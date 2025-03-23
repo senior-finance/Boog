@@ -1,3 +1,5 @@
+![SOPIE Senior Of Finance   artificial IntelligEnce (2)](https://github.com/user-attachments/assets/dcbdffbf-28cb-486d-8013-43c76302d447)
+
 This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
 
 # Getting Started
