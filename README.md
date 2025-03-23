@@ -74,7 +74,7 @@ dependencies {
 
 npm install react-native-config --legacy-peer-deps  명령어 실행
 
-프로젝트 폴더 바로 안에 .env 파일 만들고 CLIENT_VALUE=86n98ozqdn 값 넣고 저장 (사진첨부)
+프로젝트 폴더 바로 안에 .env 파일 만들고 디코에 올린 값 넣고 저장 (사진첨부)
 
 그리고 npx react-native start --reset-cache 로 실행
 
