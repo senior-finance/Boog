@@ -16,7 +16,7 @@
 
       <meta-data
             android:name="com.naver.maps.map.CLIENT_ID"
-            android:value="@string/CLIENT_VALUE" />
+            android:value="@string/MAP_CLIENT_VALUE" />
 
       <activity
         android:name=".MainActivity"
