@@ -1,6 +1,6 @@
 ![SOPIE Senior Of Finance   artificial IntelligEnce (2)](https://github.com/user-attachments/assets/dcbdffbf-28cb-486d-8013-43c76302d447)
 
-vscode에서 Git 리포지토리 복제 (https://github.com/Eojin61/](https://github.com/senior-finance/Boog.git)
+vscode에서 Git 리포지토리 복제 (https://github.com/senior-finance/Boog.git)
 
 npm install react-native-nmap --legacy-peer-deps  명령어 실행
 
