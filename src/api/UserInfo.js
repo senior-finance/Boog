@@ -1,5 +1,5 @@
 import axios from "axios";
-import { BASE_URL } from "./config.js"; // config 에서 BASE_URL을 가져옴
+import { BASE_URL } from "../../.env"; // env 에서 BASE_URL을 가져옴
 
 export const getUserInfo = async (accessToken) => {
   try {

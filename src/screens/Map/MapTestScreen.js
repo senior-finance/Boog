@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import NaverMapView, { Marker } from 'react-native-nmap';
+import { NavigationContainer } from '@react-navigation/native';
 
 const MapTestScreen = () => {
   return (

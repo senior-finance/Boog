@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, FlatList, ActivityIndicator } from "react-native";
-import { getAccessToken } from "./api/auth.js";
-import { getAccountList } from "./api/accountList.js";
+import { getAccessToken } from "../../api/Auth.js";
+import { getAccountList } from "../../api/AccountList.js";
 
 const AccountListScreen = ({ route }) => {
   const [accounts, setAccounts] = useState([]);
