@@ -73,7 +73,7 @@ const MainScreen = ({ navigation }) => {
       {/* 클로버 기반 AI 음성 대화 */}
       <TouchableOpacity
         style={[styles.roundBox, { height: boxHeight }]}
-        onPress={() => navigation.navigate('MyInfo')}>
+        onPress={() => navigation.navigate('')}>
         <Text style={styles.boxText}>AI 대화하기</Text>
       </TouchableOpacity>
 
