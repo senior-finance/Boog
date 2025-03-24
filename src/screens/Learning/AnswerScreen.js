@@ -59,7 +59,7 @@ const CorrectAnswerScreen = ({ answer, explanation, currentQuestionIndex, naviga
       </View>
 
       {/* "그만둘래요" 버튼 */}
-      <TouchableOpacity style={styles.quitButton} onPress={() => navigation.navigate("Learning")}>
+      <TouchableOpacity style={styles.quitButton} onPress={() => navigation.navigate("Main")}>
         <Text style={styles.buttonText}>그만둘래요</Text>
       </TouchableOpacity>
     </View>
@@ -99,7 +99,7 @@ const WrongAnswerScreen = ({ answer, explanation, currentQuestionIndex, navigati
         </TouchableOpacity>
       </View>
 
-      <TouchableOpacity style={styles.quitButton} onPress={() => navigation.navigate("Learning")}>
+      <TouchableOpacity style={styles.quitButton} onPress={() => navigation.navigate("Main")}>
         <Text style={styles.buttonText}>그만둘래요</Text>
       </TouchableOpacity>
     </View>

@@ -19,10 +19,6 @@ const LearningScreen = ({ navigation }) => {
         <Text style={styles.buttonText}>사기 사례 대비하기{'\n'}(보이스피싱, 금융 피해 등)</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={[styles.button, styles.blue]} onPress={() => navigation.navigate('MapTest')}>
-        <Text style={styles.buttonText}>네이버 지도 테스트</Text>
-      </TouchableOpacity>
-
       {/* 도움 요청 버튼만 남김 */}
       <View style={styles.footer}>
         <TouchableOpacity style={[styles.footerButton, styles.help]}>

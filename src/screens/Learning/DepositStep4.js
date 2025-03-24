@@ -58,12 +58,15 @@ export default function DepositStep4({ navigation, route }) {
             </View>
 
             <View style={styles.buttonRow}>
-              <TouchableOpacity 
-                style={styles.modalButton} 
-                onPress={() => navigation.navigate('Home')}
-              >
-                <Text style={styles.modalButtonText}>홈화면</Text>
-              </TouchableOpacity>
+            <TouchableOpacity 
+              style={styles.modalButton} 
+              onPress={() => {
+                setModalVisible(false); // 모달 닫기
+                navigation.navigate('Main'); // 홈화면 이동
+              }}
+            >
+              <Text style={styles.modalButtonText}>홈화면</Text>
+            </TouchableOpacity>
             </View>
           </View>
         </View>
