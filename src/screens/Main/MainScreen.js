@@ -31,7 +31,7 @@ const MainScreen = ({ navigation }) => {
   };
 
   const Color1 = ['#c955ff', '#008bff'];
-  const [boxHeight, setBoxHeight] = useState(100);
+  const [boxHeight, setBoxHeight] = useState(60);
 
   return (
     <LinearGradient colors={Color1} style={styles.container}>
@@ -63,11 +63,18 @@ const MainScreen = ({ navigation }) => {
         <Text style={styles.boxText}>사용자 로그인</Text>
       </TouchableOpacity>
 
-      {/* 사용자 프로필 */}
+      {/* 프로필 화면 */}
       <TouchableOpacity
         style={[styles.roundBox, { height: boxHeight }]}
         onPress={() => navigation.navigate('MyInfo')}>
         <Text style={styles.boxText}>나의 프로필</Text>
+      </TouchableOpacity>
+
+      {/* 클로버 기반 AI 음성 대화 */}
+      <TouchableOpacity
+        style={[styles.roundBox, { height: boxHeight }]}
+        onPress={() => navigation.navigate('MyInfo')}>
+        <Text style={styles.boxText}>AI 대화하기</Text>
       </TouchableOpacity>
 
       {/* 메뉴 항목들 */}
