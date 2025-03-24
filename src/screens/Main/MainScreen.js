@@ -80,7 +80,7 @@ const MainScreen = ({ navigation }) => {
       {/*지문 인증하기*/}
       <TouchableOpacity
         style={[styles.roundBox, { height: boxHeight }]}
-        onPress={() => navigation.navigate('')}>
+        onPress={() => navigation.navigate('Biometric')}>
         <Text style={styles.boxText}>지문 인증 테스트</Text>
       </TouchableOpacity>
 

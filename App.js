@@ -23,6 +23,8 @@ import VoicePhishingScreen from './src/screens/Info/VoicePhishingScreen';
 import VoicePhishingDetailScreen from './src/screens/Info/VoicePhishingDetailScreen';
 import CallTextAnalysisScreen from './src/screens/Info/CallTextAnalysisScreen';
 
+import BiometricScreen from './src/screens/Biometric/BiometricScreen';
+
 import API_TEST from 'react-native-config';
 // console.log(API_TEST.CLIENT_VALUE);
 
@@ -47,6 +49,8 @@ export default function App() {
         <Stack.Screen name="DepositStep4" component={DepositStep4} options={{ title: '연습 - 모의 송금' }} />
 
         <Stack.Screen name="MapTest" component={MapTestScreen} options={{ title: '네이버 지도 확인' }} />
+
+        <Stack.Screen name="Biometric" component={BiometricScreen} options={{ title: '지문 인식 확인'}} />
 
         <Stack.Screen name="MyInfo" component={MyInfoScreen} options={{ title: '내 정보' }} />
         <Stack.Screen name="FontSize" component={FontSizeSettingScreen} options={{ title: '글자 크기 설정' }} />
