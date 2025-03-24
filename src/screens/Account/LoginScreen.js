@@ -32,7 +32,7 @@ const LoginScreen = ({ navigation }) => {
 
     // env 선언부
     // 오픈뱅킹 로그인 URL로 리다이렉트
-    const authUrl = `https://api.iamport.kr/authorize?client_id=${process.env.KFTC__CLIENT_ID}&redirect_uri=${process.env.KFTC_REDIRECT_URI}`;
+    const authUrl = `https://api.iamport.kr/authorize?client_id=${process.env.KFTC_CLIENT_ID}&redirect_uri=${process.env.KFTC_REDIRECT_URI}`;
 
     // WebView로 인증 페이지 열기
     navigation.navigate('WebView', {
