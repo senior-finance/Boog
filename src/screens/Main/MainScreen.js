@@ -63,6 +63,13 @@ const MainScreen = ({ navigation }) => {
         <Text style={styles.boxText}>사용자 로그인</Text>
       </TouchableOpacity>
 
+      {/* 사용자 프로필 */}
+      <TouchableOpacity
+        style={[styles.roundBox, { height: boxHeight }]}
+        onPress={() => navigation.navigate('MyInfo')}>
+        <Text style={styles.boxText}>나의 프로필</Text>
+      </TouchableOpacity>
+
       {/* 메뉴 항목들 */}
       <View style={styles.menuContainer}></View>
     </LinearGradient>

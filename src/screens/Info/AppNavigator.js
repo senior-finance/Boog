@@ -10,8 +10,6 @@ import VoicePhishingScreen from './VoicePhishingScreen';
 import VoicePhishingDetailScreen from './VoicePhishingDetailScreen';
 import CallTextAnalysisScreen from './CallTextAnalysisScreen';
 
-
-
 const Stack = createNativeStackNavigator();
 
 const AppNavigator = () => {

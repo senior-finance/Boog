@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, Slider } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 
-const FontSizeSettingScreen = () => {
+const FontSizeSettingScreen = ({ navigation }) => {
   const [fontSize, setFontSize] = useState(16);
 
   return (

@@ -4,7 +4,7 @@ import { View, Text, StyleSheet, Slider, TouchableOpacity } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/Ionicons'; // 아이콘 사용 시 필요
 
-const SoundVolumeScreen = () => {
+const SoundVolumeScreen = ({ navigation }) => {
   const [volume, setVolume] = useState(50);
 
   return (

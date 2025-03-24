@@ -16,6 +16,13 @@ import MainScreen from './src/screens/Main/MainScreen';
 import LoginScreen from './src/screens/Account/LoginScreen';
 import WebViewScreen from './src/screens/Account/WebViewScreen';
 
+import MyInfoScreen from './src/screens/Info/MyInfoScreen';
+import FontSizeSettingScreen from './src/screens/Info/FontSizeSettingScreen';
+import SoundVolumeScreen from './src/screens/Info/SoundVolumeScreen';
+import VoicePhishingScreen from './src/screens/Info/VoicePhishingScreen';
+import VoicePhishingDetailScreen from './src/screens/Info/VoicePhishingDetailScreen';
+import CallTextAnalysisScreen from './src/screens/Info/CallTextAnalysisScreen';
+
 import API_TEST from 'react-native-config';
 // console.log(API_TEST.CLIENT_VALUE);
 
@@ -26,7 +33,7 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator>
         {/* 아직 initial 화면 지정없이 스택 순서대로 뜨는 중 */}
-        
+
         <Stack.Screen name="Main" component={MainScreen} options={{ title: '메인 화면' }} />
         <Stack.Screen name="Login" component={LoginScreen} options={{ title: '로그인' }} />
         <Stack.Screen name="WebView" component={WebViewScreen} options={{ title: '웹뷰 화면' }} />
@@ -40,6 +47,13 @@ export default function App() {
         <Stack.Screen name="DepositStep4" component={DepositStep4} options={{ title: '연습 - 모의 송금' }} />
 
         <Stack.Screen name="MapTest" component={MapTestScreen} options={{ title: '네이버 지도 확인' }} />
+
+        <Stack.Screen name="MyInfo" component={MyInfoScreen} options={{ title: '내 정보' }} />
+        <Stack.Screen name="FontSize" component={FontSizeSettingScreen} options={{ title: '글자 크기 설정' }} />
+        <Stack.Screen name="SoundVolume" component={SoundVolumeScreen} options={{ title: '음향 크기 설정' }} />
+        <Stack.Screen name="VoicePhishing" component={VoicePhishingScreen} options={{ title: '보이스 피싱 사례' }} />
+        <Stack.Screen name="VoicePhishingDetail" component={VoicePhishingDetailScreen} options={{ title: '사례 상세 보기' }} />
+        <Stack.Screen name="CallTextAnalysis" component={CallTextAnalysisScreen} options={{ title: '통화 및 문자 분석' }} />    
       </Stack.Navigator>
     </NavigationContainer>
   );
