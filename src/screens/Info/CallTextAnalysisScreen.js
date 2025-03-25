@@ -84,6 +84,8 @@ const CallTextAnalysisScreen = () => {
         multiline
         value={text}
         onChangeText={setText}
+        keyboardType="default"
+        autoCapitalize="none"
       />
 
       {/* 분석 버튼 */}

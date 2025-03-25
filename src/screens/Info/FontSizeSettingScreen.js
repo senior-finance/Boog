@@ -1,7 +1,9 @@
 // src/FontSizeSettingScreen.js
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Slider } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
+import Slider from '@react-native-community/slider';
+
 
 const FontSizeSettingScreen = ({ navigation }) => {
   const [fontSize, setFontSize] = useState(16);
