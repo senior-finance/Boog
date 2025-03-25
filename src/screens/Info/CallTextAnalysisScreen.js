@@ -10,8 +10,19 @@ import {
   Alert,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
+import TextRecognition from 'react-native-text-recognition';
+import { launchImageLibrary } from 'react-native-image-picker';
+import { ScrollView } from 'react-native';
 
-const phishingKeywords = ['환급', '세금', '보안', '국세청', '계좌번호', '클릭', '인증', '로그인', '앱설치'];
+
+
+
+const phishingKeywords = ['환급', '세금', '보안', '국세청', '계좌번호', '클릭', '인증', '로그인', '앱설치','대출', '지원금', '연체', '미납', '고객센터', '상담원', '공공기관',
+  '홈택스', '출금', '송금', '입금', '카카오페이', '토스',
+  '팀뷰어', '원격', '다운로드', '설치', '급한일', '개인정보',
+  '본인인증', '문자확인', '금일출금', '직접처리', '경찰서', '검찰청',
+  '피해보상', '사건번호', '보이스피싱', '불법', '사칭', '문의',
+  '앱다운', '앱설치', '공무원', '보증금', '모바일', '차단'];
 
 const CallTextAnalysisScreen = () => {
   const [text, setText] = useState('');
@@ -19,16 +30,35 @@ const CallTextAnalysisScreen = () => {
   const [result, setResult] = useState(null);
 
   const pickImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
+    const options = {
+      mediaType: 'photo',
+      maxWidth: 800,
+      maxHeight: 800,
       quality: 1,
+    };
+  
+    launchImageLibrary(options, async (response) => {
+      if (response.didCancel) {
+        console.log('사용자가 이미지 선택을 취소했습니다');
+      } else if (response.errorCode) {
+        console.log('이미지 선택 오류: ', response.errorMessage);
+        Alert.alert('이미지 오류', response.errorMessage);
+      } else {
+        const uri = response.assets[0].uri;
+        setImageUri(uri);
+  
+        try {
+          const recognizedText = await TextRecognition.recognize(uri);
+          const fullText = recognizedText.join(' ');
+          setText(fullText);
+        } catch (err) {
+          console.error('OCR 실패:', err);
+          Alert.alert('문자 인식 오류', '이미지에서 텍스트를 인식할 수 없습니다.');
+        }
+      }
     });
-
-    if (!result.canceled && result.assets.length > 0) {
-      setImageUri(result.assets[0].uri);
-    }
   };
+  
 
   const analyze = () => {
     if (!text && !imageUri) {
@@ -61,6 +91,8 @@ const CallTextAnalysisScreen = () => {
 
   return (
     <LinearGradient colors={['#AEEEEE', '#DDA0DD']} style={styles.container}>
+      <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
+
       <Text style={styles.title}>통화 및 문자 분석</Text>
 
     {/* ✅ 통화 음성 파일 업로드 버튼 (기능은 나중에 추가) */}
@@ -100,6 +132,7 @@ const CallTextAnalysisScreen = () => {
           <Text style={styles.resultText}>{result.details}</Text>
         </View>
       )}
+       </ScrollView>
     </LinearGradient>
   );
 };
