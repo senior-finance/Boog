@@ -77,6 +77,13 @@ const MainScreen = ({ navigation }) => {
         <Text style={styles.boxText}>AI 대화하기</Text>
       </TouchableOpacity>
 
+      {/*지문 인증하기*/}
+      <TouchableOpacity
+        style={[styles.roundBox, { height: boxHeight }]}
+        onPress={() => navigation.navigate('Biometric')}>
+        <Text style={styles.boxText}>지문 인증 테스트</Text>
+      </TouchableOpacity>
+
       {/* 메뉴 항목들 */}
       <View style={styles.menuContainer}></View>
     </LinearGradient>
