@@ -43,18 +43,7 @@ const SoundVolumeScreen = () => {
         thumbTintColor="#fff"
       />
 
-      {/* 하단 네비게이션 바 */}
-      <View style={styles.bottomNav}>
-        <TouchableOpacity>
-          <Text style={styles.navText}>🏠 확인 화면</Text>
-        </TouchableOpacity>
-        <TouchableOpacity>
-          <Text style={styles.navText}>⭐</Text>
-        </TouchableOpacity>
-        <TouchableOpacity>
-          <Text style={styles.navText}>👤 사용자 정보</Text>
-        </TouchableOpacity>
-      </View>
+      
     </LinearGradient>
   );
 };

@@ -19,15 +19,9 @@ const MyInfoScreen = ({navigation}) => {
       </View>
 
       {/* 버튼 영역 */}
-      <View style={styles.buttonRow}>
-       <TouchableOpacity style={styles.smallButton} onPress={() => navigation.navigate('CustomerService')}>
-        <Text style={styles.buttonText}>고객센터</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.smallButton}>
-          <Text style={styles.buttonText}>채팅봇</Text>
-        </TouchableOpacity>
-      </View>
+      <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('CustomerService')}>
+      <Text style={styles.menuText}>고객센터</Text>
+      </TouchableOpacity>
 
       {/* 설정 메뉴 */}
       <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('FontSize')}>
@@ -42,15 +36,14 @@ const MyInfoScreen = ({navigation}) => {
       <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('CallTextAnalysis')}>
          <Text style={styles.menuText}>통화 및 문자 분석</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.menuItem}>
-        <Text style={styles.menuText}>화면 설정</Text>
-      </TouchableOpacity>
+    
 
       {/* 하단 네비게이션 바 */}
       <View style={styles.bottomNav}>
-        <TouchableOpacity>
-          <Text style={styles.navText}>🏠 홈</Text>
-        </TouchableOpacity>
+      <TouchableOpacity onPress={() => navigation.navigate('Main')}>
+        <Text style={styles.navText}>🏠 홈</Text>
+      </TouchableOpacity>
+
         <TouchableOpacity>
           <Text style={styles.navText}>💖</Text>
         </TouchableOpacity>
@@ -93,7 +86,11 @@ profileImage: {
     backgroundColor: '#ffffff88',
     padding: 10,
     borderRadius: 10,
+    alignItems: 'center', 
+    justifyContent: 'center',
+    minWidth: 100,
   },
+
   buttonText: {
     fontWeight: 'bold',
   },
