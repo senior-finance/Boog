@@ -52,7 +52,7 @@ const MainScreen = ({ navigation }) => {
       {/* 네이버 지도 */}
       <TouchableOpacity
         style={[styles.roundBox, { height: boxHeight }]}
-        onPress={() => navigation.navigate('MapTest')}>
+        onPress={() => navigation.navigate('MapView')}>
         <Text style={styles.boxText}>지도 화면 이동</Text>
       </TouchableOpacity>
 

@@ -10,7 +10,7 @@ import DepositStep2 from './src/screens/Learning/DepositStep2';
 import DepositStep3 from './src/screens/Learning/DepositStep3';
 import DepositStep4 from './src/screens/Learning/DepositStep4';
 
-import MapTestScreen from './src/screens/Map/MapTestScreen';
+import MapViewScreen from './src/screens/Map/MapViewScreen';
 
 import MainScreen from './src/screens/Main/MainScreen';
 import LoginScreen from './src/screens/Account/LoginScreen';
@@ -48,7 +48,7 @@ export default function App() {
         <Stack.Screen name="DepositStep3" component={DepositStep3} options={{ title: '연습 - 금액 입력' }} />
         <Stack.Screen name="DepositStep4" component={DepositStep4} options={{ title: '연습 - 모의 송금' }} />
 
-        <Stack.Screen name="MapTest" component={MapTestScreen} options={{ title: '네이버 지도 확인' }} />
+        <Stack.Screen name="MapView" component={MapViewScreen} options={{ title: '네이버 지도 확인' }} />
 
         <Stack.Screen name="Biometric" component={BiometricScreen} options={{ title: '지문 인식 확인'}} />
 
