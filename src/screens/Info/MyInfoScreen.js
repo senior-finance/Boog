@@ -7,19 +7,23 @@ const MyInfoScreen = ({navigation}) => {
     <LinearGradient colors={['#AEEEEE', '#DDA0DD']} style={styles.container}>
       {/* 내 정보 */}
       <View style={styles.profileContainer}>
-        <Image
-          source={{ uri: 'https://mc-heads.net/avatar/username/100.png' }}
-          style={styles.profileImage}
-        />
+      <Image
+     source={{ uri: 'https://mc-heads.net/avatar/username/100.png' }}
+     style={styles.profileImage}
+      />
+
+
+
         <Text style={styles.name}>부금이</Text>
         <Text style={styles.account}>111-222-4445543</Text>
       </View>
 
       {/* 버튼 영역 */}
       <View style={styles.buttonRow}>
-        <TouchableOpacity style={styles.smallButton}>
-          <Text style={styles.buttonText}>고객센터</Text>
+       <TouchableOpacity style={styles.smallButton} onPress={() => navigation.navigate('CustomerService')}>
+        <Text style={styles.buttonText}>고객센터</Text>
         </TouchableOpacity>
+
         <TouchableOpacity style={styles.smallButton}>
           <Text style={styles.buttonText}>채팅봇</Text>
         </TouchableOpacity>
@@ -65,12 +69,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 20,
   },
-  profileImage: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    marginBottom: 10,
-  },
+profileImage: {
+  width: 100,
+  height: 100,
+  borderRadius: 50,
+  marginBottom: 10,
+},
   name: {
     fontSize: 18,
     fontWeight: 'bold',

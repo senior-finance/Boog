@@ -22,8 +22,12 @@ import SoundVolumeScreen from './src/screens/Info/SoundVolumeScreen';
 import VoicePhishingScreen from './src/screens/Info/VoicePhishingScreen';
 import VoicePhishingDetailScreen from './src/screens/Info/VoicePhishingDetailScreen';
 import CallTextAnalysisScreen from './src/screens/Info/CallTextAnalysisScreen';
-
+import { FontSizeProvider } from './src/screens/Info/FontSizeContext';
 import BiometricScreen from './src/screens/Biometric/BiometricScreen';
+import CustomerServiceScreen from './src/screens/Info/CustomerServiceScreen';
+import FAQScreen from './src/screens/Info/FAQScreen.js';
+import InquiryFormScreen from './src/screens/Info/InquiryFormScreen';
+import InquiryListScreen from './src/screens/Info/InquiryListScreen';
 
 import API_TEST from 'react-native-config';
 // console.log(API_TEST.CLIENT_VALUE);
@@ -32,6 +36,7 @@ const Stack = createStackNavigator();
 
 export default function App() {
   return (
+    <FontSizeProvider>
     <NavigationContainer>
       <Stack.Navigator>
         {/* 아직 initial 화면 지정없이 스택 순서대로 뜨는 중 */}
@@ -58,7 +63,13 @@ export default function App() {
         <Stack.Screen name="VoicePhishing" component={VoicePhishingScreen} options={{ title: '보이스 피싱 사례' }} />
         <Stack.Screen name="VoicePhishingDetail" component={VoicePhishingDetailScreen} options={{ title: '사례 상세 보기' }} />
         <Stack.Screen name="CallTextAnalysis" component={CallTextAnalysisScreen} options={{ title: '통화 및 문자 분석' }} />    
+        <Stack.Screen name="CustomerService" component={CustomerServiceScreen} options={{ title: '고객센터' }} />
+        <Stack.Screen name="FAQ" component={FAQScreen} options={{ title: '자주 묻는 질문' }} />
+        <Stack.Screen name="InquiryForm" component={InquiryFormScreen} options={{ title: '문의하기' }} />
+        <Stack.Screen name="InquiryList" component={InquiryListScreen} options={{ title: '문의 내역' }} />
+     
       </Stack.Navigator>
     </NavigationContainer>
+    </FontSizeProvider>
   );
 }
