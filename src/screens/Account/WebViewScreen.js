@@ -22,8 +22,8 @@ const WebViewScreen = ({ route }) => {
         const authCode = parsed.query.code;
 
         if (authCode) {
-          route?.params?.onTokenReceived?.(authCode); // ✅ 방어 코드 추가
-          navigation.goBack();
+          // 함수가 아니라 "authCode" 데이터만 전달
+          navigation.navigate('Login', { authCode });
         }
       }
     } catch (error) {
@@ -31,9 +31,13 @@ const WebViewScreen = ({ route }) => {
     }
   };
 
-  return route?.params?.url ? ( // ✅ return 문법 오류 해결 (조건부 렌더링)
+  if (!route.params?.url) {
+    return null; // URL이 없으면 렌더링 X
+  }
+
+  return (
     <WebView
-      source={{ uri: route.params?.url }}
+      source={{ uri: route.params.url }}
       mixedContentMode="always"
       onNavigationStateChange={onNavigationStateChange}
       onLoadEnd={() => setLoading(false)}
@@ -50,7 +54,7 @@ const WebViewScreen = ({ route }) => {
       }}
     />
 
-  ) : null; // ✅ URL이 없으면 null 반환 (흰 화면 방지)
+  )
 };
 
 export default WebViewScreen;
