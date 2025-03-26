@@ -29,6 +29,8 @@ import FAQScreen from './src/screens/Info/FAQScreen.js';
 import InquiryFormScreen from './src/screens/Info/InquiryFormScreen';
 import InquiryListScreen from './src/screens/Info/InquiryListScreen';
 
+import VoiceInputScreen from './src/screens/VoiceAssistant/VoiceInputScreen.js';
+
 import API_TEST from 'react-native-config';
 // console.log(API_TEST.CLIENT_VALUE);
 
@@ -68,6 +70,8 @@ export default function App() {
         <Stack.Screen name="InquiryForm" component={InquiryFormScreen} options={{ title: '문의하기' }} />
         <Stack.Screen name="InquiryList" component={InquiryListScreen} options={{ title: '문의 내역' }} />
      
+        <Stack.Screen name="VoiceInput" component={VoiceInputScreen} options={{title: '음성 입력'}} />
+
       </Stack.Navigator>
     </NavigationContainer>
     </FontSizeProvider>
