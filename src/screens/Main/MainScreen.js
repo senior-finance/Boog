@@ -56,6 +56,13 @@ const MainScreen = ({ navigation }) => {
         <Text style={styles.boxText}>지도 화면 이동</Text>
       </TouchableOpacity>
 
+      {/* 네이버 검색*/}
+      <TouchableOpacity
+        style={[styles.roundBox, { height: boxHeight }]}
+        onPress={() => navigation.navigate('MapSearch')}>
+        <Text style={styles.boxText}>네이버 검색 화면 이동</Text>
+      </TouchableOpacity>
+
       {/* 금융결제원 */}
       <TouchableOpacity
         style={[styles.roundBox, { height: boxHeight }]}

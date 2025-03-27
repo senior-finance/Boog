@@ -13,9 +13,8 @@ const P5 = { latitude: 37.562834, longitude: 126.976218 };
 
 // const Tab = createBottomTabNavigator();
 
-
-// const MapViewScreen = ({ navigation }) => {
-const MapViewScreen = () => {
+// const MapViewScreen = () => {
+const MapViewScreen = ({ navigation }) => {
   const mapView = useRef(null);
   const [enableLayerGroup, setEnableLayerGroup] = useState(true);
 
@@ -52,11 +51,11 @@ const MapViewScreen = () => {
                   </View>
               </Marker> */}
       </NaverMapView>
-      {/* <TouchableOpacity style={{ position: 'absolute', bottom: '10%', right: 8 }} onPress={() => navigation.navigate('Learning')}>
-              <View style={{ backgroundColor: 'gray', padding: 4 }}>
-                  <Text style={{ color: 'white' }}>Go to Learning</Text>
-              </View>
-          </TouchableOpacity> */}
+      <TouchableOpacity style={{ position: 'absolute', bottom: '10%', right: 8 }} onPress={() => navigation.navigate('MapSearch')}>
+        <View style={{ backgroundColor: 'gray', padding: 4 }}>
+          <Text style={{ color: 'white' }}>Go to search screen</Text>
+        </View>
+      </TouchableOpacity>
     </>
   );
 };

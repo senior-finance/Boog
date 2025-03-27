@@ -1,4 +1,12 @@
 import React from 'react';
+
+// 앱 화면 하단에 뜨는 경고 삭제하는 코드
+import { LogBox } from 'react-native';
+LogBox.ignoreLogs([
+  '`new NativeEventEmitter()` was called with a non-null argument',
+]);
+///////////////////////////////////////
+
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
@@ -14,6 +22,7 @@ import DepositStep3 from './src/screens/Learning/DepositStep3';
 import DepositStep4 from './src/screens/Learning/DepositStep4';
 
 import MapViewScreen from './src/screens/Map/MapViewScreen';
+import MapSearchScreen from './src/screens/Map/MapSearchScreen';
 
 import MainScreen from './src/screens/Main/MainScreen';
 import LoginScreen from './src/screens/Account/LoginScreen';
@@ -59,6 +68,7 @@ export default function App() {
         <Stack.Screen name="DepositStep4" component={DepositStep4} options={{ title: '연습 - 모의 송금' }} />
 
         <Stack.Screen name="MapView" component={MapViewScreen} options={{ title: '네이버 지도 확인' }} />
+        <Stack.Screen name="MapSearch" component={MapSearchScreen} options={{ title: '네이버 지도 확인' }} />
 
         <Stack.Screen name="Biometric" component={BiometricScreen} options={{ title: '지문 인식 확인'}} />
 
