@@ -42,7 +42,7 @@ const Place = () => {
     setSelectedPlace({ title: "", address: "" });
 
     try {
-      const response = await axios.post(`${MAP_SEARCH_BACKEND_URL}/searchPlace`, {
+      const response = await axios.post(`${MAP_SEARCH_BACKEND_URL}searchPlace`, {
         placeName: query,
       });
 
