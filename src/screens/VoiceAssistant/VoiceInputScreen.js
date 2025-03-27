@@ -69,7 +69,7 @@ export default function VoiceInputScreen() {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>🎙️ 음성 비서 테스트 (WAV)</Text>
+      <Text style={styles.title}>🎙️ AI 대화하기</Text>
 
       <Button
         title={isRecording ? '🛑 녹음 종료' : '🎤 녹음 시작'}

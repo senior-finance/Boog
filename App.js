@@ -73,7 +73,7 @@ export default function App() {
         <Stack.Screen name="InquiryForm" component={InquiryFormScreen} options={{ title: '문의하기' }} />
         <Stack.Screen name="InquiryList" component={InquiryListScreen} options={{ title: '문의 내역' }} />
      
-        <Stack.Screen name="VoiceInput" component={VoiceInputScreen} options={{title: '음성 입력'}} />
+        <Stack.Screen name="VoiceInput" component={VoiceInputScreen} options={{title: 'AI 대화하기'}} />
 
       </Stack.Navigator>
     </NavigationContainer>
