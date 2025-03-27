@@ -2,6 +2,9 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
+import { Buffer } from 'buffer';
+global.Buffer = Buffer;
+
 import LearningScreen from './src/screens/Learning/LearningScreen';
 import QuizScreen from './src/screens/Learning/QuizScreen';
 import AnswerScreen from './src/screens/Learning/AnswerScreen';

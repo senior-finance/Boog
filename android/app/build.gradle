@@ -112,6 +112,8 @@ dependencies {
     implementation("com.facebook.react:react-android")
     implementation("com.facebook.react:flipper-integration")
 
+    implementation 'com.naver.speech.clientapi:naverspeech-ncp-sdk-android:1.1.8'   // CSR 사용
+
     implementation 'com.naver.maps:map-sdk:3.20.0'
 
     if (hermesEnabled.toBoolean()) {

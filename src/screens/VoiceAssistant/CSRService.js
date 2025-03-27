@@ -1,44 +1,46 @@
+// CSRService.js
 import { Platform } from 'react-native';
+import RNFS from 'react-native-fs';
 import { CSR_CLIENT_ID, CSR_CLIENT_SECRET } from '@env';
 
-// CSR API 엔드포인트
-const CSR_URL = 'https://clovaspeech-gw.ncloud.com/recognizer/upload';
+// ✅ CSR 전용 API 주소
+const CSR_URL = 'https://naveropenapi.apigw.ntruss.com/recog/v1/stt?lang=Kor';
 
 export default async function sendAudioToCSR(filePath) {
   try {
-    // Android 파일 경로 처리
     const cleanPath = Platform.OS === 'android'
       ? filePath.replace('file://', '')
       : filePath;
 
-    const formData = new FormData();
-    formData.append('media', {
-      uri: filePath,
-      type: 'audio/mp4', // 녹음 형식에 따라 변경 가능 (m4a, wav 등)
-      name: 'voice.mp4',
-    });
+    console.log('📁 파일 경로:', cleanPath);
 
-    // CSR 요청 (비동기)
+    // 🔹 오디오 파일을 base64로 읽고 binary로 변환
+    const base64Audio = await RNFS.readFile(cleanPath, 'base64');
+    const binaryAudio = Buffer.from(base64Audio, 'base64');
+
+    console.log('📦 오디오 파일 읽기 완료. 바이트 수:', binaryAudio.length);
+
+    // 🔗 CSR API에 raw binary 전송
     const response = await fetch(CSR_URL, {
       method: 'POST',
       headers: {
+        'Content-Type': 'application/octet-stream',
         'X-NCP-APIGW-API-KEY-ID': CSR_CLIENT_ID,
         'X-NCP-APIGW-API-KEY': CSR_CLIENT_SECRET,
       },
-      body: formData,
+      body: binaryAudio,
     });
 
-    const data = await response.json();
+    const result = await response.json();
 
-    // 성공 시 텍스트 추출
-    if (data.text) {
-      return data.text;
+    if (result.text) {
+      return result.text;
     } else {
-      console.warn('CSR 응답이 예상과 다릅니다:', data);
+      console.warn('⚠️ CSR 응답이 예상과 다릅니다:', result);
       return '(텍스트 인식 실패)';
     }
-  } catch (error) {
-    console.error('CSR API 오류:', error);
-    throw error;
+  } catch (err) {
+    console.error('❌ CSR API 오류:', err);
+    return '(CSR 오류 발생)';
   }
 }

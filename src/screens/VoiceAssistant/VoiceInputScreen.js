@@ -1,12 +1,10 @@
 // VoiceInputScreen.js
 import React, { useState } from 'react';
-import { View, Text, Button, StyleSheet, ActivityIndicator, ScrollView } from 'react-native';
-import AudioRecorderPlayer from 'react-native-audio-recorder-player';
+import { View, Text, Button, StyleSheet, ActivityIndicator, ScrollView, PermissionsAndroid, Platform } from 'react-native';
+import AudioRecord from 'react-native-audio-record';
 import sendAudioToCSR from './CSRService';
 import askClovaAI from './AIService';
-import { PermissionsAndroid, Platform } from 'react-native';
-
-const audioRecorderPlayer = new AudioRecorderPlayer();
+import RNFS from 'react-native-fs';
 
 export default function VoiceInputScreen() {
   const [isRecording, setIsRecording] = useState(false);
@@ -14,6 +12,8 @@ export default function VoiceInputScreen() {
   const [isLoading, setIsLoading] = useState(false);
   const [recognizedText, setRecognizedText] = useState('');
   const [aiResponse, setAiResponse] = useState('');
+
+  const filePath = `${RNFS.CachesDirectoryPath}/sound.wav`;
 
   // 안드로이드 권한 요청
   const requestPermission = async () => {
@@ -31,25 +31,30 @@ export default function VoiceInputScreen() {
     const hasPermission = await requestPermission();
     if (!hasPermission) return;
 
-    try {
-      const result = await audioRecorderPlayer.startRecorder();
-      setIsRecording(true);
-      setRecordedPath(result);
-    } catch (err) {
-      console.error('녹음 시작 오류:', err);
-    }
+    const options = {
+      sampleRate: 16000,
+      channels: 1,
+      bitsPerSample: 16,
+      audioSource: 6,
+      wavFile: 'sound.wav',
+    };
+
+    AudioRecord.init(options);
+    AudioRecord.start();
+    setIsRecording(true);
   };
 
   // 녹음 종료
   const stopRecording = async () => {
     try {
       setIsLoading(true);
-      const result = await audioRecorderPlayer.stopRecorder();
+      const audioFile = await AudioRecord.stop();
       setIsRecording(false);
-      setRecordedPath(result);
+      setRecordedPath(audioFile);
+      console.log('📁 녹음된 파일 경로:', audioFile);
 
       // CSR 전송
-      const text = await sendAudioToCSR(result);
+      const text = await sendAudioToCSR(audioFile);
       setRecognizedText(text);
 
       // AI 응답 받기
@@ -64,22 +69,13 @@ export default function VoiceInputScreen() {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>🎙️ 음성 비서 테스트</Text>
+      <Text style={styles.title}>🎙️ 음성 비서 테스트 (WAV)</Text>
 
       <Button
         title={isRecording ? '🛑 녹음 종료' : '🎤 녹음 시작'}
         onPress={isRecording ? stopRecording : startRecording}
+        color={isRecording ? '#d63031' : '#0984e3'}
       />
-
-<Button
-  title="🤖 AI 응답 테스트"
-  color="#6c5ce7"
-  onPress={async () => {
-    const test = await askClovaAI('오늘 날씨 어때?');
-    console.log('✅ AI 테스트 응답:', test);
-    setAiResponse(test); // 화면에 출력
-  }}
-/>
 
       {isLoading && <ActivityIndicator size="large" style={{ marginTop: 20 }} />}
 
