@@ -67,7 +67,8 @@ export default function App() {
         <Stack.Screen name="FAQ" component={FAQScreen} options={{ title: '자주 묻는 질문' }} />
         <Stack.Screen name="InquiryForm" component={InquiryFormScreen} options={{ title: '문의하기' }} />
         <Stack.Screen name="InquiryList" component={InquiryListScreen} options={{ title: '문의 내역' }} />
-     
+       
+
       </Stack.Navigator>
     </NavigationContainer>
     </FontSizeProvider>
