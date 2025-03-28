@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Animated } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Animated, ScrollView } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import LinearGradient from 'react-native-linear-gradient'; // 그라데이션 임포트
+import LinearGradient from 'react-native-linear-gradient';
 // npm install react-native-linear-gradient
 
 const MainScreen = ({ navigation }) => {
@@ -35,6 +35,9 @@ const MainScreen = ({ navigation }) => {
 
   return (
     <LinearGradient colors={Color1} style={styles.container}>
+       <ScrollView
+    contentContainerStyle={styles.scrollContainer}
+    showsVerticalScrollIndicator={true}>
       <Text style={styles.header}>테스트 화면</Text>
 
       {/* 라운드 박스: 그라데이션 배경 적용 */}
@@ -93,6 +96,7 @@ const MainScreen = ({ navigation }) => {
 
       {/* 메뉴 항목들 */}
       <View style={styles.menuContainer}></View>
+      </ScrollView>
     </LinearGradient>
   );
 };
@@ -100,10 +104,10 @@ const MainScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    width: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
+    //width: '100%',
+    //justifyContent: 'flex-start',
+    //alignItems: 'center',
+    //padding: 20,
   },
   header: {
     fontSize: 40,
@@ -134,6 +138,13 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
   },
+
+  scrollContainer: {
+    padding: 20,
+    alignItems: 'center',
+  },
+  
+
 });
 
 export default MainScreen;
