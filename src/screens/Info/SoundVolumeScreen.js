@@ -4,32 +4,28 @@ import LinearGradient from 'react-native-linear-gradient';
 import Slider from '@react-native-community/slider';
 import SystemSetting from 'react-native-system-setting';
 import Tts from 'react-native-tts';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const SoundVolumeScreen = () => {
   const [volume, setVolume] = useState(0.5);
   const [selectedVoice, setSelectedVoice] = useState('com.google.android.tts:ko-kr-x-ism-local');
 
-  // 미리 정의한 음성 목록
   const voices = [
     { id: 'com.google.android.tts:ko-kr-x-ism-local', name: '여성1 (기본)' },
+     { id: 'com.google.android.tts:ko-KR', name: '여성2' },
     { id: 'com.google.android.tts:ko-KR-language', name: '남성1' },
-    { id: 'com.google.android.tts:ko-KR', name: '여성2' },
+   
   ];
 
   useEffect(() => {
-    // 현재 볼륨 가져오기
-    SystemSetting.getVolume().then((v) => {
-      setVolume(v);
-    });
-
-    // TTS 초기 설정
+    SystemSetting.getVolume().then((v) => setVolume(v));
     Tts.setDefaultLanguage('ko-KR');
     Tts.setDefaultVoice(selectedVoice);
   }, []);
 
   const onVolumeChange = (value) => {
     setVolume(value);
-    SystemSetting.setVolume(value); // 실제 볼륨 조절
+    SystemSetting.setVolume(value);
   };
 
   const handleVoiceSelect = (voiceId) => {
@@ -43,11 +39,12 @@ const SoundVolumeScreen = () => {
   };
 
   return (
-    <LinearGradient colors={['#AEEEEE', '#DDA0DD']} style={styles.container}>
-      <Text style={styles.title}>음향 크기 설정</Text>
+    <LinearGradient colors={['#F8F8F8', '#F8F8F8']} style={styles.container}>
+      <View style={styles.card}>
+        <Ionicons name="volume-high-outline" size={32} color="#4B7BE5" style={{ marginBottom: 10 }} />
+        <Text style={styles.title}>음향 크기 설정</Text>
 
-      {/* 음성 선택 */}
-      <View style={styles.voiceContainer}>
+        {/* 음성 선택 */}
         <Text style={styles.subtitle}>음성 선택</Text>
         {voices.map((voice) => (
           <TouchableOpacity
@@ -55,10 +52,15 @@ const SoundVolumeScreen = () => {
             onPress={() => handleVoiceSelect(voice.id)}
             style={[
               styles.voiceOption,
-              { backgroundColor: selectedVoice === voice.id ? '#DDA0DD' : '#eee' },
+              {
+                backgroundColor: selectedVoice === voice.id ? '#4B7BE5' : '#fff',
+              },
             ]}
           >
-            <Text style={{ color: selectedVoice === voice.id ? '#fff' : '#333' }}>
+            <Text style={{
+              color: selectedVoice === voice.id ? '#fff' : '#333',
+              fontWeight: '600',
+            }}>
               {voice.name}
             </Text>
           </TouchableOpacity>
@@ -67,20 +69,19 @@ const SoundVolumeScreen = () => {
         <TouchableOpacity style={styles.previewButton} onPress={handlePreview}>
           <Text style={styles.previewText}>🔊 미리듣기</Text>
         </TouchableOpacity>
-      </View>
 
-      {/* 볼륨 조절 슬라이더 */}
-      <Slider
-        style={styles.slider}
-        minimumValue={0}
-        maximumValue={1}
-        value={volume}
-        step={0.01}
-        onValueChange={onVolumeChange}
-        minimumTrackTintColor="#ffffff"
-        maximumTrackTintColor="#000000"
-        thumbTintColor="#fff"
-      />
+        <Slider
+          style={styles.slider}
+          minimumValue={0}
+          maximumValue={1}
+          value={volume}
+          step={0.01}
+          onValueChange={onVolumeChange}
+          minimumTrackTintColor="#4B7BE5"
+          maximumTrackTintColor="#ddd"
+          thumbTintColor="#4B7BE5"
+        />
+      </View>
     </LinearGradient>
   );
 };
@@ -89,45 +90,61 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    paddingTop: 60,
-    paddingHorizontal: 20,
+    justifyContent: 'center',
+  },
+  card: {
+    width: '88%',
+    paddingVertical: 30,
+    paddingHorizontal: 24,
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 6,
   },
   title: {
-    fontSize: 22,
+    fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 20,
     color: '#333',
   },
   subtitle: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: '600',
     marginBottom: 10,
     color: '#333',
-  },
-  voiceContainer: {
-    width: '100%',
-    marginBottom: 40,
+    alignSelf: 'flex-start',
   },
   voiceOption: {
-    padding: 12,
+    width: '100%',
+    padding: 14,
     borderRadius: 10,
     marginBottom: 10,
     alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.07,
+    shadowRadius: 2,
+    elevation: 2,
   },
   previewButton: {
-    backgroundColor: '#008bff',
-    padding: 12,
+    backgroundColor: '#4B7BE5',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
     borderRadius: 10,
     marginTop: 10,
-    alignItems: 'center',
   },
   previewText: {
-    color: 'white',
+    color: '#fff',
     fontWeight: 'bold',
   },
   slider: {
-    width: '90%',
+    width: '100%',
     height: 40,
+    marginTop: 30,
   },
 });
 

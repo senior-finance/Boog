@@ -1,54 +1,95 @@
-// src/screens/Info/FAQScreen.js
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const FAQScreen = () => {
   const faqs = [
-    { question: '계좌 잔액은 어디서 볼 수 있나요?', answer: '메인 화면에서 “내 계좌 보기”를 누르시면 잔액을 확인할 수 있습니다.' },
-    { question: '비밀번호를 잊어버렸어요.', answer: '로그인 화면에서 “비밀번호 찾기”를 눌러 재설정할 수 있습니다.' },
-    { question: '송금은 어떻게 하나요?', answer: '하단 메뉴에서 “송금하기”를 선택하고 안내에 따라 진행하시면 됩니다.' },
-    { question: '화면 글씨를 키우고 싶어요.', answer: '“내 정보 > 글자 크기 설정”에서 원하는 크기로 조절하실 수 있어요.' },
+    {
+      question: '계좌 잔액은 어디서 볼 수 있나요?',
+      answer: '메인 화면에서 “내 계좌 보기”를 누르시면 잔액을 확인할 수 있습니다.',
+    },
+    {
+      question: '비밀번호를 잊어버렸어요.',
+      answer: '로그인 화면에서 “비밀번호 찾기”를 눌러 재설정할 수 있습니다.',
+    },
+    {
+      question: '송금은 어떻게 하나요?',
+      answer: '하단 메뉴에서 “송금하기”를 선택하고 안내에 따라 진행하시면 됩니다.',
+    },
+    {
+      question: '화면 글씨를 키우고 싶어요.',
+      answer: '“내 정보 > 글자 크기 설정”에서 원하는 크기로 조절하실 수 있어요.',
+    },
   ];
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <LinearGradient colors={['#F8F8F8', '#ECECEC']} style={styles.container}>
       <Text style={styles.title}>자주 묻는 질문</Text>
-      {faqs.map((item, idx) => (
-        <View key={idx} style={styles.box}>
-          <Text style={styles.question}>Q. {item.question}</Text>
-          <Text style={styles.answer}>A. {item.answer}</Text>
-        </View>
-      ))}
-    </ScrollView>
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        {faqs.map((item, idx) => (
+          <View key={idx} style={styles.card}>
+            <View style={styles.row}>
+              <Ionicons name="chatbubble-ellipses-outline" size={24} color="#4B7BE5" style={styles.icon} />
+              <Text style={styles.question}>{item.question}</Text>
+            </View>
+            <View style={styles.row}>
+              <Ionicons name="information-circle-outline" size={22} color="#999" style={styles.icon} />
+              <Text style={styles.answer}>{item.answer}</Text>
+            </View>
+          </View>
+        ))}
+      </ScrollView>
+    </LinearGradient>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
+    flex: 1,
+    paddingTop: 40,
+    paddingHorizontal: 20,
+  },
+  scrollContainer: {
+    paddingBottom: 30,
   },
   title: {
-    fontSize: 22,
+    fontSize: 26,
     fontWeight: 'bold',
-    marginBottom: 20,
+    marginBottom: 30,
     textAlign: 'center',
-    color: 'rgb(42, 35, 42)',
+    color: '#333',
   },
-  box: {
-    backgroundColor: 'rgb(241, 194, 246)',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
+  card: {
+    backgroundColor: '#fff',
+    borderRadius: 14,
+    padding: 18,
+    marginBottom: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginBottom: 10,
+  },
+  icon: {
+    marginRight: 10,
+    marginTop: 3,
   },
   question: {
-    fontWeight: 'bold',
     fontSize: 18,
-    marginBottom: 6,
-    color: 'rgb(57, 44, 57)',
+    fontWeight: '600',
+    color: '#333',
+    flexShrink: 1,
   },
   answer: {
     fontSize: 16,
-    color: 'rgb(52, 27, 55)',
+    color: '#555',
+    flexShrink: 1,
   },
 });
 

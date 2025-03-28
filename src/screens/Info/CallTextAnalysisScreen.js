@@ -113,7 +113,7 @@ const CallTextAnalysisScreen = () => {
   };
 
   return (
-    <LinearGradient colors={['#AEEEEE', '#DDA0DD']} style={styles.container}>
+    <LinearGradient colors={['#F8F8F8', '#F8F8F8']} style={styles.container}>
       <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
 
       <Text style={styles.title}>통화 및 문자 분석</Text>
@@ -167,6 +167,7 @@ const CallTextAnalysisScreen = () => {
   );
 };
 
+// 🔁 수정된 스타일
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -177,17 +178,24 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: 'bold',
     textAlign: 'center',
+    color: '#333',
   },
   uploadButton: {
-    backgroundColor: '#ffffffaa',
+    backgroundColor: '#fff',
     padding: 15,
-    borderRadius: 10,
+    borderRadius: 12,
     marginTop: 30,
     alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 5,
   },
   uploadButtonText: {
     fontSize: 16,
     fontWeight: '600',
+    color: '#333',
   },
   imagePreview: {
     width: '100%',
@@ -203,40 +211,74 @@ const styles = StyleSheet.create({
     textAlignVertical: 'top',
     fontSize: 16,
     marginBottom: 20,
+    color: '#333',
   },
   analyzeButton: {
     backgroundColor: '#fff',
     padding: 15,
     borderRadius: 12,
     alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 5,
   },
   analyzeButtonText: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: '600',
+    color: '#333',
   },
   resultContainer: {
     marginTop: 30,
-    backgroundColor: '#ffffffaa',
+    backgroundColor: '#fff',
     padding: 20,
     borderRadius: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 5,
   },
   resultTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 10,
+    color: '#333',
   },
   resultText: {
     fontSize: 16,
     lineHeight: 24,
+    color: '#333',
   },
-
   audioFileName: {
     textAlign: 'center',
     marginTop: 10,
     fontStyle: 'italic',
-    color: '#444',
-  }
+    color: '#666',
+  },
+
+  input: {
+    height: 120,
+    backgroundColor: '#f0f2f5', // 연한 회색
+    borderRadius: 10,
+    padding: 15,
+    textAlignVertical: 'top',
+    fontSize: 16,
+    marginBottom: 20,
+    color: '#333',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 3,
+    elevation: 2,
+  },
   
 });
+
+  
+
 
 export default CallTextAnalysisScreen;

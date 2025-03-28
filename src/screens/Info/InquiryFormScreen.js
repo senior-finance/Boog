@@ -1,6 +1,16 @@
-// src/screens/Info/InquiryFormScreen.js
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  TouchableOpacity,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+} from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
 
 const InquiryFormScreen = () => {
   const [title, setTitle] = useState('');
@@ -12,65 +22,98 @@ const InquiryFormScreen = () => {
       return;
     }
 
-    // 실제 저장 로직 연결 예정 (예: Firebase 또는 서버 API)
     Alert.alert('접수 완료', '고객님의 문의가 접수되었습니다.');
     setTitle('');
     setContent('');
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>1:1 문의하기</Text>
+    <LinearGradient colors={['#F8F8F8', '#ECECEC']} style={styles.gradient}>
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
+        <ScrollView contentContainerStyle={styles.container}>
+          <Text style={styles.title}>1:1 문의하기</Text>
 
-      <TextInput
-        placeholder="제목"
-        value={title}
-        onChangeText={setTitle}
-        style={styles.input}
-      />
-      <TextInput
-        placeholder="문의 내용"
-        value={content}
-        onChangeText={setContent}
-        style={[styles.input, { height: 120 }]}
-        multiline
-      />
+          <TextInput
+            placeholder="제목"
+            value={title}
+            onChangeText={setTitle}
+            style={styles.input}
+          />
+          <TextInput
+            placeholder="문의 내용을 입력해주세요"
+            value={content}
+            onChangeText={setContent}
+            style={styles.textArea}
+            multiline
+          />
 
-      <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-        <Text style={styles.buttonText}>문의 보내기</Text>
-      </TouchableOpacity>
-    </View>
+          <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+            <Text style={styles.buttonText}>📨 문의 보내기</Text>
+          </TouchableOpacity>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </LinearGradient>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  gradient: {
     flex: 1,
-    padding: 20,
+  },
+  container: {
+    padding: 24,
+    alignItems: 'center',
   },
   title: {
-    fontSize: 22,
+    fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 20,
-    textAlign: 'center',
+    marginBottom: 30,
+    color: '#333',
   },
   input: {
+    width: '100%',
     backgroundColor: '#fff',
     padding: 14,
     borderRadius: 10,
-    marginBottom: 15,
     fontSize: 16,
+    marginBottom: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 3,
+    elevation: 3,
+  },
+  textArea: {
+    width: '100%',
+    height: 140,
+    backgroundColor: '#fff',
+    padding: 14,
+    borderRadius: 10,
+    fontSize: 16,
+    textAlignVertical: 'top',
+    marginBottom: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 3,
+    elevation: 3,
   },
   button: {
-    backgroundColor: '#6A5ACD',
-    padding: 15,
+    width: '100%',
+    backgroundColor: '#4B7BE5',
+    paddingVertical: 16,
     borderRadius: 12,
     alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
+    elevation: 4,
   },
   buttonText: {
     color: '#fff',
+    fontSize: 18,
     fontWeight: 'bold',
-    fontSize: 16,
   },
 });
 

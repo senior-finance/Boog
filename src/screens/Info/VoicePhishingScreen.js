@@ -36,7 +36,6 @@ const data = [
     fullContent: `💰 세금/환급 문자 피싱\n\n"국세청 환급금이 있습니다" 또는 "세금 미납 내역 안내" 등의 문자를 통해 가짜 링크에 접속을 유도하고, 주민등록번호나 계좌정보를 입력하도록 합니다.\n\n✅ 국세청은 문자로 환급이나 납부 안내를 하지 않으며, 홈택스 등 공식 경로를 이용하세요.`,
     images: [require('../../assets/phishing4.png')],
   },
-
   {
     id: '5',
     title: '📦 물품 결제 문자 피싱',
@@ -45,7 +44,6 @@ const data = [
     fullContent: `📦 물품 결제 문자 피싱\n\n"에어컨 416,000원 정상처리완료"처럼 사용자가 결제하지 않은 상품에 대해 결제가 완료되었다는 문자를 보내 수신자를 놀라게 만듭니다.\n\n이후 문구 하단에 있는 고객센터 번호로 전화를 유도하여, 개인 정보를 요구하거나 원격 제어 앱 설치를 시도합니다.\n\n✅ 절대 문자 속 번호로 전화하지 마시고, 카드사 또는 쇼핑몰 공식 앱/사이트에서 먼저 확인하세요.`,
     images: [require('../../assets/phishing5.png')],
   },
-
   {
     id: '6',
     title: '💸 정부지원 대출 문자 피싱',
@@ -54,7 +52,6 @@ const data = [
     fullContent: `💸 정부지원 대출 문자 피싱\n\n"[정부지원 대환대출] 간편대출 신청"이라는 문구로, 실제 정부 정책인 것처럼 위장합니다.\n\n'본인인증 PIN'이나 '앱 다운로드'라는 표현으로 수신자를 속여, 악성 앱 설치나 개인정보 입력을 유도합니다.\n\n이후 피해자는 원격 제어, 계좌 이체, 사칭 상담 등을 당할 수 있습니다.\n\n✅ 정부기관은 문자로 앱 설치를 유도하지 않으며, 출처가 불분명한 링크는 클릭하지 마세요.`,
     images: [require('../../assets/phishing6.png')],
   },
-
   {
     id: '7',
     title: '👪 가족 사칭 보이스피싱',
@@ -63,9 +60,6 @@ const data = [
     fullContent: `👪 가족 사칭 보이스피싱\n\n"엄마 메시지 받은 거 없어?"처럼 가족이나 지인을 사칭해 접근합니다.\n\n대화를 통해 피해자의 신뢰를 얻은 뒤, "앱 설치해줘", "여기 링크 클릭해서 신청해줘" 등의 메시지로 유도합니다.\n\n보낸 링크는 보통 원격제어 앱(TeamViewer, AnyDesk 등)으로, 설치 시 피해자의 기기를 통째로 조작할 수 있게 됩니다.\n\n✅ 가족에게 먼저 전화 확인 필수! 낯선 링크나 앱 설치 요청은 무조건 의심하세요.`,
     images: [require('../../assets/phishing7.png')],
   }
-  
-  
-  
 ];
 
 const VoicePhishingScreen = ({ navigation }) => {
@@ -81,7 +75,7 @@ const VoicePhishingScreen = ({ navigation }) => {
   );
 
   return (
-    <LinearGradient colors={['#AEEEEE', '#DDA0DD']} style={styles.container}>
+    <LinearGradient colors={['#F8F8F8', '#F8F8F8']} style={styles.container}>
       <FlatList
         data={data}
         renderItem={renderItem}
@@ -103,33 +97,50 @@ const VoicePhishingScreen = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
-  list: { padding: 10 },
+  container: {
+    flex: 1,
+  },
+  list: {
+    padding: 16,
+  },
   card: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 15,
-    marginBottom: 15,
-    elevation: 3,
+    backgroundColor: '#ffffff',
+    borderRadius: 16,
+    padding: 16,
+    marginBottom: 16,
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
   },
   image: {
     width: '100%',
     height: 180,
-    borderRadius: 10,
-    marginBottom: 10,
-  },
-  title: { fontSize: 18, fontWeight: 'bold', marginBottom: 5 },
-  summary: { fontSize: 14, color: '#333' },
-  newsButton: {
-    marginTop: 20,
-    marginBottom: 40,
-    padding: 15,
-    backgroundColor: '#ffffffcc',
     borderRadius: 12,
+    marginBottom: 12,
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#1A4DCC',
+    marginBottom: 6,
+  },
+  summary: {
+    fontSize: 14,
+    color: '#333',
+  },
+  newsButton: {
+    marginTop: 24,
+    marginBottom: 48,
+    padding: 16,
+    backgroundColor: '#eaf0ff',
+    borderRadius: 16,
     alignItems: 'center',
+    elevation: 2,
   },
   newsButtonText: {
-    color: '#333',
+    color: '#1A4DCC',
     fontWeight: 'bold',
     fontSize: 16,
     textDecorationLine: 'underline',
