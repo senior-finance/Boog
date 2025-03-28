@@ -167,88 +167,75 @@ const CallTextAnalysisScreen = () => {
   );
 };
 
-// 🔁 수정된 스타일
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    backgroundColor: '#F3F4F6', // 배경색을 연한 회색으로 설정
+    paddingHorizontal: 20,
   },
   title: {
-    marginTop: 40,
-    fontSize: 22,
+    marginTop: 30,
+    fontSize: 20,
     fontWeight: 'bold',
     textAlign: 'center',
     color: '#333',
+    marginBottom: 20,
   },
   uploadButton: {
-    backgroundColor: '#fff',
-    padding: 15,
+    backgroundColor: '#FFFFFF',
+    paddingVertical: 18,
     borderRadius: 12,
-    marginTop: 30,
+    marginTop: 15,
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    elevation: 5,
+    justifyContent: 'center',
+    elevation: 3,
   },
   uploadButtonText: {
     fontSize: 16,
-    fontWeight: '600',
-    color: '#333',
-  },
-  imagePreview: {
-    width: '100%',
-    height: 180,
-    borderRadius: 12,
-    marginVertical: 15,
+    fontWeight: 'bold',
+    color: '#333', // 파란색 계열 강조
   },
   input: {
-    height: 120,
-    backgroundColor: '#fff',
-    borderRadius: 10,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
     padding: 15,
     textAlignVertical: 'top',
     fontSize: 16,
-    marginBottom: 20,
+    marginTop: 15,
     color: '#333',
+    elevation: 3,
+    height: 120,
   },
   analyzeButton: {
-    backgroundColor: '#fff',
-    padding: 15,
+    backgroundColor: '#3B82F6', // 파란색 계열 버튼
+    paddingVertical: 18,
     borderRadius: 12,
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    elevation: 5,
+    justifyContent: 'center',
+    elevation: 3,
+    marginTop: 20,
   },
   analyzeButtonText: {
     fontSize: 16,
-    fontWeight: '600',
-    color: '#333',
+    fontWeight: 'bold',
+    color: '#FFFFFF', // 흰색 글씨로 강조
   },
   resultContainer: {
-    marginTop: 30,
-    backgroundColor: '#fff',
+    marginTop: 20,
+    backgroundColor: '#FFFFFF',
     padding: 20,
     borderRadius: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    elevation: 5,
+    elevation: 3,
   },
   resultTitle: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 10,
-    color: '#333',
+    color: '#EF4444', // 경고성 메시지는 빨간색 강조
   },
   resultText: {
-    fontSize: 16,
-    lineHeight: 24,
+    fontSize: 15,
+    lineHeight: 22,
     color: '#333',
   },
   audioFileName: {
@@ -257,26 +244,14 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
     color: '#666',
   },
-
-  input: {
-    height: 120,
-    backgroundColor: '#f0f2f5', // 연한 회색
-    borderRadius: 10,
-    padding: 15,
-    textAlignVertical: 'top',
-    fontSize: 16,
-    marginBottom: 20,
-    color: '#333',
-    borderWidth: 1,
-    borderColor: '#ccc',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 3,
-    elevation: 2,
+  imagePreview: {
+    width: '100%',
+    height: 180,
+    borderRadius: 12,
+    marginTop: 15,
   },
-  
 });
+
 
   
 

@@ -17,7 +17,7 @@ const FunctionScreen = ({ navigation }) => {
         <View style={styles.gridContainer}>
           <FunctionButton title="퀴즈" icon="school" onPress={() => navigation.navigate('Learning')} />
           <FunctionButton title="지도" icon="map" onPress={() => navigation.navigate('MapView')} />
-          <FunctionButton title="검색" icon="search" onPress={() => navigation.navigate('MapSearch')} />
+          <FunctionButton title="장소 검색" icon="search" onPress={() => navigation.navigate('MapSearch')} />
           <FunctionButton title="AI 대화" icon="mic" onPress={() => navigation.navigate('VoiceInput')} />
           <FunctionButton title="지문 인증" icon="finger-print" onPress={() => navigation.navigate('Biometric')} />
         </View>
