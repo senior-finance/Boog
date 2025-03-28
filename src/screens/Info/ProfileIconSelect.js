@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { View, Image, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { ProfileContext } from './ProfileContext';
 
 const iconList = [
   require('../../assets/icon1.png'),
@@ -9,9 +10,12 @@ const iconList = [
 ];
 
 const ProfileIconSelect = ({ navigation }) => {
+  const { setProfileUri } = useContext(ProfileContext);
+
   const handleSelect = (icon) => {
     const resolvedUri = Image.resolveAssetSource(icon).uri;
-    navigation.navigate('MyInfo', { selectedIcon: resolvedUri });
+    setProfileUri(resolvedUri);
+    navigation.goBack();
   };
 
   return (

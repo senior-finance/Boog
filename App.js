@@ -41,6 +41,7 @@ import InquiryFormScreen from './src/screens/Info/InquiryFormScreen';
 import InquiryListScreen from './src/screens/Info/InquiryListScreen';
 import NotificationScreen from './src/screens/Info/NotificationScreen';
 import ProfileIconSelect from './src/screens/Info/ProfileIconSelect';
+import { ProfileProvider } from './src/screens/ProfileContext';
 
 // 기타
 import BiometricScreen from './src/screens/Biometric/BiometricScreen';

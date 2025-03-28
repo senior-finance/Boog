@@ -1,15 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, Alert, ScrollView } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { launchImageLibrary } from 'react-native-image-picker';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { Modal } from 'react-native';
-import { useRoute } from '@react-navigation/native';
+import { ProfileContext } from './ProfileContext';
+
+// 로컬 기본 이미지 사용 (이미지 경로에 맞게 조정)
+// const defaultProfile = Image.resolveAssetSource(require('../../assets/minecraft-skin-head-girl.png')).uri;
 
 const MyInfoScreen = ({ navigation }) => {
-  const [profileUri, setProfileUri] = useState('https://mc-heads.net/avatar/username/100.png');
+  const { profileUri, setProfileUri } = useContext(ProfileContext);
   const [selectModalVisible, setSelectModalVisible] = useState(false);
-
 
   const handleSelectImage = () => {
     launchImageLibrary({ mediaType: 'photo' }, (response) => {
@@ -26,28 +28,21 @@ const MyInfoScreen = ({ navigation }) => {
     setSelectModalVisible(true);
   };
 
-  const route = useRoute();
-  
-  useEffect(() => {
-    if (route.params?.selectedIcon) {
-        setProfileUri(route.params.selectedIcon);
-    }
-}, [route.params?.selectedIcon]);
-
-
-
-
   return (
     <LinearGradient colors={['#F8F8F8', '#ECECEC']} style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
 
-      <View style={styles.profileContainer}>
-        <TouchableOpacity onPress={handleProfilePress}>
-     <Image source={{ uri: profileUri }} style={styles.profileImage} />
-     <Ionicons name="camera-outline" size={24} color="#fff" style={styles.cameraIcon} />
-     </TouchableOpacity>
-     <Text style={styles.name}>부금이</Text>
-     <Text style={styles.account}>111-222-4445543</Text>
+        <View style={styles.profileContainer}>
+          <TouchableOpacity onPress={handleProfilePress}>
+            {/* <Image source={{ uri: profileUri }} style={styles.profileImage} /> */}
+            <Image
+              source={typeof profileUri === 'string' ? { uri: profileUri } : profileUri}
+              style={styles.profileImage}
+            />
+            <Ionicons name="camera-outline" size={24} color="#fff" style={styles.cameraIcon} />
+          </TouchableOpacity>
+          <Text style={styles.name}>부금이</Text>
+          <Text style={styles.account}>111-222-4445543</Text>
         </View>
 
 
@@ -77,33 +72,34 @@ const MyInfoScreen = ({ navigation }) => {
           <Text style={styles.menuText}>통화 및 문자 분석</Text>
         </TouchableOpacity>
       </ScrollView>
+
       {/* 프로필 선택 모달 */}
-<Modal visible={selectModalVisible} transparent animationType="fade">
-  <View style={styles.modalOverlay}>
-    <View style={styles.selectBox}>
-    <TouchableOpacity onPress={() => {
-     setSelectModalVisible(false);
-   navigation.navigate('ProfileIconSelect'); // ← 여기!
-    }} style={styles.selectButton}>
-    <Text style={styles.selectText}>기본 아이콘 선택</Text>
-  </TouchableOpacity>
+      <Modal visible={selectModalVisible} transparent animationType="fade">
+        <View style={styles.modalOverlay}>
+          <View style={styles.selectBox}>
+            <TouchableOpacity onPress={() => {
+              setSelectModalVisible(false);
+              navigation.navigate('ProfileIconSelect'); // ← 여기!
+            }} style={styles.selectButton}>
+              <Text style={styles.selectText}>기본 아이콘 선택</Text>
+            </TouchableOpacity>
 
-      <TouchableOpacity onPress={() => {
-        setSelectModalVisible(false);
-        handleSelectImage();
-      }} style={styles.selectButton}>
-        <Text style={styles.selectText}>갤러리에서 선택</Text>
-      </TouchableOpacity>
+            <TouchableOpacity onPress={() => {
+              setSelectModalVisible(false);
+              handleSelectImage();
+            }} style={styles.selectButton}>
+              <Text style={styles.selectText}>갤러리에서 선택</Text>
+            </TouchableOpacity>
 
-      <TouchableOpacity onPress={() => setSelectModalVisible(false)} style={[styles.selectButton, { borderTopWidth: 1 }]}>
-        <Text style={[styles.selectText, { color: '#999' }]}>취소</Text>
-      </TouchableOpacity>
-    </View>
-  </View>
-</Modal>
+            <TouchableOpacity onPress={() => setSelectModalVisible(false)} style={[styles.selectButton, { borderTopWidth: 1 }]}>
+              <Text style={[styles.selectText, { color: '#999' }]}>취소</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
 
 
-      
+
     </LinearGradient>
   );
 };
@@ -195,8 +191,8 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: '#4B7BE5',
   },
-  
-  
+
+
 });
 
 export default MyInfoScreen;
