@@ -16,6 +16,7 @@ const WebViewScreen = ({ route }) => {
   }, [route.params?.url]);  // URL이 변경될 때마다 출력
 
   const onNavigationStateChange = (event) => {
+    console.log('Navigation URL:', event.url)
     try {
       if (event.url.includes('redirect_uri')) {
         const parsed = queryString.parseUrl(event.url);
