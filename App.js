@@ -1,6 +1,17 @@
 import React from 'react';
+
+// 앱 화면 하단에 뜨는 경고 삭제하는 코드
+import { LogBox } from 'react-native';
+LogBox.ignoreLogs([
+  '`new NativeEventEmitter()` was called with a non-null argument',
+]);
+///////////////////////////////////////
+
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+
+import { Buffer } from 'buffer';
+global.Buffer = Buffer;
 
 import LearningScreen from './src/screens/Learning/LearningScreen';
 import QuizScreen from './src/screens/Learning/QuizScreen';
@@ -11,6 +22,7 @@ import DepositStep3 from './src/screens/Learning/DepositStep3';
 import DepositStep4 from './src/screens/Learning/DepositStep4';
 
 import MapViewScreen from './src/screens/Map/MapViewScreen';
+import MapSearchScreen from './src/screens/Map/MapSearchScreen';
 
 import MainScreen from './src/screens/Main/MainScreen';
 import LoginScreen from './src/screens/Account/LoginScreen';
@@ -28,6 +40,8 @@ import CustomerServiceScreen from './src/screens/Info/CustomerServiceScreen';
 import FAQScreen from './src/screens/Info/FAQScreen.js';
 import InquiryFormScreen from './src/screens/Info/InquiryFormScreen';
 import InquiryListScreen from './src/screens/Info/InquiryListScreen';
+
+import VoiceInputScreen from './src/screens/VoiceAssistant/VoiceInputScreen.js';
 
 import API_TEST from 'react-native-config';
 // console.log(API_TEST.CLIENT_VALUE);
@@ -54,6 +68,7 @@ export default function App() {
         <Stack.Screen name="DepositStep4" component={DepositStep4} options={{ title: '연습 - 모의 송금' }} />
 
         <Stack.Screen name="MapView" component={MapViewScreen} options={{ title: '네이버 지도 확인' }} />
+        <Stack.Screen name="MapSearch" component={MapSearchScreen} options={{ title: '네이버 지도 확인' }} />
 
         <Stack.Screen name="Biometric" component={BiometricScreen} options={{ title: '지문 인식 확인'}} />
 
@@ -67,8 +82,7 @@ export default function App() {
         <Stack.Screen name="FAQ" component={FAQScreen} options={{ title: '자주 묻는 질문' }} />
         <Stack.Screen name="InquiryForm" component={InquiryFormScreen} options={{ title: '문의하기' }} />
         <Stack.Screen name="InquiryList" component={InquiryListScreen} options={{ title: '문의 내역' }} />
-       
-
+     
       </Stack.Navigator>
     </NavigationContainer>
     </FontSizeProvider>
