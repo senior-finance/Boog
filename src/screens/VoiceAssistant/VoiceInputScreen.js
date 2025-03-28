@@ -1,10 +1,19 @@
-// VoiceInputScreen.js
 import React, { useState } from 'react';
-import { View, Text, Button, StyleSheet, ActivityIndicator, ScrollView, PermissionsAndroid, Platform } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  PermissionsAndroid,
+  Platform,
+  ActivityIndicator,
+  TouchableOpacity,
+} from 'react-native';
 import AudioRecord from 'react-native-audio-record';
 import sendAudioToCSR from './CSRService';
 import askClovaAI from './AIService';
 import RNFS from 'react-native-fs';
+import LinearGradient from 'react-native-linear-gradient';
 
 export default function VoiceInputScreen() {
   const [isRecording, setIsRecording] = useState(false);
@@ -15,7 +24,6 @@ export default function VoiceInputScreen() {
 
   const filePath = `${RNFS.CachesDirectoryPath}/sound.wav`;
 
-  // 안드로이드 권한 요청
   const requestPermission = async () => {
     if (Platform.OS === 'android') {
       const granted = await PermissionsAndroid.request(
@@ -26,7 +34,6 @@ export default function VoiceInputScreen() {
     return true;
   };
 
-  // 녹음 시작
   const startRecording = async () => {
     const hasPermission = await requestPermission();
     if (!hasPermission) return;
@@ -44,7 +51,6 @@ export default function VoiceInputScreen() {
     setIsRecording(true);
   };
 
-  // 녹음 종료
   const stopRecording = async () => {
     try {
       setIsLoading(true);
@@ -53,11 +59,9 @@ export default function VoiceInputScreen() {
       setRecordedPath(audioFile);
       console.log('📁 녹음된 파일 경로:', audioFile);
 
-      // CSR 전송
       const text = await sendAudioToCSR(audioFile);
       setRecognizedText(text);
 
-      // AI 응답 받기
       const reply = await askClovaAI(text);
       setAiResponse(reply);
     } catch (err) {
@@ -68,45 +72,90 @@ export default function VoiceInputScreen() {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>🎙️ AI 대화하기</Text>
+    <LinearGradient colors={['#F8F8F8', '#ECECEC']} style={styles.container}>
+      <ScrollView contentContainerStyle={styles.scroll}>
+        <Text style={styles.title}>🎙️ AI 대화하기</Text>
 
-      <Button
-        title={isRecording ? '🛑 녹음 종료' : '🎤 녹음 시작'}
-        onPress={isRecording ? stopRecording : startRecording}
-        color={isRecording ? '#d63031' : '#0984e3'}
-      />
+        <TouchableOpacity
+          style={[styles.recordButton, isRecording && styles.recording]}
+          onPress={isRecording ? stopRecording : startRecording}
+        >
+          <Text style={styles.recordButtonText}>
+            {isRecording ? '🛑 녹음 종료' : '🎤 녹음 시작'}
+          </Text>
+        </TouchableOpacity>
 
-      {isLoading && <ActivityIndicator size="large" style={{ marginTop: 20 }} />}
+        {isLoading && <ActivityIndicator size="large" style={{ marginTop: 20 }} />}
 
-      <Text style={styles.label}>📝 인식된 텍스트:</Text>
-      <Text style={styles.result}>{recognizedText}</Text>
+        {/* 항상 보이는 카드들 */}
+        <View style={styles.card}>
+          <Text style={styles.label}>📝 인식된 텍스트</Text>
+          <Text style={styles.result}>
+            {recognizedText ? recognizedText : '아직 음성 인식 결과가 없습니다.'}
+          </Text>
+        </View>
 
-      <Text style={styles.label}>🤖 AI 응답:</Text>
-      <Text style={styles.result}>{aiResponse}</Text>
-    </ScrollView>
+        <View style={styles.card}>
+          <Text style={styles.label}>🤖 AI 응답</Text>
+          <Text style={styles.result}>
+            {aiResponse ? aiResponse : 'AI 응답이 여기에 표시됩니다.'}
+          </Text>
+        </View>
+      </ScrollView>
+    </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    padding: 24,
+  container: { flex: 1 },
+  scroll: {
+    padding: 20,
     alignItems: 'center',
-    justifyContent: 'flex-start',
   },
   title: {
     fontSize: 22,
     fontWeight: 'bold',
     marginVertical: 20,
+    color: '#1A4DCC',
+    textAlign: 'center',
   },
-  label: {
-    marginTop: 20,
+  recordButton: {
+    backgroundColor: '#0984e3',
+    paddingVertical: 14,
+    paddingHorizontal: 30,
+    borderRadius: 30,
+    marginBottom: 20,
+    elevation: 3,
+  },
+  recording: {
+    backgroundColor: '#d63031',
+  },
+  recordButtonText: {
+    color: 'white',
     fontSize: 16,
     fontWeight: 'bold',
   },
-  result: {
-    marginTop: 8,
+  label: {
     fontSize: 16,
+    fontWeight: 'bold',
     color: '#333',
+    marginBottom: 8,
+  },
+  result: {
+    fontSize: 15,
+    color: '#333',
+    lineHeight: 22,
+  },
+  card: {
+    backgroundColor: '#fff',
+    borderRadius: 14,
+    padding: 16,
+    marginVertical: 10,
+    width: '100%',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 3,
+    elevation: 4,
   },
 });

@@ -32,17 +32,12 @@ const MainScreen = ({ navigation }) => {
         {/* 잔액 카드 */}
         <LinearGradient colors={['#4B7BE5', '#6FA8DC']} style={styles.balanceCard}>
           <Text style={styles.balanceLabel}>잔액</Text>
-          <Text style={styles.balanceAmount}>₩123,456,789</Text>
+          <Text style={styles.balanceAmount}>123,456,789원</Text>
         </LinearGradient>
 
         {/* 송금/입금/출금 버튼 */}
         <View style={styles.actionRow}>
-          <FunctionButton
-            title="송금"
-            icon="send"
-            onPress={() => navigation.navigate('TransferScreen')}
-            size="pinned"
-          />
+        
           <FunctionButton
             title="입금"
             icon="wallet"
@@ -51,7 +46,7 @@ const MainScreen = ({ navigation }) => {
           />
           <FunctionButton
             title="출금"
-            icon="cash-outline"
+            icon="send"
             onPress={() => navigation.navigate('WithdrawScreen')}
             size="pinned"
           />
@@ -109,7 +104,7 @@ const styles = StyleSheet.create({
   balanceCard: {
     width: '90%',
     paddingVertical: 24,
-    borderRadius: 16,
+    borderRadius: 8,
     alignItems: 'center',
     marginBottom: 20,
     shadowColor: '#000',
@@ -129,7 +124,8 @@ const styles = StyleSheet.create({
   },
   actionRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
+    alignItems: 'center',
     width: '90%',
     marginBottom: 24,
   },
@@ -198,7 +194,8 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   pinnedButton: {
-    width: '30%',
+    width: '36%',
+    marginHorizontal: 8,
   },
   functionText: {
     fontSize: 16,
