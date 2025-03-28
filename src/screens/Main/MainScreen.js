@@ -12,7 +12,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 // 기능 버튼 공통 컴포넌트
 const FunctionButton = ({ title, onPress, icon, size = 'large' }) => (
   <TouchableOpacity
-    style={[styles.functionButton, size === 'small' && styles.smallButton]}
+    style={[styles.functionButton, size === 'pinned' && styles.pinnedButton]}
     onPress={onPress}
   >
     <Ionicons name={icon} size={32} color="#4B7BE5" />
@@ -46,23 +46,23 @@ const MainScreen = ({ navigation }) => {
 
         {/* 송금/입금/출금 버튼 */}
         <View style={styles.actionRow}>
-          <FunctionButton
+          {/* <FunctionButton
             title="송금"
             icon="send"
             onPress={() => console.log('송금')}
-            size="small"
-          />
+            size="pinned"
+          /> */}
           <FunctionButton
             title="입금"
             icon="wallet"
             onPress={() => console.log('입금')}
-            size="small"
+            size="pinned"
           />
           <FunctionButton
             title="출금"
             icon="cash-outline"
             onPress={() => console.log('출금')}
-            size="small"
+            size="pinned"
           />
         </View>
 
@@ -164,8 +164,8 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
     elevation: 5,
   },
-  smallButton: {
-    width: '30%',
+  pinnedButton: {
+    width: '48%',
   },
   functionText: {
     fontSize: 16,
