@@ -1,15 +1,9 @@
 import React, { useLayoutEffect } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  ScrollView
-} from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
-// 기능 버튼 공통 컴포넌트
+// 공통 기능 버튼
 const FunctionButton = ({ title, onPress, icon, size = 'large' }) => (
   <TouchableOpacity
     style={[styles.functionButton, size === 'pinned' && styles.pinnedButton]}
@@ -21,7 +15,6 @@ const FunctionButton = ({ title, onPress, icon, size = 'large' }) => (
 );
 
 const MainScreen = ({ navigation }) => {
-  // 상단 로그인 아이콘 설정
   useLayoutEffect(() => {
     navigation.setOptions({
       headerTitle: '',
@@ -35,9 +28,7 @@ const MainScreen = ({ navigation }) => {
 
   return (
     <LinearGradient colors={['#F8F8F8', '#ECECEC']} style={styles.container}>
-
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-      
         {/* 잔액 카드 */}
         <LinearGradient colors={['#4B7BE5', '#6FA8DC']} style={styles.balanceCard}>
           <Text style={styles.balanceLabel}>잔액</Text>
@@ -46,58 +37,61 @@ const MainScreen = ({ navigation }) => {
 
         {/* 송금/입금/출금 버튼 */}
         <View style={styles.actionRow}>
-          {/* <FunctionButton
+          <FunctionButton
             title="송금"
             icon="send"
-            onPress={() => console.log('송금')}
+            onPress={() => navigation.navigate('TransferScreen')}
             size="pinned"
-          /> */}
+          />
           <FunctionButton
             title="입금"
             icon="wallet"
-            onPress={() => console.log('입금')}
+            onPress={() => navigation.navigate('DepositScreen')}
             size="pinned"
           />
           <FunctionButton
             title="출금"
             icon="cash-outline"
-            onPress={() => console.log('출금')}
+            onPress={() => navigation.navigate('WithdrawScreen')}
             size="pinned"
           />
         </View>
 
-        {/* 기능 버튼 6개 */}
-        <View style={styles.gridContainer}>
-          <FunctionButton
-            title="퀴즈"
-            icon="school"
-            onPress={() => navigation.navigate('Learning')}
-          />
-          <FunctionButton
-            title="지도"
-            icon="map"
-            onPress={() => navigation.navigate('MapView')}
-          />
-          <FunctionButton
-            title="검색"
-            icon="search"
-            onPress={() => navigation.navigate('MapSearch')}
-          />
-          <FunctionButton
-            title="프로필"
-            icon="person"
-            onPress={() => navigation.navigate('MyInfo')}
-          />
-          <FunctionButton
-            title="AI 대화"
-            icon="mic"
-            onPress={() => navigation.navigate('VoiceInput')}
-          />
-          <FunctionButton
-            title="지문 인증"
-            icon="finger-print"
-            onPress={() => navigation.navigate('Biometric')}
-          />
+        {/* 최근 송금 내역 섹션 */}
+        <Text style={styles.sectionTitle}>최근 송금 내역</Text>
+        <View style={styles.historyContainer}>
+          <View style={styles.historyCard}>
+            <Ionicons name="person-circle-outline" size={32} color="#4B7BE5" />
+            <View style={styles.historyText}>
+              <Text style={styles.name}>김민수</Text>
+              <Text style={styles.date}>2024-03-27</Text>
+            </View>
+            <Text style={styles.amount}>₩50,000</Text>
+          </View>
+          <View style={styles.historyCard}>
+            <Ionicons name="person-circle-outline" size={32} color="#4B7BE5" />
+            <View style={styles.historyText}>
+              <Text style={styles.name}>이영희</Text>
+              <Text style={styles.date}>2024-03-26</Text>
+            </View>
+            <Text style={styles.amount}>₩120,000</Text>
+          </View>
+          <View style={styles.historyCard}>
+            <Ionicons name="person-circle-outline" size={32} color="#4B7BE5" />
+            <View style={styles.historyText}>
+              <Text style={styles.name}>박철수</Text>
+              <Text style={styles.date}>2024-03-25</Text>
+            </View>
+            <Text style={styles.amount}>₩75,000</Text>
+          </View>
+          <View style={styles.historyCard}>
+            <Ionicons name="person-circle-outline" size={32} color="#4B7BE5" />
+            <View style={styles.historyText}>
+              <Text style={styles.name}>정하늘</Text>
+              <Text style={styles.date}>2024-03-24</Text>
+            </View>
+            <Text style={styles.amount}>₩33,000</Text>
+          </View>
         </View>
       </ScrollView>
     </LinearGradient>
@@ -111,12 +105,6 @@ const styles = StyleSheet.create({
   scrollContainer: {
     padding: 20,
     alignItems: 'center',
-  },
-  header: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 16,
   },
   balanceCard: {
     width: '90%',
@@ -145,6 +133,51 @@ const styles = StyleSheet.create({
     width: '90%',
     marginBottom: 24,
   },
+  sectionTitle: {
+    alignSelf: 'flex-start',
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 12,
+    marginTop: 10,
+  },
+  historyContainer: {
+    width: '100%',
+    alignItems: 'center',
+    marginBottom: 30,
+  },
+  historyCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    width: '90%',
+    padding: 16,
+    borderRadius: 12,
+    marginBottom: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  historyText: {
+    flex: 1,
+    marginLeft: 12,
+  },
+  name: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#333',
+  },
+  date: {
+    fontSize: 13,
+    color: '#999',
+  },
+  amount: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#4B7BE5',
+  },
   gridContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -165,7 +198,7 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   pinnedButton: {
-    width: '48%',
+    width: '30%',
   },
   functionText: {
     fontSize: 16,

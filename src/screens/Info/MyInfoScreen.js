@@ -19,7 +19,7 @@ const MyInfoScreen = ({ navigation }) => {
   };
 
   return (
-    <LinearGradient colors={['#AEEEEE', '#DDA0DD']} style={styles.container}>
+    <LinearGradient colors={['#F8F8F8', '#ECECEC']} style={styles.container}>
       <View style={styles.profileContainer}>
         <TouchableOpacity onPress={handleSelectImage}>
           <Image source={{ uri: profileUri }} style={styles.profileImage} />
@@ -48,16 +48,7 @@ const MyInfoScreen = ({ navigation }) => {
       </TouchableOpacity>
     
 
-      {/* 하단 네비게이션 바 */}
-      <View style={styles.bottomNav}>
-      <TouchableOpacity onPress={() => navigation.navigate('Main')}>
-        <Text style={styles.navText}>🏠 홈</Text>
-      </TouchableOpacity>
-
-        <TouchableOpacity>
-          <Text style={styles.navText}>💖</Text>
-        </TouchableOpacity>
-      </View>
+     
     </LinearGradient>
   );
 };
@@ -106,15 +97,24 @@ profileImage: {
   },
   menuItem: {
     backgroundColor: 'white',
-    width: '80%',
-    padding: 15,
-    marginVertical: 5,
-    borderRadius: 10,
+    width: '85%', // 약간 더 넓게
+    paddingVertical: 20,
+    paddingHorizontal: 24,
+    marginVertical: 10,
+    borderRadius: 12,
     alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 5,
   },
   menuText: {
     fontSize: 16,
+    fontWeight: '600',
+    color: '#333',
   },
+  
   bottomNav: {
     position: 'absolute',
     bottom: 10,

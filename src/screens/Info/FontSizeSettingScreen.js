@@ -3,11 +3,12 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Slider from '@react-native-community/slider';
+import { useFontSize } from './FontSizeContext'; 
 
 
-const FontSizeSettingScreen = ({ navigation }) => {
-  const [fontSize, setFontSize] = useState(16);
-
+const FontSizeSettingScreen = () => {
+  const { fontSize, setFontSize } = useFontSize();
+  
   return (
     <LinearGradient colors={['#AEEEEE', '#DDA0DD']} style={styles.container}>
       <Text style={styles.title}>글자 크기 설정</Text>
