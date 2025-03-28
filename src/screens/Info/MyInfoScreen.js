@@ -1,19 +1,29 @@
-import React from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, Image, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient'; // CLI용 올바른 import
+import { launchImageLibrary } from 'react-native-image-picker';
 
-const MyInfoScreen = ({navigation}) => {
+const MyInfoScreen = ({ navigation }) => {
+  const [profileUri, setProfileUri] = useState('https://mc-heads.net/avatar/username/100.png');
+
+  const handleSelectImage = () => {
+    launchImageLibrary({ mediaType: 'photo' }, (response) => {
+      if (response.didCancel) {
+        return;
+      } else if (response.assets && response.assets.length > 0) {
+        setProfileUri(response.assets[0].uri);
+      } else {
+        Alert.alert('이미지 선택 실패', '다시 시도해 주세요.');
+      }
+    });
+  };
+
   return (
     <LinearGradient colors={['#AEEEEE', '#DDA0DD']} style={styles.container}>
-      {/* 내 정보 */}
       <View style={styles.profileContainer}>
-      <Image
-     source={{ uri: 'https://mc-heads.net/avatar/username/100.png' }}
-     style={styles.profileImage}
-      />
-
-
-
+        <TouchableOpacity onPress={handleSelectImage}>
+          <Image source={{ uri: profileUri }} style={styles.profileImage} />
+        </TouchableOpacity>
         <Text style={styles.name}>부금이</Text>
         <Text style={styles.account}>111-222-4445543</Text>
       </View>

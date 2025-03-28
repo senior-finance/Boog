@@ -13,6 +13,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import TextRecognition from 'react-native-text-recognition';
 import { launchImageLibrary } from 'react-native-image-picker';
 import { ScrollView } from 'react-native';
+import DocumentPicker from 'react-native-document-picker';
 
 
 
@@ -28,6 +29,28 @@ const CallTextAnalysisScreen = () => {
   const [text, setText] = useState('');
   const [imageUri, setImageUri] = useState(null);
   const [result, setResult] = useState(null);
+  const [audioFileName, setAudioFileName] = useState(null);
+
+  const pickAudioFile = async () => {
+    try {
+      const res = await DocumentPicker.pick({
+        type: [DocumentPicker.types.audio],
+      });
+      console.log('✅ 오디오 선택됨:', res[0]);
+      setAudioFileName(res[0].name);
+  
+      // 여기서 서버로 업로드하거나 STT 분석을 요청할 수 있음
+      // 예시:
+      // await uploadAudioToServer(res[0].uri);
+  
+    } catch (err) {
+      if (DocumentPicker.isCancel(err)) {
+        console.log('사용자가 파일 선택을 취소했어요.');
+      } else {
+        console.error('❌ 오류 발생:', err);
+      }
+    }
+  };
 
   const pickImage = async () => {
     const options = {
@@ -96,9 +119,16 @@ const CallTextAnalysisScreen = () => {
       <Text style={styles.title}>통화 및 문자 분석</Text>
 
     {/* ✅ 통화 음성 파일 업로드 버튼 (기능은 나중에 추가) */}
-    <TouchableOpacity style={styles.uploadButton}>
-        <Text style={styles.uploadButtonText}>📞 통화 음성 파일 업로드</Text>
+    <TouchableOpacity style={styles.uploadButton} onPress={pickAudioFile}>
+    <Text style={styles.uploadButtonText}>📞 통화 음성 파일 업로드</Text>
     </TouchableOpacity>
+
+    {audioFileName && (
+    <Text style={styles.audioFileName}>
+    🎵 선택된 오디오 파일: {audioFileName}
+       </Text>
+      )}
+
 
       {/* 이미지 업로드 */}
       <TouchableOpacity style={styles.uploadButton} onPress={pickImage}>
@@ -199,6 +229,14 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 24,
   },
+
+  audioFileName: {
+    textAlign: 'center',
+    marginTop: 10,
+    fontStyle: 'italic',
+    color: '#444',
+  }
+  
 });
 
 export default CallTextAnalysisScreen;

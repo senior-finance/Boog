@@ -30,7 +30,7 @@ const MainScreen = ({ navigation }) => {
     ]).start();
   };
 
-  const Color1 = ['#c955ff', '#008bff'];
+  const Color1 = ['#AEEEEE', '#DDA0DD'];
   const [boxHeight, setBoxHeight] = useState(60);
 
   return (

@@ -32,9 +32,10 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 20,
     textAlign: 'center',
+    color: 'rgb(42, 35, 42)',
   },
   box: {
-    backgroundColor: '#f0f0f0',
+    backgroundColor: 'rgb(241, 194, 246)',
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,
@@ -43,10 +44,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 18,
     marginBottom: 6,
+    color: 'rgb(57, 44, 57)',
   },
   answer: {
     fontSize: 16,
-    color: '#333',
+    color: 'rgb(52, 27, 55)',
   },
 });
 
