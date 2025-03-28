@@ -15,7 +15,7 @@ const FunctionScreen = ({ navigation }) => {
   return (
     <LinearGradient colors={['#F8F8F8', '#ECECEC']} style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <Text style={styles.title}>기능 선택</Text>
+      
 
         <View style={styles.gridContainer}>
           <FunctionButton
@@ -54,9 +54,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContainer: {
-    padding: 20,
+    flexGrow: 1,             
+    justifyContent: 'center',
     alignItems: 'center',
+    padding: 20,
   },
+  
   title: {
     fontSize: 24,
     fontWeight: 'bold',
@@ -68,14 +71,15 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     justifyContent: 'space-between',
     width: '90%',
+    marginTop: 20, // 여유 살짝 더!
   },
   functionButton: {
     width: '48%',
     backgroundColor: '#fff',
-    borderRadius: 12,
-    paddingVertical: 20,
+    borderRadius: 14,
+    paddingVertical: 28, // 👈 버튼 더 두툼하게!
     alignItems: 'center',
-    marginBottom: 16,
+    marginBottom: 24,    // 👈 버튼 간 간격 넉넉하게
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -83,11 +87,12 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   functionText: {
-    fontSize: 16,
+    fontSize: 17,
     color: '#333',
-    marginTop: 8,
+    marginTop: 10,
     fontWeight: '600',
   },
+  
 });
 
 export default FunctionScreen;
