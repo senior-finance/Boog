@@ -6,6 +6,7 @@ import MainScreen from '../screens/Main/MainScreen';
 import FunctionScreen from '../screens/Info/FunctionScreen';
 import GuideScreen from '../screens/Info/GuideScreen';
 import MyInfoScreen from '../screens/Info/MyInfoScreen';
+import MyInfoStack from './MyInfoStack';
 
 const Tab = createBottomTabNavigator();
 
@@ -39,10 +40,9 @@ const TabNavigator = () => (
 />
 <Tab.Screen
   name="MyInfo"
-  component={MyInfoScreen}
+  component={MyInfoStack}
   options={{ tabBarLabel: '내 정보' }}
 />
-
   </Tab.Navigator>
 );
 

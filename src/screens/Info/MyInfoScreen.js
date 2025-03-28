@@ -1,11 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, Alert, ScrollView } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { launchImageLibrary } from 'react-native-image-picker';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { Modal } from 'react-native';
+import { useRoute } from '@react-navigation/native';
 
 const MyInfoScreen = ({ navigation }) => {
   const [profileUri, setProfileUri] = useState('https://mc-heads.net/avatar/username/100.png');
+  const [selectModalVisible, setSelectModalVisible] = useState(false);
+
 
   const handleSelectImage = () => {
     launchImageLibrary({ mediaType: 'photo' }, (response) => {
@@ -18,17 +22,34 @@ const MyInfoScreen = ({ navigation }) => {
     });
   };
 
+  const handleProfilePress = () => {
+    setSelectModalVisible(true);
+  };
+
+  const route = useRoute();
+  
+  useEffect(() => {
+    if (route.params?.selectedIcon) {
+        setProfileUri(route.params.selectedIcon);
+    }
+}, [route.params?.selectedIcon]);
+
+
+
+
   return (
     <LinearGradient colors={['#F8F8F8', '#ECECEC']} style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-        {/* 프로필 영역 */}
-        <View style={styles.profileContainer}>
-          <TouchableOpacity onPress={handleSelectImage}>
-            <Image source={{ uri: profileUri }} style={styles.profileImage} />
-          </TouchableOpacity>
-          <Text style={styles.name}>부금이</Text>
-          <Text style={styles.account}>111-222-4445543</Text>
+
+      <View style={styles.profileContainer}>
+        <TouchableOpacity onPress={handleProfilePress}>
+     <Image source={{ uri: profileUri }} style={styles.profileImage} />
+     <Ionicons name="camera-outline" size={24} color="#fff" style={styles.cameraIcon} />
+     </TouchableOpacity>
+     <Text style={styles.name}>부금이</Text>
+     <Text style={styles.account}>111-222-4445543</Text>
         </View>
+
 
         {/* 버튼들 */}
         <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('CustomerService')}>
@@ -56,9 +77,38 @@ const MyInfoScreen = ({ navigation }) => {
           <Text style={styles.menuText}>통화 및 문자 분석</Text>
         </TouchableOpacity>
       </ScrollView>
+      {/* 프로필 선택 모달 */}
+<Modal visible={selectModalVisible} transparent animationType="fade">
+  <View style={styles.modalOverlay}>
+    <View style={styles.selectBox}>
+    <TouchableOpacity onPress={() => {
+     setSelectModalVisible(false);
+   navigation.navigate('ProfileIconSelect'); // ← 여기!
+    }} style={styles.selectButton}>
+    <Text style={styles.selectText}>기본 아이콘 선택</Text>
+  </TouchableOpacity>
+
+      <TouchableOpacity onPress={() => {
+        setSelectModalVisible(false);
+        handleSelectImage();
+      }} style={styles.selectButton}>
+        <Text style={styles.selectText}>갤러리에서 선택</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity onPress={() => setSelectModalVisible(false)} style={[styles.selectButton, { borderTopWidth: 1 }]}>
+        <Text style={[styles.selectText, { color: '#999' }]}>취소</Text>
+      </TouchableOpacity>
+    </View>
+  </View>
+</Modal>
+
+
+      
     </LinearGradient>
   );
 };
+
+
 
 const styles = StyleSheet.create({
   container: {
@@ -110,6 +160,43 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#333',
   },
+
+  cameraIcon: {
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    backgroundColor: '#4B7BE5',
+    padding: 6,
+    borderRadius: 20,
+  },
+
+  modalOverlay: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.3)',
+  },
+  selectBox: {
+    width: '80%',
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    paddingVertical: 16,
+    alignItems: 'center',
+  },
+  selectButton: {
+    width: '100%',
+    paddingVertical: 14,
+    borderBottomWidth: 1,
+    borderColor: '#eee',
+    alignItems: 'center',
+  },
+  selectText: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#4B7BE5',
+  },
+  
+  
 });
 
 export default MyInfoScreen;

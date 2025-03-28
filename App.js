@@ -39,6 +39,8 @@ import CustomerServiceScreen from './src/screens/Info/CustomerServiceScreen';
 import FAQScreen from './src/screens/Info/FAQScreen';
 import InquiryFormScreen from './src/screens/Info/InquiryFormScreen';
 import InquiryListScreen from './src/screens/Info/InquiryListScreen';
+import NotificationScreen from './src/screens/Info/NotificationScreen';
+import ProfileIconSelect from './src/screens/Info/ProfileIconSelect';
 
 // 기타
 import BiometricScreen from './src/screens/Biometric/BiometricScreen';
@@ -81,9 +83,11 @@ export default function App() {
 
           <Stack.Screen name="CustomerService" component={CustomerServiceScreen} />
           <Stack.Screen name="FAQ" component={FAQScreen} />
+          <Stack.Screen name="ProfileIconSelect" component={ProfileIconSelect} />
+
           <Stack.Screen name="InquiryForm" component={InquiryFormScreen} />
           <Stack.Screen name="InquiryList" component={InquiryListScreen} />
-
+          <Stack.Screen name="NotificationScreen" component={NotificationScreen} />   
           <Stack.Screen name="Biometric" component={BiometricScreen} />
           <Stack.Screen name="VoiceInput" component={VoiceInputScreen} />
         </Stack.Navigator>
