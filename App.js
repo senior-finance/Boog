@@ -42,7 +42,8 @@ import InquiryListScreen from './src/screens/Info/InquiryListScreen';
 import NotificationScreen from './src/screens/Info/NotificationScreen';
 import ProfileIconSelect from './src/screens/Info/ProfileIconSelect';
 import { ProfileProvider } from './src/screens/ProfileContext';
-
+import WelfareScreen from './src/screens/Info/WelfareScreen'; 
+import WebScreen from './src/screens/Info/WebScreen';
 // 기타
 import BiometricScreen from './src/screens/Biometric/BiometricScreen';
 import VoiceInputScreen from './src/screens/VoiceAssistant/VoiceInputScreen';
@@ -85,6 +86,9 @@ export default function App() {
           <Stack.Screen name="CustomerService" component={CustomerServiceScreen} />
           <Stack.Screen name="FAQ" component={FAQScreen} />
           <Stack.Screen name="ProfileIconSelect" component={ProfileIconSelect} />
+          <Stack.Screen name="Welfare" component={WelfareScreen} />
+          <Stack.Screen name="Web" component={WebScreen} />
+
 
           <Stack.Screen name="InquiryForm" component={InquiryFormScreen} />
           <Stack.Screen name="InquiryList" component={InquiryListScreen} />

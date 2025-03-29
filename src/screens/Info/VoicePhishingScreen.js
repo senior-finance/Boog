@@ -85,8 +85,11 @@ const VoicePhishingScreen = ({ navigation }) => {
           <TouchableOpacity
             style={styles.newsButton}
             onPress={() =>
-              Linking.openURL('https://search.naver.com/search.naver?query=보이스피싱')
+              navigation.navigate('Web', {
+                url: 'https://search.naver.com/search.naver?query=보이스피싱'
+              })
             }
+            
           >
             <Text style={styles.newsButtonText}>📰 보이스피싱 관련 최신 뉴스 더 보러가기</Text>
           </TouchableOpacity>

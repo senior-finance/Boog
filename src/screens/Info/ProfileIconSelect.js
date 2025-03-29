@@ -6,6 +6,7 @@ import { ProfileContext } from './ProfileContext';
 const iconList = [
   require('../../assets/icon1.png'),
   require('../../assets/icon2.png'),
+  require('../../assets/icon3.png'),
   // 나머지 아이콘 추가
 ];
 
