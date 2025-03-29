@@ -26,8 +26,9 @@ import MapViewScreen from './src/screens/Map/MapViewScreen';
 import MapSearchScreen from './src/screens/Map/MapSearchScreen';
 
 // 계정
-import LoginScreen from './src/screens/Account/LoginScreen';
-import WebViewScreen from './src/screens/Account/WebViewScreen';
+// import LoginScreen from './src/screens/Account/LoginScreen';
+// import WebViewScreen from './src/screens/Account/WebViewScreen';
+import AccountScreen from './src/screens/Account/AccountScreen'; // 변경된 로그인 to 계좌목록 파일
 
 // 내 정보
 import FontSizeSettingScreen from './src/screens/Info/FontSizeSettingScreen';
@@ -44,6 +45,7 @@ import ProfileIconSelect from './src/screens/Info/ProfileIconSelect';
 import { ProfileProvider } from './src/screens/ProfileContext';
 import WelfareScreen from './src/screens/Info/WelfareScreen'; 
 import WebScreen from './src/screens/Info/WebScreen';
+
 // 기타
 import BiometricScreen from './src/screens/Biometric/BiometricScreen';
 import VoiceInputScreen from './src/screens/VoiceAssistant/VoiceInputScreen';
@@ -63,8 +65,9 @@ export default function App() {
           />
 
           {/* 탭 외부로 이동할 화면들 */}
-          <Stack.Screen name="Login" component={LoginScreen} />
-          <Stack.Screen name="WebView" component={WebViewScreen} />
+          <Stack.Screen name="Account" component={AccountScreen} />
+          {/* <Stack.Screen name="Account2" component={Account2} /> */}
+          {/* <Stack.Screen name="WebView" component={WebViewScreen} /> */}
 
           <Stack.Screen name="Learning" component={LearningScreen} />
           <Stack.Screen name="Quiz" component={QuizScreen} />

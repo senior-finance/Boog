@@ -45,7 +45,7 @@ const MainScreen = ({ navigation }) => {
     navigation.setOptions({
       headerTitle: '',
       headerLeft: () => (
-        <TouchableOpacity onPress={() => navigation.navigate('Login')} style={{ marginLeft: 16 }}>
+        <TouchableOpacity onPress={() => navigation.navigate('Account')} style={{ marginLeft: 16 }}>
           <Ionicons name="log-in-outline" size={24} color="#4B7BE5" />
         </TouchableOpacity>
       ),
@@ -78,8 +78,8 @@ const MainScreen = ({ navigation }) => {
 
         {/* 입금/출금 버튼 */}
         <View style={styles.actionRow}>
-          <FunctionButton title="입금" icon="wallet" onPress={() => {}} size="pinned" />
-          <FunctionButton title="출금" icon="send" onPress={() => {}} size="pinned" />
+          <FunctionButton title="입금" icon="wallet" onPress={() => { }} size="pinned" />
+          <FunctionButton title="출금" icon="send" onPress={() => { }} size="pinned" />
         </View>
 
         {/* 송금 내역 */}
@@ -156,41 +156,41 @@ const MainScreen = ({ navigation }) => {
             <Text>날짜: {selectedTransaction?.date}</Text>
             <Text>금액: {selectedTransaction?.amount}</Text>
 
-{/* 메모 영역 */}
-<View style={styles.memoRow}>
-  <Text style={{ fontWeight: 'bold' }}>메모:</Text>
+            {/* 메모 영역 */}
+            <View style={styles.memoRow}>
+              <Text style={{ fontWeight: 'bold' }}>메모:</Text>
 
-  {!isEditing ? (
-    <View style={styles.memoDisplayRow}>
-      <Text style={styles.memoText}>
-        {selectedTransaction?.memo ? ` ${selectedTransaction.memo}` : ' '}
-      </Text>
-      <TouchableOpacity onPress={() => setIsEditing(true)}>
-        <Ionicons name="create-outline" size={20} color="#4B7BE5" style={{ marginLeft: 8 }} />
-      </TouchableOpacity>
-    </View>
-  ) : (
-    <>
-      <TextInput
-        value={memoText}
-        onChangeText={setMemoText}
-        placeholder="메모를 입력하세요"
-        style={styles.memoInput}
-        multiline
-      />
-      <TouchableOpacity
-        onPress={() => {
-          selectedTransaction.memo = memoText;
-          setIsEditing(false);
-          alert('메모가 저장되었습니다!');
-        }}
-        style={styles.saveButton}
-        >
-             <Text style={styles.saveButtonText}>저장</Text>
-           </TouchableOpacity>
-            </>
-             )}
-        </View>
+              {!isEditing ? (
+                <View style={styles.memoDisplayRow}>
+                  <Text style={styles.memoText}>
+                    {selectedTransaction?.memo ? ` ${selectedTransaction.memo}` : ' '}
+                  </Text>
+                  <TouchableOpacity onPress={() => setIsEditing(true)}>
+                    <Ionicons name="create-outline" size={20} color="#4B7BE5" style={{ marginLeft: 8 }} />
+                  </TouchableOpacity>
+                </View>
+              ) : (
+                <>
+                  <TextInput
+                    value={memoText}
+                    onChangeText={setMemoText}
+                    placeholder="메모를 입력하세요"
+                    style={styles.memoInput}
+                    multiline
+                  />
+                  <TouchableOpacity
+                    onPress={() => {
+                      selectedTransaction.memo = memoText;
+                      setIsEditing(false);
+                      alert('메모가 저장되었습니다!');
+                    }}
+                    style={styles.saveButton}
+                  >
+                    <Text style={styles.saveButtonText}>저장</Text>
+                  </TouchableOpacity>
+                </>
+              )}
+            </View>
 
             <TouchableOpacity
               onPress={() => setIsModalVisible(false)}
@@ -330,7 +330,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: 'bold',
   },
-  
+
   modalCloseButton: {
     marginTop: 12,
     paddingVertical: 10,
