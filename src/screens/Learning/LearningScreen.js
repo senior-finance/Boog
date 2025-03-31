@@ -1,25 +1,29 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons'; // 아이콘 사용
 
 const LearningScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>학습 콘텐츠 🌱</Text>
+      <Text style={styles.title}>학습 콘텐츠</Text>
 
-      {/* 학습 콘텐츠 버튼 */}
-      <TouchableOpacity style={[styles.button, styles.yellow]} onPress={() => navigation.navigate('Quiz')}>
-        <Text style={styles.buttonText}>금융 용어 학습하기</Text>
+      {/* 카드형 버튼들 */}
+      <TouchableOpacity style={styles.card} onPress={() => navigation.navigate('Quiz')}>
+        <Icon name="school-outline" size={36} color="#3B82F6" />
+        <Text style={styles.cardText}>금융 용어 학습하기</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={[styles.button, styles.green]} onPress={() => navigation.navigate('DepositStep1')}>
-        <Text style={styles.buttonText}>송금 연습하기</Text>
+      <TouchableOpacity style={styles.card} onPress={() => navigation.navigate('DepositStep1')}>
+        <Icon name="bank-transfer" size={36} color="#3B82F6" />
+        <Text style={styles.cardText}>입금 연습하기</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={[styles.button, styles.blue]}>
-        <Text style={styles.buttonText}>사기 사례 대비하기{'\n'}(보이스피싱, 금융 피해 등)</Text>
+      <TouchableOpacity style={styles.card}>
+        <Icon name="alert-circle-outline" size={36} color="#3B82F6" />
+        <Text style={styles.cardText}>사기 사례 대비하기{'\n'}(보이스피싱, 금융 피해 등)</Text>
       </TouchableOpacity>
 
-      {/* 도움 요청 버튼만 남김 */}
+      {/* 도움 버튼 */}
       <View style={styles.footer}>
         <TouchableOpacity style={[styles.footerButton, styles.help]}>
           <Text style={styles.footerText}>도움</Text>
@@ -29,13 +33,13 @@ const LearningScreen = ({ navigation }) => {
   );
 };
 
-// 스타일 정의
+// 스타일
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F5F5', // 연한 하늘색 배경
+    backgroundColor: '#F5F5F5',
     alignItems: 'center',
-    justifyContent: 'flex-start', // 화면 상단으로 정렬
+    justifyContent: 'flex-start',
     paddingHorizontal: 20,
     paddingTop: 40,
   },
@@ -45,33 +49,29 @@ const styles = StyleSheet.create({
     marginBottom: 40,
     color: 'black',
   },
-  button: {
-    width: '90%',  // 버튼 크기 조정
+  card: {
+    width: '90%',
     height: 125,
-    paddingVertical: 25,
-    borderRadius: 25,
-    marginBottom: 40,  // 버튼 간격 늘림
-    alignItems: 'center',
+    borderRadius: 20,
+    backgroundColor: 'white',
+    marginBottom: 30,
+    padding: 20,
     justifyContent: 'center',
-    borderWidth: 2, // 테두리 추가
-    borderColor: '#555',
+    alignItems: 'center',
     shadowColor: '#000',
-    shadowOffset: { width: 3, height: 3 },
-    shadowOpacity: 0.3,
-    shadowRadius: 5,
+    shadowOffset: { width: 2, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
     elevation: 5,
   },
-  buttonText: {
-    fontSize: 25,
-    fontWeight: 'bold',
-    textAlign: 'center',
+  cardText: {
+    fontSize: 20,
     color: 'black',
+    fontWeight: 'bold',
+    marginTop: 10,
+    textAlign: 'center',
   },
-  yellow: { backgroundColor: '#F9EA97' },
-  green: { backgroundColor: '#C8EAAE' },
-  blue: { backgroundColor: '#A0CAF9' },
-
-  // 하단 도움 버튼 스타일
+  // 도움 버튼
   footer: {
     position: 'absolute',
     bottom: 20,
@@ -79,14 +79,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   footerButton: {
-    width: '40%', // 버튼 크기 조정
+    width: '30%',
     paddingVertical: 15,
     borderRadius: 20,
     alignItems: 'center',
-    borderWidth: 2, // 검은색 테두리 추가
-    borderColor: '#555',
   },
-  help: { backgroundColor: '#F9CB97' },
+  help: {
+    backgroundColor: '#DFEBF8',
+  },
   footerText: {
     fontSize: 20,
     fontWeight: 'bold',

@@ -17,17 +17,35 @@ import sendAudioToCSR from './CSRService';
 import askClovaAI from './AIService';
 import RNFS from 'react-native-fs';
 import Icon from 'react-native-vector-icons/Ionicons';
-import botImage from '../../assets/bot3.png';
+import botImage from '../../assets/bot5.png';
 
 export default function VoiceInputScreen() {
   const [isRecording, setIsRecording] = useState(false);
   const [recordedPath, setRecordedPath] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [recognizedText, setRecognizedText] = useState('');
-  const [aiResponse, setAiResponse] = useState('');
   const [textInput, setTextInput] = useState('');
+  const [chatHistory, setChatHistory] = useState([]);
 
   const filePath = `${RNFS.CachesDirectoryPath}/sound.wav`;
+
+  const onSendText = async () => {
+    if (textInput.trim() === '') return;
+
+    try {
+      const userMessage = { role: 'user', text: textInput };
+      setChatHistory((prev) => [...prev, userMessage]);
+      setIsLoading(true);
+
+      const reply = await askClovaAI(textInput);
+      const botMessage = { role: 'bot', text: reply };
+      setChatHistory((prev) => [...prev, botMessage]);
+      setTextInput('');
+    } catch (err) {
+      console.error('텍스트 질문 처리 오류:', err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const requestPermission = async () => {
     if (Platform.OS === 'android') {
@@ -64,10 +82,12 @@ export default function VoiceInputScreen() {
       setRecordedPath(audioFile);
 
       const text = await sendAudioToCSR(audioFile);
-      setRecognizedText(text);
+      const userMessage = { role: 'user', text };
+      setChatHistory((prev) => [...prev, userMessage]);
 
       const reply = await askClovaAI(text);
-      setAiResponse(reply);
+      const botMessage = { role: 'bot', text: reply };
+      setChatHistory((prev) => [...prev, botMessage]);
     } catch (err) {
       console.error('녹음/CSR/AI 처리 오류:', err);
     } finally {
@@ -95,7 +115,7 @@ export default function VoiceInputScreen() {
         </View>
 
         <View style={styles.buttonGroup}>
-          {['카드 유효기간', '재발급 신청', '환불 안내', '송금 방법', 'ATM/은행 찾기', '앱 사용방법'].map((item, index) => (
+          {["카드 유효기간", "재발급 신청", "환불 안내", "송금 방법", "ATM/은행 찾기", "앱 사용방법"].map((item, index) => (
             <TouchableOpacity key={index} style={[styles.topicButton, { width: '30%' }]}>
               <Text style={styles.topicText}>{item}</Text>
             </TouchableOpacity>
@@ -104,17 +124,14 @@ export default function VoiceInputScreen() {
 
         {isLoading && <ActivityIndicator size="large" style={{ marginTop: 20 }} />}
 
-        {recognizedText !== '' && (
-          <View style={styles.chatBubbleUser}>
-            <Text style={styles.chatText}>{recognizedText}</Text>
+        {chatHistory.map((msg, idx) => (
+          <View
+            key={idx}
+            style={msg.role === 'user' ? styles.chatBubbleUser : styles.chatBubbleBot}
+          >
+            <Text style={styles.chatText}>{msg.text}</Text>
           </View>
-        )}
-
-        {aiResponse !== '' && (
-          <View style={styles.chatBubbleBot}>
-            <Text style={styles.chatText}>{aiResponse}</Text>
-          </View>
-        )}
+        ))}
       </ScrollView>
 
       <View style={styles.bottomBar}>
@@ -125,10 +142,16 @@ export default function VoiceInputScreen() {
           onChangeText={setTextInput}
         />
         <TouchableOpacity
+          style={styles.sendButton}
+          onPress={onSendText}
+        >
+          <Icon name="send" size={24} color="#fff" />
+        </TouchableOpacity>
+        <TouchableOpacity
           style={styles.voiceIconButton}
           onPress={isRecording ? stopRecording : startRecording}
         >
-          <Icon name={isRecording ? 'stop' : 'mic'} size={24} color="#fff" />
+          <Icon name={isRecording ? 'stop' : 'mic'} size={25} color="#fff" />
         </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>
@@ -161,16 +184,16 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
   botText: {
-    fontSize: 20,
+    fontSize: 21,
     lineHeight: 24,
     color: '#333',
-    marginLeft: 20,
+    marginLeft: 30,
   },
   botImage: {
-    width: 80,
-    height: 120,
+    width: 130,
+    height: 130,
     resizeMode: 'contain',
-    marginRight: 20,
+    marginRight: 30,
   },
   buttonGroup: {
     flexDirection: 'row',
@@ -192,7 +215,7 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   topicText: {
-    fontSize: 13,
+    fontSize: 15,
     color: '#333',
   },
   micButton: {
@@ -259,6 +282,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginRight: 12,
     color: '#333',
+  },
+  sendButton: {
+    backgroundColor: '#4B7BE5',
+    padding: 14,
+    borderRadius: 50,
+    marginRight: 12
   },
   voiceIconButton: {
     backgroundColor: '#4B7BE5',

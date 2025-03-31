@@ -63,9 +63,7 @@ const styles = StyleSheet.create({
     padding: 50,
     borderRadius: 25,
     alignItems: 'center',
-    marginBottom: 50,
-    borderWidth: 2,
-    borderColor: 'black'
+    marginBottom: 50
   },
   questionText: {
     fontSize: 25,
@@ -74,24 +72,34 @@ const styles = StyleSheet.create({
     textAlign: 'center'
   },
   optionButton1: {
-    backgroundColor: '#F9EA97',
-    paddingVertical: 30,
-    width: '80%',
+    width: '90%',
+    height: 125,
     borderRadius: 20,
+    backgroundColor: 'white',
+    marginBottom: 30,
+    padding: 20,
+    justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 40,
-    borderWidth: 2,
-    borderColor: 'black'
+    shadowColor: '#000',
+    shadowOffset: { width: 2, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    elevation: 5,
   },
   optionButton2: {
-    backgroundColor: '#C8EAAE',
-    paddingVertical: 30,
-    width: '80%',
+    width: '90%',
+    height: 125,
     borderRadius: 20,
+    backgroundColor: 'white',
+    marginBottom: 30,
+    padding: 20,
+    justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 20,
-    borderWidth: 2,
-    borderColor: 'black'
+    shadowColor: '#000',
+    shadowOffset: { width: 2, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    elevation: 5,
   },
   optionText: {
     fontSize: 25,

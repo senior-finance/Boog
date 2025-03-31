@@ -6,10 +6,10 @@ export default function DepositStep1({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>송금 연습을 해볼게요{'\n'}실제로 송금이 되지는 않아요!</Text>
+      <Text style={styles.title}>입금 연습을 해볼게요{'\n'}실제로 입금이 되지는 않아요!</Text>
 
       <Text style={styles.subtitle}>
-        아래 빈칸에 송금할{'\n'}계좌 번호를 입력하면{'\n'}
+        아래 빈칸에 입금할{'\n'}계좌 번호를 입력하면{'\n'}
         올바른 계좌인지 확인해드릴게요
       </Text>
 
@@ -26,13 +26,13 @@ export default function DepositStep1({ navigation }) {
         onPress={() => navigation.navigate('DepositStep2', { accountNumber })}
         disabled={!accountNumber}
       >
-        <Text style={styles.buttonText}>다음 화면 ➡️</Text>
+        <Text style={styles.buttonText}>다음 화면</Text>
       </TouchableOpacity>
 
       {/* 도움 요청 및 긴급 연락 버튼 */}
       <View style={styles.footer}>
         <TouchableOpacity style={[styles.footerButton, styles.help]}>
-          <Text style={styles.footerText}>도움 요청</Text>
+          <Text style={styles.footerText}>도움</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={[styles.footerButton, styles.emergency]}>
@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
   container: { 
     flex: 1, 
     alignItems: 'center', 
-    backgroundColor: '#F7F5F0', 
+    backgroundColor: '#F5F5F5', 
     paddingHorizontal: 20, 
     paddingTop: 80 // 제목을 위로 올리기 위해 추가
   },
@@ -81,8 +81,11 @@ const styles = StyleSheet.create({
     paddingVertical: 15, 
     paddingHorizontal: 30, 
     borderRadius: 30,
-    borderWidth: 2, // 검은색 테두리 추가
-    borderColor: 'black',
+    shadowColor: '#000',
+    shadowOffset: { width: 2, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    elevation: 5,
   },
   buttonText: { 
     fontSize: 25, 
@@ -103,12 +106,10 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     marginHorizontal: 5,
     borderRadius: 20,
-    alignItems: 'center',
-    borderWidth: 2, // 검은색 테두리 추가
-    borderColor: 'black',
+    alignItems: 'center'
   },
-  help: { backgroundColor: '#F9CB97' },
-  emergency: { backgroundColor: '#F99797' },
+  help: { backgroundColor: '#DFEBF8' },
+  emergency: { backgroundColor: '#FFC1B1' },
   footerText: {
     fontSize: 20,
     fontWeight: 'bold',

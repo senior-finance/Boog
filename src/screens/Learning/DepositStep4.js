@@ -7,7 +7,7 @@ export default function DepositStep4({ navigation, route }) {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>
-        송금 연습을 해볼게요{'\n'}실제로 송금이 되지는 않아요!
+        입금 연습을 해볼게요{'\n'}실제로 입금이 되지는 않아요!
       </Text>
 
       <Text style={styles.subtitle}>
@@ -26,7 +26,7 @@ export default function DepositStep4({ navigation, route }) {
         style={styles.button} 
         onPress={() => setModalVisible(true)}
       >
-        <Text style={styles.buttonText}>모의 송금하기</Text>
+        <Text style={styles.buttonText}>모의 입금하기</Text>
       </TouchableOpacity>
 
       {/* 팝업 모달 */}
@@ -62,7 +62,7 @@ export default function DepositStep4({ navigation, route }) {
               style={styles.modalButton} 
               onPress={() => {
                 setModalVisible(false); // 모달 닫기
-                navigation.navigate('Main'); // 홈화면 이동
+                navigation.navigate('MainTabs'); // 홈화면 이동
               }}
             >
               <Text style={styles.modalButtonText}>홈화면</Text>
@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
   container: { 
     flex: 1, 
     alignItems: 'center', 
-    backgroundColor: '#F7F5F0', 
+    backgroundColor: '#F5F5F5', 
     paddingHorizontal: 20, 
     paddingTop: 80 
   },
@@ -116,12 +116,15 @@ const styles = StyleSheet.create({
     textAlign: 'center' 
   },
   button: { 
-    backgroundColor: '#F9EA97', 
+    backgroundColor: '#D9D9D9', 
     paddingVertical: 15, 
     paddingHorizontal: 30, 
     borderRadius: 30,
-    borderWidth: 2, 
-    borderColor: 'black',
+    shadowColor: '#000',
+    shadowOffset: { width: 2, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    elevation: 5,
   },
   buttonText: { 
     fontSize: 25, 
@@ -141,8 +144,6 @@ const styles = StyleSheet.create({
     padding: 30,
     borderRadius: 20,
     alignItems: 'center',
-    borderWidth: 2,
-    borderColor: 'black'
   },
   modalTitle: { 
     fontSize: 28, 
@@ -162,17 +163,20 @@ const styles = StyleSheet.create({
     flexDirection: 'row', 
     justifyContent: 'space-between', 
     width: '100%', 
-    marginBottom: 15 
+    marginBottom: 20 
   },
   modalButton: { 
     flex: 1,
     paddingVertical: 15,
-    marginHorizontal: 5,
+    marginHorizontal: 15,
     borderRadius: 15,
     backgroundColor: '#D9D9D9',
     alignItems: 'center',
-    borderWidth: 2,
-    borderColor: 'black',
+    shadowColor: '#000',
+    shadowOffset: { width: 2, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    elevation: 5,
   },
   modalButtonText: { 
     fontSize: 25,
