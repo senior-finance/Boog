@@ -50,6 +50,7 @@ import WebScreen from './src/screens/Info/WebScreen';
 // 기타
 import BiometricScreen from './src/screens/Biometric/BiometricScreen';
 import VoiceInputScreen from './src/screens/VoiceAssistant/VoiceInputScreen';
+import TTSSettingScreen from './src/screens/VoiceAssistant/TTSSettingScreen';
 
 const Stack = createStackNavigator();
 
@@ -71,7 +72,7 @@ export default function App() {
           {/* <Stack.Screen name="WebView" component={WebViewScreen} /> */}
 
           <Stack.Screen name="Learning" component={LearningScreen} options={{ title: '학습 콘텐츠' }} />
-          <Stack.Screen name="Level" component={SelectLevelScreen} options={{ title: '금융 용어 학습 난이도 선택'}} />
+          <Stack.Screen name="QuizLevel" component={SelectLevelScreen} options={{ title: '금융 용어 학습 난이도 선택'}} />
           <Stack.Screen name="Quiz" component={QuizScreen} options={{ title: '금융 용어 학습하기' }} />
           <Stack.Screen name="Answer" component={AnswerScreen} options={{ title: ' 정답 확인' }} />
           <Stack.Screen name="DepositStep1" component={DepositStep1} options={{ title: '입금 연습 - 계좌 번호 입력' }} />
@@ -99,7 +100,9 @@ export default function App() {
           <Stack.Screen name="InquiryList" component={InquiryListScreen} />
           <Stack.Screen name="NotificationScreen" component={NotificationScreen} />   
           <Stack.Screen name="Biometric" component={BiometricScreen} />
-          <Stack.Screen name="VoiceInput" component={VoiceInputScreen} />
+          <Stack.Screen name="VoiceInput" component={VoiceInputScreen} options={{title: 'AI 대화하기'}}/>
+          <Stack.Screen name="TTSSetting" component={TTSSettingScreen} options={{title: '음성 설정'}}/>
+
         </Stack.Navigator>
       </NavigationContainer>
     </FontSizeProvider>

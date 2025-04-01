@@ -8,7 +8,7 @@ const LearningScreen = ({ navigation }) => {
       <Text style={styles.title}>학습 콘텐츠</Text>
 
       {/* 카드형 버튼들 */}
-      <TouchableOpacity style={styles.card} onPress={() => navigation.navigate('Level')}>
+      <TouchableOpacity style={styles.card} onPress={() => navigation.navigate('QuizLevel')}>
         <Icon name="school-outline" size={36} color="#3B82F6" />
         <Text style={styles.cardText}>금융 용어 학습하기</Text>
       </TouchableOpacity>

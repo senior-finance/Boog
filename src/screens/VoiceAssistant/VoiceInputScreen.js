@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useLayoutEffect } from 'react';
 import {
   View,
   Text,
@@ -18,8 +18,11 @@ import askClovaAI from './AIService';
 import RNFS from 'react-native-fs';
 import Icon from 'react-native-vector-icons/Ionicons';
 import botImage from '../../assets/bot5.png';
+import { useNavigation } from '@react-navigation/native';
+import Tts from 'react-native-tts';
 
 export default function VoiceInputScreen() {
+  const navigation = useNavigation();
   const [isRecording, setIsRecording] = useState(false);
   const [recordedPath, setRecordedPath] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -28,8 +31,26 @@ export default function VoiceInputScreen() {
 
   const filePath = `${RNFS.CachesDirectoryPath}/sound.wav`;
 
+  useEffect(() => {
+    return () => {
+      Tts.stop();
+    };
+  }, []);
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <TouchableOpacity onPress={() => navigation.navigate('TTSSetting')}>
+          <Icon name="settings-outline" size={30} color="#000" style={{ marginRight: 20 }} />
+        </TouchableOpacity>
+      )
+    });
+  }, [navigation]);
+
   const onSendText = async () => {
     if (textInput.trim() === '') return;
+
+    Tts.stop();
 
     try {
       const userMessage = { role: 'user', text: textInput };
@@ -37,8 +58,17 @@ export default function VoiceInputScreen() {
       setIsLoading(true);
 
       const reply = await askClovaAI(textInput);
-      const botMessage = { role: 'bot', text: reply };
-      setChatHistory((prev) => [...prev, botMessage]);
+
+      if (reply.type === 'navigate') {
+        navigation.navigate(reply.target);
+      } else {
+        const botMessage = { role: 'bot', text: reply.text };
+        setChatHistory((prev) => [...prev, botMessage]);
+
+        Tts.stop(); // 이전 TTS 중지
+        Tts.speak(reply.text);
+      }
+
       setTextInput('');
     } catch (err) {
       console.error('텍스트 질문 처리 오류:', err);
@@ -58,6 +88,8 @@ export default function VoiceInputScreen() {
   };
 
   const startRecording = async () => {
+    Tts.stop();
+
     const hasPermission = await requestPermission();
     if (!hasPermission) return;
 
@@ -86,8 +118,16 @@ export default function VoiceInputScreen() {
       setChatHistory((prev) => [...prev, userMessage]);
 
       const reply = await askClovaAI(text);
-      const botMessage = { role: 'bot', text: reply };
-      setChatHistory((prev) => [...prev, botMessage]);
+
+      if (reply.type === 'navigate') {
+        navigation.navigate(reply.target);
+      } else {
+        const botMessage = { role: 'bot', text: reply.text };
+        setChatHistory((prev) => [...prev, botMessage]);
+
+        Tts.stop(); // 이전 TTS 중지
+        Tts.speak(reply.text);
+      }
     } catch (err) {
       console.error('녹음/CSR/AI 처리 오류:', err);
     } finally {
@@ -115,7 +155,7 @@ export default function VoiceInputScreen() {
         </View>
 
         <View style={styles.buttonGroup}>
-          {["카드 유효기간", "재발급 신청", "환불 안내", "송금 방법", "ATM/은행 찾기", "앱 사용방법"].map((item, index) => (
+          {["카드 유효기간", "재발급 신청", "환불 안내", "입금 방법", "ATM/은행 찾기", "앱 사용방법"].map((item, index) => (
             <TouchableOpacity key={index} style={[styles.topicButton, { width: '30%' }]}>
               <Text style={styles.topicText}>{item}</Text>
             </TouchableOpacity>
@@ -157,6 +197,7 @@ export default function VoiceInputScreen() {
     </KeyboardAvoidingView>
   );
 }
+
 
 const styles = StyleSheet.create({
   wrapper: {
