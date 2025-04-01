@@ -13,6 +13,7 @@ import { FontSizeProvider } from './src/screens/Info/FontSizeContext';
 import TabNavigator from './src/navigation/TabNavigator';
 
 // 학습
+import SelectLevelScreen from './src/screens/Learning/SelectLevelScreen';
 import QuizScreen from './src/screens/Learning/QuizScreen';
 import AnswerScreen from './src/screens/Learning/AnswerScreen';
 import DepositStep1 from './src/screens/Learning/DepositStep1';
@@ -70,6 +71,7 @@ export default function App() {
           {/* <Stack.Screen name="WebView" component={WebViewScreen} /> */}
 
           <Stack.Screen name="Learning" component={LearningScreen} options={{ title: '학습 콘텐츠' }} />
+          <Stack.Screen name="Level" component={SelectLevelScreen} options={{ title: '금융 용어 학습 난이도 선택'}} />
           <Stack.Screen name="Quiz" component={QuizScreen} options={{ title: '금융 용어 학습하기' }} />
           <Stack.Screen name="Answer" component={AnswerScreen} options={{ title: ' 정답 확인' }} />
           <Stack.Screen name="DepositStep1" component={DepositStep1} options={{ title: '입금 연습 - 계좌 번호 입력' }} />

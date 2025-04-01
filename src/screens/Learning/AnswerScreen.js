@@ -1,5 +1,4 @@
-import React from 'react';
-import { useLayoutEffect } from 'react';
+import React, { useLayoutEffect } from 'react';
 import CorrectAnswerScreen from './CorrectAnswerScreen';
 import WrongAnswerScreen from './WrongAnswerScreen';
 
@@ -13,20 +12,15 @@ const AnswerScreen = ({ route, navigation }) => {
     });
   }, [navigation]);
 
+  const screenProps = {
+    route: { params: { answer, explanation, currentQuestionIndex } },
+    navigation,
+  };
+
   return isCorrect ? (
-    <CorrectAnswerScreen
-      answer={answer}
-      explanation={explanation}
-      currentQuestionIndex={currentQuestionIndex}
-      navigation={navigation}
-    />
+    <CorrectAnswerScreen {...screenProps} />
   ) : (
-    <WrongAnswerScreen
-      answer={answer}
-      explanation={explanation}
-      currentQuestionIndex={currentQuestionIndex}
-      navigation={navigation}
-    />
+    <WrongAnswerScreen {...screenProps} />
   );
 };
 

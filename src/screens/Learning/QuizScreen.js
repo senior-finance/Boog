@@ -1,25 +1,40 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useRoute } from '@react-navigation/native';
-import quizData from '../../assets/quizData.json'; // 📌 JSON 데이터 가져오기
+import easyQuiz from '../../assets/easyQuiz.json';
+import hardQuiz from '../../assets//hardQuiz.json';
 
-const QuizScreen = ({ navigation }) => {
-  const route = useRoute();
-  // 현재 문제 인덱스를 route.params로 받되, 기본값을 0으로 설정
-  const currentQuestionIndex = route.params?.questionIndex ?? 0;
-  const currentQuestion = quizData.quiz[currentQuestionIndex];
+const shuffleArray = (array) => {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+};
+
+const QuizScreen = ({ navigation, route }) => {
+  const { level } = route.params;
+  const allQuiz = level === 'easy' ? easyQuiz : hardQuiz;
+
+  // ✅ 퀴즈 데이터 한 번 섞기
+  const [shuffledQuiz, setShuffledQuiz] = useState(() => shuffleArray(allQuiz));
+  const [questionIndex, setQuestionIndex] = useState(0);
+
+  const currentQuestion = shuffledQuiz[questionIndex];
 
   const handleAnswerSelection = (selectedAnswer) => {
     const isCorrect = selectedAnswer === currentQuestion.correctAnswer;
-    navigation.navigate("Answer", { 
-      isCorrect, 
-      answer: currentQuestion.correctAnswer, 
-      explanation: isCorrect 
-        ? currentQuestion.feedback.correct 
+    navigation.navigate("Answer", {
+      isCorrect,
+      answer: currentQuestion.correctAnswer,
+      explanation: isCorrect
+        ? currentQuestion.feedback.correct
         : currentQuestion.feedback.incorrect,
-      currentQuestionIndex 
+      currentQuestionIndex: questionIndex
     });
   };
+
 
   return (
     <View style={styles.container}>

@@ -8,17 +8,28 @@ import {
   Animated,
   Easing
 } from 'react-native';
-import quizData from '../../assets/quizData.json';
+import Sound from 'react-native-sound';
 import correctImage from '../../assets/correct.png';
 
-const CorrectAnswerScreen = ({ answer, explanation, currentQuestionIndex, navigation }) => {
-  const totalQuestions = quizData.quiz.length;
+const CorrectAnswerScreen = ({ route, navigation }) => {
+  const { answer, explanation, currentQuestionIndex } = route.params;
   const [showContent, setShowContent] = useState(false);
 
   const scaleAnim = useRef(new Animated.Value(4)).current;
   const translateYAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
+    // 🔊 사운드 재생
+    const correctSound = new Sound(
+      require('../../assets/sounds/correct.mp3'),
+      (error) => {
+        if (!error) {
+          correctSound.play();
+        }
+      }
+    );
+
+    // 애니메이션 실행
     Animated.parallel([
       Animated.timing(scaleAnim, {
         toValue: 1,
@@ -34,26 +45,27 @@ const CorrectAnswerScreen = ({ answer, explanation, currentQuestionIndex, naviga
       }),
     ]).start(() => {
       setShowContent(true);
+      correctSound.release();
     });
+
+    return () => {
+      correctSound.stop(() => correctSound.release());
+    };
   }, []);
 
   const goToNextQuestion = () => {
-    const nextIndex = (currentQuestionIndex + 1) % totalQuestions;
-    navigation.navigate("Quiz", { questionIndex: nextIndex });
+    navigation.navigate("Quiz", { questionIndex: currentQuestionIndex + 1 });
   };
 
   const goToPreviousQuestion = () => {
-    const prevIndex = (currentQuestionIndex - 1 + totalQuestions) % totalQuestions;
-    navigation.navigate("Quiz", { questionIndex: prevIndex });
+    navigation.navigate("Quiz", { questionIndex: currentQuestionIndex - 1 });
   };
 
   return (
     <View style={styles.container}>
-      {/* ✅ 상단 텍스트 */}
       <Text style={styles.title}>맞았어요</Text>
       <Text style={styles.answerText}>정답은 "{answer}" 에요!</Text>
 
-      {/* ✅ 이미지 (텍스트와 설명 사이에 위치) */}
       <Animated.Image
         source={correctImage}
         style={[
@@ -67,14 +79,12 @@ const CorrectAnswerScreen = ({ answer, explanation, currentQuestionIndex, naviga
         ]}
       />
 
-      {/* ✅ 설명 박스 */}
       {showContent && (
         <>
           <View style={styles.explanationBox}>
             <Text style={styles.explanationText}>{explanation}</Text>
           </View>
 
-          {/* 버튼 영역 */}
           <View style={styles.buttonRow}>
             <TouchableOpacity style={styles.button} onPress={goToPreviousQuestion}>
               <Text style={styles.buttonText}>이전 문제</Text>
@@ -115,8 +125,8 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   imageOnly: {
-    width: 100,
-    height: 100,
+    width: 120,
+    height: 120,
     marginBottom: 20,
   },
   explanationBox: {

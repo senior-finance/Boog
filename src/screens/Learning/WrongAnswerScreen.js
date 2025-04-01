@@ -6,16 +6,15 @@ import {
   StyleSheet,
   Image,
   Animated,
-  Easing,
+  Easing
 } from 'react-native';
-import quizData from '../../assets/quizData.json';
 import wrongImage from '../../assets/wrong.png';
 
-const WrongAnswerScreen = ({ answer, explanation, currentQuestionIndex, navigation }) => {
-  const totalQuestions = quizData.quiz.length;
+const WrongAnswerScreen = ({ route, navigation }) => {
+  const { answer, explanation, currentQuestionIndex } = route.params;
   const [showContent, setShowContent] = useState(false);
 
-  const scaleAnim = useRef(new Animated.Value(4)).current; // 크게 시작
+  const scaleAnim = useRef(new Animated.Value(4)).current;
   const translateYAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -38,22 +37,18 @@ const WrongAnswerScreen = ({ answer, explanation, currentQuestionIndex, navigati
   }, []);
 
   const goToNextQuestion = () => {
-    const nextIndex = (currentQuestionIndex + 1) % totalQuestions;
-    navigation.navigate("Quiz", { questionIndex: nextIndex });
+    navigation.navigate("Quiz", { questionIndex: currentQuestionIndex + 1 });
   };
 
   const goToPreviousQuestion = () => {
-    const prevIndex = (currentQuestionIndex - 1 + totalQuestions) % totalQuestions;
-    navigation.navigate("Quiz", { questionIndex: prevIndex });
+    navigation.navigate("Quiz", { questionIndex: currentQuestionIndex - 1 });
   };
 
   return (
     <View style={styles.container}>
-      {/* 상단 텍스트 */}
       <Text style={styles.title}>틀렸어요</Text>
       <Text style={styles.answerText}>정답은 "{answer}" 에요!</Text>
 
-      {/* 애니메이션 이미지 */}
       <Animated.Image
         source={wrongImage}
         style={[
@@ -67,7 +62,6 @@ const WrongAnswerScreen = ({ answer, explanation, currentQuestionIndex, navigati
         ]}
       />
 
-      {/* 설명 + 버튼 */}
       {showContent && (
         <>
           <View style={styles.explanationBox}>
@@ -114,8 +108,8 @@ const styles = StyleSheet.create({
       textAlign: 'center',
     },
     imageOnly: {
-      width: 100,
-      height: 100,
+      width: 120,
+      height: 120,
       marginBottom: 20,
     },
     explanationBox: {
