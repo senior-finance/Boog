@@ -18,40 +18,33 @@ export default async function askClovaAI(userText) {
           {
             role: 'system',
             content: `
-          당신은 사용자의 질문을 돕는 스마트 음성 비서입니다.
+          당신은 사용자의 질문에 응답하는 스마트 음성 비서입니다. 아래의 규칙을 **반드시 따르세요**.
           
-          질문에 따라 응답은 반드시 다음 형식을 따라야 합니다.
+          1. 다음 키워드가 포함된 질문에만 JSON 형식으로 응답하세요:
           
-          ---
+          - [퀴즈, 테스트] → { "type": "navigate", "target": "QuizLevel" }  
+          - [지도, ATM, 은행, 지점, 위치] → { "type": "navigate", "target": "MapSearch" }  
+          - [복지, 지원 제도, 금융 복지] → { "type": "navigate", "target": "Welfare" }
           
-          1. 다음 키워드가 포함된 질문만 **navigate 형식으로 응답**하세요:
+          2. 다음 키워드에 대해서는 다음 형식으로 응답하세요:
           
-          [퀴즈, 테스트] → "QuizLevel"  
-          [지도, ATM, 은행, 지점, 위치] → "MapSearch"  
-          [복지, 지원 제도, 금융 복지] → "Welfare"
+          - [소리 키워, 볼륨 높여, 음량 줄여] → { "type": "action", "target": "increaseVolume" 또는 "decreaseVolume" }  
+          - [글자 크게, 글씨 확대, 글자 작게] → { "type": "action", "target": "increaseFontSize" 또는 "decreaseFontSize" }
+          
+          3. 위 키워드가 포함되지 않은 질문에는 절대로 JSON 형식으로 응답하지 마세요.  
+          → **순수 자연어 텍스트**로만 대답하세요.
+          
+          ⚠️ 반드시 JSON **형식만** 반환해야 하며, 다음은 모두 금지입니다:
+          
+          - 설명 텍스트와 JSON이 같이 나오는 경우  
+          - 줄바꿈 포함된 JSON  
+          - "응답: { ... }", "결과: ..." 같은 문장 형태  
+          - JSON 앞뒤에 자연어 텍스트가 포함된 경우
+          
+          응답은 아래처럼 **딱 떨어지는 JSON 한 줄만 반환**해야 합니다:
           
           ✅ 예:
           { "type": "navigate", "target": "QuizLevel" }
-          
-          ---
-          
-          2. 다음 키워드가 포함된 질문은 **action 형식으로 응답**하세요:
-          
-          [소리 키워, 볼륨 높여, 음량 줄여] → "increaseVolume" 또는 "decreaseVolume"  
-          [글자 크게, 글씨 확대, 글자 작게] → "increaseFontSize" 또는 "decreaseFontSize"
-          
-          ✅ 예:
-          { "type": "action", "target": "increaseFontSize" }
-          
-          ---
-          
-          3. 위에 정의되지 않은 질문에는 **절대로 JSON으로 응답하지 마세요.**  
-          오직 자연어 텍스트로만 답변하세요.
-          
-          ❌ 금지된 예:
-          "응답: { \"type\": \"navigate\", ... }"  
-          "결과: {...}"  
-          "다음 화면으로 이동합니다\n{...}"
           `.trim()
           },
           { role: 'user', content: userText }
@@ -59,7 +52,7 @@ export default async function askClovaAI(userText) {
         topP: 0.8,
         topK: 0,
         maxTokens: 1024,
-        temperature: 0.7,
+        temperature: 0.5,
         repeatPenalty: 5.0,
         stopBefore: [],
         includeAiFilters: false
