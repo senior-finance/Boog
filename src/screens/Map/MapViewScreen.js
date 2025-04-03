@@ -14,13 +14,19 @@ const P5 = { latitude: 37.562834, longitude: 126.976218 };
 // const Tab = createBottomTabNavigator();
 
 // const MapViewScreen = () => {
-const MapViewScreen = ({ navigation }) => {
+const MapViewScreen = ({ route, navigation }) => {
+  const { placeData } = route.params; // `MapSearchScreen`에서 전달된 데이터
+  const { placeName, address, mapx, mapy } = placeData;
   const mapView = useRef(null);
   const [enableLayerGroup, setEnableLayerGroup] = useState(true);
-
   useEffect(() => {
     requestLocationPermission();
   }, []);
+
+  // placeData 배열이 유효한지 확인
+  if (!Array.isArray(placeData) || placeData.length === 0) {
+    return <Text>장소 정보가 없습니다.</Text>;
+  }
 
   return (
     <>
@@ -28,10 +34,33 @@ const MapViewScreen = ({ navigation }) => {
         ref={mapView}
         style={{ width: '100%', height: '100%' }}
         showsMyLocationButton={true}
-        center={{ ...P0, zoom: 16 }}
+        // center={{ ...P0, zoom: 16 }}
+        // 중심을 첫 번째 장소로 설정
+        center={{ latitude: parseFloat(placeData[0].mapy), longitude: parseFloat(placeData[0].mapx), zoom: 16 }}
         useTextureView
       >
-        <Marker coordinate={P0} pinColor='green'
+        {/* 5개의 Marker를 반복문으로 표시 */}
+        {placeData.map((place, index) => {
+          // mapx, mapy 값이 존재하는지 확인
+          if (place.mapx && place.mapy) {
+            return (
+              <Marker
+                key={index}
+                coordinate={{
+                  latitude: parseFloat(place.mapy),
+                  longitude: parseFloat(place.mapx)
+                }}
+                pinColor="blue"
+                caption={{ text: place.placeName, align: Align.Top }}
+              />
+            );
+          } else {
+            // mapx, mapy 값이 없을 경우 빈 화면 표시
+            console.warn(`Invalid coordinates for place: ${place.placeName}`);
+            return null;
+          }
+        })}
+        {/* <Marker coordinate={P0} pinColor='green'
         // onClick={() => {
         //     mapView.current.setLayerGroupEnabled(LayerGroup.LAYER_GROUP_BUILDING, enableLayerGroup);
         //     mapView.current.setLayerGroupEnabled(LayerGroup.LAYER_GROUP_TRANSIT, enableLayerGroup);
@@ -40,7 +69,7 @@ const MapViewScreen = ({ navigation }) => {
         // caption={{ text: "test caption", align: Align.Left }}
         />
         <Marker coordinate={P1} pinColor="blue" />
-        <Marker coordinate={P2} pinColor="red" />
+        <Marker coordinate={P2} pinColor="red" /> */}
         {/* <Marker coordinate={P4} image={require("./marker.png")} width={48} height={48} /> */}
         {/* <Path coordinates={[P0, P1]} width={10} /> */}
         {/* <Polyline coordinates={[P1, P2]} />

@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import axios from "axios";
 
-const Place = () => {
+const MapSearchScreen = ({ navigation }) => {
   const [query, setQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [selectedPlace, setSelectedPlace] = useState({ title: "", address: "" });
@@ -21,62 +21,60 @@ const Place = () => {
 
   // 다음 버튼 누를때 동작하는 함수
   const handleNextStep = (newPlaceData) => {
-    // console.log("최종 데이터:", {
-    //   placeInfo: { firstPlace: newPlaceData },
-    // });
-
     console.log("📦 최종 전달 데이터:\n", JSON.stringify({
       placeInfo: { firstPlace: newPlaceData },
     }, null, 2));
 
-    // 화면 이동 등 나중에 추가 가능
-    // navigation.navigate("NextScreen", {
-    //   placeData: newPlaceData,
-    // });
+    // 좌표 정보를 MapViewScreen으로 전달
+    navigation.navigate("MapView", {
+      placeData: newPlaceData, // mapx, mapy 포함된 데이터 전달
+    });
   };
 
   // 검색 버튼 누를때 동작함
   const handleSearch = async () => {
-    // console.log("handleSearch 실행됨");
-
-    setSelectedPlace({ title: "", address: "" });
+    setSearchResults([]); // 기존 검색 결과를 비운다
 
     try {
-      const response = await axios.post(`${MAP_SEARCH_BACKEND_URL}searchPlace`, {
+      // const response = await axios.post(`${MAP_SEARCH_BACKEND_URL}searchPlace`, {
+      //   placeName: query,
+      // });
+
+      const response = await axios.post("http://10.0.2.2:4000/searchPlace", {
         placeName: query,
       });
-
       // 아래 주석처리한 코드는 백엔드 응답 원본
       // console.log("백엔드 응답:", response.data);
 
       // 아래 코드는 로그에서만 보기 편하게 수정한 것
       // console.log("백엔드 응답:\n", JSON.stringify(response.data, null, 2));
-      response.data.places?.forEach((place, idx) => {
-        const cleanTitle = place.title.replace(/<[^>]*>/g, "");
-        console.log(
-          `\n[${idx + 1}] ${cleanTitle}\n    주소: ${place.address}\n    도로명: ${place.roadAddress || '없음'}\n    링크: ${place.link || '없음'}`
-        );
+
+      // 좌표 값 변환을 포함하여 placesData를 설정
+      const placesData = response.data.places.map((place) => {
+        const cleanTitle = place.title ? place.title.replace(/<[^>]*>/g, "") : "제목 없음"; // 제목이 없으면 "제목 없음"
+        const cleanedMapx = place.mapx ? place.mapx / 10000000 : 126.977011;  // X 좌표 변환 (1e7로 나누기)
+        const cleanedMapy = place.mapy ? place.mapy / 10000000 : 37.564362;  // Y 좌표 변환 (1e7로 나누기)
+
+        // log로 mapx, mapy 값을 확인
+        console.log(`place: ${cleanTitle}, mapx: ${cleanedMapx}, mapy: ${cleanedMapy}`);
+
+        return {
+          placeName: cleanTitle,
+          address: place.address || "주소 없음", // 주소가 없으면 "주소 없음"
+          mapx: cleanedMapx,
+          mapy: cleanedMapy,
+        };
       });
-      setSearchResults(response.data.places || []);
+      setSearchResults(placesData); // 검색 결과 저장
     } catch (error) {
       console.error("검색 오류:", error);
     }
   };
 
-  // 검색 결과 클릭 했을때
-  const handlePlaceSelection = (title, address) => {
-    setSelectedPlace({ title, address });
-    setQuery(title);
-    setSearchResults([]);
-    console.log("선택한 장소:", { title, address });
-  };
-
   // 클릭했을때 그 클릭한 장소 정보 저장
   const handleNext = () => {
-    const newPlaceData = {
-      placeName: selectedPlace.title,
-      address: selectedPlace.address,
-    };
+    // 첫 번째 검색 결과만 MapView로 전달
+    const newPlaceData = searchResults; // 검색된 5개 장소 전체를 선택
 
     setFormData((prevData) => ({
       ...prevData,
@@ -107,36 +105,28 @@ const Place = () => {
         <FlatList
           data={searchResults}
           keyExtractor={(item, index) => index.toString()}
-          renderItem={({ item }) => {
-            const cleanTitle = item.title.replace(/<[^>]*>/g, "");
-            return (
-              <TouchableOpacity
-                onPress={() => handlePlaceSelection(cleanTitle, item.address)}
-                style={styles.resultItem}
-              >
-                <Text style={styles.resultTitle}>{cleanTitle}</Text>
-                <Text style={styles.resultAddress}>{item.address}</Text>
-              </TouchableOpacity>
-            );
-          }}
+          renderItem={({ item }) => (
+            <View style={styles.resultItem}>
+              <Text style={styles.resultTitle}>{item.placeName}</Text>
+              <Text style={styles.resultAddress}>{item.address}</Text>
+            </View>
+          )}
         />
       )}
 
-      {selectedPlace.title !== "" && (
-        <View style={{ marginTop: 10 }}>
-          <Text>선택한 장소: {selectedPlace.title}</Text>
-          <Text>주소: {selectedPlace.address}</Text>
-        </View>
-      )}
-
-      <TouchableOpacity style={styles.nextButton} onPress={handleNext}>
+      {/* 다음 버튼 비활성화 처리 */}
+      <TouchableOpacity
+        style={[styles.nextButton, { opacity: searchResults.length > 0 ? 1 : 0.5 }]}
+        onPress={handleNext}
+        disabled={searchResults.length === 0}
+      >
         <Text style={styles.nextButtonText}>다음</Text>
       </TouchableOpacity>
     </View>
   );
 };
 
-export default Place;
+export default MapSearchScreen;
 
 const styles = StyleSheet.create({
   container: { padding: 16 },
