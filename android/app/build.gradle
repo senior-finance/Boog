@@ -1,6 +1,7 @@
 apply plugin: "com.android.application"
 apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
+apply plugin: "com.google.gms.google-services"
 apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle"
 
 /**
@@ -113,8 +114,9 @@ dependencies {
     implementation("com.facebook.react:flipper-integration")
 
     implementation 'com.naver.speech.clientapi:naverspeech-ncp-sdk-android:1.1.8'   // CSR 사용
-
     implementation 'com.naver.maps:map-sdk:3.20.0'
+    implementation platform('com.google.firebase:firebase-bom:33.12.0')
+    implementation("com.google.firebase:firebase-analytics")
 
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")
