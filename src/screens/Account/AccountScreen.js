@@ -281,14 +281,29 @@ const Account = () => {
     // 토큰 캐시 삭제 함수
     const handleClearToken = async () => {
         try {
-            await AsyncStorage.removeItem('tokenData');
-            console.log("토큰 캐시 삭제됨");
+            await firestore().collection('tokens').doc("Token").update({
+                access_token: firestore.FieldValue.delete()
+            });
+            console.log("파이어베이스 최신 토큰 필드 삭제됨");
             setTokenData(null);
             setAccountList([]);
             setStep('home');
         } catch (error) {
-            console.error("토큰 삭제 에러:", error);
+            console.error("파이어베이스 토큰 필드 삭제 에러:", error);
         }
+    };
+
+    // 토큰 정말로 지울건지 물어보기
+    const confirmClearToken = () => {
+        Alert.alert(
+            "토큰 삭제 확인",
+            "정말로 파이어베이스 토큰 캐시를 삭제하시겠습니까?",
+            [
+                { text: "아니오", style: "cancel" },
+                { text: "예", onPress: handleClearToken }
+            ],
+            { cancelable: false }
+        );
     };
 
     // 각 단계에 따른 화면 렌더링
@@ -368,7 +383,7 @@ const Account = () => {
                         );
                     }}
                 />
-                <Button title="token 캐시 초기화" onPress={handleClearToken} />
+                <Button title="token 캐시 초기화" onPress={confirmClearToken} />
             </View>
         );
     }
