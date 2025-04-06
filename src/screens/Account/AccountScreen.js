@@ -19,7 +19,7 @@ import {
     KFTC_STATE,
     KFTC_TRAN_ID,
 } from '@env';
-// import firestore from '@react-native-firebase/firestore';
+import firestore from '@react-native-firebase/firestore';
 
 // 사용자 인증을 위한 URL 생성
 const AUTH_URL = `https://testapi.openbanking.or.kr/oauth/2.0/authorize?response_type=code&client_id=${KFTC_CLIENT_ID}&redirect_uri=${encodeURIComponent(
@@ -62,37 +62,38 @@ const Account = () => {
     //     }
     // };
 
-    const storeTokenDataFirebase = async (userId, data) => {
+    // 파이어베이스 토큰 저장 및 로드 (사용자 userID 없이 고정된 문서 사용)
+    const storeTokenDataFirebase = async (data) => {
         try {
-          const tokenDocRef = firestore().collection('tokens').doc(userId);
-          const doc = await tokenDocRef.get();
-      
-          if (doc.exists) {
-            const currentData = doc.data();
-            // 현재 저장된 access_token과 새로 받은 access_token 비교
-            if (currentData.access_token !== data.access_token) {
-              await tokenDocRef.set(data);
-              console.log("Firebase에 토큰 데이터 업데이트 완료");
-            } else {
-              console.log("토큰 값이 동일하여 업데이트하지 않음");
-            }
-          } else {
-            // 문서가 없는 경우 새로 저장
-            await tokenDocRef.set(data);
-            console.log("Firebase에 토큰 데이터 저장 완료");
-          }
-        } catch (error) {
-          console.error("Firebase 토큰 데이터 저장 에러:", error);
-        }
-      };      
+            const tokenDocRef = firestore().collection('tokens').doc("Token");
+            const doc = await tokenDocRef.get();
 
-    const loadTokenDataFirebase = async (userId) => {
+            if (doc.exists) {
+                const currentData = doc.data();
+                // 현재 저장된 access_token과 새로 받은 access_token 비교
+                if (currentData.access_token !== data.access_token) {
+                    await tokenDocRef.set(data);
+                    console.log("Firebase에 토큰 데이터 업데이트 완료");
+                } else {
+                    console.log("토큰 값이 동일하여 업데이트하지 않음");
+                }
+            } else {
+                // 문서가 없는 경우 새로 저장
+                await tokenDocRef.set(data);
+                console.log("Firebase에 토큰 데이터 저장 완료");
+            }
+        } catch (error) {
+            console.error("Firebase 토큰 데이터 저장 에러:", error);
+        }
+    };
+
+    const loadTokenDataFirebase = async () => {
         try {
-            const doc = await firestore().collection('tokens').doc(userId).get();
+            const doc = await firestore().collection('tokens').doc("Token").get();
             if (doc.exists) {
                 return doc.data();
             } else {
-                console.log("해당 유저의 토큰 데이터가 존재하지 않습니다.");
+                console.log("토큰 데이터가 존재하지 않습니다.");
                 return null;
             }
         } catch (error) {
@@ -171,7 +172,7 @@ const Account = () => {
                     if (data.access_token) {
                         setTokenData(data);
                         // storeTokenData(data); // 토큰 저장
-                        storeTokenDataFirebase(userId, data); // 기존 storeTokenData(data) 대신 Firebase에 저장
+                        storeTokenDataFirebase(data); // 기존 storeTokenData(data) 대신 Firebase에 저장
                         setStep('fetchAccounts');
                     } else {
                         console.error("토큰 요청 실패:", data);
