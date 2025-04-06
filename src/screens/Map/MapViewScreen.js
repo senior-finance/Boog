@@ -15,7 +15,19 @@ const P5 = { latitude: 37.562834, longitude: 126.976218 };
 
 // const MapViewScreen = () => {
 const MapViewScreen = ({ route, navigation }) => {
-  const { placeData } = route.params; // `MapSearchScreen`에서 전달된 데이터
+  const { placeData } = route?.params || {}; // `MapSearchScreen`에서 전달된 데이터
+
+  // placeData 값 있는지 체크, 없으면 UI 반환
+  if (!placeData) {
+    return (
+      <View style={{ backgroundColor: '#03C75A', padding: 10 }}>
+      <Text style={{ fontSize: 24, fontWeight: 'bold', color: 'white' }}>
+      {"placeData 값이 존재하지 않습니다!\nAws 서버 상태를 확인해주세요"}
+      </Text>
+    </View>
+    );
+  }
+
   const { placeName, address, mapx, mapy } = placeData;
   const mapView = useRef(null);
   const [enableLayerGroup, setEnableLayerGroup] = useState(true);
