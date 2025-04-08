@@ -193,7 +193,7 @@ const styles = StyleSheet.create({
   uploadButtonText: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#333', // 파란색 계열 강조
+    color: '#333', 
   },
   input: {
     backgroundColor: '#FFFFFF',

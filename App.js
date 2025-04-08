@@ -46,6 +46,8 @@ import ProfileIconSelect from './src/screens/Info/ProfileIconSelect';
 import { ProfileProvider } from './src/screens/ProfileContext';
 import WelfareScreen from './src/screens/Info/WelfareScreen'; 
 import WebScreen from './src/screens/Info/WebScreen';
+import AutoPhoneAnalysisScreen from './src/screens/Info/AutoPhoneAnalysisScreen'; 
+
 
 // 기타
 import BiometricScreen from './src/screens/Biometric/BiometricScreen';
@@ -102,6 +104,7 @@ export default function App() {
           <Stack.Screen name="Biometric" component={BiometricScreen} />
           <Stack.Screen name="VoiceInput" component={VoiceInputScreen} options={{title: 'AI 대화하기'}}/>
           <Stack.Screen name="TTSSetting" component={TTSSettingScreen} options={{title: '음성 설정'}}/>
+          <Stack.Screen name="AutoPhoneAnalysis" component={AutoPhoneAnalysisScreen} options={{ title: '자동 문자/통화 분석' }}/>
 
         </Stack.Navigator>
       </NavigationContainer>
