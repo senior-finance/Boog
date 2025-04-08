@@ -73,6 +73,7 @@ const MainScreen = ({ navigation }) => {
         {/* 잔액 카드 */}
         <LinearGradient colors={['#4B7BE5', '#6FA8DC']} style={styles.balanceCard}>
           <Text style={styles.balanceLabel}>잔액</Text>
+          <Text style={styles.accountNumber}>111-222-4445543</Text>
           <Text style={styles.balanceAmount}>123,456,789원</Text>
         </LinearGradient>
 
@@ -342,6 +343,14 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: 'bold',
   },
+
+  accountNumber: {
+    color: 'white',
+    fontSize: 16,
+    marginBottom: 6,
+    textDecorationLine: 'underline',
+  },
+  
 });
 
 export default MainScreen;
