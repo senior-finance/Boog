@@ -13,7 +13,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import { NativeModules, PermissionsAndroid } from 'react-native';
 import { checkSpamForNumber } from './PhoneUtils';  // 새로 만든 파일에서 함수 import
 
-const { SMSModule, CallLogModule } = NativeModules;
+const { PhoneAnalysisModule } = NativeModules;
 
 const phishingKeywords = ['입금', '계좌', '검찰', '세금', '송금', '파출소', '고객센터'];
 
@@ -55,7 +55,7 @@ const AutoPhoneAnalysisScreen = () => {
     let found = [];
 
     await new Promise((resolve) => {
-      SMSModule.getAllSMS((smsList) => {
+      PhoneAnalysisModule.getAllSMS((smsList) => {
         smsList.forEach((sms) => {
           if (isToday(sms.timestamp)) {
             const matches = phishingKeywords.filter((kw) => sms.body.includes(kw));
@@ -74,7 +74,7 @@ const AutoPhoneAnalysisScreen = () => {
     });
 
     await new Promise((resolve) => {
-      CallLogModule.getRecentCallLogs((logs) => {
+      PhoneAnalysisModule.getRecentCallLogs((logs) => {
         logs.forEach((log) => {
           if (isToday(log.timestamp)) {
             if (log.number.startsWith('070') || log.duration < 5) {
@@ -139,7 +139,6 @@ const AutoPhoneAnalysisScreen = () => {
               <Text style={styles.link}>📞 후후에서 번호 조회</Text>
             </TouchableOpacity>
 
-            {/* 자동으로 후후 조회 결과를 앱 내 팝업으로 확인 */}
             <TouchableOpacity onPress={() => autoCheckSpam(item.sender)}>
               <Text style={styles.link}>🤖 자동 스캔 후 결과 확인</Text>
             </TouchableOpacity>
