@@ -135,9 +135,7 @@ const AutoPhoneAnalysisScreen = () => {
             <Text style={styles.itemText}>{item.text}</Text>
             <Text style={styles.itemText}>⚠️ 키워드: {item.keywords.join(', ')}</Text>
 
-            <TouchableOpacity onPress={() => openWhowho(item.sender)}>
-              <Text style={styles.link}>📞 후후에서 번호 조회</Text>
-            </TouchableOpacity>
+          
 
             <TouchableOpacity onPress={() => autoCheckSpam(item.sender)}>
               <Text style={styles.link}>🤖 자동 스캔 후 결과 확인</Text>
