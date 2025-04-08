@@ -18,4 +18,3 @@ const MyInfoStack = () => {
 };
 
 export default MyInfoStack;
- 

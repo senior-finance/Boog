@@ -22,6 +22,8 @@ const FunctionScreen = ({ navigation }) => {
           <FunctionButton title="지문 인증" icon="finger-print" onPress={() => navigation.navigate('Biometric')} />
           <FunctionButton title="정부 복지 혜택" icon="gift" onPress={() => navigation.navigate('Welfare')} />
           <FunctionButton title="자동 문자/통화 분석" icon="phone-portrait" onPress={() => navigation.navigate('AutoPhoneAnalysis')} />
+          <FunctionButton title="보이스 피싱 사례" icon="alert-circle-outline" onPress={() => navigation.navigate('VoicePhishing')} />
+          <FunctionButton title="통화 및 문자 분석" icon="document-text-outline" onPress={() => navigation.navigate('CallTextAnalysis')} />
         </View>
       </ScrollView>
     </LinearGradient>

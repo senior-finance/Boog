@@ -47,10 +47,6 @@ const MyInfoScreen = ({ navigation }) => {
 
 
         {/* 버튼들 */}
-        <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('CustomerService')}>
-          <Ionicons name="chatbox-ellipses-outline" size={22} color="#4B7BE5" style={styles.icon} />
-          <Text style={styles.menuText}>고객센터</Text>
-        </TouchableOpacity>
 
         <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('FontSize')}>
           <Ionicons name="text-outline" size={22} color="#4B7BE5" style={styles.icon} />
@@ -62,15 +58,22 @@ const MyInfoScreen = ({ navigation }) => {
           <Text style={styles.menuText}>음향 크기</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('VoicePhishing')}>
-          <Ionicons name="alert-circle-outline" size={22} color="#4B7BE5" style={styles.icon} />
-          <Text style={styles.menuText}>보이스 피싱 사례</Text>
+        <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('FAQ')}>
+       <Ionicons name="help-circle-outline" size={22} color="#4B7BE5" style={styles.icon} />
+       <Text style={styles.menuText}>자주 묻는 질문</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('CallTextAnalysis')}>
-          <Ionicons name="document-text-outline" size={22} color="#4B7BE5" style={styles.icon} />
-          <Text style={styles.menuText}>통화 및 문자 분석</Text>
+      <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('InquiryForm')}>
+       <Ionicons name="chatbubble-ellipses-outline" size={22} color="#4B7BE5" style={styles.icon} />
+       <Text style={styles.menuText}>1:1 문의하기</Text>
         </TouchableOpacity>
+
+      <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('InquiryList')}>
+        <Ionicons name="document-text-outline" size={22} color="#4B7BE5" style={styles.icon} />
+       <Text style={styles.menuText}>문의 내역 확인</Text>
+        </TouchableOpacity>
+
+
       </ScrollView>
 
       {/* 프로필 선택 모달 */}

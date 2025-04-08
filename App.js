@@ -37,7 +37,6 @@ import SoundVolumeScreen from './src/screens/Info/SoundVolumeScreen';
 import VoicePhishingScreen from './src/screens/Info/VoicePhishingScreen';
 import VoicePhishingDetailScreen from './src/screens/Info/VoicePhishingDetailScreen';
 import CallTextAnalysisScreen from './src/screens/Info/CallTextAnalysisScreen';
-import CustomerServiceScreen from './src/screens/Info/CustomerServiceScreen';
 import FAQScreen from './src/screens/Info/FAQScreen';
 import InquiryFormScreen from './src/screens/Info/InquiryFormScreen';
 import InquiryListScreen from './src/screens/Info/InquiryListScreen';
@@ -91,7 +90,7 @@ export default function App() {
           <Stack.Screen name="VoicePhishingDetail" component={VoicePhishingDetailScreen} />
           <Stack.Screen name="CallTextAnalysis" component={CallTextAnalysisScreen} />
 
-          <Stack.Screen name="CustomerService" component={CustomerServiceScreen} />
+        
           <Stack.Screen name="FAQ" component={FAQScreen} />
           <Stack.Screen name="ProfileIconSelect" component={ProfileIconSelect} />
           <Stack.Screen name="Welfare" component={WelfareScreen} />
