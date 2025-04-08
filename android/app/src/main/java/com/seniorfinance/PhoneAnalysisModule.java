@@ -9,10 +9,9 @@ import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import com.facebook.react.bridge.WritableNativeArray;
+import com.facebook.react.bridge.WritableNativeMap;
+import com.facebook.react.bridge.WritableMap;
 
 public class PhoneAnalysisModule extends ReactContextBaseJavaModule {
 
@@ -30,7 +29,7 @@ public class PhoneAnalysisModule extends ReactContextBaseJavaModule {
 
     @ReactMethod
     public void getAllSMS(Callback callback) {
-        ArrayList<Map<String, Object>> smsList = new ArrayList<>();
+        WritableNativeArray smsArray = new WritableNativeArray();
 
         Uri uri = Telephony.Sms.CONTENT_URI;
         Cursor cursor = reactContext.getContentResolver().query(uri, null, null, null, null);
@@ -40,21 +39,21 @@ public class PhoneAnalysisModule extends ReactContextBaseJavaModule {
             int dateIdx = cursor.getColumnIndex("date");
 
             while (cursor.moveToNext()) {
-                Map<String, Object> sms = new HashMap<>();
-                sms.put("body", cursor.getString(bodyIdx));
-                sms.put("sender", cursor.getString(addressIdx));
-                sms.put("timestamp", cursor.getLong(dateIdx));
-                smsList.add(sms);
+                WritableMap smsMap = new WritableNativeMap();
+                smsMap.putString("body", cursor.getString(bodyIdx));
+                smsMap.putString("sender", cursor.getString(addressIdx));
+                // timestamp를 double 또는 int로 넣을 수 있습니다. 여기서는 double로 처리합니다.
+                smsMap.putDouble("timestamp", cursor.getLong(dateIdx));
+                smsArray.pushMap(smsMap);
             }
             cursor.close();
         }
-
-        callback.invoke(smsList);
+        callback.invoke(smsArray);
     }
 
     @ReactMethod
     public void getRecentCallLogs(Callback callback) {
-        ArrayList<Map<String, Object>> callLogs = new ArrayList<>();
+        WritableNativeArray callArray = new WritableNativeArray();
 
         Cursor cursor = reactContext.getContentResolver().query(
                 CallLog.Calls.CONTENT_URI,
@@ -69,15 +68,14 @@ public class PhoneAnalysisModule extends ReactContextBaseJavaModule {
             int durationIdx = cursor.getColumnIndex(CallLog.Calls.DURATION);
 
             while (cursor.moveToNext()) {
-                Map<String, Object> log = new HashMap<>();
-                log.put("number", cursor.getString(numberIdx));
-                log.put("timestamp", cursor.getLong(dateIdx));
-                log.put("duration", cursor.getInt(durationIdx));
-                callLogs.add(log);
+                WritableMap callMap = new WritableNativeMap();
+                callMap.putString("number", cursor.getString(numberIdx));
+                callMap.putDouble("timestamp", cursor.getLong(dateIdx));
+                callMap.putInt("duration", cursor.getInt(durationIdx));
+                callArray.pushMap(callMap);
             }
             cursor.close();
         }
-
-        callback.invoke(callLogs);
+        callback.invoke(callArray);
     }
 }
