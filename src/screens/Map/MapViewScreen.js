@@ -269,7 +269,7 @@ const MapViewScreen = ({ route, navigation }) => {
                 latitude: userLocation.latitude,
                 longitude: userLocation.longitude,
               }}
-              image={require('../../assets/marker-user')}
+              image={require('../../assets/marker-user.png')}
               width={60}
               height={60}
               caption={{ text: '내 위치', align: Align.Top }}
@@ -283,7 +283,7 @@ const MapViewScreen = ({ route, navigation }) => {
                 latitude: parseFloat(place.mapy),
                 longitude: parseFloat(place.mapx),
               }}
-              image={require('../../assets/marker-blue')}
+              image={require('../../assets/marker-blue.png')}
               width={60}
               height={60}
               caption={{ text: place.placeName, align: Align.Top }}
