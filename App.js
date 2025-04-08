@@ -36,7 +36,6 @@ import FontSizeSettingScreen from './src/screens/Info/FontSizeSettingScreen';
 import SoundVolumeScreen from './src/screens/Info/SoundVolumeScreen';
 import VoicePhishingScreen from './src/screens/Info/VoicePhishingScreen';
 import VoicePhishingDetailScreen from './src/screens/Info/VoicePhishingDetailScreen';
-import CallTextAnalysisScreen from './src/screens/Info/CallTextAnalysisScreen';
 import FAQScreen from './src/screens/Info/FAQScreen';
 import InquiryFormScreen from './src/screens/Info/InquiryFormScreen';
 import InquiryListScreen from './src/screens/Info/InquiryListScreen';
@@ -88,7 +87,7 @@ export default function App() {
           <Stack.Screen name="SoundVolume" component={SoundVolumeScreen} />
           <Stack.Screen name="VoicePhishing" component={VoicePhishingScreen} />
           <Stack.Screen name="VoicePhishingDetail" component={VoicePhishingDetailScreen} />
-          <Stack.Screen name="CallTextAnalysis" component={CallTextAnalysisScreen} />
+        
 
         
           <Stack.Screen name="FAQ" component={FAQScreen} />
@@ -103,7 +102,7 @@ export default function App() {
           <Stack.Screen name="Biometric" component={BiometricScreen} />
           <Stack.Screen name="VoiceInput" component={VoiceInputScreen} options={{title: 'AI 대화하기'}}/>
           <Stack.Screen name="TTSSetting" component={TTSSettingScreen} options={{title: '음성 설정'}}/>
-          <Stack.Screen name="AutoPhoneAnalysis" component={AutoPhoneAnalysisScreen} options={{ title: '자동 문자/통화 분석' }}/>
+          <Stack.Screen name="AutoPhoneAnalysis" component={AutoPhoneAnalysisScreen} options={{ title: '자동 통화/문자 분석' }}/>
 
         </Stack.Navigator>
       </NavigationContainer>
