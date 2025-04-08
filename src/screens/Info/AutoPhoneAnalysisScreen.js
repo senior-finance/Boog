@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { NativeModules, PermissionsAndroid } from 'react-native';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import { checkSpamForNumber } from './PhoneUtils';  // 새로 만든 파일에서 함수 import
 
 const { PhoneAnalysisModule } = NativeModules;
@@ -91,34 +92,49 @@ const AutoPhoneAnalysisScreen = () => {
       });
     });
 
-    setSuspiciousList(found);
+    const autoCheckedFound = await Promise.all(found.map(async (item) => {
+      try {
+        const isSpam = await checkSpamForNumber(item.sender);
+        return { ...item, whowhoResult: isSpam };
+      } catch (err) {
+        console.error(item.sender, '번호 조회 에러:', err);
+        return { ...item, whowhoResult: null };
+      }
+    }));
 
-    if (found.length === 0) {
+    setSuspiciousList(autoCheckedFound);
+
+    if (autoCheckedFound.length === 0) {
       setResultText('✅ 오늘은 의심스러운 문자나 통화 기록이 없습니다.');
     } else {
-      setResultText(`❗ 의심 기록 ${found.length}건 발견됨!`);
+      const smsCount = autoCheckedFound.filter(item => item.type === 'sms').length;
+      const callCount = autoCheckedFound.filter(item => item.type === 'call').length;
+      setResultText(`❗ 의심 기록 ${autoCheckedFound.length}건 발견됨!`);
+
+      setTimeout(() => {
+        Alert.alert(
+          '📊 분석 요약',
+          `총 ${autoCheckedFound.length}건의 의심 기록이 발견되었습니다.\n\n` +
+          `💬 문자: ${smsCount}건\n📞 통화: ${callCount}건`
+        );
+      }, 500);
     }
   };
 
-  // 기존 Linking을 사용한 후후 조회 함수
-  const openWhowho = (number) => {
-    const url = `https://whowho.co.kr/number-search/?tel=${number}`;
-    Linking.openURL(url);
-  };
+  const handleItemPress = (item) => {
+    let detail = item.type === 'sms'
+      ? '🚨이 문자는 피싱 가능성이 있는 키워드를 포함하고 있어 주의가 필요합니다.'
+      : '🚨짧은 통화나 070 번호는 스팸일 가능성이 높습니다. 꼭 확인하세요!';
 
-  // 자동으로 후후 조회해서 스팸 여부를 확인하는 함수
-  const autoCheckSpam = async (number) => {
-    const isSpam = await checkSpamForNumber(number);
-    if (isSpam) {
-      Alert.alert('스팸 확인', `${number}는 스팸(의심) 번호로 판별되었습니다.`);
-    } else {
-      Alert.alert('정상 확인', `${number}는 이상 없는 번호입니다.`);
-    }
+    Alert.alert(
+      `${item.type === 'sms' ? '💬 문자 상세 분석' : '📞 통화 상세 분석'}`,
+      `${item.sender}\n\n내용: ${item.text}\n\n의심 키워드: ${item.keywords.join(', ')}\n\n${detail}`
+    );
   };
 
   return (
     <LinearGradient colors={['#F8F8F8', '#F8F8F8']} style={styles.container}>
-      <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
         <Text style={styles.title}>📱 오늘의 통화/문자 분석</Text>
 
         <TouchableOpacity style={styles.analyzeButton} onPress={analyze}>
@@ -128,19 +144,26 @@ const AutoPhoneAnalysisScreen = () => {
         <Text style={styles.resultText}>{resultText}</Text>
 
         {suspiciousList.map((item, index) => (
-          <View key={index} style={styles.itemBox}>
-            <Text style={styles.itemText}>
-              [{item.type === 'sms' ? '문자' : '통화'}] {item.sender}
-            </Text>
+          <TouchableOpacity key={index} style={styles.itemBox} onPress={() => handleItemPress(item)}>
+            <View style={styles.itemHeader}>
+              { item.type === 'sms' ? (
+                <Ionicons name="chatbubble-outline" size={20} color="#4B7BE5" style={styles.icon} />
+              ) : (
+                <Ionicons name="call-outline" size={20} color="#4B7BE5" style={styles.icon} />
+              )}
+              <Text style={styles.itemSender}>
+                {item.sender} { item.type === 'sms' ? '(문자)' : '(통화)' }
+              </Text>
+            </View>
+
             <Text style={styles.itemText}>{item.text}</Text>
-            <Text style={styles.itemText}>⚠️ 키워드: {item.keywords.join(', ')}</Text>
-
-          
-
-            <TouchableOpacity onPress={() => autoCheckSpam(item.sender)}>
-              <Text style={styles.link}>🤖 자동 스캔 후 결과 확인</Text>
-            </TouchableOpacity>
-          </View>
+            <Text style={styles.itemText}>⚠️ 의심: {item.keywords.join(', ')}</Text>
+            { item.type === 'call' && item.whowhoResult !== null && (
+              <Text style={styles.itemText}>
+                통화 분석 결과: {item.whowhoResult ? '스팸(의심)' : '정상'}
+              </Text>
+            )}
+          </TouchableOpacity>
         ))}
       </ScrollView>
     </LinearGradient>
@@ -149,6 +172,7 @@ const AutoPhoneAnalysisScreen = () => {
 
 const styles = StyleSheet.create({
   container: { flex: 1, paddingHorizontal: 20 },
+  scrollContainer: { paddingBottom: 40 },
   title: { marginTop: 30, fontSize: 20, fontWeight: 'bold', textAlign: 'center', color: '#333', marginBottom: 20 },
   analyzeButton: {
     backgroundColor: '#3B82F6',
@@ -159,7 +183,24 @@ const styles = StyleSheet.create({
   },
   analyzeButtonText: { fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' },
   resultText: { textAlign: 'center', fontSize: 16, color: '#333', marginBottom: 15 },
-  itemBox: { backgroundColor: '#FFF', borderRadius: 12, padding: 15, marginBottom: 15, elevation: 2 },
+  itemBox: { 
+    backgroundColor: '#FFF', 
+    borderRadius: 12, 
+    padding: 15, 
+    marginBottom: 15, 
+    elevation: 2 
+  },
+  itemHeader: { 
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    marginBottom: 5 
+  },
+  icon: { marginRight: 8 },
+  itemSender: { 
+    fontSize: 14, 
+    color: '#333', 
+    fontWeight: 'bold' 
+  },
   itemText: { fontSize: 14, color: '#333', marginBottom: 5 },
   link: { color: '#10B981', fontWeight: 'bold', marginTop: 5 },
 });
