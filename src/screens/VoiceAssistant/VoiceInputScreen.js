@@ -47,28 +47,66 @@ export default function VoiceInputScreen() {
     });
   }, [navigation]);
 
-  const onSendText = async () => {
-    if (textInput.trim() === '') return;
+  const [pendingNavigation, setPendingNavigation] = useState(null);
 
+  const onSendText = async (customText) => {
+    const input = customText ?? textInput;
+    if (input.trim() === '') return;
+  
     Tts.stop();
-
+  
+    const userMessage = { role: 'user', text: input };
+    setChatHistory((prev) => [...prev, userMessage]);
+    setIsLoading(true);
+  
     try {
-      const userMessage = { role: 'user', text: textInput };
-      setChatHistory((prev) => [...prev, userMessage]);
-      setIsLoading(true);
-
-      const reply = await askClovaAI(textInput);
-
-      if (reply.type === 'navigate') {
+      // ✅ navigate-confirm 처리
+      if (pendingNavigation) {
+        const positive = ['응', '네', '좋아', '맞아', '예', '그래'];
+        const negative = ['아니', '아니요', '싫어', '노'];
+        const lowerText = input.toLowerCase();
+  
+        if (positive.some(word => lowerText.includes(word))) {
+          navigation.navigate(pendingNavigation);
+          setPendingNavigation(null);
+          return;
+        } else if (negative.some(word => lowerText.includes(word))) {
+          setChatHistory(prev => [...prev, { role: 'bot', text: '이동을 취소했어요.' }]);
+          Tts.speak('이동을 취소했어요.');
+          setPendingNavigation(null);
+          return;
+        }
+      }
+  
+      // ✅ AI에게 질문 보내기
+      const reply = await askClovaAI(input);
+  
+      if (reply.type === 'navigate-confirm') {
+        setPendingNavigation(reply.target);
+  
+        const screenNameMap = {
+          QuizLevel: '퀴즈',
+          MapSearch: '지도',
+          Welfare: '복지'
+        };
+  
+        const readableName = screenNameMap[reply.target] || reply.target;
+  
+        const visibleText = `👉 '${readableName}' 화면으로 이동할까요?`;
+        const spokenText = `'${readableName}' 화면으로 이동할까요?`;
+  
+        setChatHistory((prev) => [...prev, { role: 'bot', text: visibleText }]);
+        Tts.speak(spokenText);
+  
+      } else if (reply.type === 'navigate') {
         navigation.navigate(reply.target);
+      } else if (reply.type === 'action') {
+        // TODO: 액션 처리
       } else {
-        const botMessage = { role: 'bot', text: reply.text };
-        setChatHistory((prev) => [...prev, botMessage]);
-
-        Tts.stop(); // 이전 TTS 중지
+        setChatHistory((prev) => [...prev, { role: 'bot', text: reply.text }]);
         Tts.speak(reply.text);
       }
-
+  
       setTextInput('');
     } catch (err) {
       console.error('텍스트 질문 처리 오류:', err);
@@ -135,12 +173,20 @@ export default function VoiceInputScreen() {
     }
   };
 
+  const handleTopicClick = async (text) => {
+    setTextInput(text);        // 입력창에 보여주기
+    await onSendText(text);    // 바로 전송 실행
+  };
+
   const today = new Date();
   const formattedDate = `${today.getFullYear()}년 ${today.getMonth() + 1}월 ${today.getDate()}일 ${['일','월','화','수','목','금','토'][today.getDay()]}요일`;
 
   return (
     <KeyboardAvoidingView style={styles.wrapper} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-      <ScrollView contentContainerStyle={styles.container}>
+      <ScrollView
+        contentContainerStyle={styles.container}
+        keyboardShouldPersistTaps="handled"
+      >
         <Text style={styles.dateText}>{formattedDate}</Text>
 
         <View style={styles.botIntroContainer}>
@@ -155,8 +201,10 @@ export default function VoiceInputScreen() {
         </View>
 
         <View style={styles.buttonGroup}>
-          {["카드 유효기간", "재발급 신청", "환불 안내", "입금 방법", "ATM/은행 찾기", "앱 사용방법"].map((item, index) => (
-            <TouchableOpacity key={index} style={[styles.topicButton, { width: '30%' }]}>
+          {["카드 유효기간", "재발급 신청", "환불 안내", "입금 방법", "ATM/은행 찾기", "앱 사용 방법"].map((item, index) => (
+            <TouchableOpacity key={index} 
+              style={[styles.topicButton, { width: '30%' }]}
+              onPress={() => handleTopicClick(item)}>
               <Text style={styles.topicText}>{item}</Text>
             </TouchableOpacity>
           ))}
@@ -175,12 +223,21 @@ export default function VoiceInputScreen() {
       </ScrollView>
 
       <View style={styles.bottomBar}>
-        <TextInput
-          style={styles.input}
-          placeholder="궁금한 점을 입력해주세요"
-          value={textInput}
-          onChangeText={setTextInput}
-        />
+      <TextInput
+        style={styles.input}
+        placeholder="궁금한 점을 입력해주세요"
+        value={textInput}
+        onChangeText={setTextInput}
+        onSubmitEditing={onSendText}
+        blurOnSubmit={false}
+        returnKeyType="send"
+        multiline={false}
+        onKeyPress={({ nativeEvent }) => {
+          if (nativeEvent.key === 'Enter') {
+            onSendText();
+          }
+        }}
+      />
         <TouchableOpacity
           style={styles.sendButton}
           onPress={onSendText}
@@ -197,7 +254,6 @@ export default function VoiceInputScreen() {
     </KeyboardAvoidingView>
   );
 }
-
 
 const styles = StyleSheet.create({
   wrapper: {

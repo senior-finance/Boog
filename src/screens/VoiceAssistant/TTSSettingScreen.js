@@ -14,9 +14,9 @@ export default function TTSSettingScreen() {
 
   const voiceNameMap = {
     'ko-kr-x-ism-local': '여성1 (조용함)',
-    'ko-kr-x-kod-local': '여성3 (표준)',
-    'ko-kr-x-kob-local': '여성2 (활발함)',
-    'ko-kr-x-koc-local': '남성1 (표준)',
+    'ko-kr-x-kod-local': '남성1 (표준)',
+    'ko-kr-x-kob-local': '여성2 (차분함)',
+    'ko-kr-x-koc-local': '남성2 (차분함)',
     'ko-KR-language': '기본 한국어 음성',
   };
 

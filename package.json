@@ -67,6 +67,7 @@
     "react-native-text-recognition": "^1.0.2",
     "react-native-tts": "^4.1.1",
     "react-native-vector-icons": "^10.2.0",
-    "react-native-webview": "^13.13.5"
+    "react-native-webview": "^13.13.5",
+    "string-similarity": "^4.0.4"
   }
 }

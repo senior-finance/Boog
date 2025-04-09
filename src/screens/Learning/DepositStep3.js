@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
     paddingTop: 80 // 제목을 위로 올리기 위해 추가
   },
   title: { 
-    fontSize: 30, 
+    fontSize: 28, 
     fontWeight: 'bold',
     color: 'black',
     textAlign: 'center',
