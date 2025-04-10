@@ -22,7 +22,7 @@ export default async function askClovaAI(userText) {
           
           1. 다음 키워드가 포함된 질문에만 JSON 형식으로 응답하세요:
             - [퀴즈, 테스트] → { "type": "navigate", "target": "QuizLevel" }  
-            - [지도, ATM, 은행, 지점, 위치] → { "type": "navigate", "target": "MapSearch" }  
+            - [지도, ATM, 은행, 지점, 위치] → { "type": "navigate", "target": "MapView" }  
             - [복지, 지원 제도, 금융 복지] → { "type": "navigate", "target": "Welfare" }
 
           2. 다음 키워드에 대해서는 다음 형식으로 응답하세요:

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useLayoutEffect } from 'react';
+import React, { useState, useEffect, useLayoutEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -28,6 +28,15 @@ export default function VoiceInputScreen() {
   const [isLoading, setIsLoading] = useState(false);
   const [textInput, setTextInput] = useState('');
   const [chatHistory, setChatHistory] = useState([]);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [confirmTarget, setConfirmTarget] = useState(null);
+  const scrollViewRef = useRef(null);
+
+  const screenNameMap = {
+    QuizLevel: '퀴즈',
+    MapView: '지도',
+    Welfare: '복지'
+  };
 
   const filePath = `${RNFS.CachesDirectoryPath}/sound.wav`;
 
@@ -36,6 +45,16 @@ export default function VoiceInputScreen() {
       Tts.stop();
     };
   }, []);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (scrollViewRef.current) {
+        scrollViewRef.current.scrollToEnd({ animated: true });
+      }
+    }, 100); // 100~150ms 정도가 적당함
+  
+    return () => clearTimeout(timer);
+  }, [chatHistory]);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -46,8 +65,6 @@ export default function VoiceInputScreen() {
       )
     });
   }, [navigation]);
-
-  const [pendingNavigation, setPendingNavigation] = useState(null);
 
   const onSendText = async (customText) => {
     const input = customText ?? textInput;
@@ -60,39 +77,16 @@ export default function VoiceInputScreen() {
     setIsLoading(true);
   
     try {
-      // ✅ navigate-confirm 처리
-      if (pendingNavigation) {
-        const positive = ['응', '네', '좋아', '맞아', '예', '그래'];
-        const negative = ['아니', '아니요', '싫어', '노'];
-        const lowerText = input.toLowerCase();
-  
-        if (positive.some(word => lowerText.includes(word))) {
-          navigation.navigate(pendingNavigation);
-          setPendingNavigation(null);
-          return;
-        } else if (negative.some(word => lowerText.includes(word))) {
-          setChatHistory(prev => [...prev, { role: 'bot', text: '이동을 취소했어요.' }]);
-          Tts.speak('이동을 취소했어요.');
-          setPendingNavigation(null);
-          return;
-        }
-      }
-  
-      // ✅ AI에게 질문 보내기
+      // askGPT로 수정 예정
       const reply = await askClovaAI(input);
   
       if (reply.type === 'navigate-confirm') {
-        setPendingNavigation(reply.target);
-  
-        const screenNameMap = {
-          QuizLevel: '퀴즈',
-          MapSearch: '지도',
-          Welfare: '복지'
-        };
+        setConfirmTarget(reply.target);
+        setShowConfirmModal(true);
   
         const readableName = screenNameMap[reply.target] || reply.target;
   
-        const visibleText = `👉 '${readableName}' 화면으로 이동할까요?`;
+        const visibleText = `'${readableName}' 화면으로 이동할까요?`;
         const spokenText = `'${readableName}' 화면으로 이동할까요?`;
   
         setChatHistory((prev) => [...prev, { role: 'bot', text: visibleText }]);
@@ -184,6 +178,7 @@ export default function VoiceInputScreen() {
   return (
     <KeyboardAvoidingView style={styles.wrapper} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
       <ScrollView
+        ref={scrollViewRef}
         contentContainerStyle={styles.container}
         keyboardShouldPersistTaps="handled"
       >
@@ -201,7 +196,7 @@ export default function VoiceInputScreen() {
         </View>
 
         <View style={styles.buttonGroup}>
-          {["카드 유효기간", "재발급 신청", "환불 안내", "입금 방법", "ATM/은행 찾기", "앱 사용 방법"].map((item, index) => (
+          {["문자/통화 분석", "입금 방법", "금융 퀴즈", "복지 혜택", "ATM/은행 찾기", "앱 사용 방법"].map((item, index) => (
             <TouchableOpacity key={index} 
               style={[styles.topicButton, { width: '30%' }]}
               onPress={() => handleTopicClick(item)}>
@@ -221,6 +216,39 @@ export default function VoiceInputScreen() {
           </View>
         ))}
       </ScrollView>
+
+      {showConfirmModal && (
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalBox}>
+          <Text style={styles.modalText}>
+            '{screenNameMap[confirmTarget] || confirmTarget}' 화면으로 이동할까요?
+          </Text>
+            <View style={styles.modalButtons}>
+              <TouchableOpacity
+                style={styles.modalBtn}
+                onPress={() => {
+                  navigation.navigate(confirmTarget);
+                  setShowConfirmModal(false);
+                  setConfirmTarget(null);
+                }}
+              >
+                <Text style={styles.modalBtnText}>예</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.modalBtn, { backgroundColor: '#ccc' }]}
+                onPress={() => {
+                  setShowConfirmModal(false);
+                  setConfirmTarget(null);
+                  setChatHistory(prev => [...prev, { role: 'bot', text: '이동을 취소했어요.' }]);
+                  Tts.speak('이동을 취소했어요.');
+                }}
+              >
+                <Text style={styles.modalBtnText}>아니오</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      )}
 
       <View style={styles.bottomBar}>
       <TextInput
@@ -315,6 +343,51 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: '#333',
   },
+  modalOverlay: {
+    position: 'absolute',
+    top: 0, left: 0, right: 0, bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 999,
+  },
+  modalBox: {
+    backgroundColor: '#fff',
+    padding: 20,
+    borderRadius: 16,
+    alignItems: 'center',
+    width: '80%',
+  },
+  modalText: {
+    fontSize: 20,
+    color: '#333',
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  modalButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+    gap: 15,
+  },
+  modalBtn: {
+    flex: 1,
+    padding: 12,
+    borderRadius: 20,
+    backgroundColor: '#4B7BE5',
+    marginHorizontal: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  modalBtnText: {
+    color: 'white',
+    textAlign: 'center',
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
   micButton: {
     flexDirection: 'row',
     alignSelf: 'center',
@@ -344,7 +417,7 @@ const styles = StyleSheet.create({
     maxWidth: '80%',
   },
   chatBubbleBot: {
-    backgroundColor: '#D2D2D2',
+    backgroundColor: '#DBDBDB',
     alignSelf: 'flex-start',
     padding: 12,
     borderRadius: 16,
