@@ -24,7 +24,6 @@ import LearningScreen from './src/screens/Learning/LearningScreen';
 
 // 지도
 import MapViewScreen from './src/screens/Map/MapViewScreen';
-import MapSearchScreen from './src/screens/Map/MapSearchScreen';
 
 // 계정
 // import LoginScreen from './src/screens/Account/LoginScreen';
@@ -81,7 +80,6 @@ export default function App() {
           <Stack.Screen name="DepositStep4" component={DepositStep4} options={{ title: '입금 연습 - 확인하기' }}/>
 
           <Stack.Screen name="MapView" component={MapViewScreen} />
-          <Stack.Screen name="MapSearch" component={MapSearchScreen} />
 
           <Stack.Screen name="FontSize" component={FontSizeSettingScreen} />
           <Stack.Screen name="SoundVolume" component={SoundVolumeScreen} />

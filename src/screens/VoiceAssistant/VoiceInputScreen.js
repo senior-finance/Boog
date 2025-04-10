@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useLayoutEffect } from 'react';
+import React, { useState, useEffect, useLayoutEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -28,6 +28,15 @@ export default function VoiceInputScreen() {
   const [isLoading, setIsLoading] = useState(false);
   const [textInput, setTextInput] = useState('');
   const [chatHistory, setChatHistory] = useState([]);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [confirmTarget, setConfirmTarget] = useState(null);
+  const scrollViewRef = useRef(null);
+
+  const screenNameMap = {
+    QuizLevel: '퀴즈',
+    MapView: '지도',
+    Welfare: '복지'
+  };
 
   const filePath = `${RNFS.CachesDirectoryPath}/sound.wav`;
 
@@ -36,6 +45,16 @@ export default function VoiceInputScreen() {
       Tts.stop();
     };
   }, []);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (scrollViewRef.current) {
+        scrollViewRef.current.scrollToEnd({ animated: true });
+      }
+    }, 100); // 100~150ms 정도가 적당함
+  
+    return () => clearTimeout(timer);
+  }, [chatHistory]);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -47,28 +66,41 @@ export default function VoiceInputScreen() {
     });
   }, [navigation]);
 
-  const onSendText = async () => {
-    if (textInput.trim() === '') return;
-
+  const onSendText = async (customText) => {
+    const input = customText ?? textInput;
+    if (input.trim() === '') return;
+  
     Tts.stop();
-
+  
+    const userMessage = { role: 'user', text: input };
+    setChatHistory((prev) => [...prev, userMessage]);
+    setIsLoading(true);
+  
     try {
-      const userMessage = { role: 'user', text: textInput };
-      setChatHistory((prev) => [...prev, userMessage]);
-      setIsLoading(true);
-
-      const reply = await askClovaAI(textInput);
-
-      if (reply.type === 'navigate') {
+      // askGPT로 수정 예정
+      const reply = await askClovaAI(input);
+  
+      if (reply.type === 'navigate-confirm') {
+        setConfirmTarget(reply.target);
+        setShowConfirmModal(true);
+  
+        const readableName = screenNameMap[reply.target] || reply.target;
+  
+        const visibleText = `'${readableName}' 화면으로 이동할까요?`;
+        const spokenText = `'${readableName}' 화면으로 이동할까요?`;
+  
+        setChatHistory((prev) => [...prev, { role: 'bot', text: visibleText }]);
+        Tts.speak(spokenText);
+  
+      } else if (reply.type === 'navigate') {
         navigation.navigate(reply.target);
+      } else if (reply.type === 'action') {
+        // TODO: 액션 처리
       } else {
-        const botMessage = { role: 'bot', text: reply.text };
-        setChatHistory((prev) => [...prev, botMessage]);
-
-        Tts.stop(); // 이전 TTS 중지
+        setChatHistory((prev) => [...prev, { role: 'bot', text: reply.text }]);
         Tts.speak(reply.text);
       }
-
+  
       setTextInput('');
     } catch (err) {
       console.error('텍스트 질문 처리 오류:', err);
@@ -135,12 +167,21 @@ export default function VoiceInputScreen() {
     }
   };
 
+  const handleTopicClick = async (text) => {
+    setTextInput(text);        // 입력창에 보여주기
+    await onSendText(text);    // 바로 전송 실행
+  };
+
   const today = new Date();
   const formattedDate = `${today.getFullYear()}년 ${today.getMonth() + 1}월 ${today.getDate()}일 ${['일','월','화','수','목','금','토'][today.getDay()]}요일`;
 
   return (
     <KeyboardAvoidingView style={styles.wrapper} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-      <ScrollView contentContainerStyle={styles.container}>
+      <ScrollView
+        ref={scrollViewRef}
+        contentContainerStyle={styles.container}
+        keyboardShouldPersistTaps="handled"
+      >
         <Text style={styles.dateText}>{formattedDate}</Text>
 
         <View style={styles.botIntroContainer}>
@@ -155,8 +196,10 @@ export default function VoiceInputScreen() {
         </View>
 
         <View style={styles.buttonGroup}>
-          {["카드 유효기간", "재발급 신청", "환불 안내", "입금 방법", "ATM/은행 찾기", "앱 사용방법"].map((item, index) => (
-            <TouchableOpacity key={index} style={[styles.topicButton, { width: '30%' }]}>
+          {["문자/통화 분석", "입금 방법", "금융 퀴즈", "복지 혜택", "ATM/은행 찾기", "앱 사용 방법"].map((item, index) => (
+            <TouchableOpacity key={index} 
+              style={[styles.topicButton, { width: '30%' }]}
+              onPress={() => handleTopicClick(item)}>
               <Text style={styles.topicText}>{item}</Text>
             </TouchableOpacity>
           ))}
@@ -174,13 +217,55 @@ export default function VoiceInputScreen() {
         ))}
       </ScrollView>
 
+      {showConfirmModal && (
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalBox}>
+          <Text style={styles.modalText}>
+            '{screenNameMap[confirmTarget] || confirmTarget}' 화면으로 이동할까요?
+          </Text>
+            <View style={styles.modalButtons}>
+              <TouchableOpacity
+                style={styles.modalBtn}
+                onPress={() => {
+                  navigation.navigate(confirmTarget);
+                  setShowConfirmModal(false);
+                  setConfirmTarget(null);
+                }}
+              >
+                <Text style={styles.modalBtnText}>예</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.modalBtn, { backgroundColor: '#ccc' }]}
+                onPress={() => {
+                  setShowConfirmModal(false);
+                  setConfirmTarget(null);
+                  setChatHistory(prev => [...prev, { role: 'bot', text: '이동을 취소했어요.' }]);
+                  Tts.speak('이동을 취소했어요.');
+                }}
+              >
+                <Text style={styles.modalBtnText}>아니오</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      )}
+
       <View style={styles.bottomBar}>
-        <TextInput
-          style={styles.input}
-          placeholder="궁금한 점을 입력해주세요"
-          value={textInput}
-          onChangeText={setTextInput}
-        />
+      <TextInput
+        style={styles.input}
+        placeholder="궁금한 점을 입력해주세요"
+        value={textInput}
+        onChangeText={setTextInput}
+        onSubmitEditing={onSendText}
+        blurOnSubmit={false}
+        returnKeyType="send"
+        multiline={false}
+        onKeyPress={({ nativeEvent }) => {
+          if (nativeEvent.key === 'Enter') {
+            onSendText();
+          }
+        }}
+      />
         <TouchableOpacity
           style={styles.sendButton}
           onPress={onSendText}
@@ -197,7 +282,6 @@ export default function VoiceInputScreen() {
     </KeyboardAvoidingView>
   );
 }
-
 
 const styles = StyleSheet.create({
   wrapper: {
@@ -259,6 +343,51 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: '#333',
   },
+  modalOverlay: {
+    position: 'absolute',
+    top: 0, left: 0, right: 0, bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 999,
+  },
+  modalBox: {
+    backgroundColor: '#fff',
+    padding: 20,
+    borderRadius: 16,
+    alignItems: 'center',
+    width: '80%',
+  },
+  modalText: {
+    fontSize: 20,
+    color: '#333',
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  modalButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+    gap: 15,
+  },
+  modalBtn: {
+    flex: 1,
+    padding: 12,
+    borderRadius: 20,
+    backgroundColor: '#4B7BE5',
+    marginHorizontal: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  modalBtnText: {
+    color: 'white',
+    textAlign: 'center',
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
   micButton: {
     flexDirection: 'row',
     alignSelf: 'center',
@@ -288,7 +417,7 @@ const styles = StyleSheet.create({
     maxWidth: '80%',
   },
   chatBubbleBot: {
-    backgroundColor: '#D2D2D2',
+    backgroundColor: '#DBDBDB',
     alignSelf: 'flex-start',
     padding: 12,
     borderRadius: 16,

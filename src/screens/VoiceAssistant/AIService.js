@@ -18,32 +18,27 @@ export default async function askClovaAI(userText) {
           {
             role: 'system',
             content: `
-          당신은 사용자의 질문에 응답하는 스마트 음성 비서입니다. 아래의 규칙을 **반드시 따르세요**.
+          당신은 사용자의 질문에 응답하는 스마트 음성 비서입니다. 아래의 규칙을 반드시 따르세요.
           
           1. 다음 키워드가 포함된 질문에만 JSON 형식으로 응답하세요:
-          
-          - [퀴즈, 테스트] → { "type": "navigate", "target": "QuizLevel" }  
-          - [지도, ATM, 은행, 지점, 위치] → { "type": "navigate", "target": "MapSearch" }  
-          - [복지, 지원 제도, 금융 복지] → { "type": "navigate", "target": "Welfare" }
-          
+            - [퀴즈, 테스트] → { "type": "navigate", "target": "QuizLevel" }  
+            - [지도, ATM, 은행, 지점, 위치] → { "type": "navigate", "target": "MapView" }  
+            - [복지, 지원 제도, 금융 복지] → { "type": "navigate", "target": "Welfare" }
+
           2. 다음 키워드에 대해서는 다음 형식으로 응답하세요:
-          
-          - [소리 키워, 볼륨 높여, 음량 줄여] → { "type": "action", "target": "increaseVolume" 또는 "decreaseVolume" }  
-          - [글자 크게, 글씨 확대, 글자 작게] → { "type": "action", "target": "increaseFontSize" 또는 "decreaseFontSize" }
-          
+            - [소리 키워, 볼륨 높여, 음량 줄여] → { "type": "action", "target": "increaseVolume" 또는 "decreaseVolume" }  
+            - [글자 크게, 글씨 확대, 글자 작게] → { "type": "action", "target": "increaseFontSize" 또는 "decreaseFontSize" }
+
           3. 위 키워드가 포함되지 않은 질문에는 절대로 JSON 형식으로 응답하지 마세요.  
-          → **순수 자연어 텍스트**로만 대답하세요.
-          
-          ⚠️ 반드시 JSON **형식만** 반환해야 하며, 다음은 모두 금지입니다:
-          
-          - 설명 텍스트와 JSON이 같이 나오는 경우  
-          - 줄바꿈 포함된 JSON  
-          - "응답: { ... }", "결과: ..." 같은 문장 형태  
-          - JSON 앞뒤에 자연어 텍스트가 포함된 경우
-          
-          응답은 아래처럼 **딱 떨어지는 JSON 한 줄만 반환**해야 합니다:
-          
-          ✅ 예:
+            → 순수 자연어 텍스트로만 대답하세요.
+
+          ⚠️ 반드시 JSON 형식만 반환해야 하며, 다음은 모두 금지입니다:
+            - 설명 텍스트와 JSON이 같이 나오는 경우  
+            - 줄바꿈 포함된 JSON  
+            - "응답: { ... }", "결과: ..." 같은 문장 형태  
+            - JSON 앞뒤에 자연어 텍스트가 포함된 경우
+
+          응답 예시:
           { "type": "navigate", "target": "QuizLevel" }
           `.trim()
           },
@@ -69,17 +64,28 @@ export default async function askClovaAI(userText) {
       return { type: 'text', text: '(AI 응답 없음)' };
     }
 
-    // content가 JSON 문자열이면 navigate로 처리
     try {
       const parsed = JSON.parse(content);
+
+      // navigate 요청일 경우 → 화면 이동 전에 대기 상태로 전달
       if (parsed.type === 'navigate' && parsed.target) {
-        return { type: 'navigate', target: parsed.target };
+        return {
+          type: 'navigate-confirm',
+          target: parsed.target,
+        };
+      }
+
+      // action 처리
+      if (parsed.type === 'action' && parsed.target) {
+        return {
+          type: 'action',
+          target: parsed.target,
+        };
       }
     } catch (err) {
-      // JSON 아님 → 텍스트로 처리
+      // JSON 파싱 실패 → 일반 텍스트 응답 처리
     }
 
-    // 일반 텍스트 응답
     return { type: 'text', text: content };
   } catch (err) {
     console.error('CLOVA API 호출 오류:', err);

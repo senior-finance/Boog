@@ -42,6 +42,27 @@ const Account = () => {
     const [error, setError] = useState(null);
     const [accountBalances, setAccountBalances] = useState([]);
 
+    const [secrets, setSecrets] = useState(null);
+    const [vaultError, setVaultError] = useState(null); // Vault 데이터 fetch 과정에서 발생한 에러
+    
+    useEffect(() => {
+        fetch('http://10.0.2.2:3000/vault-secret') // Android 에뮬레이터의 로컬 서버 접근 IP
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('서버 응답에 문제가 있습니다.');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('파싱된 데이터:', JSON.stringify(data, null, 2));
+                setSecrets(data); // 성공적으로 받은 Vault 비밀 정보 저장
+            })
+            .catch(err => {
+                console.error('Vault secrets를 불러오는 중 에러 발생:', err);
+                setVaultError(err); // 에러 상태 저장
+            });
+    }, []);
+
     // 로컬에 토큰 저장 및 로드 함수
     // const storeTokenData = async (data) => {
     //     try {
@@ -234,6 +255,7 @@ const Account = () => {
                     accountList.map(async (account) => {
                         // bankTranId는 한 줄로 생성 (총 20자리)
                         const bankTranId = `${KFTC_TRAN_ID}U${Math.floor(Math.random() * 1e9)
+                            //vault 사용 시 secrets.KFTC_TRAN_ID
                             .toString()
                             .padStart(9, '0')}`;
                         const tranDTime = new Date()
