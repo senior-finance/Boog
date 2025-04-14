@@ -18,9 +18,9 @@ const LearningScreen = ({ navigation }) => {
         <Text style={styles.cardText}>입금 연습하기</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.card}>
+      <TouchableOpacity style={styles.card} onPress={() => navigation.navigate('VoicePhishingScreen')}>
         <Icon name="alert-circle-outline" size={36} color="#3B82F6" />
-        <Text style={styles.cardText}>사기 사례 대비하기{'\n'}(보이스피싱, 금융 피해 등)</Text>
+        <Text style={styles.cardText}>보이스피싱 사례{'\n'} </Text>
       </TouchableOpacity>
 
       {/* 도움 버튼 */}

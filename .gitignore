@@ -68,3 +68,4 @@ yarn-error.log
 env.d.ts
 google-services.json
 google-services
+android/app/src/main/res/values/strings.xml

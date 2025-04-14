@@ -83,7 +83,8 @@ export default function App() {
 
           <Stack.Screen name="FontSize" component={FontSizeSettingScreen} />
           <Stack.Screen name="SoundVolume" component={SoundVolumeScreen} />
-          <Stack.Screen name="VoicePhishing" component={VoicePhishingScreen} />
+          <Stack.Screen name="VoicePhishingScreen" component={VoicePhishingScreen} options={{ presentation: 'modal' }} />
+
           <Stack.Screen name="VoicePhishingDetail" component={VoicePhishingDetailScreen} />
         
 
