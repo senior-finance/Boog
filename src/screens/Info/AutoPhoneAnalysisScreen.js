@@ -83,7 +83,7 @@ const AutoPhoneAnalysisScreen = () => {
                 type: 'call',
                 sender: log.number,
                 text: `통화 (${log.duration}초)`,
-                keywords: ['070 또는 짤은 통화'],
+                keywords: ['070 또는 짧은 통화'],
               });
             }
           }
@@ -105,17 +105,17 @@ const AutoPhoneAnalysisScreen = () => {
     setSuspiciousList(autoCheckedFound);
 
     if (autoCheckedFound.length === 0) {
-      setResultText('✅ 오늘은 의심스럽는 문자나 통화 기록이 없습니다.');
+      setResultText('✅ 오늘은 의심스러운 문자나 통화 기록이 없습니다.');
     } else {
       const smsCount = autoCheckedFound.filter(item => item.type === 'sms').length;
       const callCount = autoCheckedFound.filter(item => item.type === 'call').length;
-      setResultText(`❗ 의심 기록 ${autoCheckedFound.length}개 발견됨!`);
+      setResultText(`❗ 의심 기록 ${autoCheckedFound.length}건 발견됨!`);
 
       setTimeout(() => {
         Alert.alert(
-          '📊 분석 요조',
-          `총 ${autoCheckedFound.length}개의 의심 기록이 발견되었습니다.\n\n` +
-          `💬 문자: ${smsCount}개\n📞 통화: ${callCount}개`
+          '📊 분석 요소소',
+          `총 ${autoCheckedFound.length}개개의 의심 기록이 발견되었습니다.\n\n` +
+          `💬 문자: ${smsCount}개\n📞 통화: ${callCount}건건`
         );
       }, 500);
     }
@@ -124,7 +124,7 @@ const AutoPhoneAnalysisScreen = () => {
   const handleItemPress = (item) => {
     let detail = item.type === 'sms'
       ? '🚨이 문자는 피싱 가능성이 있는 키워드를 포함하고 있어 주의가 필요합니다.'
-      : '🚨짤은 통화나 070 번호는 스팸일 가능성이 높습니다. 꼭 확인하세요!';
+      : '🚨짧은 통화나 070 번호는 스팸일 가능성이 높습니다. 꼭 확인하세요!';
 
     Alert.alert(
       `${item.type === 'sms' ? '💬 문자 상세 분석' : '📞 통화 상세 분석'}`,
