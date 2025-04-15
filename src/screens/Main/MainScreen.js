@@ -1,7 +1,6 @@
 import React, { useLayoutEffect, useState } from 'react';
 import {
   View,
-  Text,
   StyleSheet,
   TouchableOpacity,
   ScrollView,
@@ -10,14 +9,15 @@ import {
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-
+import CustomText from '../../components/CustomText';
+import CustomTextInput from '../../components/CustomTextInput';
 const FunctionButton = ({ title, onPress, icon, size = 'large' }) => (
   <TouchableOpacity
     style={[styles.functionButton, size === 'pinned' && styles.pinnedButton]}
     onPress={onPress}
   >
     <Ionicons name={icon} size={32} color="#4B7BE5" />
-    <Text style={styles.functionText}>{title}</Text>
+    <CustomText style={styles.functionText}>{title}</CustomText>
   </TouchableOpacity>
 );
 
@@ -64,31 +64,28 @@ const MainScreen = ({ navigation }) => {
     setSelectedTransaction(transaction);
     setMemoText(transaction.memo || '');
     setIsModalVisible(true);
-    setIsEditing(false); // 모달 열 때는 편집모드 꺼진 상태
+    setIsEditing(false);
   };
 
   return (
     <LinearGradient colors={['#F8F8F8', '#ECECEC']} style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-        {/* 잔액 카드 */}
         <LinearGradient colors={['#4B7BE5', '#6FA8DC']} style={styles.balanceCard}>
-          <Text style={styles.balanceLabel}>잔액</Text>
-          <Text style={styles.accountNumber}>111-222-4445543</Text>
-          <Text style={styles.balanceAmount}>123,456,789원</Text>
+          <CustomText style={styles.balanceLabel}>잔액</CustomText>
+          <CustomText style={styles.accountNumber}>111-222-4445543</CustomText>
+          <CustomText style={styles.balanceAmount}>123,456,789원</CustomText>
         </LinearGradient>
 
-        {/* 입금/출금 버튼 */}
         <View style={styles.actionRow}>
           <FunctionButton title="입금" icon="wallet" onPress={() => { }} size="pinned" />
           <FunctionButton title="출금" icon="send" onPress={() => { }} size="pinned" />
         </View>
 
-        {/* 송금 내역 */}
         <TouchableOpacity
           onPress={() => setRecentTransfersVisible(!recentTransfersVisible)}
           style={styles.expandToggle}
         >
-          <Text style={styles.sectionTitle}>최근 송금 내역</Text>
+          <CustomText style={styles.sectionTitle}>최근 송금 내역</CustomText>
           <Ionicons
             name={recentTransfersVisible ? 'chevron-up-outline' : 'chevron-down-outline'}
             size={20}
@@ -106,21 +103,20 @@ const MainScreen = ({ navigation }) => {
               >
                 <Ionicons name="person-circle-outline" size={32} color="#4B7BE5" />
                 <View style={styles.historyText}>
-                  <Text style={styles.name}>{item.name}</Text>
-                  <Text style={styles.date}>{item.date}</Text>
+                  <CustomText style={styles.name}>{item.name}</CustomText>
+                  <CustomText style={styles.date}>{item.date}</CustomText>
                 </View>
-                <Text style={[styles.amount, { color: '#DC3545' }]}>{item.amount}</Text>
+                <CustomText style={[styles.amount, { color: '#DC3545' }]}>{item.amount}</CustomText>
               </TouchableOpacity>
             ))}
           </View>
         )}
 
-        {/* 입금 내역 */}
         <TouchableOpacity
           onPress={() => setRecentDepositsVisible(!recentDepositsVisible)}
           style={styles.expandToggle}
         >
-          <Text style={styles.sectionTitle}>최근 입금 내역</Text>
+          <CustomText style={styles.sectionTitle}>최근 입금 내역</CustomText>
           <Ionicons
             name={recentDepositsVisible ? 'chevron-up-outline' : 'chevron-down-outline'}
             size={20}
@@ -138,41 +134,41 @@ const MainScreen = ({ navigation }) => {
               >
                 <Ionicons name="person-circle-outline" size={32} color="#4B7BE5" />
                 <View style={styles.historyText}>
-                  <Text style={styles.name}>{item.name}</Text>
-                  <Text style={styles.date}>{item.date}</Text>
+                  <CustomText style={styles.name}>{item.name}</CustomText>
+                  <CustomText style={styles.date}>{item.date}</CustomText>
                 </View>
-                <Text style={styles.depositAmount}>{item.amount}</Text>
+                <CustomText style={styles.depositAmount}>{item.amount}</CustomText>
               </TouchableOpacity>
             ))}
           </View>
         )}
       </ScrollView>
 
-      {/* 상세 모달 */}
       <Modal visible={isModalVisible} transparent animationType="fade">
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>{selectedTransaction?.type} 상세 내역</Text>
-            <Text>이름: {selectedTransaction?.name}</Text>
-            <Text>날짜: {selectedTransaction?.date}</Text>
-            <Text>금액: {selectedTransaction?.amount}</Text>
+            <CustomText style={styles.modalTitle}>
+              {selectedTransaction?.type} 상세 내역
+            </CustomText>
+            <CustomText>이름: {selectedTransaction?.name}</CustomText>
+            <CustomText>날짜: {selectedTransaction?.date}</CustomText>
+            <CustomText>금액: {selectedTransaction?.amount}</CustomText>
 
-            {/* 메모 영역 */}
             <View style={styles.memoRow}>
-              <Text style={{ fontWeight: 'bold' }}>메모:</Text>
+              <CustomText style={{ fontWeight: 'bold' }}>메모:</CustomText>
 
               {!isEditing ? (
                 <View style={styles.memoDisplayRow}>
-                  <Text style={styles.memoText}>
+                  <CustomText style={styles.memoText}>
                     {selectedTransaction?.memo ? ` ${selectedTransaction.memo}` : ' '}
-                  </Text>
+                  </CustomText>
                   <TouchableOpacity onPress={() => setIsEditing(true)}>
                     <Ionicons name="create-outline" size={20} color="#4B7BE5" style={{ marginLeft: 8 }} />
                   </TouchableOpacity>
                 </View>
               ) : (
                 <>
-                  <TextInput
+                  <CustomTextInput
                     value={memoText}
                     onChangeText={setMemoText}
                     placeholder="메모를 입력하세요"
@@ -187,7 +183,7 @@ const MainScreen = ({ navigation }) => {
                     }}
                     style={styles.saveButton}
                   >
-                    <Text style={styles.saveButtonText}>저장</Text>
+                    <CustomText style={styles.saveButtonText}>저장</CustomText>
                   </TouchableOpacity>
                 </>
               )}
@@ -197,7 +193,7 @@ const MainScreen = ({ navigation }) => {
               onPress={() => setIsModalVisible(false)}
               style={styles.modalCloseButton}
             >
-              <Text style={styles.modalCloseText}>닫기</Text>
+              <CustomText style={styles.modalCloseText}>닫기</CustomText>
             </TouchableOpacity>
           </View>
         </View>
@@ -220,15 +216,20 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     elevation: 8,
   },
-  balanceLabel: { color: 'white', fontSize: 18, marginBottom: 6 },
-  balanceAmount: { color: 'white', fontSize: 28, fontWeight: 'bold' },
+  balanceLabel: { color: 'white', marginBottom: 6 },
+  balanceAmount: { color: 'white', fontWeight: 'bold' },
+  accountNumber: {
+    color: 'white',
+    marginBottom: 6,
+    textDecorationLine: 'underline',
+  },
   actionRow: {
     flexDirection: 'row',
     justifyContent: 'center',
     width: '90%',
     marginBottom: 24,
   },
-  sectionTitle: { fontSize: 18, fontWeight: 'bold', color: '#333' },
+  sectionTitle: { fontWeight: 'bold', color: '#333' },
   expandToggle: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -257,11 +258,10 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   historyText: { flex: 1, marginLeft: 12 },
-  name: { fontSize: 16, fontWeight: '600', color: '#333' },
-  date: { fontSize: 13, color: '#999' },
-  amount: { fontSize: 16, fontWeight: 'bold' },
+  name: { fontWeight: '600', color: '#333' },
+  date: { color: '#999' },
+  amount: { fontWeight: 'bold' },
   depositAmount: {
-    fontSize: 16,
     fontWeight: 'bold',
     color: '#4B7BE5',
   },
@@ -279,7 +279,7 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   pinnedButton: { width: '36%', marginHorizontal: 8 },
-  functionText: { fontSize: 16, color: '#333', marginTop: 8, fontWeight: '600' },
+  functionText: { color: '#333', marginTop: 8, fontWeight: '600' },
 
   modalOverlay: {
     flex: 1,
@@ -294,7 +294,6 @@ const styles = StyleSheet.create({
     width: '85%',
   },
   modalTitle: {
-    fontSize: 20,
     fontWeight: 'bold',
     color: '#4B7BE5',
     marginBottom: 12,
@@ -308,7 +307,6 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   memoText: {
-    fontSize: 15,
     color: '#333',
   },
   memoInput: {
@@ -331,7 +329,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: 'bold',
   },
-
   modalCloseButton: {
     marginTop: 12,
     paddingVertical: 10,
@@ -343,14 +340,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: 'bold',
   },
-
-  accountNumber: {
-    color: 'white',
-    fontSize: 16,
-    marginBottom: 6,
-    textDecorationLine: 'underline',
-  },
-  
 });
 
 export default MainScreen;

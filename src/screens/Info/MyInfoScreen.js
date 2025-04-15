@@ -5,6 +5,7 @@ import { launchImageLibrary } from 'react-native-image-picker';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { Modal } from 'react-native';
 import { ProfileContext } from './ProfileContext';
+import CustomText from '../../components/CustomText';
 
 // 로컬 기본 이미지 사용 (이미지 경로에 맞게 조정)
 // const defaultProfile = Image.resolveAssetSource(require('../../assets/minecraft-skin-head-girl.png')).uri;
@@ -41,8 +42,8 @@ const MyInfoScreen = ({ navigation }) => {
             />
             <Ionicons name="camera-outline" size={24} color="#fff" style={styles.cameraIcon} />
           </TouchableOpacity>
-          <Text style={styles.name}>부금이</Text>
-          <Text style={styles.account}>111-222-4445543</Text>
+          <CustomText style={styles.name}>부금이</CustomText>
+          <CustomText style={styles.account}>111-222-4445543</CustomText>
         </View>
 
 
@@ -50,27 +51,27 @@ const MyInfoScreen = ({ navigation }) => {
 
         <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('FontSize')}>
           <Ionicons name="text-outline" size={22} color="#4B7BE5" style={styles.icon} />
-          <Text style={styles.menuText}>글자 크기</Text>
+          <CustomText style={styles.menuText}>글자 크기</CustomText>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('SoundVolume')}>
           <Ionicons name="volume-high-outline" size={22} color="#4B7BE5" style={styles.icon} />
-          <Text style={styles.menuText}>음향 크기</Text>
+          <CustomText style={styles.menuText}>음향 크기</CustomText>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('FAQ')}>
        <Ionicons name="help-circle-outline" size={22} color="#4B7BE5" style={styles.icon} />
-       <Text style={styles.menuText}>자주 묻는 질문</Text>
+       <CustomText style={styles.menuText}>자주 묻는 질문</CustomText>
         </TouchableOpacity>
 
       <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('InquiryForm')}>
        <Ionicons name="chatbubble-ellipses-outline" size={22} color="#4B7BE5" style={styles.icon} />
-       <Text style={styles.menuText}>1:1 문의하기</Text>
+       <CustomText style={styles.menuText}>1:1 문의하기</CustomText>
         </TouchableOpacity>
 
       <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('InquiryList')}>
         <Ionicons name="document-text-outline" size={22} color="#4B7BE5" style={styles.icon} />
-       <Text style={styles.menuText}>문의 내역 확인</Text>
+       <CustomText style={styles.menuText}>문의 내역 확인</CustomText>
         </TouchableOpacity>
 
 
@@ -84,18 +85,18 @@ const MyInfoScreen = ({ navigation }) => {
               setSelectModalVisible(false);
               navigation.navigate('ProfileIconSelect'); // ← 여기!
             }} style={styles.selectButton}>
-              <Text style={styles.selectText}>기본 아이콘 선택</Text>
+              <CustomText style={styles.selectText}>기본 아이콘 선택</CustomText>
             </TouchableOpacity>
 
             <TouchableOpacity onPress={() => {
               setSelectModalVisible(false);
               handleSelectImage();
             }} style={styles.selectButton}>
-              <Text style={styles.selectText}>갤러리에서 선택</Text>
+              <CustomText style={styles.selectText}>갤러리에서 선택</CustomText>
             </TouchableOpacity>
 
             <TouchableOpacity onPress={() => setSelectModalVisible(false)} style={[styles.selectButton, { borderTopWidth: 1 }]}>
-              <Text style={[styles.selectText, { color: '#999' }]}>취소</Text>
+              <CustomText style={[styles.selectText, { color: '#999' }]}>취소</CustomText>
             </TouchableOpacity>
           </View>
         </View>
@@ -128,13 +129,11 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   name: {
-    fontSize: 20,
-    fontWeight: 'bold',
+        fontWeight: 'bold',
     color: '#333',
   },
   account: {
-    fontSize: 14,
-    color: '#666',
+        color: '#666',
   },
   menuItem: {
     flexDirection: 'row',
@@ -155,8 +154,7 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
   menuText: {
-    fontSize: 17,
-    fontWeight: '600',
+        fontWeight: '600',
     color: '#333',
   },
 
@@ -190,8 +188,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   selectText: {
-    fontSize: 16,
-    fontWeight: '500',
+        fontWeight: '500',
     color: '#4B7BE5',
   },
 

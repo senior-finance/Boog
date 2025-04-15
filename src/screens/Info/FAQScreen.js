@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import CustomText from '../../components/CustomText';
 
 const FAQScreen = () => {
   const faqs = [
@@ -25,17 +26,17 @@ const FAQScreen = () => {
 
   return (
     <LinearGradient colors={['#F8F8F8', '#ECECEC']} style={styles.container}>
-      <Text style={styles.title}>자주 묻는 질문</Text>
+      <CustomText style={styles.title}>자주 묻는 질문</CustomText>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         {faqs.map((item, idx) => (
           <View key={idx} style={styles.card}>
             <View style={styles.row}>
               <Ionicons name="chatbubble-ellipses-outline" size={24} color="#4B7BE5" style={styles.icon} />
-              <Text style={styles.question}>{item.question}</Text>
+              <CustomText style={styles.question}>{item.question}</CustomText>
             </View>
             <View style={styles.row}>
               <Ionicons name="information-circle-outline" size={22} color="#999" style={styles.icon} />
-              <Text style={styles.answer}>{item.answer}</Text>
+              <CustomText style={styles.answer}>{item.answer}</CustomText>
             </View>
           </View>
         ))}
@@ -54,7 +55,6 @@ const styles = StyleSheet.create({
     paddingBottom: 30,
   },
   title: {
-    fontSize: 26,
     fontWeight: 'bold',
     marginBottom: 30,
     textAlign: 'center',
@@ -81,13 +81,13 @@ const styles = StyleSheet.create({
     marginTop: 3,
   },
   question: {
-    fontSize: 18,
+
     fontWeight: '600',
     color: '#333',
     flexShrink: 1,
   },
   answer: {
-    fontSize: 16,
+   
     color: '#555',
     flexShrink: 1,
   },

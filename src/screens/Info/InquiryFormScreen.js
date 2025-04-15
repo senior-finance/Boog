@@ -11,6 +11,8 @@ import {
   ScrollView,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
+import CustomText from '../../components/CustomText';
+import CustomTextInput from '../../components/CustomTextInput';
 
 const InquiryFormScreen = () => {
   const [title, setTitle] = useState('');
@@ -31,15 +33,15 @@ const InquiryFormScreen = () => {
     <LinearGradient colors={['#F8F8F8', '#ECECEC']} style={styles.gradient}>
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
         <ScrollView contentContainerStyle={styles.container}>
-          <Text style={styles.title}>1:1 문의하기</Text>
+          <CustomText style={styles.title}>1:1 문의하기</CustomText>
 
-          <TextInput
+          <CustomTextInput
             placeholder="제목"
             value={title}
             onChangeText={setTitle}
             style={styles.input}
           />
-          <TextInput
+          <CustomTextInput
             placeholder="문의 내용을 입력해주세요"
             value={content}
             onChangeText={setContent}
@@ -48,7 +50,7 @@ const InquiryFormScreen = () => {
           />
 
           <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-            <Text style={styles.buttonText}>📨 문의 보내기</Text>
+            <CustomText style={styles.buttonText}>📨 문의 보내기</CustomText>
           </TouchableOpacity>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -65,7 +67,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   title: {
-    fontSize: 24,
+  
     fontWeight: 'bold',
     marginBottom: 30,
     color: '#333',
@@ -75,7 +77,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     padding: 14,
     borderRadius: 10,
-    fontSize: 16,
+ 
     marginBottom: 20,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -89,7 +91,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     padding: 14,
     borderRadius: 10,
-    fontSize: 16,
+   
     textAlignVertical: 'top',
     marginBottom: 20,
     shadowColor: '#000',
@@ -112,7 +114,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: '#fff',
-    fontSize: 18,
+   
     fontWeight: 'bold',
   },
 });

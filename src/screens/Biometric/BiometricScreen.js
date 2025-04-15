@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import ReactNativeBiometrics from 'react-native-biometrics';
+import CustomText from '../../components/CustomText';
 
 export default function BiometricScreen() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -50,14 +51,14 @@ export default function BiometricScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>🔒 생체 인증 테스트</Text>
+      <CustomText style={styles.title}>🔒 생체 인증 테스트</CustomText>
 
       <TouchableOpacity style={styles.authButton} onPress={handleAuthentication}>
-        <Text style={styles.buttonText}>지문 인증 시도하기</Text>
+        <CustomText style={styles.buttonText}>지문 인증 시도하기</CustomText>
       </TouchableOpacity>
 
       {isAuthenticated && (
-        <Text style={styles.successText}>✅ 인증 완료 ({biometryType})</Text>
+        <CustomText style={styles.successText}>✅ 인증 완료 ({biometryType})</CustomText>
       )}
     </View>
   );
@@ -71,12 +72,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 20,
   },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    marginBottom: 40,
-    color: '#333',
-  },
+
   authButton: {
     backgroundColor: '#FFD700',
     paddingVertical: 15,
@@ -86,14 +82,12 @@ const styles = StyleSheet.create({
     borderColor: 'black',
   },
   buttonText: {
-    fontSize: 22,
-    fontWeight: 'bold',
+  //      fontWeight: 'bold',
     color: 'black',
   },
   successText: {
     marginTop: 20,
-    fontSize: 20,
-    fontWeight: 'bold',
+   //     fontWeight: 'bold',
     color: 'green',
   },
 });

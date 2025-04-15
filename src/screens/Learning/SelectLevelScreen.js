@@ -1,23 +1,24 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import CustomText from '../../components/CustomText';
 
 const SelectLevelScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>난이도를 선택하세요</Text>
+      <CustomText style={styles.title}>난이도를 선택하세요</CustomText>
 
       <TouchableOpacity
         style={styles.button}
         onPress={() => navigation.navigate('Quiz', { level: 'easy' })}
       >
-        <Text style={styles.buttonText}>쉬운 문제</Text>
+        <CustomText style={styles.buttonText}>쉬운 문제</CustomText>
       </TouchableOpacity>
 
       <TouchableOpacity
         style={styles.button}
         onPress={() => navigation.navigate('Quiz', { level: 'hard' })}
       >
-        <Text style={styles.buttonText}>어려운 문제</Text>
+        <CustomText style={styles.buttonText}>어려운 문제</CustomText>
       </TouchableOpacity>
     </View>
   );
@@ -32,8 +33,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#F5F5F5',
   },
   title: {
-    fontSize: 28,
-    fontWeight: 'bold',
+    //    fontWeight: 'bold',
     marginBottom: 40,
   },
   button: {
@@ -52,8 +52,7 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   buttonText: {
-    fontSize: 25,
-    fontWeight: 'bold',
+   //     fontWeight: 'bold',
     color: 'black',
   },
 });

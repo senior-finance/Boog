@@ -1,19 +1,20 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
-
+import CustomText from '../../components/CustomText';
+import CustomTextInput from '../../components/CustomTextInput';
 export default function DepositStep1({ navigation }) {
   const [accountNumber, setAccountNumber] = useState('');
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>입금 연습을 해볼게요{'\n'}실제로 입금이 되지는 않아요!</Text>
+      <CustomText style={styles.title}>입금 연습을 해볼게요{'\n'}실제로 입금이 되지는 않아요!</CustomText>
 
-      <Text style={styles.subtitle}>
+      <CustomText style={styles.subtitle}>
         아래 빈칸에 입금할{'\n'}계좌 번호를 입력하면{'\n'}
         올바른 계좌인지 확인해드릴게요
-      </Text>
+      </CustomText>
 
-      <TextInput
+      <CustomTextInput
         style={styles.input}
         placeholder="계좌 번호 입력"
         keyboardType="numeric"
@@ -26,17 +27,17 @@ export default function DepositStep1({ navigation }) {
         onPress={() => navigation.navigate('DepositStep2', { accountNumber })}
         disabled={!accountNumber}
       >
-        <Text style={styles.buttonText}>다음 화면</Text>
+        <CustomText style={styles.buttonText}>다음 화면</CustomText>
       </TouchableOpacity>
 
       {/* 도움 요청 및 긴급 연락 버튼 */}
       <View style={styles.footer}>
         <TouchableOpacity style={[styles.footerButton, styles.help]}>
-          <Text style={styles.footerText}>도움</Text>
+          <CustomText style={styles.footerText}>도움</CustomText>
         </TouchableOpacity>
 
         <TouchableOpacity style={[styles.footerButton, styles.emergency]}>
-          <Text style={styles.footerText}>긴급 연락 🚨</Text>
+          <CustomText style={styles.footerText}>긴급 연락 🚨</CustomText>
         </TouchableOpacity>
       </View>
     </View>
@@ -59,8 +60,7 @@ const styles = StyleSheet.create({
     marginBottom: 60 // 기존보다 간격을 더 늘림
   },
   subtitle: { 
-    fontSize: 25,
-    fontWeight: 'bold',
+        fontWeight: 'bold',
     color: 'black',
     textAlign: 'center', 
     marginTop: 20, // 제목과의 간격 추가
@@ -111,8 +111,7 @@ const styles = StyleSheet.create({
   help: { backgroundColor: '#DFEBF8' },
   emergency: { backgroundColor: '#FFC1B1' },
   footerText: {
-    fontSize: 20,
-    fontWeight: 'bold',
+        fontWeight: 'bold',
     color: 'black',
   },
 });

@@ -13,6 +13,8 @@ import LinearGradient from 'react-native-linear-gradient';
 import { NativeModules, PermissionsAndroid } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { checkSpamForNumber } from './PhoneUtils';  // 새로 만든 파일에서 함수 import
+import CustomText from '../../components/CustomText';
+
 
 const { PhoneAnalysisModule } = NativeModules;
 
@@ -135,13 +137,13 @@ const AutoPhoneAnalysisScreen = () => {
   return (
     <LinearGradient colors={['#F8F8F8', '#F8F8F8']} style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <Text style={styles.title}>📱 오늘의 통화/문자 분석</Text>
+        <CustomText style={styles.title}>📱 오늘의 통화/문자 분석</CustomText>
 
         <TouchableOpacity style={styles.analyzeButton} onPress={analyze}>
-          <Text style={styles.analyzeButtonText}>🔍 오늘 기록 스캔하기</Text>
+          <CustomText style={styles.analyzeButtonText}>🔍 오늘 기록 스캔하기</CustomText>
         </TouchableOpacity>
 
-        <Text style={styles.resultText}>{resultText}</Text>
+        <CustomText style={styles.resultText}>{resultText}</CustomText>
 
         {suspiciousList.map((item, index) => (
           <TouchableOpacity key={index} style={styles.itemBox} onPress={() => handleItemPress(item)}>
@@ -151,17 +153,17 @@ const AutoPhoneAnalysisScreen = () => {
               ) : (
                 <Ionicons name="call-outline" size={20} color="#4B7BE5" style={styles.icon} />
               )}
-              <Text style={styles.itemSender}>
+              <CustomText style={styles.itemSender}>
                 {item.sender} { item.type === 'sms' ? '(문자)' : '(통화)' }
-              </Text>
+              </CustomText>
             </View>
 
-            <Text style={styles.itemText}>{item.text}</Text>
-            <Text style={styles.itemText}>⚠️ 의심: {item.keywords.join(', ')}</Text>
+            <CustomText style={styles.itemText}>{item.text}</CustomText>
+            <CustomText style={styles.itemText}>⚠️ 의심: {item.keywords.join(', ')}</CustomText>
             { item.type === 'call' && item.whowhoResult !== null && (
-              <Text style={styles.itemText}>
+              <CustomText style={styles.itemText}>
                 통화 분석 결과: {item.whowhoResult ? '스팸(의심)' : '정상'}
-              </Text>
+              </CustomText>
             )}
           </TouchableOpacity>
         ))}
@@ -181,8 +183,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 20,
   },
-  analyzeButtonText: { fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' },
-  resultText: { textAlign: 'center', fontSize: 16, color: '#333', marginBottom: 15 },
+  analyzeButtonText: {  fontWeight: 'bold', color: '#FFFFFF' },
+  resultText: { textAlign: 'center',  color: '#333', marginBottom: 15 },
   itemBox: { 
     backgroundColor: '#FFF', 
     borderRadius: 12, 

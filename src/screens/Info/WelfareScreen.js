@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import CustomText from '../../components/CustomText';
 
 const dummyWelfareList = [
   {
@@ -27,13 +28,13 @@ const dummyWelfareList = [
 const WelfareScreen = ({ navigation }) => {
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.header}>노인 혜택 한눈에 보기 👵</Text>
+      <CustomText style={styles.header}>노인 혜택 한눈에 보기 👵</CustomText>
       {dummyWelfareList.map((item, index) => (
         <View key={index} style={styles.card}>
-          <Text style={styles.cardTitle}>{item.title}</Text>
-          <Text style={styles.cardDesc}>{item.desc}</Text>
+          <CustomText style={styles.cardTitle}>{item.title}</CustomText>
+          <CustomText style={styles.cardDesc}>{item.desc}</CustomText>
           <TouchableOpacity onPress={() => navigation.navigate('Web', { url: item.link })}>
-            <Text style={styles.link}>🔗 자세히 보기</Text>
+            <CustomText style={styles.link}>🔗 자세히 보기</CustomText>
           </TouchableOpacity>
         </View>
       ))}
@@ -47,8 +48,7 @@ const styles = StyleSheet.create({
     paddingBottom: 60,
   },
   header: {
-    fontSize: 22,
-    fontWeight: '700',
+        fontWeight: '700',
     marginBottom: 20,
     color: '#333',
   },
@@ -64,14 +64,12 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   cardTitle: {
-    fontSize: 18,
-    fontWeight: '600',
+        fontWeight: '600',
     marginBottom: 10,
     color: '#222',
   },
   cardDesc: {
-    fontSize: 15,
-    color: '#666',
+        color: '#666',
     marginBottom: 10,
   },
   link: {

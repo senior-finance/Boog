@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, FlatList } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import CustomText from '../../components/CustomText';
 
 const InquiryListScreen = () => {
   const dummyData = [
@@ -19,7 +20,7 @@ const InquiryListScreen = () => {
 
   return (
     <LinearGradient colors={['#F8F8F8', '#ECECEC']} style={styles.container}>
-      <Text style={styles.title}>📋 내 문의 내역</Text>
+      <CustomText style={styles.title}>📋 내 문의 내역</CustomText>
 
       <FlatList
         data={dummyData}
@@ -29,9 +30,9 @@ const InquiryListScreen = () => {
           <View style={styles.itemBox}>
             <View style={styles.row}>
               <Ionicons name="chatbubble-ellipses-outline" size={24} color="#4B7BE5" style={styles.icon} />
-              <Text style={styles.itemTitle}>{item.title}</Text>
+              <CustomText style={styles.itemTitle}>{item.title}</CustomText>
             </View>
-            <Text style={styles.status}>{item.status}</Text>
+            <CustomText style={styles.status}>{item.status}</CustomText>
           </View>
         )}
       />
@@ -49,8 +50,7 @@ const styles = StyleSheet.create({
     paddingBottom: 30,
   },
   title: {
-    fontSize: 24,
-    fontWeight: 'bold',
+        fontWeight: 'bold',
     marginBottom: 20,
     textAlign: 'center',
     color: '#333',
@@ -75,13 +75,11 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   itemTitle: {
-    fontSize: 17,
-    fontWeight: '600',
+        fontWeight: '600',
     color: '#333',
   },
   status: {
-    fontSize: 15,
-    color: '#4B7BE5',
+        color: '#4B7BE5',
     fontWeight: '500',
     marginLeft: 32,
   },

@@ -10,7 +10,7 @@ const VoicePhishingDetailScreen = ({ route }) => {
       <ScrollView contentContainerStyle={styles.scroll}>
         
         {/* 🔷 제목 텍스트만 (박스 제거됨) */}
-        <Text style={styles.titleText}>📌 {title}</Text>
+        <CustomText style={styles.titleText}>📌 {title}</CustomText>
 
         {/* 이미지 미리보기 */}
         {images.map((img, idx) => (
@@ -19,18 +19,18 @@ const VoicePhishingDetailScreen = ({ route }) => {
 
         {/* 🔷 본문 박스 */}
         <View style={styles.contentBox}>
-          <Text style={styles.contentTitle}> {title}</Text>
-          <Text style={styles.content}>
+          <CustomText style={styles.contentTitle}> {title}</CustomText>
+          <CustomText style={styles.content}>
             "삼가 고인의 명복을 빕니다."라는 문구와 함께 지인인 것처럼 위장한 부고 문자를 발송해, 
             수신자가 슬픔과 당황스러움 속에서 링크를 클릭하게 유도합니다.
-          </Text>
-          <Text style={styles.content}>
-            링크를 클릭하면 <Text style={styles.highlight}>악성 앱이 설치</Text>되거나 
-            <Text style={styles.highlight}>개인정보가 유출</Text>될 수 있습니다.
-          </Text>
-          <Text style={styles.important}>
+          </CustomText>
+          <CustomText style={styles.content}>
+            링크를 클릭하면 <CustomText style={styles.highlight}>악성 앱이 설치</CustomText>되거나 
+            <CustomText style={styles.highlight}>개인정보가 유출</CustomText>될 수 있습니다.
+          </CustomText>
+          <CustomText style={styles.important}>
             ✅ 출처 불명 문자에 포함된 링크는 절대 클릭하지 마세요.
-          </Text>
+          </CustomText>
         </View>
       </ScrollView>
     </LinearGradient>
@@ -44,8 +44,7 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
   },
   titleText: {
-    fontSize: 22,
-    fontWeight: 'bold',
+        fontWeight: 'bold',
     color: '#1A4DCC',
     marginBottom: 20,
     textAlign: 'center',
@@ -68,14 +67,12 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   contentTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
+        fontWeight: 'bold',
     marginBottom: 14,
     color: '#333',
   },
   content: {
-    fontSize: 16,
-    color: '#333',
+        color: '#333',
     lineHeight: 24,
     marginBottom: 12,
   },
@@ -84,8 +81,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   important: {
-    fontSize: 16,
-    marginTop: 10,
+        marginTop: 10,
     backgroundColor: '#E8F0FE',
     padding: 10,
     borderRadius: 8,

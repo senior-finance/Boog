@@ -2,6 +2,7 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet, FlatList, TouchableOpacity, Linking } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
+import CustomText from '../../components/CustomText';
 
 const data = [
   {
@@ -69,8 +70,8 @@ const VoicePhishingScreen = ({ navigation }) => {
       onPress={() => navigation.navigate('VoicePhishingDetail', item)}
     >
       <Image source={item.image} style={styles.image} />
-      <Text style={styles.title}>{item.title}</Text>
-      <Text style={styles.summary}>{item.summary}</Text>
+      <CustomText style={styles.title}>{item.title}</CustomText>
+      <CustomText style={styles.summary}>{item.summary}</CustomText>
     </TouchableOpacity>
   );
 
@@ -91,7 +92,7 @@ const VoicePhishingScreen = ({ navigation }) => {
             }
             
           >
-            <Text style={styles.newsButtonText}>📰 보이스피싱 관련 최신 뉴스 더 보러가기</Text>
+            <CustomText style={styles.newsButtonText}>📰 보이스피싱 관련 최신 뉴스 더 보러가기</CustomText>
           </TouchableOpacity>
         }
       />
@@ -124,14 +125,12 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   title: {
-    fontSize: 18,
-    fontWeight: 'bold',
+        fontWeight: 'bold',
     color: '#1A4DCC',
     marginBottom: 6,
   },
   summary: {
-    fontSize: 14,
-    color: '#333',
+        color: '#333',
   },
   newsButton: {
     marginTop: 24,
@@ -145,8 +144,7 @@ const styles = StyleSheet.create({
   newsButtonText: {
     color: '#1A4DCC',
     fontWeight: 'bold',
-    fontSize: 16,
-    textDecorationLine: 'underline',
+        textDecorationLine: 'underline',
   },
 });
 

@@ -5,6 +5,7 @@ import Slider from '@react-native-community/slider';
 import Tts from 'react-native-tts';
 import Icon from 'react-native-vector-icons/Ionicons';
 import botImage from '../../assets/bot5.png';
+import CustomText from '../../components/CustomText';
 
 export default function TTSSettingScreen() {
   const [voices, setVoices] = useState([]);
@@ -57,17 +58,17 @@ export default function TTSSettingScreen() {
     <View style={styles.container}>
       <View style={styles.titleRow}>
         <View>
-          <Text style={styles.title}>
-            <Text style={styles.blueText}>상담원 부금이</Text>{'\n'}
-            <Text style={styles.blackText}>   음성 설정</Text>
-          </Text>
+          <CustomText style={styles.title}>
+            <CustomText style={styles.blueText}>상담원 부금이</CustomText>{'\n'}
+            <CustomText style={styles.blackText}>   음성 설정</CustomText>
+          </CustomText>
         </View>
         <Image source={botImage} style={styles.botImage} />
       </View>
 
       <View style={styles.labelRow}>
         <Icon name="volume-high-outline" size={20} color="#000" style={styles.iconSpacing} />
-        <Text style={styles.label}>음성 종류 선택</Text>
+        <CustomText style={styles.label}>음성 종류 선택</CustomText>
       </View>
       <View style={styles.pickerWrapper}>
         <Picker
@@ -87,7 +88,7 @@ export default function TTSSettingScreen() {
 
       <View style={styles.labelRow}>
         <Icon name="musical-notes-outline" size={20} color="#000" style={styles.iconSpacing} />
-        <Text style={styles.label}>말하는 속도</Text>
+        <CustomText style={styles.label}>말하는 속도</CustomText>
       </View>
       <View style={styles.sliderWrapper}>
         <Slider
@@ -101,7 +102,7 @@ export default function TTSSettingScreen() {
 
       <View style={styles.labelRow}>
         <Icon name="mic-outline" size={20} color="#000" style={styles.iconSpacing} />
-        <Text style={styles.label}>음성 높이</Text>
+        <CustomText style={styles.label}>음성 높이</CustomText>
       </View>
       <View style={styles.sliderWrapper}>
         <Slider
@@ -119,7 +120,7 @@ export default function TTSSettingScreen() {
       >
         <View style={styles.buttonContent}>
           <Icon name="megaphone-outline" size={20} color="#4B7BE5" style={styles.iconSpacing} />
-          <Text style={styles.testButtonText}>설정된 음성 들어보기</Text>
+          <CustomText style={styles.testButtonText}>설정된 음성 들어보기</CustomText>
         </View>
       </TouchableOpacity>
     </View>
@@ -140,8 +141,7 @@ const styles = StyleSheet.create({
     marginBottom: 30,
   },
   title: {
-    fontSize: 25,
-    fontWeight: 'bold',
+   //     fontWeight: 'bold',
     marginLeft: 55
   },
   blueText: {
@@ -163,8 +163,7 @@ const styles = StyleSheet.create({
     marginTop: 30,
   },
   label: {
-    fontSize: 20,
-    fontWeight: '600',
+    //    fontWeight: '600',
     color: '#333',
   },
   iconSpacing: {
@@ -202,7 +201,6 @@ const styles = StyleSheet.create({
   },
   testButtonText: {
     color: '#4B7BE5',
-    fontSize: 20,
-    fontWeight: 'bold',
+    //    fontWeight: 'bold',
   },
 });

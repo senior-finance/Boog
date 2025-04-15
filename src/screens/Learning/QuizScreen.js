@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import easyQuiz from '../../assets/easyQuiz.json';
 import hardQuiz from '../../assets//hardQuiz.json';
+import CustomText from '../../components/CustomText';
 
 const shuffleArray = (array) => {
   const shuffled = [...array];
@@ -38,10 +39,10 @@ const QuizScreen = ({ navigation, route }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>금융 용어를 배워볼게요</Text>
+      <CustomText style={styles.title}>금융 용어를 배워볼게요</CustomText>
 
       <View style={styles.questionBox}>
-        <Text style={styles.questionText}>{`"${currentQuestion.question}"`}</Text>
+        <CustomText style={styles.questionText}>{`"${currentQuestion.question}"`}</CustomText>
       </View>
 
       {currentQuestion.options.map((option, index) => (
@@ -50,7 +51,7 @@ const QuizScreen = ({ navigation, route }) => {
           style={index === 0 ? styles.optionButton1 : styles.optionButton2} 
           onPress={() => handleAnswerSelection(option)}
         >
-          <Text style={styles.optionText}>{option}</Text>
+          <CustomText style={styles.optionText}>{option}</CustomText>
         </TouchableOpacity>
       ))}
     </View>
@@ -66,7 +67,7 @@ const styles = StyleSheet.create({
     paddingTop: 50
   },
   title: {
-    fontSize: 30,
+
     fontWeight: 'bold',
     textAlign: 'center',
     marginBottom: 50,
@@ -81,7 +82,7 @@ const styles = StyleSheet.create({
     marginBottom: 50
   },
   questionText: {
-    fontSize: 25,
+   
     fontWeight: 'bold',
     color: 'black',
     textAlign: 'center'
@@ -117,7 +118,7 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   optionText: {
-    fontSize: 25,
+    
     fontWeight: 'bold',
     color: 'black',
     textAlign: 'center',

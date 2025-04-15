@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import LinearGradient from 'react-native-linear-gradient';
+import CustomText from '../../components/CustomText';
 
 const NotificationScreen = () => {
   const notifications = [
@@ -84,7 +85,7 @@ const NotificationScreen = () => {
           <View key={item.id} style={[styles.card, { borderColor: item.borderColor }]}>
             <View style={styles.cardHeader}>
               <Ionicons name={item.icon} size={22} color={item.iconColor} style={styles.icon} />
-              <Text style={styles.cardContent}>{item.content}</Text>
+              <CustomText style={styles.cardContent}>{item.content}</CustomText>
             </View>
           </View>
         ))}
@@ -123,7 +124,7 @@ const styles = StyleSheet.create({
   },
   cardContent: {
     flex: 1,
-    fontSize: 16,
+   
     fontWeight: '500',
     color: '#333',
     lineHeight: 23,

@@ -9,6 +9,7 @@ import {
   Easing
 } from 'react-native';
 import wrongImage from '../../assets/wrong.png';
+import CustomText from '../../components/CustomText';
 
 const WrongAnswerScreen = ({ route, navigation }) => {
   const { answer, explanation, currentQuestionIndex } = route.params;
@@ -46,8 +47,8 @@ const WrongAnswerScreen = ({ route, navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>틀렸어요</Text>
-      <Text style={styles.answerText}>정답은 "{answer}" 에요!</Text>
+      <CustomText style={styles.title}>틀렸어요</CustomText>
+      <CustomText style={styles.answerText}>정답은 "{answer}" 에요!</CustomText>
 
       <Animated.Image
         source={wrongImage}
@@ -65,20 +66,20 @@ const WrongAnswerScreen = ({ route, navigation }) => {
       {showContent && (
         <>
           <View style={styles.explanationBox}>
-            <Text style={styles.explanationText}>{explanation}</Text>
+            <CustomText style={styles.explanationText}>{explanation}</CustomText>
           </View>
 
           <View style={styles.buttonRow}>
             <TouchableOpacity style={styles.button} onPress={goToPreviousQuestion}>
-              <Text style={styles.buttonText}>이전 문제</Text>
+              <CustomText style={styles.buttonText}>이전 문제</CustomText>
             </TouchableOpacity>
             <TouchableOpacity style={styles.button} onPress={goToNextQuestion}>
-              <Text style={styles.buttonText}>다음 문제</Text>
+              <CustomText style={styles.buttonText}>다음 문제</CustomText>
             </TouchableOpacity>
           </View>
 
           <TouchableOpacity style={styles.quitButton} onPress={() => navigation.navigate("MainTabs")}>
-            <Text style={styles.buttonText}>그만둘래요</Text>
+            <CustomText style={styles.buttonText}>그만둘래요</CustomText>
           </TouchableOpacity>
         </>
       )}
@@ -95,14 +96,12 @@ const styles = StyleSheet.create({
       paddingTop: 60,
     },
     title: {
-      fontSize: 27,
-      fontWeight: 'bold',
+     //       fontWeight: 'bold',
       color: 'black',
       marginBottom: 10,
     },
     answerText: {
-      fontSize: 22,
-      fontWeight: 'bold',
+     //       fontWeight: 'bold',
       color: 'black',
       marginBottom: 20,
       textAlign: 'center',
@@ -120,8 +119,7 @@ const styles = StyleSheet.create({
       marginBottom: 30,
     },
     explanationText: {
-      fontSize: 23,
-      fontWeight: 'bold',
+     //       fontWeight: 'bold',
       color: 'black',
       textAlign: 'center',
     },
@@ -158,8 +156,7 @@ const styles = StyleSheet.create({
       elevation: 4,
     },
     buttonText: {
-      fontSize: 22,
-      fontWeight: 'bold',
+    //        fontWeight: 'bold',
       color: 'black',
     },
   });

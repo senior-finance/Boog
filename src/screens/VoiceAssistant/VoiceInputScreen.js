@@ -20,7 +20,8 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import botImage from '../../assets/bot5.png';
 import { useNavigation } from '@react-navigation/native';
 import Tts from 'react-native-tts';
-
+import CustomText from '../../components/CustomText';
+import CustomTextInput from '../../components/CustomTextInput';
 export default function VoiceInputScreen() {
   const navigation = useNavigation();
   const [isRecording, setIsRecording] = useState(false);
@@ -182,15 +183,15 @@ export default function VoiceInputScreen() {
         contentContainerStyle={styles.container}
         keyboardShouldPersistTaps="handled"
       >
-        <Text style={styles.dateText}>{formattedDate}</Text>
+        <CustomText style={styles.dateText}>{formattedDate}</CustomText>
 
         <View style={styles.botIntroContainer}>
           <View style={styles.botTextWrapper}>
-            <Text style={styles.botText}>
+            <CustomText style={styles.botText}>
               안녕하세요!{"\n"}
-              <Text style={{ color: '#4B7BE5', fontWeight: 'bold' }}>상담원 부금이</Text>입니다.{"\n"}
+              <CustomText style={{ color: '#4B7BE5', fontWeight: 'bold' }}>상담원 부금이</CustomText>입니다.{"\n"}
               무엇을 도와드릴까요?
-            </Text>
+            </CustomText>
           </View>
           <Image source={botImage} style={styles.botImage} />
         </View>
@@ -200,7 +201,7 @@ export default function VoiceInputScreen() {
             <TouchableOpacity key={index} 
               style={[styles.topicButton, { width: '30%' }]}
               onPress={() => handleTopicClick(item)}>
-              <Text style={styles.topicText}>{item}</Text>
+              <CustomText style={styles.topicText}>{item}</CustomText>
             </TouchableOpacity>
           ))}
         </View>
@@ -212,7 +213,7 @@ export default function VoiceInputScreen() {
             key={idx}
             style={msg.role === 'user' ? styles.chatBubbleUser : styles.chatBubbleBot}
           >
-            <Text style={styles.chatText}>{msg.text}</Text>
+            <CustomText style={styles.chatText}>{msg.text}</CustomText>
           </View>
         ))}
       </ScrollView>
@@ -220,9 +221,9 @@ export default function VoiceInputScreen() {
       {showConfirmModal && (
         <View style={styles.modalOverlay}>
           <View style={styles.modalBox}>
-          <Text style={styles.modalText}>
+          <CustomText style={styles.modalText}>
             '{screenNameMap[confirmTarget] || confirmTarget}' 화면으로 이동할까요?
-          </Text>
+          </CustomText>
             <View style={styles.modalButtons}>
               <TouchableOpacity
                 style={styles.modalBtn}
@@ -232,7 +233,7 @@ export default function VoiceInputScreen() {
                   setConfirmTarget(null);
                 }}
               >
-                <Text style={styles.modalBtnText}>예</Text>
+                <CustomText style={styles.modalBtnText}>예</CustomText>
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.modalBtn, { backgroundColor: '#ccc' }]}
@@ -243,7 +244,7 @@ export default function VoiceInputScreen() {
                   Tts.speak('이동을 취소했어요.');
                 }}
               >
-                <Text style={styles.modalBtnText}>아니오</Text>
+                <CustomText style={styles.modalBtnText}>아니오</CustomText>
               </TouchableOpacity>
             </View>
           </View>
@@ -251,7 +252,7 @@ export default function VoiceInputScreen() {
       )}
 
       <View style={styles.bottomBar}>
-      <TextInput
+      <CustomTextInput
         style={styles.input}
         placeholder="궁금한 점을 입력해주세요"
         value={textInput}
@@ -293,8 +294,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   dateText: {
-    fontSize: 18,
-    color: '#999',
+   //     color: '#999',
     textAlign: 'center',
     marginBottom: 16,
   },
@@ -309,8 +309,7 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
   botText: {
-    fontSize: 21,
-    lineHeight: 24,
+    //    lineHeight: 24,
     color: '#333',
     marginLeft: 30,
   },
@@ -340,8 +339,7 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   topicText: {
-    fontSize: 15,
-    color: '#333',
+   //     color: '#333',
   },
   modalOverlay: {
     position: 'absolute',
@@ -359,8 +357,7 @@ const styles = StyleSheet.create({
     width: '80%',
   },
   modalText: {
-    fontSize: 20,
-    color: '#333',
+   //     color: '#333',
     marginBottom: 20,
     textAlign: 'center',
   },
@@ -385,8 +382,7 @@ const styles = StyleSheet.create({
   modalBtnText: {
     color: 'white',
     textAlign: 'center',
-    fontSize: 20,
-    fontWeight: 'bold',
+   //     fontWeight: 'bold',
   },
   micButton: {
     flexDirection: 'row',
@@ -399,8 +395,7 @@ const styles = StyleSheet.create({
   },
   micButtonText: {
     color: '#fff',
-    fontSize: 16,
-    marginLeft: 10,
+ //       marginLeft: 10,
   },
   start: {
     backgroundColor: '#4B7BE5',
@@ -425,8 +420,7 @@ const styles = StyleSheet.create({
     maxWidth: '80%',
   },
   chatText: {
-    fontSize: 16,
-    lineHeight: 22,
+   //     lineHeight: 22,
     color: '#333',
   },
   bottomBar: {
@@ -449,8 +443,7 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     paddingHorizontal: 20,
     paddingVertical: Platform.OS === 'ios' ? 14 : 10,
-    fontSize: 16,
-    marginRight: 12,
+    //    marginRight: 12,
     color: '#333',
   },
   sendButton: {

@@ -5,6 +5,7 @@ import Slider from '@react-native-community/slider';
 import SystemSetting from 'react-native-system-setting';
 import Tts from 'react-native-tts';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import CustomText from '../../components/CustomText';
 
 const SoundVolumeScreen = () => {
   const [volume, setVolume] = useState(0.5);
@@ -42,10 +43,10 @@ const SoundVolumeScreen = () => {
     <LinearGradient colors={['#F8F8F8', '#F8F8F8']} style={styles.container}>
       <View style={styles.card}>
         <Ionicons name="volume-high-outline" size={32} color="#4B7BE5" style={{ marginBottom: 10 }} />
-        <Text style={styles.title}>음향 크기 설정</Text>
+        <CustomText style={styles.title}>음향 크기 설정</CustomText>
 
         {/* 음성 선택 */}
-        <Text style={styles.subtitle}>음성 선택</Text>
+        <CustomText style={styles.subtitle}>음성 선택</CustomText>
         {voices.map((voice) => (
           <TouchableOpacity
             key={voice.id}
@@ -57,17 +58,17 @@ const SoundVolumeScreen = () => {
               },
             ]}
           >
-            <Text style={{
+            <CustomText style={{
               color: selectedVoice === voice.id ? '#fff' : '#333',
               fontWeight: '600',
             }}>
               {voice.name}
-            </Text>
+            </CustomText>
           </TouchableOpacity>
         ))}
 
         <TouchableOpacity style={styles.previewButton} onPress={handlePreview}>
-          <Text style={styles.previewText}>🔊 미리듣기</Text>
+          <CustomText style={styles.previewText}>🔊 미리듣기</CustomText>
         </TouchableOpacity>
 
         <Slider
@@ -106,13 +107,13 @@ const styles = StyleSheet.create({
     elevation: 6,
   },
   title: {
-    fontSize: 20,
+
     fontWeight: 'bold',
     marginBottom: 20,
     color: '#333',
   },
   subtitle: {
-    fontSize: 16,
+    
     fontWeight: '600',
     marginBottom: 10,
     color: '#333',

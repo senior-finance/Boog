@@ -1,12 +1,14 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import LinearGradient from 'react-native-linear-gradient';
+import CustomText from '../../components/CustomText';
+
 
 const FunctionButton = ({ title, onPress, icon }) => (
   <TouchableOpacity style={styles.functionButton} onPress={onPress}>
     <Ionicons name={icon} size={30} color="#4B7BE5" />
-    <Text style={styles.functionText}>{title}</Text>
+    <CustomText style={styles.functionText}>{String(title)}</CustomText>
   </TouchableOpacity>
 );
 
@@ -22,8 +24,6 @@ const FunctionScreen = ({ navigation }) => {
           <FunctionButton title="지문 인증" icon="finger-print" onPress={() => navigation.navigate('Biometric')} />
           <FunctionButton title="정부 복지 혜택" icon="gift" onPress={() => navigation.navigate('Welfare')} />
           <FunctionButton title="자동 통화/문자 분석" icon="phone-portrait" onPress={() => navigation.navigate('AutoPhoneAnalysis')} />
-          <FunctionButton title="보이스 피싱 사례" icon="alert-circle-outline" onPress={() => navigation.navigate('VoicePhishing')} />
-      
         </View>
       </ScrollView>
     </LinearGradient>
@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
   gridContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-around', // 더 꽉 차 보이게
+    justifyContent: 'space-around',
     width: '90%',
     marginTop: 20,
   },
@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
     width: '48%',
     backgroundColor: '#fff',
     borderRadius: 14,
-    paddingVertical: 40, // 버튼 키우기
+    paddingVertical: 40,
     alignItems: 'center',
     marginBottom: 30,
     shadowColor: '#000',
@@ -61,7 +61,6 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   functionText: {
-    fontSize: 17,
     color: '#333',
     marginTop: 10,
     fontWeight: '600',

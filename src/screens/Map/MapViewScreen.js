@@ -13,6 +13,7 @@ import {
 import DropDownPicker from 'react-native-dropdown-picker';
 import axios from "axios";
 import Geolocation from '@react-native-community/geolocation';
+import CustomText from '../../components/CustomText';
 
 import { MAP_SEARCH_BACKEND_URL } from '@env';
 
@@ -246,7 +247,7 @@ const MapViewScreen = ({ route, navigation }) => {
               fetchSearchResults(selectedCategory);
             }}
           >
-            <Text style={{ color: 'white', fontWeight: '600', fontSize: 20, lineHeight: 30 }}>검색</Text>
+            <CustomText style={{ color: 'white', fontWeight: '600', fontSize: 20, lineHeight: 30 }}>검색</CustomText>
           </TouchableOpacity>
         </View>
       </View>
@@ -335,14 +336,14 @@ const MapViewScreen = ({ route, navigation }) => {
                 ]}
               >
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <Text style={{ fontWeight: 'bold', fontSize: 16, color: '#4B7BE5' }}>
+                  <CustomText style={{ fontWeight: 'bold', fontSize: 16, color: '#4B7BE5' }}>
                     {item.placeName}
-                  </Text>
+                  </CustomText>
                   {distance && (
-                    <Text style={{ fontSize: 14, color: '#555' }}>{distance} km</Text>
+                    <CustomText style={{ fontSize: 14, color: '#555' }}>{distance} km</CustomText>
                   )}
                 </View>
-                <Text style={{ color: '#333', marginTop: 4 }}>{item.address}</Text>
+                <CustomText style={{ color: '#333', marginTop: 4 }}>{item.address}</CustomText>
               </Pressable>
             );
           }}

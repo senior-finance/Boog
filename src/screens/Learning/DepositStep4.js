@@ -1,24 +1,25 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Modal } from 'react-native';
+import CustomText from '../../components/CustomText';
 
 export default function DepositStep4({ navigation, route }) {
   const [modalVisible, setModalVisible] = useState(false);
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>
+      <CustomText style={styles.title}>
         입금 연습을 해볼게요{'\n'}실제로 입금이 되지는 않아요!
-      </Text>
+      </CustomText>
 
-      <Text style={styles.subtitle}>
+      <CustomText style={styles.subtitle}>
         입금할 계좌, 은행, 금액을{'\n'}
         확인해주세요
-      </Text>
+      </CustomText>
 
       <View style={styles.infoBox}>
-        <Text style={styles.infoText}>계좌 : {route.params.accountNumber}</Text>
-        <Text style={styles.infoText}>은행 : {route.params.selectedBank}</Text>
-        <Text style={styles.infoText}>금액 : {route.params.amount}원</Text>
+        <CustomText style={styles.infoText}>계좌 : {route.params.accountNumber}</CustomText>
+        <CustomText style={styles.infoText}>은행 : {route.params.selectedBank}</CustomText>
+        <CustomText style={styles.infoText}>금액 : {route.params.amount}원</CustomText>
       </View>
 
       {/* 모의 입금 버튼 */}
@@ -26,7 +27,7 @@ export default function DepositStep4({ navigation, route }) {
         style={styles.button} 
         onPress={() => setModalVisible(true)}
       >
-        <Text style={styles.buttonText}>모의 입금하기</Text>
+        <CustomText style={styles.buttonText}>모의 입금하기</CustomText>
       </TouchableOpacity>
 
       {/* 팝업 모달 */}
@@ -38,13 +39,13 @@ export default function DepositStep4({ navigation, route }) {
       >
         <View style={styles.modalOverlay}>
           <View style={styles.modalContainer}>
-            <Text style={styles.modalTitle}>잘하셨어요! 👏</Text>
-            <Text style={styles.modalSubtitle}>연습하면서 도움이 필요하셨나요?</Text>
+            <CustomText style={styles.modalTitle}>잘하셨어요! 👏</CustomText>
+            <CustomText style={styles.modalSubtitle}>연습하면서 도움이 필요하셨나요?</CustomText>
 
             {/* 버튼들 */}
             <View style={styles.buttonRow}>
               <TouchableOpacity style={styles.modalButton}>
-                <Text style={styles.modalButtonText}>도움</Text>
+                <CustomText style={styles.modalButtonText}>도움</CustomText>
               </TouchableOpacity>
               <TouchableOpacity 
                 style={styles.modalButton} 
@@ -53,7 +54,7 @@ export default function DepositStep4({ navigation, route }) {
                   navigation.navigate('DepositStep1'); // 다시 연습 버튼 → DepositStep1 이동
                 }}
               >
-                <Text style={styles.modalButtonText}>다시 연습</Text>
+                <CustomText style={styles.modalButtonText}>다시 연습</CustomText>
               </TouchableOpacity>
             </View>
 
@@ -65,7 +66,7 @@ export default function DepositStep4({ navigation, route }) {
                 navigation.navigate('MainTabs'); // 홈화면 이동
               }}
             >
-              <Text style={styles.modalButtonText}>홈화면</Text>
+              <CustomText style={styles.modalButtonText}>홈화면</CustomText>
             </TouchableOpacity>
             </View>
           </View>
@@ -84,15 +85,14 @@ const styles = StyleSheet.create({
     paddingTop: 80 
   },
   title: { 
-    fontSize: 28, 
+   // fontSize: 28, 
     fontWeight: 'bold',
     color: 'black',
     textAlign: 'center',
     marginBottom: 50 
   },
   subtitle: { 
-    fontSize: 25,
-    fontWeight: 'bold',
+   //     fontWeight: 'bold',
     color: 'black',
     textAlign: 'center', 
     marginBottom: 40 
@@ -110,7 +110,7 @@ const styles = StyleSheet.create({
     marginBottom: 40 
   },
   infoText: { 
-    fontSize: 23, 
+   // fontSize: 23, 
     fontWeight: 'bold',
     color: 'black', 
     textAlign: 'center' 
@@ -127,7 +127,7 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   buttonText: { 
-    fontSize: 25, 
+   // fontSize: 25, 
     fontWeight: 'bold',
     color: 'black', 
   },
@@ -146,15 +146,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modalTitle: { 
-    fontSize: 28, 
+   // fontSize: 28, 
     fontWeight: 'bold',
     color: 'black',
     textAlign: 'center',
     marginBottom: 10
   },
   modalSubtitle: { 
-    fontSize: 23,
-    fontWeight: 'bold',
+   //     fontWeight: 'bold',
     color: 'black',
     textAlign: 'center',
     marginBottom: 30 
@@ -179,8 +178,7 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   modalButtonText: { 
-    fontSize: 25,
-    color: 'black',
+   //     color: 'black',
     fontWeight: 'bold' 
   }
 });

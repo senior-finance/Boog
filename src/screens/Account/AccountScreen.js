@@ -20,6 +20,8 @@ import {
     KFTC_TRAN_ID,
 } from '@env';
 import firestore from '@react-native-firebase/firestore';
+import CustomText from '../../components/CustomText';
+
 
 // 사용자 인증을 위한 URL 생성
 const AUTH_URL = `https://testapi.openbanking.or.kr/oauth/2.0/authorize?response_type=code&client_id=${KFTC_CLIENT_ID}&redirect_uri=${encodeURIComponent(
@@ -332,7 +334,7 @@ const Account = () => {
     if (step === 'home') {
         return (
             <View style={styles.container}>
-                <Text style={styles.title}>금융결제원 테스트베드</Text>
+                <CustomText style={styles.title}>금융결제원 테스트베드</CustomText>
                 <Button title="인증하기" onPress={() => setStep('auth')} />
             </View>
         );
@@ -351,7 +353,7 @@ const Account = () => {
         return (
             <View style={styles.container}>
                 <ActivityIndicator size="large" />
-                <Text>로딩 중...</Text>
+                <CustomText>로딩 중...</CustomText>
             </View>
         );
     }
@@ -364,7 +366,7 @@ const Account = () => {
     if (step === 'accountList') {
         return (
             <View style={styles.container}>
-                <Text style={styles.title}>계좌 목록</Text>
+                <CustomText style={styles.title}>계좌 목록</CustomText>
                 <FlatList
                     data={accountList}
                     keyExtractor={(item) => item.fintech_use_num}
@@ -376,29 +378,29 @@ const Account = () => {
                         return (
                             <View style={styles.accountItem}>
                                 <View style={styles.accountInfo}>
-                                    <Text style={styles.bankName}>
+                                    <CustomText style={styles.bankName}>
                                         은행명 : {balanceObj ? balanceObj.bank_name : '은행 조회 중...'}
-                                    </Text>
-                                    <Text style={styles.accountNumber}>
+                                    </CustomText>
+                                    <CustomText style={styles.accountNumber}>
                                         계좌번호 : {item.account_num_masked || '정보없음'}
-                                    </Text>
-                                    <Text style={styles.balance}>
+                                    </CustomText>
+                                    <CustomText style={styles.balance}>
                                         잔액 : {" "}
                                         {balanceObj ? Number(balanceObj.balance_amt).toLocaleString() : '잔액 조회 중...'}
-                                    </Text>
+                                    </CustomText>
                                 </View>
                                 <View style={styles.buttonContainer}>
                                     <TouchableOpacity
                                         style={styles.receiveButton}
                                         onPress={() => handleReceiveMoney(item)}
                                     >
-                                        <Text style={styles.receiveButtonText}>지원금 받기</Text>
+                                        <CustomText style={styles.receiveButtonText}>지원금 받기</CustomText>
                                     </TouchableOpacity>
                                     <TouchableOpacity
                                         style={styles.withdrawButton}
                                         onPress={() => handleWithdraw(item)}
                                     >
-                                        <Text style={styles.withdrawButtonText}>출금</Text>
+                                        <CustomText style={styles.withdrawButtonText}>출금</CustomText>
                                     </TouchableOpacity>
                                 </View>
                             </View>
@@ -412,7 +414,7 @@ const Account = () => {
 
     return (
         <View style={styles.container}>
-            <Text>프로세스 진행 중...</Text>
+            <CustomText>프로세스 진행 중...</CustomText>
         </View>
     );
 };
@@ -424,8 +426,7 @@ const styles = StyleSheet.create({
         padding: 20
     },
     title: {
-        fontSize: 24,
-        fontWeight: 'bold',
+       //         fontWeight: 'bold',
         marginBottom: 20
     },
     accountItem: {
@@ -446,17 +447,14 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     accountNumber: {
-        fontSize: 14,
-        marginBottom: 2
+                marginBottom: 2
     },
     balance: {
-        fontSize: 12,
-        color: '#333',
+                color: '#333',
         marginTop: 2
     },
     bankName: {
-        fontSize: 14,
-        color: '#555',
+                color: '#555',
         marginTop: 2,
     },
     buttonContainer: {

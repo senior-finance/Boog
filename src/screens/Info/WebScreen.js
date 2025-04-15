@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { WebView } from 'react-native-webview';
+import CustomText from '../../components/CustomText';
 
 const WebScreen = ({ route }) => {
   const { url } = route.params;
@@ -11,7 +12,7 @@ const WebScreen = ({ route }) => {
       {loading && (
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#4B7BE5" />
-          <Text style={styles.loadingText}>로딩 중입니다...</Text>
+          <CustomText style={styles.loadingText}>로딩 중입니다...</CustomText>
         </View>
       )}
       <WebView
@@ -39,8 +40,7 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     marginTop: 15,
-    fontSize: 16,
-    color: '#333',
+        color: '#333',
   },
 });
 
