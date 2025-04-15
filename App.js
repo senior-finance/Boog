@@ -33,6 +33,7 @@ import AccountScreen from './src/screens/Account/AccountScreen'; // 변경된 �
 // 내 정보
 import FontSizeSettingScreen from './src/screens/Info/FontSizeSettingScreen';
 import SoundVolumeScreen from './src/screens/Info/SoundVolumeScreen';
+import SoundVolumeSettingScreen from './src/screens/Info/SoundVolumeSettingScreen';
 import VoicePhishingScreen from './src/screens/Info/VoicePhishingScreen';
 import VoicePhishingDetailScreen from './src/screens/Info/VoicePhishingDetailScreen';
 import FAQScreen from './src/screens/Info/FAQScreen';
@@ -83,6 +84,7 @@ export default function App() {
 
           <Stack.Screen name="FontSize" component={FontSizeSettingScreen} />
           <Stack.Screen name="SoundVolume" component={SoundVolumeScreen} />
+          <Stack.Screen name="SoundVolumeSetting" component={SoundVolumeSettingScreen} options={{ title: '음성 및 효과음 설정' }} />
           <Stack.Screen name="VoicePhishingScreen" component={VoicePhishingScreen} options={{ presentation: 'modal' }} />
 
           <Stack.Screen name="VoicePhishingDetail" component={VoicePhishingDetailScreen} />

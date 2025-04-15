@@ -17,7 +17,7 @@ import sendAudioToCSR from './CSRService';
 import askClovaAI from './AIService';
 import RNFS from 'react-native-fs';
 import Icon from 'react-native-vector-icons/Ionicons';
-import botImage from '../../assets/bot5.png';
+import botImage from '../../assets/bot6.png';
 import { useNavigation } from '@react-navigation/native';
 import Tts from 'react-native-tts';
 import CustomText from '../../components/CustomText';

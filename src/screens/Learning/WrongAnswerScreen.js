@@ -8,7 +8,8 @@ import {
   Animated,
   Easing
 } from 'react-native';
-import wrongImage from '../../assets/wrong.png';
+import Sound from 'react-native-sound';
+import wrongImage from '../../assets/wrong_rabbit.png';
 import CustomText from '../../components/CustomText';
 
 const WrongAnswerScreen = ({ route, navigation }) => {
@@ -19,6 +20,16 @@ const WrongAnswerScreen = ({ route, navigation }) => {
   const translateYAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
+    // 🔊 사운드 재생
+    const wrongSound = new Sound(
+      require('../../assets/sounds/wrong.mp3'),
+      (error) => {
+        if (!error) {
+          wrongSound.play();
+        }
+      }
+    );
+  
     Animated.parallel([
       Animated.timing(scaleAnim, {
         toValue: 1,
@@ -34,8 +45,13 @@ const WrongAnswerScreen = ({ route, navigation }) => {
       }),
     ]).start(() => {
       setShowContent(true);
+      wrongSound.release();
     });
-  }, []);
+
+  return () => {
+    wrongSound.stop(() => wrongSound.release());
+  };
+}, []);
 
   const goToNextQuestion = () => {
     navigation.navigate("Quiz", { questionIndex: currentQuestionIndex + 1 });
@@ -78,7 +94,7 @@ const WrongAnswerScreen = ({ route, navigation }) => {
             </TouchableOpacity>
           </View>
 
-          <TouchableOpacity style={styles.quitButton} onPress={() => navigation.navigate("MainTabs")}>
+          <TouchableOpacity style={styles.quitButton} onPress={() => navigation.navigate("Learning")}>
             <CustomText style={styles.buttonText}>그만둘래요</CustomText>
           </TouchableOpacity>
         </>
@@ -107,9 +123,9 @@ const styles = StyleSheet.create({
       textAlign: 'center',
     },
     imageOnly: {
-      width: 120,
-      height: 120,
-      marginBottom: 20,
+      width: 230,
+      height: 230,
+      marginBottom: 10,
     },
     explanationBox: {
       width: '100%',

@@ -54,7 +54,7 @@ const MyInfoScreen = ({ navigation }) => {
           <CustomText style={styles.menuText}>글자 크기</CustomText>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('SoundVolume')}>
+        <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('SoundVolumeSetting')}>
           <Ionicons name="volume-high-outline" size={22} color="#4B7BE5" style={styles.icon} />
           <CustomText style={styles.menuText}>음향 크기</CustomText>
         </TouchableOpacity>

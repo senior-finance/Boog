@@ -4,7 +4,7 @@ import { Picker } from '@react-native-picker/picker';
 import Slider from '@react-native-community/slider';
 import Tts from 'react-native-tts';
 import Icon from 'react-native-vector-icons/Ionicons';
-import botImage from '../../assets/bot5.png';
+import botImage from '../../assets/bot6.png';
 import CustomText from '../../components/CustomText';
 
 export default function TTSSettingScreen() {

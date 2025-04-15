@@ -9,7 +9,7 @@ import {
   Easing
 } from 'react-native';
 import Sound from 'react-native-sound';
-import correctImage from '../../assets/correct.png';
+import correctImage from '../../assets/correct_rabbit.png';
 import CustomText from '../../components/CustomText';
 
 const CorrectAnswerScreen = ({ route, navigation }) => {
@@ -95,7 +95,7 @@ const CorrectAnswerScreen = ({ route, navigation }) => {
             </TouchableOpacity>
           </View>
 
-          <TouchableOpacity style={styles.quitButton} onPress={() => navigation.navigate("MainTabs")}>
+          <TouchableOpacity style={styles.quitButton} onPress={() => navigation.navigate("Learning")}>
             <CustomText style={styles.buttonText}>그만둘래요</CustomText>
           </TouchableOpacity>
         </>
@@ -124,9 +124,9 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   imageOnly: {
-    width: 120,
-    height: 120,
-    marginBottom: 20,
+    width: 230,
+    height: 230,
+    marginBottom: 10,
   },
   explanationBox: {
     width: '100%',
