@@ -46,7 +46,7 @@ const FontSizeSettingScreen = () => {
         <Slider
           style={styles.slider}
           minimumValue={12}
-          maximumValue={30}
+          maximumValue={23}
           step={1}
           value={tempFontSize}
           onValueChange={value => setTempFontSize(value)}
