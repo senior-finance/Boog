@@ -2,7 +2,6 @@
 import React, { useState } from 'react';
 import {
   View,
-  Text,
   TouchableOpacity,
   ScrollView,
   StyleSheet,
@@ -12,9 +11,8 @@ import {
 import LinearGradient from 'react-native-linear-gradient';
 import { NativeModules, PermissionsAndroid } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { checkSpamForNumber } from './PhoneUtils';  // 새로 만든 파일에서 함수 import
+import { checkSpamForNumber } from './PhoneUtils';
 import CustomText from '../../components/CustomText';
-
 
 const { PhoneAnalysisModule } = NativeModules;
 
@@ -85,7 +83,7 @@ const AutoPhoneAnalysisScreen = () => {
                 type: 'call',
                 sender: log.number,
                 text: `통화 (${log.duration}초)`,
-                keywords: ['070 또는 짧은 통화'],
+                keywords: ['070 또는 짤은 통화'],
               });
             }
           }
@@ -107,17 +105,17 @@ const AutoPhoneAnalysisScreen = () => {
     setSuspiciousList(autoCheckedFound);
 
     if (autoCheckedFound.length === 0) {
-      setResultText('✅ 오늘은 의심스러운 문자나 통화 기록이 없습니다.');
+      setResultText('✅ 오늘은 의심스럽는 문자나 통화 기록이 없습니다.');
     } else {
       const smsCount = autoCheckedFound.filter(item => item.type === 'sms').length;
       const callCount = autoCheckedFound.filter(item => item.type === 'call').length;
-      setResultText(`❗ 의심 기록 ${autoCheckedFound.length}건 발견됨!`);
+      setResultText(`❗ 의심 기록 ${autoCheckedFound.length}개 발견됨!`);
 
       setTimeout(() => {
         Alert.alert(
-          '📊 분석 요약',
-          `총 ${autoCheckedFound.length}건의 의심 기록이 발견되었습니다.\n\n` +
-          `💬 문자: ${smsCount}건\n📞 통화: ${callCount}건`
+          '📊 분석 요조',
+          `총 ${autoCheckedFound.length}개의 의심 기록이 발견되었습니다.\n\n` +
+          `💬 문자: ${smsCount}개\n📞 통화: ${callCount}개`
         );
       }, 500);
     }
@@ -126,7 +124,7 @@ const AutoPhoneAnalysisScreen = () => {
   const handleItemPress = (item) => {
     let detail = item.type === 'sms'
       ? '🚨이 문자는 피싱 가능성이 있는 키워드를 포함하고 있어 주의가 필요합니다.'
-      : '🚨짧은 통화나 070 번호는 스팸일 가능성이 높습니다. 꼭 확인하세요!';
+      : '🚨짤은 통화나 070 번호는 스팸일 가능성이 높습니다. 꼭 확인하세요!';
 
     Alert.alert(
       `${item.type === 'sms' ? '💬 문자 상세 분석' : '📞 통화 상세 분석'}`,
@@ -175,7 +173,7 @@ const AutoPhoneAnalysisScreen = () => {
 const styles = StyleSheet.create({
   container: { flex: 1, paddingHorizontal: 20 },
   scrollContainer: { paddingBottom: 40 },
-  title: { marginTop: 30, fontSize: 20, fontWeight: 'bold', textAlign: 'center', color: '#333', marginBottom: 20 },
+  title: { marginTop: 30, fontWeight: 'bold', textAlign: 'center', color: '#333', marginBottom: 20 },
   analyzeButton: {
     backgroundColor: '#3B82F6',
     paddingVertical: 18,
@@ -183,28 +181,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 20,
   },
-  analyzeButtonText: {  fontWeight: 'bold', color: '#FFFFFF' },
-  resultText: { textAlign: 'center',  color: '#333', marginBottom: 15 },
-  itemBox: { 
-    backgroundColor: '#FFF', 
-    borderRadius: 12, 
-    padding: 15, 
-    marginBottom: 15, 
-    elevation: 2 
-  },
-  itemHeader: { 
-    flexDirection: 'row', 
-    alignItems: 'center', 
-    marginBottom: 5 
-  },
+  analyzeButtonText: { fontWeight: 'bold', color: '#FFFFFF' },
+  resultText: { textAlign: 'center', color: '#333', marginBottom: 15 },
+  itemBox: { backgroundColor: '#FFF', borderRadius: 12, padding: 15, marginBottom: 15, elevation: 2 },
+  itemHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 5 },
   icon: { marginRight: 8 },
-  itemSender: { 
-    fontSize: 14, 
-    color: '#333', 
-    fontWeight: 'bold' 
-  },
-  itemText: { fontSize: 14, color: '#333', marginBottom: 5 },
-  link: { color: '#10B981', fontWeight: 'bold', marginTop: 5 },
+  itemSender: { color: '#333', fontWeight: 'bold' },
+  itemText: { color: '#333', marginBottom: 5 },
 });
 
 export default AutoPhoneAnalysisScreen;
