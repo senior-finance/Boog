@@ -93,17 +93,17 @@ const MapViewScreen = ({ route, navigation }) => {
 
     try {
 
-      // const res = await axios.post(`${MAP_SEARCH_BACKEND_URL}searchPlace`, {
-      //   placeName: keyword,
-      //   x: userLocation.longitude,
-      //   y: userLocation.latitude,
-      // });
-
-      const res = await axios.post('http://10.0.2.2:4000/searchPlace', {
+      const res = await axios.post(`${MAP_SEARCH_BACKEND_URL}searchPlace`, {
         placeName: keyword,
         x: userLocation.longitude,
         y: userLocation.latitude,
       });
+
+      // const res = await axios.post('http://10.0.2.2:4000/searchPlace', {
+      //   placeName: keyword,
+      //   x: userLocation.longitude,
+      //   y: userLocation.latitude,
+      // });
 
       const placesData = res.data.places.map((place) => ({
         placeName: place.placeName || '이름 없음',
