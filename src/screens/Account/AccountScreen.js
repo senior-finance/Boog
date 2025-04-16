@@ -9,30 +9,30 @@ import {
     StyleSheet,
     Alert,
 } from 'react-native';
-import { WebView } from 'react-native-webview';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
     KFTC_CLIENT_ID,
     KFTC_CLIENT_SECRET,
     KFTC_REDIRECT_URI,
+    KFTC_BASE_URL,
     KFTC_SCOPE,
     KFTC_STATE,
     KFTC_TRAN_ID,
 } from '@env';
+import { WebView } from 'react-native-webview';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import firestore from '@react-native-firebase/firestore';
-import CustomText from '../../components/CustomText';
-
+import AccountScreenGUI from './AccountScreenGUI'; // UI 관련 컴포넌트를 불러옴
 
 // 사용자 인증을 위한 URL 생성
-const AUTH_URL = `https://testapi.openbanking.or.kr/oauth/2.0/authorize?response_type=code&client_id=${KFTC_CLIENT_ID}&redirect_uri=${encodeURIComponent(
+const AUTH_URL = `${KFTC_BASE_URL}/oauth/2.0/authorize?response_type=code&client_id=${KFTC_CLIENT_ID}&redirect_uri=${encodeURIComponent(
     KFTC_REDIRECT_URI
 )}&scope=${KFTC_SCOPE}&state=${KFTC_STATE}&auth_type=0`;
 
-const TOKEN_URL = 'https://testapi.openbanking.or.kr/oauth/2.0/token';
-const USER_ME_URL = 'https://testapi.openbanking.or.kr/v2.0/user/me';
-const ACCOUNT_BALANCE_URL = 'https://testapi.openbanking.or.kr/v2.0/account/balance/fin_num';
+const TOKEN_URL = `${KFTC_BASE_URL}/oauth/2.0/token`;
+const USER_ME_URL = `${KFTC_BASE_URL}/v2.0/user/me`;
+const ACCOUNT_BALANCE_URL = `${KFTC_BASE_URL}/v2.0/account/balance/fin_num`;
 
-const Account = () => {
+const AccountScreen = () => {
     // 상태 관리: 각 단계별 진행상태
     const [step, setStep] = useState('home'); // home, auth, fetchToken, fetchAccounts, accountList, fetchBalance, balance
     const [authCode, setAuthCode] = useState(null);
@@ -46,7 +46,7 @@ const Account = () => {
 
     const [secrets, setSecrets] = useState(null);
     const [vaultError, setVaultError] = useState(null); // Vault 데이터 fetch 과정에서 발생한 에러
-    
+
     useEffect(() => {
         fetch('http://10.0.2.2:3000/vault-secret') // Android 에뮬레이터의 로컬 서버 접근 IP
             .then(response => {
@@ -330,157 +330,22 @@ const Account = () => {
         );
     };
 
-    // 각 단계에 따른 화면 렌더링
-    if (step === 'home') {
-        return (
-            <View style={styles.container}>
-                <CustomText style={styles.title}>금융결제원 테스트베드</CustomText>
-                <Button title="인증하기" onPress={() => setStep('auth')} />
-            </View>
-        );
-    }
-
-    if (step === 'auth') {
-        return (
-            <WebView
-                source={{ uri: AUTH_URL }}
-                onNavigationStateChange={handleNavigationStateChange}
-            />
-        );
-    }
-
-    if (loading) {
-        return (
-            <View style={styles.container}>
-                <ActivityIndicator size="large" />
-                <CustomText>로딩 중...</CustomText>
-            </View>
-        );
-    }
-
-    if (error) {
-        Alert.alert('오류', error, [{ text: '확인', onPress: () => setError(null) }]);
-    }
-
-    // 계좌 목록 화면 (잔고와 우측 출금 버튼 포함)
-    if (step === 'accountList') {
-        return (
-            <View style={styles.container}>
-                <CustomText style={styles.title}>계좌 목록</CustomText>
-                <FlatList
-                    data={accountList}
-                    keyExtractor={(item) => item.fintech_use_num}
-                    renderItem={({ item }) => {
-                        // 배열에서 해당 계좌의 잔고 정보를 찾아 반환
-                        const balanceObj = accountBalances.find(
-                            (b) => b.fintech_use_num === item.fintech_use_num
-                        );
-                        return (
-                            <View style={styles.accountItem}>
-                                <View style={styles.accountInfo}>
-                                    <CustomText style={styles.bankName}>
-                                        은행명 : {balanceObj ? balanceObj.bank_name : '은행 조회 중...'}
-                                    </CustomText>
-                                    <CustomText style={styles.accountNumber}>
-                                        계좌번호 : {item.account_num_masked || '정보없음'}
-                                    </CustomText>
-                                    <CustomText style={styles.balance}>
-                                        잔액 : {" "}
-                                        {balanceObj ? Number(balanceObj.balance_amt).toLocaleString() : '잔액 조회 중...'}
-                                    </CustomText>
-                                </View>
-                                <View style={styles.buttonContainer}>
-                                    <TouchableOpacity
-                                        style={styles.receiveButton}
-                                        onPress={() => handleReceiveMoney(item)}
-                                    >
-                                        <CustomText style={styles.receiveButtonText}>지원금 받기</CustomText>
-                                    </TouchableOpacity>
-                                    <TouchableOpacity
-                                        style={styles.withdrawButton}
-                                        onPress={() => handleWithdraw(item)}
-                                    >
-                                        <CustomText style={styles.withdrawButtonText}>출금</CustomText>
-                                    </TouchableOpacity>
-                                </View>
-                            </View>
-                        );
-                    }}
-                />
-                <Button title="token 캐시 초기화" onPress={confirmClearToken} />
-            </View>
-        );
-    }
+    const handleWithdraw = () => { };
 
     return (
-        <View style={styles.container}>
-            <CustomText>프로세스 진행 중...</CustomText>
-        </View>
+        <AccountScreenGUI
+            step={step}
+            setStep={setStep}
+            AUTH_URL={AUTH_URL}
+            handleNavigationStateChange={handleNavigationStateChange}
+            loading={loading}
+            accountList={accountList}
+            accountBalances={accountBalances}
+            handleReceiveMoney={handleReceiveMoney}
+            handleWithdraw={handleWithdraw}
+            confirmClearToken={confirmClearToken}
+        />
     );
-};
+}
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#fff',
-        padding: 20
-    },
-    title: {
-       //         fontWeight: 'bold',
-        marginBottom: 20
-    },
-    accountItem: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        backgroundColor: '#f8f8f8',
-        padding: 15,
-        borderRadius: 8,
-        marginBottom: 10,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 2,
-    },
-    accountInfo: {
-        flex: 1,
-    },
-    accountNumber: {
-                marginBottom: 2
-    },
-    balance: {
-                color: '#333',
-        marginTop: 2
-    },
-    bankName: {
-                color: '#555',
-        marginTop: 2,
-    },
-    buttonContainer: {
-        flexDirection: 'row',
-    },
-    receiveButton: {
-        backgroundColor: '#28a745',
-        paddingVertical: 8,
-        paddingHorizontal: 12,
-        borderRadius: 5,
-        marginRight: 8,
-    },
-    receiveButtonText: {
-        color: '#fff',
-        fontWeight: 'bold',
-    },
-    withdrawButton: {
-        backgroundColor: '#007bff',
-        paddingVertical: 8,
-        paddingHorizontal: 12,
-        borderRadius: 5,
-    },
-    withdrawButtonText: {
-        color: '#fff',
-        fontWeight: 'bold',
-    },
-});
-
-export default Account;
+export default AccountScreen;
