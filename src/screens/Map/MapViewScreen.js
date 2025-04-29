@@ -9,17 +9,21 @@ import {
   View,
   FlatList,
   Pressable,
+  Alert,
+  Linking,
 } from "react-native";
 import DropDownPicker from 'react-native-dropdown-picker';
 import axios from "axios";
 import Geolocation from 'react-native-geolocation-service';
 import CustomText from '../../components/CustomText';
-import { Alert } from 'react-native';
 
 import { MAP_SEARCH_BACKEND_URL } from '@env';
 
 const MapViewScreen = ({ route, navigation }) => {
   const [selectedPlace, setSelectedPlace] = useState(null);
+  const [isAppNotFoundModalVisible, setAppNotFoundModalVisible] = useState(false);
+  const [isNoPlaceSelectedModalVisible, setNoPlaceSelectedModalVisible] = useState(false);
+
   const [open, setOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('은행');
   const [categoryItems, setCategoryItems] = useState([
@@ -49,7 +53,7 @@ const MapViewScreen = ({ route, navigation }) => {
   // 길찾기 함수
   const handleNavigatePress = () => {
     if (!selectedPlace) {
-      Alert.alert('알림', '먼저 장소를 선택해주세요.');
+      setNoPlaceSelectedModalVisible(true);
       return;
     }
     setIsModalVisible(true); // 모달 열기
@@ -61,29 +65,29 @@ const MapViewScreen = ({ route, navigation }) => {
   }, []);
 
   // 현재 위치 가져오기
-useEffect(() => {
-  setTimeout(() => {
-    Geolocation.getCurrentPosition(
-      (position) => {
-        setUserLocation({
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-        });
-      },
-      (error) => {
-        console.error("사용자 위치 가져오기 실패:", error);
-        Alert.alert('위치 오류', error.message);
-      },
-      {
-        enableHighAccuracy: true,
-        timeout: 30000,
-        maximumAge: 0,
-        forceRequestLocation: true,
-        showLocationDialog: true,
-      }
-    );
-  }, 1500); // 약간 딜레이 주는건 OK
-}, []);
+  useEffect(() => {
+    setTimeout(() => {
+      Geolocation.getCurrentPosition(
+        (position) => {
+          setUserLocation({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          });
+        },
+        (error) => {
+          console.error("사용자 위치 가져오기 실패:", error);
+          Alert.alert('위치 오류', error.message);
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 30000,
+          maximumAge: 0,
+          forceRequestLocation: true,
+          showLocationDialog: true,
+        }
+      );
+    }, 0);
+  }, []);
 
   // 현재 위치가 준비되면 검색 실행
   useEffect(() => {
@@ -422,6 +426,21 @@ useEffect(() => {
           }}
         />
       </View>
+      {isNoPlaceSelectedModalVisible && (
+        <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', alignItems: 'center', zIndex: 3000 }}>
+          <View style={{ width: '80%', backgroundColor: 'white', borderRadius: 20, padding: 20, alignItems: 'center', shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.25, shadowRadius: 4, elevation: 5 }}>
+            <CustomText style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 10, textAlign: 'center', color: '#ff5c5c' }}>
+              장소를 선택하세요
+            </CustomText>
+            <CustomText style={{ fontSize: 16, textAlign: 'center', color: '#555', marginBottom: 20 }}>
+              먼저 이동할 장소를 선택해주세요.
+            </CustomText>
+            <TouchableOpacity onPress={() => setNoPlaceSelectedModalVisible(false)} style={{ backgroundColor: '#4B7BE5', paddingVertical: 10, paddingHorizontal: 20, borderRadius: 10 }}>
+              <CustomText style={{ color: 'white', fontSize: 16 }}>확인</CustomText>
+            </TouchableOpacity>
+          </View>
+        </View>
+      )}
       {isModalVisible && (
         <View
           style={{
@@ -481,12 +500,47 @@ useEffect(() => {
                   marginHorizontal: 10,
                 }}
                 onPress={() => {
-                  console.log('길찾기 시작: ', selectedPlace);
+                  if (userLocation && selectedPlace) {
+                    const { latitude, longitude } = userLocation;
+                    const destLat = selectedPlace.mapy;
+                    const destLng = selectedPlace.mapx;
+
+                    const naverMapUrl = `nmap://route/walk?slat=${latitude}&slng=${longitude}&sname=내+위치&dlat=${destLat}&dlng=${destLng}&dname=${encodeURIComponent(selectedPlace.placeName)}`;
+
+                    console.log('네이버 지도 길찾기 URL:', naverMapUrl);
+
+                    // 네이버 지도 앱 열기
+                    Linking.openURL(naverMapUrl).catch(() => {
+                      setAppNotFoundModalVisible(true);
+                    });
+                  }
                   setIsModalVisible(false);
-                  // TODO: 여기서 진짜 길찾기 연결할 수 있음
                 }}
               >
                 <CustomText style={{ color: 'white', fontSize: 16 }}>확인</CustomText>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      )}
+      {isAppNotFoundModalVisible && (
+        <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', alignItems: 'center', zIndex: 3000 }}>
+          <View style={{ width: '80%', backgroundColor: 'white', borderRadius: 20, padding: 20, alignItems: 'center', shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.25, shadowRadius: 4, elevation: 5 }}>
+            <CustomText style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 10, textAlign: 'center', color: '#ff5c5c' }}>
+              네이버 지도 앱 없음
+            </CustomText>
+            <CustomText style={{ fontSize: 16, textAlign: 'center', color: '#555', marginBottom: 20 }}>
+              네이버 지도 앱이 설치되어 있지 않습니다.{"\n"}플레이스토어로 이동하시겠습니까?
+            </CustomText>
+            <View style={{ flexDirection: 'row' }}>
+              <TouchableOpacity onPress={() => setAppNotFoundModalVisible(false)} style={{ backgroundColor: '#ccc', paddingVertical: 10, paddingHorizontal: 20, borderRadius: 10, marginHorizontal: 10 }}>
+                <CustomText style={{ color: 'black', fontSize: 16 }}>닫기</CustomText>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => {
+                setAppNotFoundModalVisible(false);
+                Linking.openURL('https://play.google.com/store/apps/details?id=com.nhn.android.nmap');
+              }} style={{ backgroundColor: '#4B7BE5', paddingVertical: 10, paddingHorizontal: 20, borderRadius: 10, marginHorizontal: 10 }}>
+                <CustomText style={{ color: 'white', fontSize: 16 }}>스토어 이동</CustomText>
               </TouchableOpacity>
             </View>
           </View>
