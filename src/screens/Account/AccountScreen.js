@@ -23,14 +23,17 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import firestore from '@react-native-firebase/firestore';
 import AccountScreenGUI from './AccountScreenGUI'; // UI 관련 컴포넌트를 불러옴
 
+// 슬래시 제거
+const sanitizedBaseUrl = KFTC_BASE_URL.replace(/\/+$/, '');
+
 // 사용자 인증을 위한 URL 생성
-const AUTH_URL = `${KFTC_BASE_URL}/oauth/2.0/authorize?response_type=code&client_id=${KFTC_CLIENT_ID}&redirect_uri=${encodeURIComponent(
+const AUTH_URL = `${sanitizedBaseUrl}/oauth/2.0/authorize?response_type=code&client_id=${KFTC_CLIENT_ID}&redirect_uri=${encodeURIComponent(
     KFTC_REDIRECT_URI
 )}&scope=${KFTC_SCOPE}&state=${KFTC_STATE}&auth_type=0`;
 
-const TOKEN_URL = `${KFTC_BASE_URL}/oauth/2.0/token`;
-const USER_ME_URL = `${KFTC_BASE_URL}/v2.0/user/me`;
-const ACCOUNT_BALANCE_URL = `${KFTC_BASE_URL}/v2.0/account/balance/fin_num`;
+const TOKEN_URL = `${sanitizedBaseUrl}/oauth/2.0/token`;
+const USER_ME_URL = `${sanitizedBaseUrl}/v2.0/user/me`;
+const ACCOUNT_BALANCE_URL = `${sanitizedBaseUrl}/v2.0/account/balance/fin_num`;
 
 const AccountScreen = () => {
     // 상태 관리: 각 단계별 진행상태
