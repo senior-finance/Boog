@@ -7,7 +7,10 @@ const AnswerScreen = ({ route, navigation }) => {
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      headerLeft: () => null,
+      headerLeft: () =>
+
+
+null,
       gestureEnabled: false,
     });
   }, [navigation]);

@@ -1,36 +1,49 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
 import CustomText from '../../components/CustomText';
 import CustomTextInput from '../../components/CustomTextInput';
+
 export default function DepositStep1({ navigation }) {
   const [accountNumber, setAccountNumber] = useState('');
 
   return (
-    <View style={styles.container}>
-      <CustomText style={styles.title}>입금 연습을 해볼게요{'\n'}실제로 입금이 되지는 않아요!</CustomText>
-
-      <CustomText style={styles.subtitle}>
-        아래 빈칸에 입금할{'\n'}계좌 번호를 입력하면{'\n'}
-        올바른 계좌인지 확인해드릴게요
-      </CustomText>
-
-      <CustomTextInput
-        style={styles.input}
-        placeholder="계좌 번호 입력"
-        keyboardType="numeric"
-        value={accountNumber}
-        onChangeText={setAccountNumber}
-      />
-
-      <TouchableOpacity 
-        style={styles.button} 
-        onPress={() => navigation.navigate('DepositStep2', { accountNumber })}
-        disabled={!accountNumber}
+    <LinearGradient colors={['#F8F8F8', '#ECECEC']} style={styles.container}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        style={styles.keyboardView}
       >
-        <CustomText style={styles.buttonText}>다음 화면</CustomText>
-      </TouchableOpacity>
+        <View style={styles.card}>
+          <CustomText style={styles.title}>
+            입금 연습을 해볼게요{'\n'}실제로 입금이 되지는 않아요!
+          </CustomText>
 
-      {/* 도움 요청 및 긴급 연락 버튼 */}
+          <CustomText style={styles.subtitle}>
+            아래 빈칸에 입금할 계좌 번호를 입력하면{'\n'}올바른 계좌인지 확인해드릴게요
+          </CustomText>
+
+          <CustomTextInput
+            style={styles.input}
+            placeholder="계좌 번호 입력"
+            keyboardType="numeric"
+            value={accountNumber}
+            onChangeText={setAccountNumber}
+          />
+
+          <TouchableOpacity
+            style={[
+              styles.nextButton,
+              { backgroundColor: accountNumber ? '#4B7BE5' : '#ccc' },
+            ]}
+            onPress={() => navigation.navigate('DepositStep2', { accountNumber })}
+            disabled={!accountNumber}
+          >
+            <CustomText style={styles.nextButtonText}>다음 화면</CustomText>
+          </TouchableOpacity>
+        </View>
+      </KeyboardAvoidingView>
+
+      {/* 하단 도움 요청 / 긴급 연락 */}
       <View style={styles.footer}>
         <TouchableOpacity style={[styles.footerButton, styles.help]}>
           <CustomText style={styles.footerText}>도움</CustomText>
@@ -40,78 +53,99 @@ export default function DepositStep1({ navigation }) {
           <CustomText style={styles.footerText}>긴급 연락 🚨</CustomText>
         </TouchableOpacity>
       </View>
-    </View>
+    </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { 
-    flex: 1, 
-    alignItems: 'center', 
-    backgroundColor: '#F5F5F5', 
-    paddingHorizontal: 20, 
-    paddingTop: 80 // 제목을 위로 올리기 위해 추가
+  container: {
+    flex: 1,
+    backgroundColor: '#F8F8F8',
+    paddingHorizontal: 20,
+    alignItems: 'center',
+    justifyContent: 'flex-start', 
+    paddingTop: 0,
   },
-  title: { 
-    fontSize: 28, 
-    fontWeight: 'bold', 
-    color: 'black',
-    textAlign: 'center',
-    marginBottom: 60 // 기존보다 간격을 더 늘림
+  keyboardView: {
+    flex: 1,
+    width: '100%',
+    justifyContent: 'flex-start',   
+    alignItems: 'center',
+    paddingTop: 0,       
   },
-  subtitle: { 
-        fontWeight: 'bold',
-    color: 'black',
-    textAlign: 'center', 
-    marginTop: 20, // 제목과의 간격 추가
-    marginBottom: 40 // 입력 필드와 간격 조정
-  },
-  input: { 
-    width: '90%', 
-    borderWidth: 2, 
-    borderColor: 'gray', 
-    borderRadius: 10, 
-    padding: 10, 
-    fontSize: 25, 
-    textAlign: 'center', 
-    marginBottom: 40 
-  },
-  button: { 
-    backgroundColor: '#D9D9D9', 
-    paddingVertical: 15, 
-    paddingHorizontal: 30, 
-    borderRadius: 30,
+  card: {
+    backgroundColor: '#fff',
+    width: '90%',
+    paddingVertical: 50, // 상하 여백 크게
+    paddingHorizontal: 24,
+    borderRadius: 16,
+    alignItems: 'center',
     shadowColor: '#000',
-    shadowOffset: { width: 2, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 6,
-    elevation: 5,
+    marginTop: 50, 
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 6,
   },
-  buttonText: { 
-    fontSize: 25, 
+  title: {
     fontWeight: 'bold',
-    color: 'black', 
+    color: '#4B7BE5',
+    textAlign: 'center',
+    marginBottom: 24,
+    lineHeight: 34,
   },
-  // 하단 도움 요청 & 긴급 연락 버튼 스타일
+  subtitle: {
+    fontWeight: '600',
+    color: '#333',
+    textAlign: 'center',
+    marginBottom: 36,
+    lineHeight: 26,
+  },
+  input: {
+    width: '100%',
+    borderWidth: 1,
+    borderColor: '#bbb',
+    borderRadius: 12,
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    textAlign: 'center',
+    backgroundColor: '#ECECEC',
+    marginBottom: 36,
+  },
+  nextButton: {
+    width: '100%',
+    paddingVertical: 16,
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  nextButtonText: {
+    fontWeight: 'bold',
+    color: 'white',
+  },
   footer: {
     position: 'absolute',
     bottom: 20,
+    width: '90%',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    width: '100%',
-    gap: 100,
+    alignSelf: 'center',
   },
   footerButton: {
     flex: 1,
-    paddingVertical: 15,
-    marginHorizontal: 5,
-    borderRadius: 20,
-    alignItems: 'center'
+    paddingVertical: 14,
+    marginHorizontal: 8,
+    borderRadius: 12,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 1, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 3,
   },
-  help: { backgroundColor: '#DFEBF8' },
+  help: { backgroundColor: '#D9E7F9' },
   emergency: { backgroundColor: '#FFC1B1' },
   footerText: {
-        fontWeight: 'bold',
-    color: 'black',
+    fontWeight: 'bold',
+    color: '#333',
   },
 });
