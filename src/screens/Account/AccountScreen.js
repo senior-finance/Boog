@@ -44,6 +44,9 @@ const AccountScreen = () => {
     const [error, setError] = useState(null);
     const [accountBalances, setAccountBalances] = useState([]);
 
+    const [accountId, setAccountId] = useState('');
+    const [amount, setAmount] = useState('');
+
     const [secrets, setSecrets] = useState(null);
     const [vaultError, setVaultError] = useState(null); // Vault 데이터 fetch 과정에서 발생한 에러
 
@@ -330,57 +333,42 @@ const AccountScreen = () => {
         );
     };
 
-    // 1) Atlas Data API 설정 값
-    const APP_ID = "<YOUR_APP_ID>";
-    const API_KEY = "<YOUR_DATA_API_KEY>";
-    const DATA_URL = `https://data.mongodb-api.com/app/${APP_ID}/endpoint/data/v1/action/insertOne`;
-
-    // 2) 서버리스 함수: withdraw 기록 쓰기
-    async function writeWithdraw(accountId, amount) {
-        // 요청 페이로드
-        const payload = {
-            dataSource: "Cluster0",     // Atlas 클러스터 이름
-            database: "your-db-name", // 데이터베이스 이름
-            collection: "withdraws",    // 콜렉션 이름
-            document: {
-                accountId,
-                amount,
-                createdAt: new Date()
-            }
-        };
-
-        const res = await fetch(DATA_URL, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "api-key": API_KEY
-            },
-            body: JSON.stringify(payload)
+    // 로컬 Express 서버 호출 함수
+    const writeWithdraw = async (accountId, amount) => {
+        const API_URL = `http://10.0.2.2:3000/withdraw`;
+        const res = await fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ accountId, amount }),
         });
-
         const json = await res.json();
         if (!res.ok || !json.insertedId) {
             const errMsg = json.error || JSON.stringify(json);
-            throw new Error(`Data API error: ${errMsg}`);
+            throw new Error(`서버 오류: ${errMsg}`);
         }
         return json.insertedId;
-    }
+    };
 
-    // 3) React Native 컴포넌트 예제
-    const WithdrawButton = ({ selectedAccount, withdrawalAmount }) => {
-        const handleWithdraw = async () => {
-            console.log("🔔 handleWithdraw 호출됨");
-            try {
-                const newId = await writeWithdraw(selectedAccount.id, withdrawalAmount);
-                Alert.alert("출금 기록 생성됨", `ID: ${newId}`);
-            } catch (err) {
-                console.error("✖️ writeWithdraw 실패:", err);
-                Alert.alert("오류 발생", err.message);
-            }
-        };
-    }
-    
-    const handleWithdraw = () => { };
+    // 버튼 클릭 핸들러
+    const handleWithdraw = async () => {
+        // 테스트용 state 업데이트
+        setAccountId("accountId TEST");
+        setAmount("123456789");
+
+        if (!accountId.trim() || Number(amount) <= 0) {
+            Alert.alert('입력 오류', '유효한 계좌 ID와 금액을 입력해주세요.');
+            return;
+        }
+        try {
+            const newId = await writeWithdraw(accountId.trim(), parseFloat(amount));
+            Alert.alert('출금 기록 생성됨', `ID: ${newId}`);
+        } catch (err) {
+            console.error('✖️ writeWithdraw 실패:', err);
+            Alert.alert('오류 발생', err.message);
+        }
+    };
+
+    // const handleWithdraw = () => { };
 
     return (
         <AccountScreenGUI
