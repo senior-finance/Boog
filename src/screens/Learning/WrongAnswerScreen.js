@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
       textAlign: 'center',
     },
     imageOnly: {
-      width: 230,
+      width: 220,
       height: 230,
       marginBottom: 10,
     },
