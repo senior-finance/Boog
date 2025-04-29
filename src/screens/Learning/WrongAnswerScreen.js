@@ -94,7 +94,7 @@ const WrongAnswerScreen = ({ route, navigation }) => {
             </TouchableOpacity>
           </View>
 
-          <TouchableOpacity style={styles.quitButton} onPress={() => navigation.navigate("Learning")}>
+          <TouchableOpacity style={styles.quitButton} onPress={() => navigation.navigate("MainTabs")}>
             <CustomText style={styles.buttonText}>그만둘래요</CustomText>
           </TouchableOpacity>
         </>

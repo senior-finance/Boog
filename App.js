@@ -88,14 +88,11 @@ export default function App() {
           <Stack.Screen name="VoicePhishingScreen" component={VoicePhishingScreen} options={{ presentation: 'modal' }} />
 
           <Stack.Screen name="VoicePhishingDetail" component={VoicePhishingDetailScreen} />
-        
 
-        
           <Stack.Screen name="FAQ" component={FAQScreen} />
           <Stack.Screen name="ProfileIconSelect" component={ProfileIconSelect} />
           <Stack.Screen name="Welfare" component={WelfareScreen} />
           <Stack.Screen name="Web" component={WebScreen} />
-
 
           <Stack.Screen name="InquiryForm" component={InquiryFormScreen} />
           <Stack.Screen name="InquiryList" component={InquiryListScreen} />
