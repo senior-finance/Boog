@@ -1,36 +1,42 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Modal } from 'react-native';
+import { View, TouchableOpacity, StyleSheet, Modal, KeyboardAvoidingView, Platform } from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
 import CustomText from '../../components/CustomText';
 
 export default function DepositStep4({ navigation, route }) {
   const [modalVisible, setModalVisible] = useState(false);
 
   return (
-    <View style={styles.container}>
-      <CustomText style={styles.title}>
-        입금 연습을 해볼게요{'\n'}실제로 입금이 되지는 않아요!
-      </CustomText>
-
-      <CustomText style={styles.subtitle}>
-        입금할 계좌, 은행, 금액을{'\n'}
-        확인해주세요
-      </CustomText>
-
-      <View style={styles.infoBox}>
-        <CustomText style={styles.infoText}>계좌 : {route.params.accountNumber}</CustomText>
-        <CustomText style={styles.infoText}>은행 : {route.params.selectedBank}</CustomText>
-        <CustomText style={styles.infoText}>금액 : {route.params.amount}원</CustomText>
-      </View>
-
-      {/* 모의 입금 버튼 */}
-      <TouchableOpacity 
-        style={styles.button} 
-        onPress={() => setModalVisible(true)}
+    <LinearGradient colors={['#F8F8F8', '#ECECEC']} style={styles.container}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        style={styles.keyboardView}
       >
-        <CustomText style={styles.buttonText}>모의 입금하기</CustomText>
-      </TouchableOpacity>
+        <View style={styles.card}>
+          <CustomText style={styles.title}>
+            입금 연습을 해볼게요{'\n'}실제로 입금이 되지는 않아요!
+          </CustomText>
 
-      {/* 팝업 모달 */}
+          <CustomText style={styles.subtitle}>
+            입금할 계좌, 은행, 금액을{'\n'}확인해주세요
+          </CustomText>
+
+          <View style={styles.infoBox}>
+            <CustomText style={styles.infoText}>계좌 : {route.params.accountNumber}</CustomText>
+            <CustomText style={styles.infoText}>은행 : {route.params.selectedBank}</CustomText>
+            <CustomText style={styles.infoText}>금액 : {route.params.amount}원</CustomText>
+          </View>
+
+          <TouchableOpacity
+            style={styles.nextButton}
+            onPress={() => setModalVisible(true)}
+          >
+            <CustomText style={styles.nextButtonText}>모의 입금하기</CustomText>
+          </TouchableOpacity>
+        </View>
+      </KeyboardAvoidingView>
+
+      {/* 모달 */}
       <Modal
         animationType="slide"
         transparent={true}
@@ -42,143 +48,145 @@ export default function DepositStep4({ navigation, route }) {
             <CustomText style={styles.modalTitle}>잘하셨어요! 👏</CustomText>
             <CustomText style={styles.modalSubtitle}>연습하면서 도움이 필요하셨나요?</CustomText>
 
-            {/* 버튼들 */}
             <View style={styles.buttonRow}>
-              <TouchableOpacity style={styles.modalButton}>
-                <CustomText style={styles.modalButtonText}>도움</CustomText>
-              </TouchableOpacity>
-              <TouchableOpacity 
-                style={styles.modalButton} 
-                onPress={() => {
-                  setModalVisible(false);
-                  navigation.navigate('DepositStep1'); // 다시 연습 버튼 → DepositStep1 이동
-                }}
-              >
+              <TouchableOpacity style={styles.modalButton} onPress={() => {
+                setModalVisible(false);
+                navigation.navigate('DepositStep1');
+              }}>
                 <CustomText style={styles.modalButtonText}>다시 연습</CustomText>
               </TouchableOpacity>
-            </View>
 
-            <View style={styles.buttonRow}>
-            <TouchableOpacity 
-              style={styles.modalButton} 
-              onPress={() => {
-                setModalVisible(false); // 모달 닫기
-                navigation.navigate('MainTabs'); // 홈화면 이동
-              }}
-            >
-              <CustomText style={styles.modalButtonText}>홈화면</CustomText>
-            </TouchableOpacity>
+              <TouchableOpacity style={styles.modalButton} onPress={() => {
+                setModalVisible(false);
+                navigation.navigate('MainTabs');
+              }}>
+                <CustomText style={styles.modalButtonText}>홈화면</CustomText>
+              </TouchableOpacity>
             </View>
           </View>
         </View>
       </Modal>
-    </View>
+    </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { 
-    flex: 1, 
-    alignItems: 'center', 
-    backgroundColor: '#F5F5F5', 
-    paddingHorizontal: 20, 
-    paddingTop: 80 
-  },
-  title: { 
-   // fontSize: 28, 
-    fontWeight: 'bold',
-    color: 'black',
-    textAlign: 'center',
-    marginBottom: 50 
-  },
-  subtitle: { 
-   //     fontWeight: 'bold',
-    color: 'black',
-    textAlign: 'center', 
-    marginBottom: 40 
-  },
-  infoBox: { 
-    width: '80%', 
-    padding: 20, 
-    backgroundColor: '#CADEF4', 
-    borderRadius: 10, 
-    borderWidth: 2, 
-    borderColor: 'gray', 
+  container: {
+    flex: 1,
+    paddingHorizontal: 20,
+    backgroundColor: '#F8F8F8',
+    justifyContent: 'flex-start',
     alignItems: 'center',
-    minHeight: 180,
-    justifyContent: 'center',
-    marginBottom: 40 
   },
-  infoText: { 
-   // fontSize: 23, 
-    fontWeight: 'bold',
-    color: 'black', 
-    textAlign: 'center' 
+  keyboardView: {
+    flex: 1,
+    width: '100%',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
   },
-  button: { 
-    backgroundColor: '#D9D9D9', 
-    paddingVertical: 15, 
-    paddingHorizontal: 30, 
-    borderRadius: 30,
+  card: {
+    backgroundColor: '#fff',
+    width: '90%',
+    paddingVertical: 40,
+    paddingHorizontal: 24,
+    borderRadius: 16,
+    alignItems: 'center',
+    marginTop: 50,
     shadowColor: '#000',
-    shadowOffset: { width: 2, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 6,
-    elevation: 5,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 6,
   },
-  buttonText: { 
-   // fontSize: 25, 
+  title: {
     fontWeight: 'bold',
-    color: 'black', 
+    color: '#4B7BE5',
+    textAlign: 'center',
+    marginBottom: 24,
+    lineHeight: 34,
   },
-  // 팝업 모달 스타일
+  subtitle: {
+    fontWeight: '600',
+    color: '#333',
+    textAlign: 'center',
+    marginBottom: 30,
+    lineHeight: 26,
+  },
+  infoBox: {
+    width: '100%',
+    padding: 20,
+    backgroundColor: '#D9E7F9',
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: '#bbb',
+    alignItems: 'center',
+    marginBottom: 36,
+  },
+  infoText: {
+    fontWeight: 'bold',
+    color: '#333',
+    textAlign: 'center',
+    marginVertical: 6,
+  },
+  nextButton: {
+    width: '100%',
+    paddingVertical: 16,
+    borderRadius: 12,
+    alignItems: 'center',
+    backgroundColor: '#4B7BE5',
+  },
+  nextButtonText: {
+    fontWeight: 'bold',
+    color: 'white',
+  },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: 'rgba(0,0,0,0.5)',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
-  modalContainer: { 
+  modalContainer: {
     width: '90%',
-    backgroundColor: '#FCFCFC',
+    backgroundColor: '#fff',
     padding: 30,
     borderRadius: 20,
     alignItems: 'center',
   },
-  modalTitle: { 
-   // fontSize: 28, 
+  modalTitle: {
     fontWeight: 'bold',
-    color: 'black',
+    color: '#4B7BE5',
     textAlign: 'center',
-    marginBottom: 10
+    marginBottom: 10,
+    fontSize: 20,
   },
-  modalSubtitle: { 
-   //     fontWeight: 'bold',
-    color: 'black',
+  modalSubtitle: {
+    fontWeight: '600',
+    color: '#333',
     textAlign: 'center',
-    marginBottom: 30 
+    marginBottom: 30,
+    fontSize: 16,
   },
-  buttonRow: { 
-    flexDirection: 'row', 
-    justifyContent: 'space-between', 
-    width: '100%', 
-    marginBottom: 20 
+  buttonRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+    marginBottom: 10,
   },
-  modalButton: { 
+  modalButton: {
     flex: 1,
-    paddingVertical: 15,
-    marginHorizontal: 15,
-    borderRadius: 15,
+    paddingVertical: 14,
+    marginHorizontal: 8,
+    borderRadius: 12,
     backgroundColor: '#D9D9D9',
     alignItems: 'center',
     shadowColor: '#000',
-    shadowOffset: { width: 2, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 6,
-    elevation: 5,
+    shadowOffset: { width: 1, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 3,
   },
-  modalButtonText: { 
-   //     color: 'black',
-    fontWeight: 'bold' 
-  }
+  modalButtonText: {
+    fontWeight: 'bold',
+    color: '#333',
+  },
 });
