@@ -6,7 +6,7 @@ buildscript {
         targetSdkVersion = 34
         ndkVersion = "27.1.12297006"
         kotlinVersion = "1.8.22"
-//        multiDexEnabled = true // 추가
+        googlePlayServicesLocationVersion = "21.0.1"
     }
     repositories {
         google()
@@ -16,7 +16,9 @@ buildscript {
         classpath("com.android.tools.build:gradle")
         classpath("com.facebook.react:react-native-gradle-plugin")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin")
-        classpath("com.google.gms:google-services:4.3.5")
+//        classpath("com.google.gms:google-services:4.3.5")
+        classpath("com.google.gms:google-services:4.4.0")
+
     }
 }
 
@@ -24,7 +26,16 @@ allprojects {
     repositories {
         google()
         mavenCentral()
-        maven { url "https://repository.map.naver.com/archive/maven" } // ✅ 네이버 지도 SDK 저장소 추가
+        jcenter()
+        maven { url "https://repository.map.naver.com/archive/maven" }
+    }
+
+    configurations.all {
+        resolutionStrategy {
+            force "com.google.android.gms:play-services-location:21.0.1"
+            force "com.google.android.gms:play-services-base:18.2.0"
+            force "com.google.android.gms:play-services-tasks:18.0.2"
+        }
     }
 }
 

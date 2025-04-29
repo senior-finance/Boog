@@ -12,6 +12,8 @@ import com.facebook.react.defaults.DefaultReactNativeHost
 import com.facebook.react.flipper.ReactNativeFlipper
 import com.facebook.soloader.SoLoader
 
+import com.seniorfinance.BuildConfig
+
 // ✅ 자바 네이티브 패키지 import 추가
 import com.seniorfinance.PhoneAnalysisPackage
 

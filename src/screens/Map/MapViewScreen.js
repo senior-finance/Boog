@@ -12,12 +12,14 @@ import {
 } from "react-native";
 import DropDownPicker from 'react-native-dropdown-picker';
 import axios from "axios";
-import Geolocation from '@react-native-community/geolocation';
+import Geolocation from 'react-native-geolocation-service';
 import CustomText from '../../components/CustomText';
+import { Alert } from 'react-native';
 
 import { MAP_SEARCH_BACKEND_URL } from '@env';
 
 const MapViewScreen = ({ route, navigation }) => {
+  const [selectedPlace, setSelectedPlace] = useState(null);
   const [open, setOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('은행');
   const [categoryItems, setCategoryItems] = useState([
@@ -42,6 +44,16 @@ const MapViewScreen = ({ route, navigation }) => {
   const Divider = () => (
     <View style={{ height: 1, backgroundColor: '#dcdcdc', width: '100%' }} />
   );
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  // 길찾기 함수
+  const handleNavigatePress = () => {
+    if (!selectedPlace) {
+      Alert.alert('알림', '먼저 장소를 선택해주세요.');
+      return;
+    }
+    setIsModalVisible(true); // 모달 열기
+  };
 
   // 위치 권한 요청
   useEffect(() => {
@@ -49,7 +61,8 @@ const MapViewScreen = ({ route, navigation }) => {
   }, []);
 
   // 현재 위치 가져오기
-  useEffect(() => {
+useEffect(() => {
+  setTimeout(() => {
     Geolocation.getCurrentPosition(
       (position) => {
         setUserLocation({
@@ -57,10 +70,20 @@ const MapViewScreen = ({ route, navigation }) => {
           longitude: position.coords.longitude,
         });
       },
-      (error) => console.error("사용자 위치 가져오기 실패:", error),
-      { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+      (error) => {
+        console.error("사용자 위치 가져오기 실패:", error);
+        Alert.alert('위치 오류', error.message);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 30000,
+        maximumAge: 0,
+        forceRequestLocation: true,
+        showLocationDialog: true,
+      }
     );
-  }, []);
+  }, 1500); // 약간 딜레이 주는건 OK
+}, []);
 
   // 현재 위치가 준비되면 검색 실행
   useEffect(() => {
@@ -184,7 +207,14 @@ const MapViewScreen = ({ route, navigation }) => {
   // 위치 권한 요청 함수
   async function requestLocationPermission() {
     if (Platform.OS !== 'android') return;
+
     try {
+      const alreadyGranted = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
+      if (alreadyGranted) {
+        console.log('이미 위치 권한이 허용되어 있습니다.');
+        return;
+      }
+
       const granted = await PermissionsAndroid.request(
         PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
         {
@@ -195,16 +225,16 @@ const MapViewScreen = ({ route, navigation }) => {
           buttonPositive: '확인',
         },
       );
+
       if (granted === PermissionsAndroid.RESULTS.GRANTED) {
         console.log('위치 권한이 허용되었습니다.');
       } else {
         console.log('위치 권한이 거부되었습니다.');
       }
     } catch (err) {
-      console.warn(err);
+      console.warn('위치 권한 요청 실패:', err);
     }
   }
-
   return (
     <View style={{ flex: 1 }}>
       {/* 드롭다운 & 검색 버튼 */}
@@ -274,6 +304,17 @@ const MapViewScreen = ({ route, navigation }) => {
               width={60}
               height={60}
               caption={{ text: '내 위치', align: Align.Top }}
+              onClick={() => {
+                if (mapView.current) {
+                  mapView.current.animateToCoordinate(
+                    {
+                      latitude: userLocation.latitude,
+                      longitude: userLocation.longitude,
+                    },
+                    500
+                  );
+                }
+              }}
             />
           )}
           {/* 검색된 장소 마커 */}
@@ -288,9 +329,40 @@ const MapViewScreen = ({ route, navigation }) => {
               width={60}
               height={60}
               caption={{ text: place.placeName, align: Align.Top }}
+              onClick={() => {
+                if (mapView.current) {
+                  mapView.current.animateToCoordinate(
+                    {
+                      latitude: parseFloat(place.mapy),
+                      longitude: parseFloat(place.mapx),
+                    },
+                    500
+                  );
+                }
+                setSelectedPlace(place);
+              }}
             />
           ))}
         </NaverMapView>
+        <TouchableOpacity
+          style={{
+            position: 'absolute',
+            bottom: 20,
+            right: 20,
+            backgroundColor: '#4B7BE5',
+            paddingVertical: 12,
+            paddingHorizontal: 20,
+            borderRadius: 30,
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.3,
+            shadowRadius: 4,
+            elevation: 5,
+          }}
+          onPress={handleNavigatePress}
+        >
+          <CustomText style={{ color: 'white', fontWeight: '600', fontSize: 18 }}>길찾기</CustomText>
+        </TouchableOpacity>
       </View>
 
       <Divider />
@@ -314,11 +386,12 @@ const MapViewScreen = ({ route, navigation }) => {
                       500
                     );
                   }
+                  setSelectedPlace(item);
                 }}
                 style={({ pressed }) => [
                   {
                     marginBottom: 10,
-                    backgroundColor: '#f9f9f9',
+                    backgroundColor: selectedPlace?.address === item.address ? '#dce7ff' : '#f9f9f9',
                     borderRadius: 8,
                     padding: 12,
                     borderWidth: 1,
@@ -349,6 +422,76 @@ const MapViewScreen = ({ route, navigation }) => {
           }}
         />
       </View>
+      {isModalVisible && (
+        <View
+          style={{
+            position: 'absolute',
+            top: 0, left: 0, right: 0, bottom: 0,
+            backgroundColor: 'rgba(0,0,0,0.5)',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 2000,
+          }}
+        >
+          <View
+            style={{
+              width: '80%',
+              backgroundColor: 'white',
+              borderRadius: 20,
+              padding: 20,
+              alignItems: 'center',
+              shadowColor: '#000',
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.25,
+              shadowRadius: 4,
+              elevation: 5,
+            }}
+          >
+            {/* 제목 */}
+            <CustomText style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 10, textAlign: 'center', color: '#4B7BE5' }}>
+              {selectedPlace?.placeName}
+            </CustomText>
+
+            {/* 설명 */}
+            <CustomText style={{ fontSize: 16, textAlign: 'center', color: '#555', marginBottom: 20 }}>
+              선택한 장소로 길찾기를 하시겠습니까?
+            </CustomText>
+
+            {/* 버튼 */}
+            <View style={{ flexDirection: 'row', marginTop: 10 }}>
+              <TouchableOpacity
+                style={{
+                  backgroundColor: '#ccc',
+                  paddingVertical: 10,
+                  paddingHorizontal: 20,
+                  borderRadius: 10,
+                  marginHorizontal: 10,
+                }}
+                onPress={() => setIsModalVisible(false)}
+              >
+                <CustomText style={{ color: 'black', fontSize: 16 }}>취소</CustomText>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={{
+                  backgroundColor: '#4B7BE5',
+                  paddingVertical: 10,
+                  paddingHorizontal: 20,
+                  borderRadius: 10,
+                  marginHorizontal: 10,
+                }}
+                onPress={() => {
+                  console.log('길찾기 시작: ', selectedPlace);
+                  setIsModalVisible(false);
+                  // TODO: 여기서 진짜 길찾기 연결할 수 있음
+                }}
+              >
+                <CustomText style={{ color: 'white', fontSize: 16 }}>확인</CustomText>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      )}
     </View>
   );
 };
