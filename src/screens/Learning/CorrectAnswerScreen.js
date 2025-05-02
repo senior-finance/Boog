@@ -113,12 +113,12 @@ const styles = StyleSheet.create({
     paddingTop: 60,
   },
   title: {
-        fontWeight: 'bold',
+    fontWeight: 'bold',
     color: 'black',
     marginBottom: 10,
   },
   answerText: {
-        fontWeight: 'bold',
+    fontWeight: 'bold',
     color: 'black',
     marginBottom: 20,
     textAlign: 'center',
@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
     marginBottom: 30,
   },
   explanationText: {
-        fontWeight: 'bold',
+    fontWeight: 'bold',
     color: 'black',
     textAlign: 'center',
   },
@@ -173,7 +173,7 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   buttonText: {
-        fontWeight: 'bold',
+    fontWeight: 'bold',
     color: 'black',
   },
 });

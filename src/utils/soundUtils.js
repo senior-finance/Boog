@@ -1,18 +1,21 @@
 import Sound from 'react-native-sound';
 
-// 사운드 초기화 시 enableInSilenceMode도 true로 하면 무음 모드에서도 재생됨
+// 사운드 초기화
 Sound.setCategory('Playback', true);
 
 let soundInstance = null;
-let currentVolume = 1.0; // 기본 100%
+let currentVolume = 1.0;
 
-// 🔊 사운드 로드 및 캐싱
-export const loadSound = (fileName, onLoaded = () => {}) => {
+// ✅ 사운드 파일 import (정적 경로)
+const soundFile = require('../assets/sounds/correct.mp3');
+
+// 🔊 사운드 로드
+export const loadSound = (onLoaded = () => {}) => {
   if (soundInstance) {
-    soundInstance.release(); // 이전 사운드 정리
+    soundInstance.release();
   }
 
-  soundInstance = new Sound(fileName, Sound.MAIN_BUNDLE, (error) => {
+  soundInstance = new Sound(soundFile, (error) => {
     if (error) {
       console.error('🔈 사운드 로드 실패:', error);
       return;
@@ -40,7 +43,7 @@ export const playSound = () => {
 // 🔁 반복 재생
 export const playLoop = () => {
   if (soundInstance) {
-    soundInstance.setNumberOfLoops(-1); // 무한 반복
+    soundInstance.setNumberOfLoops(-1);
     soundInstance.play();
   }
 };
@@ -52,7 +55,7 @@ export const stopSound = () => {
   }
 };
 
-// 🔉 음량 설정 (0.0 ~ 1.0)
+// 🔉 음량 설정
 export const setSoundVolume = (volume) => {
   currentVolume = volume;
   if (soundInstance) {
@@ -60,7 +63,5 @@ export const setSoundVolume = (volume) => {
   }
 };
 
-// 🔍 현재 음량 확인
-export const getSoundVolume = () => {
-  return currentVolume;
-};
+// 🔍 음량 확인
+export const getSoundVolume = () => currentVolume;
