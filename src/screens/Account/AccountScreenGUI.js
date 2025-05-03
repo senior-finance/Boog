@@ -1,7 +1,9 @@
 import React, {useRef, useState} from 'react';
 import {
+  Modal,
   View,
   Text,
+  TextInput,
   Button,
   FlatList,
   TouchableOpacity,
@@ -28,20 +30,45 @@ const AccountScreenGUI = ({
   accountList,
   accountBalances,
   handleReceiveMoney,
-  handleWithdraw,
   confirmClearToken,
 }) => {
   const [showWithdrawOverlay, setShowWithdrawOverlay] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [amount, setAmount] = useState('');
 
-  // 출금 버튼 핸들러
-  const onPressWithdraw = item => {
-    // 실제 출금 로직 전에
-    setShowWithdrawOverlay(true);
-    // TODO: handleWithdraw(item) 호출할 위치 결정
+  const openOverlay = () => setShowWithdrawOverlay(true);
+  const closeOverlay = () => {
+    setAmount('');
+    setShowWithdrawOverlay(false);
   };
 
-  // overlay 닫기
-  const closeOverlay = () => setShowWithdrawOverlay(false);
+  const onPressWithdraw = item => {
+    setSelectedItem(item);
+    setAmount('');
+    setShowWithdrawOverlay(true);
+  };
+
+  const handleWithdraw = async () => {
+    const num = parseFloat(amount);
+    if (!selectedItem || isNaN(num) || num <= 0) {
+      alert('유효한 금액을 입력하세요.');
+      return;
+    }
+    try {
+      // fintech_use_num 또는 accountId 필드 사용
+      await writeWithdraw(selectedItem.fintech_use_num, num);
+      alert(
+        `${
+          selectedItem.bank_name || '계좌'
+        }에서 ${num.toLocaleString()}원 출금 요청 완료`,
+      );
+      setShowWithdrawOverlay(false);
+      setSelectedItem(null);
+    } catch (err) {
+      console.error(err);
+      alert('출금 중 오류가 발생했습니다.');
+    }
+  };
 
   // 애니메이션 초기값 (0)
   const animationValue = useRef(new Animated.Value(0)).current;
@@ -222,18 +249,39 @@ const AccountScreenGUI = ({
           pointerEvents="none"
           style={[styles.imageContainer, animatedImageStyle]}>
           <Image
-            source={require('../../assets/icon1.png')}
+            // source={require('../../assets/icon1.png')}
             style={styles.image}
           />
         </Animated.View>
         {/* ===== 반투명 원형 오버레이 ===== */}
-        {showWithdrawOverlay && (
+        <Modal
+          visible={showWithdrawOverlay}
+          transparent
+          animationType="fade"
+          onRequestClose={closeOverlay}>
+          {/* 바깥쪽 터치로 닫기 */}
           <TouchableWithoutFeedback onPress={closeOverlay}>
             <View style={styles.overlay}>
-              <View style={styles.overlayCircle} />
+              {/* 내부 콘텐츠에 터치 이벤트 전달 안 되도록 감싸기 */}
+              <TouchableWithoutFeedback>
+                <View style={styles.modalContent}>
+                  <Text style={styles.title}>출금 금액 입력</Text>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="금액 (원)"
+                    keyboardType="numeric"
+                    value={amount}
+                    onChangeText={setAmount}
+                  />
+                  <View style={styles.buttonRow}>
+                    <Button title="취소" onPress={closeOverlay} />
+                    <Button title="확인" onPress={handleWithdraw} />
+                  </View>
+                </View>
+              </TouchableWithoutFeedback>
             </View>
           </TouchableWithoutFeedback>
-        )}
+        </Modal>
       </View>
     );
   }
@@ -359,11 +407,38 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  overlayCircle: {
-    width: "80%",
-    height: "80%",
-    borderRadius: 10,
-    backgroundColor: 'rgba(255,255,255,0.8)', // 반투명 흰색 원
+  // overlayCircle: {
+  //   width: "80%",
+  //   height: "80%",
+  //   borderRadius: 10,
+  //   backgroundColor: 'rgba(255,255,255,0.8)', // 반투명 흰색 원
+  // },
+  overlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContent: {
+    width: 300,
+    padding: 20,
+    backgroundColor: 'white',
+    borderRadius: 12,
+    elevation: 5, // Android 그림자
+    shadowColor: '#000', // iOS 그림자
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.25,
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 6,
+    padding: 8,
+    marginBottom: 16,
+  },
+  buttonRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
 });
 
