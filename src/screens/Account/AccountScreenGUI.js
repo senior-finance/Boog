@@ -8,6 +8,7 @@ import {
   FlatList,
   TouchableOpacity,
   TouchableWithoutFeedback,
+  KeyboardAvoidingView,
   ActivityIndicator,
   Animated,
   StyleSheet,
@@ -16,6 +17,9 @@ import {
 } from 'react-native';
 import {WebView} from 'react-native-webview';
 import CustomText from '../../components/CustomText';
+import {NumPad} from '@umit-turk/react-native-num-pad';
+import {TextInputMask} from 'react-native-masked-text';
+import CustomNumPad from '../../components/CustomNumPad';
 
 // 내부에서 사용할 상수 변수 선언
 const DEFAULT_TITLE = '금융결제원 테스트베드';
@@ -35,6 +39,42 @@ const AccountScreenGUI = ({
   const [showWithdrawOverlay, setShowWithdrawOverlay] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const [amount, setAmount] = useState('');
+  const [raw, setRaw] = useState(''); // 숫자만 담깁니다
+
+  // 한국식 단위 포맷 (예: 1234567890 → "12억3456만7890")
+  const formatKorean = s => {
+    let n = BigInt(s.replace(/\D/g, '') || '0');
+    if (n === 0n) return '';
+    const units = [
+      [1000000000000n, '조 '],
+      [100000000n, '억 '],
+      [10000n, '만 '],
+      // [1n, ' 원'],
+    ];
+    let res = '';
+    for (const [u, label] of units) {
+      const q = n / u;
+      if (q) {
+        res += q + label;
+        n %= u;
+      }
+    }
+    if (n) res += n; // 4자리 미만 남은 수
+    return res;
+  };
+
+  const handlePress = digit => {
+    if (digit === '지우기' || digit === '지우') {
+      // 한 글자씩 삭제
+      setAmount(prev => prev.slice(0, -1));
+    } else if (digit === '모두 지우기') {
+      // 전체 초기화
+      setAmount('');
+    } else {
+      // 숫자 또는 '000' 등 입력
+      setAmount(prev => prev + digit);
+    }
+  };
 
   const openOverlay = () => setShowWithdrawOverlay(true);
   const closeOverlay = () => {
@@ -169,10 +209,10 @@ const AccountScreenGUI = ({
   if (step === 'accountList') {
     return (
       <View style={styles.container}>
-        <CustomText style={styles.title}>
+        <CustomText style={styles.mainTitle}>
           ! 금융결제원 테스트베드 환경에 등록된 모의 계좌입니다
         </CustomText>
-        <CustomText style={styles.title}>계좌 목록 </CustomText>
+        <CustomText style={styles.subTitle}>계좌 목록 </CustomText>
         <FlatList
           data={accountList}
           keyExtractor={item => item.fintech_use_num}
@@ -258,29 +298,70 @@ const AccountScreenGUI = ({
           visible={showWithdrawOverlay}
           transparent
           animationType="fade"
-          onRequestClose={closeOverlay}>
-          {/* 바깥쪽 터치로 닫기 */}
-          <TouchableWithoutFeedback onPress={closeOverlay}>
-            <View style={styles.overlay}>
-              {/* 내부 콘텐츠에 터치 이벤트 전달 안 되도록 감싸기 */}
-              <TouchableWithoutFeedback>
-                <View style={styles.modalContent}>
-                  <Text style={styles.title}>출금 금액 입력</Text>
-                  <TextInput
-                    style={styles.input}
-                    placeholder="금액 (원)"
-                    keyboardType="numeric"
-                    value={amount}
-                    onChangeText={setAmount}
-                  />
-                  <View style={styles.buttonRow}>
-                    <Button title="취소" onPress={closeOverlay} />
-                    <Button title="확인" onPress={handleWithdraw} />
+          onRequestClose={closeOverlay}
+          presentationStyle="overFullScreen" // 전체 화면 오버레이
+        >
+          {/* 키보드 올라올 때 레이아웃 자동 조정 */}
+          <KeyboardAvoidingView
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            style={{flex: 1}}>
+            {/* 바깥 터치로 닫기 */}
+            <TouchableWithoutFeedback onPress={closeOverlay}>
+              <View style={styles.overlay}>
+                {/* 내부 콘텐츠 터치만 막기 */}
+                <TouchableWithoutFeedback>
+                  <View style={styles.modalContent}>
+                    <Text style={styles.withdrawTitle}>출금 금액 입력</Text>
+
+                    <TextInputMask
+                      type={'money'}
+                      options={{
+                        precision: 0, // 소수점 없음
+                        separator: '', // 소수점 구분자
+                        delimiter: ',', // 천 단위 구분자
+                        unit: '', // 앞에 붙는 단위
+                        // suffixUnit: '원', // 뒤에 붙는 단위
+                      }}
+                      value={amount}
+                      onChangeText={text => setAmount(text)}
+                      style={styles.input}
+                      placeholder="금액 입력"
+                      keyboardType="numeric"
+                      returnKeyType="done"
+                    />
+
+                    <TextInput
+                      style={styles.input}
+                      keyboardType="numeric"
+                      returnKeyType="done"
+                      value={formatKorean(amount)}
+                      onChangeText={text => {
+                        const onlyNums = text.replace(/\D/g, '');
+                        setRaw(onlyNums); // 순수 숫자 저장
+                        setAmount(formatKorean(onlyNums)); // 포맷된 문자열 저장
+                      }}
+                      placeholder="금액 입력"
+                    />
+                    {/* <Text style={styles.unit}>원</Text> */}
+
+                    <View style={styles.keypadContainer}>
+                      <CustomNumPad
+                        onPress={handlePress}
+                        decimalSeparator=","
+                        buttonTextStyle={styles.keypadText}
+                        containerStyle={styles.numpadInner}
+                      />
+                    </View>
+
+                    <View style={styles.buttonRow}>
+                      <Button title="취소" onPress={closeOverlay} />
+                      <Button title="확인" onPress={handleWithdraw} />
+                    </View>
                   </View>
-                </View>
-              </TouchableWithoutFeedback>
-            </View>
-          </TouchableWithoutFeedback>
+                </TouchableWithoutFeedback>
+              </View>
+            </TouchableWithoutFeedback>
+          </KeyboardAvoidingView>
         </Modal>
       </View>
     );
@@ -305,6 +386,24 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 20,
     backgroundColor: 'yellow',
+  },
+  mainTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    backgroundColor: 'yellow',
+  },
+  subTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    // backgroundColor: 'yellow',
+  },
+  withdrawTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    backgroundColor: 'green',
   },
   accountItem: {
     flexDirection: 'row',
@@ -420,7 +519,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modalContent: {
-    width: 300,
+    width: '85%',
     padding: 20,
     backgroundColor: 'white',
     borderRadius: 12,
@@ -430,15 +529,26 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
   },
   input: {
-    borderWidth: 1,
+    borderWidth: 2,
     borderColor: '#ccc',
-    borderRadius: 6,
-    padding: 8,
+    borderRadius: 8,
+    padding: 12,
+    fontSize: 28,
+    textAlign: 'center', // ← 이 줄을 추가합니다
     marginBottom: 16,
   },
   buttonRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+  },
+  keypadContainer: {
+    // NumPad 전체 래퍼 스타일
+    marginVertical: 'auto',
+  },
+  keypadText: {
+    // 버튼 텍스트 스타일
+    fontSize: 30,
+    fontWeight: '800',
   },
 });
 
