@@ -6,7 +6,7 @@ const KEY_ROWS = [
   ['4', '5', '6'],
   ['7', '8', '9'],
   ['000', '0', '지우기'],
-  ['모두 지우기', '지우',],
+  ['모두 지우기', '지우개',],
 ];
 
 export default function CustomNumPad({onPress}) {

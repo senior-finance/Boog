@@ -20,6 +20,7 @@ import CustomText from '../../components/CustomText';
 import {NumPad} from '@umit-turk/react-native-num-pad';
 import {TextInputMask} from 'react-native-masked-text';
 import CustomNumPad from '../../components/CustomNumPad';
+import LottieView from 'lottie-react-native';
 
 // 내부에서 사용할 상수 변수 선언
 const DEFAULT_TITLE = '금융결제원 테스트베드';
@@ -209,6 +210,24 @@ const AccountScreenGUI = ({
   if (step === 'accountList') {
     return (
       <View style={styles.container}>
+        <View style={styles.rowContainer}>
+          <LottieView
+            source={require('../../assets/AnimeAI.json')}
+            autoPlay
+            loop
+            style={styles.animation}
+            // renderMode="HARDWARE" // GPU 가속 렌더링
+            // resizeMode="cover" // 화면에 꽉 차게, 비율 유지
+          />
+          <LottieView
+            source={require('../../assets/AnimeAI2.json')}
+            autoPlay
+            loop
+            style={styles.animation}
+            // renderMode="HARDWARE" // GPU 가속 렌더링
+            // resizeMode="cover" // 화면에 꽉 차게, 비율 유지
+          />
+        </View>
         <CustomText style={styles.mainTitle}>
           ! 금융결제원 테스트베드 환경에 등록된 모의 계좌입니다
         </CustomText>
@@ -293,6 +312,16 @@ const AccountScreenGUI = ({
             style={styles.image}
           />
         </Animated.View>
+
+        <View style={styles.container}>
+          <LottieView
+            source={require('../../assets/AnimeAI.json')}
+            autoPlay
+            loop
+            style={styles.animation}
+          />
+        </View>
+
         {/* ===== 반투명 원형 오버레이 ===== */}
         <Modal
           visible={showWithdrawOverlay}
@@ -380,6 +409,12 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     padding: 20,
+  },
+  rowContainer: {
+    flexDirection: 'row',            // ← 여기서 가로 방향 지정
+    justifyContent: 'space-around',  // ← 아이템 간 간격 조절
+    alignItems: 'center',            // ← 세로 정렬
+    // flex: 1,
   },
   title: {
     fontSize: 24,
@@ -549,6 +584,10 @@ const styles = StyleSheet.create({
     // 버튼 텍스트 스타일
     fontSize: 30,
     fontWeight: '800',
+  },
+  animation: {
+    width: 200,
+    height: 200,
   },
 });
 
