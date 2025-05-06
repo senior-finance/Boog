@@ -11,6 +11,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import CustomText from '../../components/CustomText';
 import CustomTextInput from '../../components/CustomTextInput';
+
 const FunctionButton = ({ title, onPress, icon, size = 'large' }) => (
   <TouchableOpacity
     style={[styles.functionButton, size === 'pinned' && styles.pinnedButton]}

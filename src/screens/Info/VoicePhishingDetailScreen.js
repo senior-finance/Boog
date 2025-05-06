@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, ScrollView, Image, StyleSheet } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
+import CustomText from '../../components/CustomText';
 
 const VoicePhishingDetailScreen = ({ route }) => {
   const { title, fullContent, images } = route.params;

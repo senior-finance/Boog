@@ -4,6 +4,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { LogBox } from 'react-native';
 LogBox.ignoreLogs([
   '`new NativeEventEmitter()` was called with a non-null argument',
+  'ReactImageView: Image source "null" doesn\'t exist'
 ]);
 
 import { Buffer } from 'buffer';
@@ -25,9 +26,7 @@ import LearningScreen from './src/screens/Learning/LearningScreen';
 // 지도
 import MapViewScreen from './src/screens/Map/MapViewScreen';
 
-// 계정
-// import LoginScreen from './src/screens/Account/LoginScreen';
-// import WebViewScreen from './src/screens/Account/WebViewScreen';
+// 계좌
 import AccountScreen from './src/screens/Account/AccountScreen'; // 변경된 로그인 to 계좌목록 파일
 
 // 내 정보
@@ -45,7 +44,6 @@ import { ProfileProvider } from './src/screens/ProfileContext';
 import WelfareScreen from './src/screens/Info/WelfareScreen'; 
 import WebScreen from './src/screens/Info/WebScreen';
 import AutoPhoneAnalysisScreen from './src/screens/Info/AutoPhoneAnalysisScreen'; 
-
 
 // 기타
 import BiometricScreen from './src/screens/Biometric/BiometricScreen';
