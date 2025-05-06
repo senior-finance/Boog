@@ -4,6 +4,14 @@ apply plugin: "com.facebook.react"
 apply plugin: "com.google.gms.google-services"
 apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle"
 
+// // ↓ 이 아래에 project.ext.react 블록을 추가
+// project.ext.react = [
+//     // 진입점 파일 경로 (필요시 수정)
+//     entryFile: "index.js",
+//     // Hermes 활성화/비활성화 설정
+//     enableHermes: true  // → true 면 Hermes, false 면 JSC 사용
+// ]
+
 /**
  * This is the configuration block to customize your React Native Android app.
  * By default you don't need to apply any configuration, just uncomment the lines you need.
