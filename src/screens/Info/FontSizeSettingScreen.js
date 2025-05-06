@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import {
   View,
-  Text,
   StyleSheet,
   TouchableOpacity,
   ToastAndroid,
@@ -14,7 +13,7 @@ import { useFontSize } from './FontSizeContext';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import CustomText from '../../components/CustomText';
 
-const FontSizeSettingScreen = () => {
+const FontSizeSettingScreen = ({ navigation }) => {
   const { fontSize, setFontSize } = useFontSize();
   const [tempFontSize, setTempFontSize] = useState(fontSize);
   const [applied, setApplied] = useState(false);
@@ -29,8 +28,10 @@ const FontSizeSettingScreen = () => {
       Alert.alert('알림', '적용되었습니다!');
     }
 
-    // 색상 원래대로 복귀
-    setTimeout(() => setApplied(false), 1500);
+    setTimeout(() => {
+      setApplied(false);
+      navigation.navigate('MainTabs', { screen: 'MyInfo' });
+    }, 500);
   };
 
   return (
@@ -88,7 +89,6 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   title: {
- 
     fontWeight: 'bold',
     color: '#333',
   },
@@ -108,11 +108,10 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   confirmButtonApplied: {
-    backgroundColor: '#2F5AE5', // 더 진한 색으로 변경
+    backgroundColor: '#2F5AE5',
   },
   confirmButtonText: {
     color: '#fff',
-  
     fontWeight: 'bold',
   },
 });
