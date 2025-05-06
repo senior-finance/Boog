@@ -19,7 +19,8 @@ const FunctionScreen = ({ navigation }) => {
         <View style={styles.gridContainer}>
           <FunctionButton title="퀴즈" icon="school" onPress={() => navigation.navigate('Learning')} />
           <FunctionButton title="지도" icon="map" onPress={() => navigation.navigate('MapView')} />
-          <FunctionButton title="AI 대화" icon="mic" onPress={() => navigation.navigate('VoiceInput')} />
+          <FunctionButton title="사용법" icon="book-outline" onPress={() => navigation.navigate('Guide')} />
+
           <FunctionButton title="지문 인증" icon="finger-print" onPress={() => navigation.navigate('Biometric')} />
           <FunctionButton title="정부 복지 혜택" icon="gift" onPress={() => navigation.navigate('Welfare')} />
           <FunctionButton title="자동 통화/문자 분석" icon="phone-portrait" onPress={() => navigation.navigate('AutoPhoneAnalysis')} />

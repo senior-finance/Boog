@@ -7,6 +7,7 @@ import FunctionScreen from '../screens/Info/FunctionScreen';
 import GuideScreen from '../screens/Info/GuideScreen';
 import MyInfoScreen from '../screens/Info/MyInfoScreen';
 import MyInfoStack from './MyInfoStack';
+import VoiceInputScreen from '../screens/VoiceAssistant/VoiceInputScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -17,7 +18,7 @@ const TabNavigator = () => (
         let iconName;
         if (route.name === 'Home') iconName = 'home';
         else if (route.name === 'Function') iconName = 'apps';
-        else if (route.name === 'Guide') iconName = 'book';
+        else if (route.name === 'VoiceAI') iconName = 'mic'; 
         else if (route.name === 'MyInfo') iconName = 'person';
         return <Ionicons name={iconName} size={size} color={color} />;
       },
@@ -34,10 +35,12 @@ const TabNavigator = () => (
   options={{ tabBarLabel: '기능' }}
 />
 <Tab.Screen
-  name="Guide"
-  component={GuideScreen}
-  options={{ tabBarLabel: '사용법' }}
+  name="VoiceAI"
+  component={VoiceInputScreen}
+  options={{ tabBarLabel: 'AI 대화', title: 'AI 대화하기' }}
 />
+
+
 <Tab.Screen
   name="MyInfo"
   component={MyInfoStack}

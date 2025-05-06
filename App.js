@@ -44,7 +44,7 @@ import { ProfileProvider } from './src/screens/ProfileContext';
 import WelfareScreen from './src/screens/Info/WelfareScreen'; 
 import WebScreen from './src/screens/Info/WebScreen';
 import AutoPhoneAnalysisScreen from './src/screens/Info/AutoPhoneAnalysisScreen'; 
-
+import GuideScreen from './src/screens/Info/GuideScreen';
 // 기타
 import BiometricScreen from './src/screens/Biometric/BiometricScreen';
 import VoiceInputScreen from './src/screens/VoiceAssistant/VoiceInputScreen';
@@ -87,6 +87,7 @@ export default function App() {
 
           <Stack.Screen name="VoicePhishingDetail" component={VoicePhishingDetailScreen} />
 
+          <Stack.Screen name="Guide" component={GuideScreen} options={{ title: '앱 사용법' }} />
           <Stack.Screen name="FAQ" component={FAQScreen} />
           <Stack.Screen name="ProfileIconSelect" component={ProfileIconSelect} />
           <Stack.Screen name="Welfare" component={WelfareScreen} />
