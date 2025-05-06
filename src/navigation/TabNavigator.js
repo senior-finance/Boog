@@ -35,11 +35,10 @@ const TabNavigator = () => (
   options={{ tabBarLabel: '기능' }}
 />
 <Tab.Screen
-  name="VoiceAI"
+  name="VoiceInput"
   component={VoiceInputScreen}
   options={{ tabBarLabel: 'AI 대화', title: 'AI 대화하기' }}
 />
-
 
 <Tab.Screen
   name="MyInfo"

@@ -22,6 +22,7 @@ import DepositStep2 from './src/screens/Learning/DepositStep2';
 import DepositStep3 from './src/screens/Learning/DepositStep3';
 import DepositStep4 from './src/screens/Learning/DepositStep4';
 import LearningScreen from './src/screens/Learning/LearningScreen';
+import GuideDetailScreen from './src/screens/Info/GuideDetailScreen';
 
 // 지도
 import MapViewScreen from './src/screens/Map/MapViewScreen';
@@ -88,10 +89,13 @@ export default function App() {
           <Stack.Screen name="VoicePhishingDetail" component={VoicePhishingDetailScreen} />
 
           <Stack.Screen name="Guide" component={GuideScreen} options={{ title: '앱 사용법' }} />
+          <Stack.Screen name="GuideDetail"component={GuideDetailScreen}options={{ title: '상세 설명' }}/>
+
           <Stack.Screen name="FAQ" component={FAQScreen} />
           <Stack.Screen name="ProfileIconSelect" component={ProfileIconSelect} />
           <Stack.Screen name="Welfare" component={WelfareScreen} />
           <Stack.Screen name="Web" component={WebScreen} />
+
 
           <Stack.Screen name="InquiryForm" component={InquiryFormScreen} />
           <Stack.Screen name="InquiryList" component={InquiryListScreen} />
