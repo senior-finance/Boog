@@ -21,6 +21,7 @@ import {NumPad} from '@umit-turk/react-native-num-pad';
 import {TextInputMask} from 'react-native-masked-text';
 import CustomNumPad from '../../components/CustomNumPad';
 import LottieView from 'lottie-react-native';
+import { withdraw } from '../../database/mongoDB'
 
 // 내부에서 사용할 상수 변수 선언
 const DEFAULT_TITLE = '금융결제원 테스트베드';
@@ -96,8 +97,13 @@ const AccountScreenGUI = ({
       return;
     }
     try {
+      // 임시 계좌번호 및 금액 (테스트용)
+      // const accountId = 'test_계좌번호';
+      // const amount = 8282;
+
       // fintech_use_num 또는 accountId 필드 사용
-      await writeWithdraw(selectedItem.fintech_use_num, num);
+      await withdraw(selectedItem.fintech_use_num, selectedItem.bank_name, num);
+      console.log('출금 요청 완료:', selectedItem.fintech_use_num, num);
       alert(
         `${
           selectedItem.bank_name || '계좌'
@@ -423,7 +429,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'yellow',
   },
   mainTitle: {
-    fontSize: 24,
+    fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 20,
     backgroundColor: 'yellow',
