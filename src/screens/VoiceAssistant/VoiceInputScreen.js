@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useLayoutEffect, useRef } from 'react';
+import React, {useState, useEffect, useLayoutEffect, useRef} from 'react';
 import {
   View,
   Text,
@@ -8,9 +8,10 @@ import {
   Platform,
   TouchableOpacity,
   Image,
+  Dimensions,
   ActivityIndicator,
   TextInput,
-  KeyboardAvoidingView
+  KeyboardAvoidingView,
 } from 'react-native';
 import AudioRecord from 'react-native-audio-record';
 import sendAudioToCSR from './CSRService';
@@ -18,10 +19,12 @@ import askClovaAI from './AIService';
 import RNFS from 'react-native-fs';
 import Icon from 'react-native-vector-icons/Ionicons';
 import botImage from '../../assets/bot.png';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import Tts from 'react-native-tts';
 import CustomText from '../../components/CustomText';
 import CustomTextInput from '../../components/CustomTextInput';
+import LottieView from 'lottie-react-native';
+
 export default function VoiceInputScreen() {
   const navigation = useNavigation();
   const [isRecording, setIsRecording] = useState(false);
@@ -36,7 +39,7 @@ export default function VoiceInputScreen() {
   const screenNameMap = {
     QuizLevel: '퀴즈',
     MapView: '지도',
-    Welfare: '복지'
+    Welfare: '복지',
   };
 
   const filePath = `${RNFS.CachesDirectoryPath}/sound.wav`;
@@ -50,10 +53,10 @@ export default function VoiceInputScreen() {
   useEffect(() => {
     const timer = setTimeout(() => {
       if (scrollViewRef.current) {
-        scrollViewRef.current.scrollToEnd({ animated: true });
+        scrollViewRef.current.scrollToEnd({animated: true});
       }
     }, 100); // 100~150ms 정도가 적당함
-  
+
     return () => clearTimeout(timer);
   }, [chatHistory]);
 
@@ -61,47 +64,51 @@ export default function VoiceInputScreen() {
     navigation.setOptions({
       headerRight: () => (
         <TouchableOpacity onPress={() => navigation.navigate('TTSSetting')}>
-          <Icon name="settings-outline" size={30} color="#000" style={{ marginRight: 20 }} />
+          <Icon
+            name="settings-outline"
+            size={30}
+            color="#000"
+            style={{marginRight: 20}}
+          />
         </TouchableOpacity>
-      )
+      ),
     });
   }, [navigation]);
 
-  const onSendText = async (customText) => {
+  const onSendText = async customText => {
     const input = customText ?? textInput;
     if (input.trim() === '') return;
-  
+
     Tts.stop();
-  
-    const userMessage = { role: 'user', text: input };
-    setChatHistory((prev) => [...prev, userMessage]);
+
+    const userMessage = {role: 'user', text: input};
+    setChatHistory(prev => [...prev, userMessage]);
     setIsLoading(true);
-  
+
     try {
       // askGPT로 수정 예정
       const reply = await askClovaAI(input);
-  
+
       if (reply.type === 'navigate-confirm') {
         setConfirmTarget(reply.target);
         setShowConfirmModal(true);
-  
+
         const readableName = screenNameMap[reply.target] || reply.target;
-  
+
         const visibleText = `'${readableName}' 화면으로 이동할까요?`;
         const spokenText = `'${readableName}' 화면으로 이동할까요?`;
-  
-        setChatHistory((prev) => [...prev, { role: 'bot', text: visibleText }]);
+
+        setChatHistory(prev => [...prev, {role: 'bot', text: visibleText}]);
         Tts.speak(spokenText);
-  
       } else if (reply.type === 'navigate') {
         navigation.navigate(reply.target);
       } else if (reply.type === 'action') {
         // TODO: 액션 처리
       } else {
-        setChatHistory((prev) => [...prev, { role: 'bot', text: reply.text }]);
+        setChatHistory(prev => [...prev, {role: 'bot', text: reply.text}]);
         Tts.speak(reply.text);
       }
-  
+
       setTextInput('');
     } catch (err) {
       console.error('텍스트 질문 처리 오류:', err);
@@ -113,7 +120,7 @@ export default function VoiceInputScreen() {
   const requestPermission = async () => {
     if (Platform.OS === 'android') {
       const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.RECORD_AUDIO
+        PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
       );
       return granted === PermissionsAndroid.RESULTS.GRANTED;
     }
@@ -147,16 +154,16 @@ export default function VoiceInputScreen() {
       setRecordedPath(audioFile);
 
       const text = await sendAudioToCSR(audioFile);
-      const userMessage = { role: 'user', text };
-      setChatHistory((prev) => [...prev, userMessage]);
+      const userMessage = {role: 'user', text};
+      setChatHistory(prev => [...prev, userMessage]);
 
       const reply = await askClovaAI(text);
 
       if (reply.type === 'navigate') {
         navigation.navigate(reply.target);
       } else {
-        const botMessage = { role: 'bot', text: reply.text };
-        setChatHistory((prev) => [...prev, botMessage]);
+        const botMessage = {role: 'bot', text: reply.text};
+        setChatHistory(prev => [...prev, botMessage]);
 
         Tts.stop(); // 이전 TTS 중지
         Tts.speak(reply.text);
@@ -168,28 +175,49 @@ export default function VoiceInputScreen() {
     }
   };
 
-  const handleTopicClick = async (text) => {
-    setTextInput(text);        // 입력창에 보여주기
-    await onSendText(text);    // 바로 전송 실행
+  const handleTopicClick = async text => {
+    setTextInput(text); // 입력창에 보여주기
+    await onSendText(text); // 바로 전송 실행
   };
 
   const today = new Date();
-  const formattedDate = `${today.getFullYear()}년 ${today.getMonth() + 1}월 ${today.getDate()}일 ${['일','월','화','수','목','금','토'][today.getDay()]}요일`;
+  const formattedDate = `${today.getFullYear()}년 ${
+    today.getMonth() + 1
+  }월 ${today.getDate()}일 ${
+    ['일', '월', '화', '수', '목', '금', '토'][today.getDay()]
+  }요일`;
 
   return (
-    <KeyboardAvoidingView style={styles.wrapper} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+    <KeyboardAvoidingView
+      style={styles.wrapper}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+
+      {/* 애니메이션 오버레이 */}
+      <LottieView
+        source={require('../../assets/animeVoice.json')}
+        autoPlay
+        loop
+        pointerEvents="none" // 터치 투명화
+        style={styles.overlayAnimation} // 절대 위치 & 투명
+        colorFilters={[
+          { keypath: 'Background', color: 'transparent' },
+        ]}
+      />
+
       <ScrollView
         ref={scrollViewRef}
         contentContainerStyle={styles.container}
-        keyboardShouldPersistTaps="handled"
-      >
+        keyboardShouldPersistTaps="handled">
         <CustomText style={styles.dateText}>{formattedDate}</CustomText>
 
         <View style={styles.botIntroContainer}>
           <View style={styles.botTextWrapper}>
             <CustomText style={styles.botText}>
-              안녕하세요!{"\n"}
-              <CustomText style={{ color: '#4B7BE5', fontWeight: 'bold' }}>상담원 부금이</CustomText>입니다.{"\n"}
+              안녕하세요!{'\n'}
+              <CustomText style={{color: '#4B7BE5', fontWeight: 'bold'}}>
+                상담원 부금이
+              </CustomText>
+              입니다.{'\n'}
               무엇을 도와드릴까요?
             </CustomText>
           </View>
@@ -197,22 +225,33 @@ export default function VoiceInputScreen() {
         </View>
 
         <View style={styles.buttonGroup}>
-          {["문자/통화 분석", "입금 방법", "금융 퀴즈", "복지 혜택", "ATM/은행 찾기", "앱 사용 방법"].map((item, index) => (
-            <TouchableOpacity key={index} 
-              style={[styles.topicButton, { width: '30%' }]}
+          {[
+            '문자/통화 분석',
+            '입금 방법',
+            '금융 퀴즈',
+            '복지 혜택',
+            'ATM/은행 찾기',
+            '앱 사용 방법',
+          ].map((item, index) => (
+            <TouchableOpacity
+              key={index}
+              style={[styles.topicButton, {width: '30%'}]}
               onPress={() => handleTopicClick(item)}>
               <CustomText style={styles.topicText}>{item}</CustomText>
             </TouchableOpacity>
           ))}
         </View>
 
-        {isLoading && <ActivityIndicator size="large" style={{ marginTop: 20 }} />}
+        {isLoading && (
+          <ActivityIndicator size="large" style={{marginTop: 20}} />
+        )}
 
         {chatHistory.map((msg, idx) => (
           <View
             key={idx}
-            style={msg.role === 'user' ? styles.chatBubbleUser : styles.chatBubbleBot}
-          >
+            style={
+              msg.role === 'user' ? styles.chatBubbleUser : styles.chatBubbleBot
+            }>
             <CustomText style={styles.chatText}>{msg.text}</CustomText>
           </View>
         ))}
@@ -221,9 +260,10 @@ export default function VoiceInputScreen() {
       {showConfirmModal && (
         <View style={styles.modalOverlay}>
           <View style={styles.modalBox}>
-          <CustomText style={styles.modalText}>
-            '{screenNameMap[confirmTarget] || confirmTarget}' 화면으로 이동할까요?
-          </CustomText>
+            <CustomText style={styles.modalText}>
+              '{screenNameMap[confirmTarget] || confirmTarget}' 화면으로
+              이동할까요?
+            </CustomText>
             <View style={styles.modalButtons}>
               <TouchableOpacity
                 style={styles.modalBtn}
@@ -231,19 +271,20 @@ export default function VoiceInputScreen() {
                   navigation.navigate(confirmTarget);
                   setShowConfirmModal(false);
                   setConfirmTarget(null);
-                }}
-              >
+                }}>
                 <CustomText style={styles.modalBtnText}>예</CustomText>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[styles.modalBtn, { backgroundColor: '#ccc' }]}
+                style={[styles.modalBtn, {backgroundColor: '#ccc'}]}
                 onPress={() => {
                   setShowConfirmModal(false);
                   setConfirmTarget(null);
-                  setChatHistory(prev => [...prev, { role: 'bot', text: '이동을 취소했어요.' }]);
+                  setChatHistory(prev => [
+                    ...prev,
+                    {role: 'bot', text: '이동을 취소했어요.'},
+                  ]);
                   Tts.speak('이동을 취소했어요.');
-                }}
-              >
+                }}>
                 <CustomText style={styles.modalBtnText}>아니오</CustomText>
               </TouchableOpacity>
             </View>
@@ -252,31 +293,27 @@ export default function VoiceInputScreen() {
       )}
 
       <View style={styles.bottomBar}>
-      <CustomTextInput
-        style={styles.input}
-        placeholder="궁금한 점을 입력해주세요"
-        value={textInput}
-        onChangeText={setTextInput}
-        onSubmitEditing={onSendText}
-        blurOnSubmit={false}
-        returnKeyType="send"
-        multiline={false}
-        onKeyPress={({ nativeEvent }) => {
-          if (nativeEvent.key === 'Enter') {
-            onSendText();
-          }
-        }}
-      />
-        <TouchableOpacity
-          style={styles.sendButton}
-          onPress={onSendText}
-        >
+        <CustomTextInput
+          style={styles.input}
+          placeholder="궁금한 점을 입력해주세요"
+          value={textInput}
+          onChangeText={setTextInput}
+          onSubmitEditing={onSendText}
+          blurOnSubmit={false}
+          returnKeyType="send"
+          multiline={false}
+          onKeyPress={({nativeEvent}) => {
+            if (nativeEvent.key === 'Enter') {
+              onSendText();
+            }
+          }}
+        />
+        <TouchableOpacity style={styles.sendButton} onPress={onSendText}>
           <Icon name="send" size={24} color="#fff" />
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.voiceIconButton}
-          onPress={isRecording ? stopRecording : startRecording}
-        >
+          onPress={isRecording ? stopRecording : startRecording}>
           <Icon name={isRecording ? 'stop' : 'mic'} size={25} color="#fff" />
         </TouchableOpacity>
       </View>
@@ -284,6 +321,7 @@ export default function VoiceInputScreen() {
   );
 }
 
+// const { width, height } = Dimensions.get('window');
 const styles = StyleSheet.create({
   wrapper: {
     flex: 1,
@@ -294,7 +332,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   dateText: {
-   //     color: '#999',
+    //     color: '#999',
     textAlign: 'center',
     marginBottom: 16,
   },
@@ -333,17 +371,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     margin: 6,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 5,
   },
   topicText: {
-   //     color: '#333',
+    //     color: '#333',
   },
   modalOverlay: {
     position: 'absolute',
-    top: 0, left: 0, right: 0, bottom: 0,
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
     backgroundColor: 'rgba(0,0,0,0.4)',
     justifyContent: 'center',
     alignItems: 'center',
@@ -357,7 +398,7 @@ const styles = StyleSheet.create({
     width: '80%',
   },
   modalText: {
-   //     color: '#333',
+    //     color: '#333',
     marginBottom: 20,
     textAlign: 'center',
   },
@@ -374,7 +415,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#4B7BE5',
     marginHorizontal: 5,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 5,
@@ -382,7 +423,7 @@ const styles = StyleSheet.create({
   modalBtnText: {
     color: 'white',
     textAlign: 'center',
-   //     fontWeight: 'bold',
+    //     fontWeight: 'bold',
   },
   micButton: {
     flexDirection: 'row',
@@ -395,7 +436,7 @@ const styles = StyleSheet.create({
   },
   micButtonText: {
     color: '#fff',
- //       marginLeft: 10,
+    //       marginLeft: 10,
   },
   start: {
     backgroundColor: '#4B7BE5',
@@ -420,7 +461,7 @@ const styles = StyleSheet.create({
     maxWidth: '80%',
   },
   chatText: {
-   //     lineHeight: 22,
+    //     lineHeight: 22,
     color: '#333',
   },
   bottomBar: {
@@ -432,7 +473,7 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     backgroundColor: '#fff',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: -2 },
+    shadowOffset: {width: 0, height: -2},
     shadowOpacity: 0.1,
     shadowRadius: 6,
     elevation: 6,
@@ -450,11 +491,22 @@ const styles = StyleSheet.create({
     backgroundColor: '#4B7BE5',
     padding: 14,
     borderRadius: 50,
-    marginRight: 12
+    marginRight: 12,
   },
   voiceIconButton: {
     backgroundColor: '#4B7BE5',
     padding: 14,
     borderRadius: 50,
+  },
+  overlayAnimation: {
+    position: 'absolute',
+    width: 100,
+    height: 100,
+    top: '10%',
+    left: '80%',
+    marginLeft: -100,  // width / 2
+    marginTop: -100,   // height / 2
+    backgroundColor: 'transparent',
+    zIndex: 2,
   },
 });

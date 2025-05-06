@@ -12,7 +12,6 @@ import CallTextAnalysisScreen from './CallTextAnalysisScreen';
 
 const Stack = createNativeStackNavigator();
 
-
 const AppNavigator = () => {
   return (
     <NavigationContainer>

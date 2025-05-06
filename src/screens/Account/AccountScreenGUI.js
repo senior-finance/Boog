@@ -218,7 +218,7 @@ const AccountScreenGUI = ({
       <View style={styles.container}>
         <View style={styles.rowContainer}>
           <LottieView
-            source={require('../../assets/AnimeAI.json')}
+            source={require('../../assets/animeAI.json')}
             autoPlay
             loop
             style={styles.animation}
@@ -226,7 +226,7 @@ const AccountScreenGUI = ({
             // resizeMode="cover" // 화면에 꽉 차게, 비율 유지
           />
           <LottieView
-            source={require('../../assets/AnimeAI2.json')}
+            source={require('../../assets/animeAI2.json')}
             autoPlay
             loop
             style={styles.animation}
@@ -318,15 +318,6 @@ const AccountScreenGUI = ({
             style={styles.image}
           />
         </Animated.View>
-
-        <View style={styles.container}>
-          <LottieView
-            source={require('../../assets/AnimeAI.json')}
-            autoPlay
-            loop
-            style={styles.animation}
-          />
-        </View>
 
         {/* ===== 반투명 원형 오버레이 ===== */}
         <Modal

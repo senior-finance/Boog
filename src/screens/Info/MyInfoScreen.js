@@ -46,7 +46,6 @@ const MyInfoScreen = ({ navigation }) => {
           <CustomText style={styles.account}>111-222-4445543</CustomText>
         </View>
 
-
         {/* 버튼들 */}
 
         <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('FontSize')}>

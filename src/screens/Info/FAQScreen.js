@@ -81,13 +81,11 @@ const styles = StyleSheet.create({
     marginTop: 3,
   },
   question: {
-
     fontWeight: '600',
     color: '#333',
     flexShrink: 1,
   },
   answer: {
-   
     color: '#555',
     flexShrink: 1,
   },

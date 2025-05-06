@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Slider from '@react-native-community/slider';
 import SystemSetting from 'react-native-system-setting';
@@ -9,27 +9,28 @@ import CustomText from '../../components/CustomText';
 
 const SoundVolumeScreen = () => {
   const [volume, setVolume] = useState(0.5);
-  const [selectedVoice, setSelectedVoice] = useState('com.google.android.tts:ko-kr-x-ism-local');
+  const [selectedVoice, setSelectedVoice] = useState(
+    'com.google.android.tts:ko-kr-x-ism-local',
+  );
 
   const voices = [
-    { id: 'com.google.android.tts:ko-kr-x-ism-local', name: '여성1 (기본)' },
-     { id: 'com.google.android.tts:ko-KR', name: '여성2' },
-    { id: 'com.google.android.tts:ko-KR-language', name: '남성1' },
-   
+    {id: 'com.google.android.tts:ko-kr-x-ism-local', name: '여성1 (기본)'},
+    {id: 'com.google.android.tts:ko-KR', name: '여성2'},
+    {id: 'com.google.android.tts:ko-KR-language', name: '남성1'},
   ];
 
   useEffect(() => {
-    SystemSetting.getVolume().then((v) => setVolume(v));
+    SystemSetting.getVolume().then(v => setVolume(v));
     Tts.setDefaultLanguage('ko-KR');
     Tts.setDefaultVoice(selectedVoice);
   }, []);
 
-  const onVolumeChange = (value) => {
+  const onVolumeChange = value => {
     setVolume(value);
     SystemSetting.setVolume(value);
   };
 
-  const handleVoiceSelect = (voiceId) => {
+  const handleVoiceSelect = voiceId => {
     setSelectedVoice(voiceId);
     Tts.setDefaultVoice(voiceId);
   };
@@ -42,26 +43,32 @@ const SoundVolumeScreen = () => {
   return (
     <LinearGradient colors={['#F8F8F8', '#F8F8F8']} style={styles.container}>
       <View style={styles.card}>
-        <Ionicons name="volume-high-outline" size={32} color="#4B7BE5" style={{ marginBottom: 10 }} />
+        <Ionicons
+          name="volume-high-outline"
+          size={32}
+          color="#4B7BE5"
+          style={{marginBottom: 10}}
+        />
         <CustomText style={styles.title}>음향 크기 설정</CustomText>
 
         {/* 음성 선택 */}
         <CustomText style={styles.subtitle}>음성 선택</CustomText>
-        {voices.map((voice) => (
+        {voices.map(voice => (
           <TouchableOpacity
             key={voice.id}
             onPress={() => handleVoiceSelect(voice.id)}
             style={[
               styles.voiceOption,
               {
-                backgroundColor: selectedVoice === voice.id ? '#4B7BE5' : '#fff',
+                backgroundColor:
+                  selectedVoice === voice.id ? '#4B7BE5' : '#fff',
               },
-            ]}
-          >
-            <CustomText style={{
-              color: selectedVoice === voice.id ? '#fff' : '#333',
-              fontWeight: '600',
-            }}>
+            ]}>
+            <CustomText
+              style={{
+                color: selectedVoice === voice.id ? '#fff' : '#333',
+                fontWeight: '600',
+              }}>
               {voice.name}
             </CustomText>
           </TouchableOpacity>
@@ -101,19 +108,17 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     alignItems: 'center',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: {width: 0, height: 4},
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 6,
   },
   title: {
-
     fontWeight: 'bold',
     marginBottom: 20,
     color: '#333',
   },
   subtitle: {
-    
     fontWeight: '600',
     marginBottom: 10,
     color: '#333',
@@ -126,7 +131,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     alignItems: 'center',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.07,
     shadowRadius: 2,
     elevation: 2,

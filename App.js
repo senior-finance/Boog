@@ -99,7 +99,6 @@ export default function App() {
           <Stack.Screen name="Welfare" component={WelfareScreen} />
           <Stack.Screen name="Web" component={WebScreen} />
 
-
           <Stack.Screen name="InquiryForm" component={InquiryFormScreen} />
           <Stack.Screen name="InquiryList" component={InquiryListScreen} />
           <Stack.Screen name="NotificationScreen" component={NotificationScreen} />   
