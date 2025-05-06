@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {
   View,
-  Text,
   TouchableOpacity,
   StyleSheet,
   Image,
@@ -9,18 +8,25 @@ import {
   Easing
 } from 'react-native';
 import Sound from 'react-native-sound';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import correctImage from '../../assets/correct_rabbit.png';
 import CustomText from '../../components/CustomText';
 
 const CorrectAnswerScreen = ({ route, navigation }) => {
-  const { answer, explanation, currentQuestionIndex } = route.params;
-  const [showContent, setShowContent] = useState(false);
+  const {
+    answer,
+    explanation,
+    nextQuestionIndex,
+    level,
+    shuffledQuiz,
+    userAnswers
+  } = route.params;
 
+  const [showContent, setShowContent] = useState(false);
   const scaleAnim = useRef(new Animated.Value(4)).current;
   const translateYAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    // 🔊 사운드 재생
     const correctSound = new Sound(
       require('../../assets/sounds/correct.mp3'),
       (error) => {
@@ -30,7 +36,6 @@ const CorrectAnswerScreen = ({ route, navigation }) => {
       }
     );
 
-    // 애니메이션 실행
     Animated.parallel([
       Animated.timing(scaleAnim, {
         toValue: 1,
@@ -55,11 +60,20 @@ const CorrectAnswerScreen = ({ route, navigation }) => {
   }, []);
 
   const goToNextQuestion = () => {
-    navigation.navigate("Quiz", { questionIndex: currentQuestionIndex + 1 });
-  };
-
-  const goToPreviousQuestion = () => {
-    navigation.navigate("Quiz", { questionIndex: currentQuestionIndex - 1 });
+    if (nextQuestionIndex >= shuffledQuiz.length) {
+      navigation.navigate("QuizResult", {
+        level,
+        total: shuffledQuiz.length,
+        userAnswers
+      });
+    } else {
+      navigation.navigate("Quiz", {
+        level,
+        nextQuestionIndex,
+        shuffledQuiz,
+        userAnswers
+      });
+    }
   };
 
   return (
@@ -86,17 +100,15 @@ const CorrectAnswerScreen = ({ route, navigation }) => {
             <CustomText style={styles.explanationText}>{explanation}</CustomText>
           </View>
 
-          <View style={styles.buttonRow}>
-            <TouchableOpacity style={styles.button} onPress={goToPreviousQuestion}>
-              <CustomText style={styles.buttonText}>이전 문제</CustomText>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.button} onPress={goToNextQuestion}>
-              <CustomText style={styles.buttonText}>다음 문제</CustomText>
-            </TouchableOpacity>
-          </View>
+          <TouchableOpacity style={styles.button} onPress={goToNextQuestion}>
+            <CustomText style={styles.buttonText}>다음 문제</CustomText>
+          </TouchableOpacity>
 
-          <TouchableOpacity style={styles.quitButton} onPress={() => navigation.navigate("MainTabs")}>
-            <CustomText style={styles.buttonText}>그만둘래요</CustomText>
+          <TouchableOpacity style={styles.quitButton} onPress={() => navigation.navigate('MainTabs')}>
+            <View style={styles.quitContent}>
+              <Ionicons name="exit-outline" size={26} color="#4B7BE5" style={styles.quitIcon} />
+              <CustomText style={styles.buttonText}>그만둘래요</CustomText>
+            </View>
           </TouchableOpacity>
         </>
       )}
@@ -121,7 +133,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: 'black',
     marginBottom: 20,
-    textAlign: 'center',
+    textAlign: 'center'
   },
   imageOnly: {
     width: 230,
@@ -134,22 +146,21 @@ const styles = StyleSheet.create({
     padding: 40,
     borderRadius: 20,
     marginBottom: 30,
+    shadowColor: '#000',
+    shadowOffset: { width: 2, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    elevation: 5,
   },
   explanationText: {
     fontWeight: 'bold',
     color: 'black',
     textAlign: 'center',
   },
-  buttonRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '100%',
-    marginBottom: 30,
-  },
   button: {
     backgroundColor: '#FFFFFF',
-    width: '46%',
-    paddingVertical: 25,
+    width: '100%',
+    paddingVertical: 30,
     borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
@@ -158,6 +169,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 5,
     elevation: 4,
+    marginBottom: 30,
   },
   quitButton: {
     backgroundColor: '#FFFFFF',
@@ -171,6 +183,15 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 5,
     elevation: 4,
+  },
+  quitContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  quitIcon: {
+    marginRight: 6,
+    marginTop: 1,
   },
   buttonText: {
     fontWeight: 'bold',

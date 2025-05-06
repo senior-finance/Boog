@@ -10,17 +10,17 @@ const LearningScreen = ({ navigation }) => {
 
       {/* 카드형 버튼들 */}
       <TouchableOpacity style={styles.card} onPress={() => navigation.navigate('QuizLevel')}>
-        <Icon name="school-outline" size={36} color="#3B82F6" />
+        <Icon name="school-outline" size={36} color="#4B7BE5" />
         <CustomText style={styles.cardText}>금융 용어 학습하기</CustomText>
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.card} onPress={() => navigation.navigate('DepositStep1')}>
-        <Icon name="bank-transfer" size={36} color="#3B82F6" />
+        <Icon name="bank-transfer" size={36} color="#4B7BE5" />
         <CustomText style={styles.cardText}>입금 연습하기</CustomText>
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.card} onPress={() => navigation.navigate('VoicePhishingScreen')}>
-        <Icon name="alert-circle-outline" size={36} color="#3B82F6" />
+        <Icon name="alert-circle-outline" size={36} color="#4B7BE5" />
         <CustomText style={styles.cardText}>보이스피싱 사례{'\n'} </CustomText>
       </TouchableOpacity>
 
@@ -44,8 +44,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 40,
   },
-  title: {
-   
+  title: {  
     fontWeight: 'bold',
     marginBottom: 40,
     color: 'black',
@@ -65,8 +64,7 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     elevation: 5,
   },
-  cardText: {
-   
+  cardText: { 
     color: 'black',
     fontWeight: 'bold',
     marginTop: 10,
@@ -89,7 +87,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#DFEBF8',
   },
   footerText: {
-
     fontWeight: 'bold',
     color: 'black',
   },

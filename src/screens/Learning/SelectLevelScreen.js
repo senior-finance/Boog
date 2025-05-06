@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#F5F5F5',
   },
   title: {
-    //    fontWeight: 'bold',
+    fontWeight: 'bold',
     marginBottom: 40,
   },
   button: {
@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   buttonText: {
-   //     fontWeight: 'bold',
+    fontWeight: 'bold',
     color: 'black',
   },
 });

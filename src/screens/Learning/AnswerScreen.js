@@ -3,20 +3,34 @@ import CorrectAnswerScreen from './CorrectAnswerScreen';
 import WrongAnswerScreen from './WrongAnswerScreen';
 
 const AnswerScreen = ({ route, navigation }) => {
-  const { isCorrect, answer, explanation, currentQuestionIndex } = route.params;
+  const {
+    isCorrect,
+    answer,
+    explanation,
+    nextQuestionIndex,
+    level,
+    shuffledQuiz,
+    userAnswers
+  } = route.params;
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      headerLeft: () =>
-
-
-null,
+      headerLeft: () => null,
       gestureEnabled: false,
     });
   }, [navigation]);
 
   const screenProps = {
-    route: { params: { answer, explanation, currentQuestionIndex } },
+    route: {
+      params: {
+        answer,
+        explanation,
+        nextQuestionIndex,
+        level,
+        shuffledQuiz,
+        userAnswers
+      }
+    },
     navigation,
   };
 

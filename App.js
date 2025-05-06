@@ -17,6 +17,7 @@ import TabNavigator from './src/navigation/TabNavigator';
 import SelectLevelScreen from './src/screens/Learning/SelectLevelScreen';
 import QuizScreen from './src/screens/Learning/QuizScreen';
 import AnswerScreen from './src/screens/Learning/AnswerScreen';
+import QuizResultScreen from './src/screens/Learning/QuizResult';
 import DepositStep1 from './src/screens/Learning/DepositStep1';
 import DepositStep2 from './src/screens/Learning/DepositStep2';
 import DepositStep3 from './src/screens/Learning/DepositStep3';
@@ -50,6 +51,7 @@ import GuideScreen from './src/screens/Info/GuideScreen';
 import BiometricScreen from './src/screens/Biometric/BiometricScreen';
 import VoiceInputScreen from './src/screens/VoiceAssistant/VoiceInputScreen';
 import TTSSettingScreen from './src/screens/VoiceAssistant/TTSSettingScreen';
+import QuizResult from './src/screens/Learning/QuizResult';
 
 const Stack = createStackNavigator();
 
@@ -74,6 +76,7 @@ export default function App() {
           <Stack.Screen name="QuizLevel" component={SelectLevelScreen} options={{ title: '금융 용어 학습 난이도 선택'}} />
           <Stack.Screen name="Quiz" component={QuizScreen} options={{ title: '금융 용어 학습하기' }} />
           <Stack.Screen name="Answer" component={AnswerScreen} options={{ title: ' 정답 확인' }} />
+          <Stack.Screen name="QuizResult" component={QuizResult} options={{ title: ' 금융 용어 학습 결과' }} />
           <Stack.Screen name="DepositStep1" component={DepositStep1} options={{ title: '입금 연습 - 계좌 번호 입력' }} />
           <Stack.Screen name="DepositStep2" component={DepositStep2} options={{ title: '입금 연습 - 은행 선택' }} />
           <Stack.Screen name="DepositStep3" component={DepositStep3} options={{ title: '입금 연습 - 금액 입력' }} />
