@@ -18,9 +18,10 @@ import {
   KFTC_STATE,
   KFTC_TRAN_ID,
 } from '@env';
+import {db} from '../../database/firebase'; // Firebase 설정을 불러옴
+import {collection, doc, getDoc, setDoc} from 'firebase/firestore';
 import {WebView} from 'react-native-webview';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import firestore from '@react-native-firebase/firestore';
 import AccountScreenGUI from './AccountScreenGUI'; // UI 관련 컴포넌트를 불러옴
 
 // 슬래시 제거
@@ -67,7 +68,7 @@ const AccountScreen = () => {
         setSecrets(data); // 성공적으로 받은 Vault 비밀 정보 저장
       })
       .catch(err => {
-        console.error('Vault secrets를 불러오는 중 에러 발생:', err);
+        // console.error('Vault secrets를 불러오는 중 에러 발생:', err);
         setVaultError(err); // 에러 상태 저장
       });
   }, []);
@@ -95,21 +96,22 @@ const AccountScreen = () => {
   // 파이어베이스 토큰 저장 및 로드 (사용자 userID 없이 고정된 문서 사용)
   const storeTokenDataFirebase = async data => {
     try {
-      const tokenDocRef = firestore().collection('tokens').doc('Token');
-      const doc = await tokenDocRef.get();
+      const tokensColRef = collection(db, 'tokens');
+      const tokenDocRef = doc(tokensColRef, 'Token');
+      const snap = await getDoc(tokenDocRef);
 
-      if (doc.exists) {
-        const currentData = doc.data();
+      if (snap.exists()) {
+        const currentData = snap.data();
         // 현재 저장된 access_token과 새로 받은 access_token 비교
         if (currentData.access_token !== data.access_token) {
-          await tokenDocRef.set(data);
+          await setDoc(tokenDocRef, data);
           console.log('Firebase에 토큰 데이터 업데이트 완료');
         } else {
           console.log('토큰 값이 동일하여 업데이트하지 않음');
         }
       } else {
         // 문서가 없는 경우 새로 저장
-        await tokenDocRef.set(data);
+        await setDoc(tokenDocRef, data);
         console.log('Firebase에 토큰 데이터 저장 완료');
       }
     } catch (error) {
@@ -119,9 +121,12 @@ const AccountScreen = () => {
 
   const loadTokenDataFirebase = async () => {
     try {
-      const doc = await firestore().collection('tokens').doc('Token').get();
-      if (doc.exists) {
-        return doc.data();
+      // db, 컬렉션 ID, 문서 ID 순서로 한 방에
+      const tokenDocRef = doc(db, 'tokens', 'Token'); // ← doc(db, 'tokens', 'Token')
+      const snap = await getDoc(tokenDocRef);
+
+      if (snap.exists()) {
+        return snap.data();
       } else {
         console.log('토큰 데이터가 존재하지 않습니다.');
         return null;
@@ -166,7 +171,11 @@ const AccountScreen = () => {
       // const storedToken = await loadTokenData();
       const storedToken = await loadTokenDataFirebase();
       if (storedToken && storedToken.access_token) {
-        console.log('저장된 토큰 데이터 로드:', storedToken);
+        console.log(
+          '저장된 토큰 데이터 로드:',
+          storedToken.access_token.substring(0, 20) + '...',
+        );
+        // 앞 20자리만 출력
         setTokenData(storedToken);
         setStep('fetchAccounts');
       }
@@ -176,12 +185,12 @@ const AccountScreen = () => {
   // WebView의 URL 변경 감지: 리다이렉트 URL에서 code 추출
   const handleNavigationStateChange = navState => {
     const {url} = navState;
-    console.log('URL 변경됨:', url);
+    console.log('URL 변경됨:', url.substring(0, 20) + '...');
     if (url.startsWith(KFTC_REDIRECT_URI)) {
       const codeMatch = url.match(/[?&]code=([^&]+)/);
       if (codeMatch) {
         const code = codeMatch[1];
-        console.log('추출된 code:', code);
+        console.log('추출된 code:', code.substring(0, 20) + '...');
         setAuthCode(code);
         setStep('fetchToken');
       }
@@ -191,7 +200,7 @@ const AccountScreen = () => {
   // code를 받은 후 토큰 요청
   useEffect(() => {
     if (step === 'fetchToken' && authCode) {
-      console.log('토큰 요청 시작 - code:', authCode);
+      console.log('토큰 요청 시작 - code:', authCode.substring(0, 20) + '...');
       setLoading(true);
       fetch(TOKEN_URL, {
         method: 'POST',
@@ -201,18 +210,18 @@ const AccountScreen = () => {
         )}&grant_type=authorization_code`,
       })
         .then(response => {
-          console.log('토큰 응답 수신:', response);
+          console.log('토큰 응답 수신:', response.substring(0, 20) + '...');
           return response.json();
         })
         .then(data => {
-          console.log('토큰 응답 데이터:', data);
+          console.log('토큰 응답 데이터:', data.substring(0, 20) + '...');
           if (data.access_token) {
             setTokenData(data);
             // storeTokenData(data); // 토큰 저장
             storeTokenDataFirebase(data); // 기존 storeTokenData(data) 대신 Firebase에 저장
             setStep('fetchAccounts');
           } else {
-            console.error('토큰 요청 실패:', data);
+            console.error('토큰 요청 실패:', data.substring(0, 20) + '...');
             setError('토큰 요청 실패');
           }
         })
@@ -230,18 +239,21 @@ const AccountScreen = () => {
   // 사용자 계좌 목록 요청 (HTTP Method를 GET으로 수정)
   useEffect(() => {
     if (step === 'fetchAccounts' && tokenData) {
-      console.log('계좌 목록 요청 시작 - tokenData:', tokenData);
+      console.log(
+        '계좌 목록 요청 시작 _ tokenData:',
+        tokenData.user_seq_no.substring(0, 20) + '...',
+      );
       setLoading(true);
       fetch(`${USER_ME_URL}?user_seq_no=${tokenData.user_seq_no}`, {
         method: 'GET',
         headers: {Authorization: `Bearer ${tokenData.access_token}`},
       })
         .then(response => {
-          console.log('계좌 목록 응답 수신:', response);
+          console.log('계좌 목록 응답 수신:', response.status);
           return response.json();
         })
         .then(data => {
-          console.log('계좌 목록 응답 데이터:', data);
+          // console.log('계좌 목록 응답 데이터:', data);
           if (data.res_list) {
             console.log('계좌 목록 성공적으로 획득');
             setAccountList(data.res_list);
@@ -256,7 +268,7 @@ const AccountScreen = () => {
           setError(err.message);
         })
         .finally(() => {
-          console.log('계좌 목록 요청 완료');
+          console.log('계좌 목록 가져오기 완료');
           setLoading(false);
         });
     }
