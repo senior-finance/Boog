@@ -47,3 +47,19 @@ export async function withdraw(accountId, accountName, amount) {
   // result.insertedId 반환
   return result.insertedId;
 }
+
+/**
+ * @param {object} filter   - MongoDB 쿼리 필터 (기본: {})
+ * @param {object} options  - find 옵션 (projection, sort 등, 기본: {})
+ * @returns {Promise<Array>} - 조회된 문서 배열
+ */
+
+// 쉬운 퀴즈 불러오기
+export async function getEasyQuiz() {
+  return await mongoDB('find', 'learn', 'easyQuiz', {});
+}
+
+// 어려운 퀴즈 불러오기
+export async function getHardQuiz() {
+  return await mongoDB('find', 'learn', 'hardQuiz', {});
+}

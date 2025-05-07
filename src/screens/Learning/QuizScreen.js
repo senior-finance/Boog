@@ -2,8 +2,8 @@ import React, { useState, useEffect, useLayoutEffect } from 'react';
 import { View, TouchableOpacity, StyleSheet } from 'react-native';
 import CustomText from '../../components/CustomText';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import easyQuiz from '../../assets/easyQuiz.json';
-import hardQuiz from '../../assets/hardQuiz.json';
+import { getEasyQuiz } from '../../database/mongoDB'; // getEasyQuiz 임포트
+import { getHardQuiz } from '../../database/mongoDB'; // getHardQuiz 임포트
 
 const shuffleArray = (array) => {
   const shuffled = [...array];
@@ -22,19 +22,39 @@ const QuizScreen = ({ navigation, route }) => {
     userAnswers: passedAnswers = []
   } = route.params;
 
+  const [shuffledQuiz, setShuffledQuiz] = useState(passedQuiz || []);
+  const [userAnswers, setUserAnswers] = useState(passedAnswers);
+
   useLayoutEffect(() => {
     navigation.setOptions({
       headerLeft: () => null,
-      gestureEnabled: false, // 제스처로도 뒤로 못 가게
+      gestureEnabled: false,
     });
   }, [navigation]);
 
-  const [shuffledQuiz] = useState(() => {
-    if (passedQuiz) return passedQuiz;
-    return level === 'easy' ? shuffleArray(easyQuiz) : shuffleArray(hardQuiz);
-  });
+  useEffect(() => {
+    const fetchQuiz = async () => {
+      if (passedQuiz) return;
+      try {
+        let quizData;
+        if (level === 'easy') {
+          quizData = await getEasyQuiz(); // 🔹 쉬운 퀴즈 불러오기
+        } else {
+          quizData = await getHardQuiz(); // 🔹 어려운 퀴즈 불러오기
+        }
+        const shuffled = shuffleArray(quizData);
+        setShuffledQuiz(shuffled);
+      } catch (err) {
+        console.error('퀴즈 불러오기 실패:', err);
+      }
+    };
+  
+    fetchQuiz();
+  }, [level, passedQuiz]);
 
-  const [userAnswers, setUserAnswers] = useState(passedAnswers);
+  if (!shuffledQuiz.length) {
+    return <CustomText>퀴즈를 불러오는 중입니다...</CustomText>;
+  }
 
   const questionIndex = nextQuestionIndex;
   const currentQuestion = shuffledQuiz[questionIndex];
@@ -42,13 +62,13 @@ const QuizScreen = ({ navigation, route }) => {
   const handleAnswerSelection = (selectedAnswer) => {
     const isCorrect = selectedAnswer === currentQuestion.correctAnswer;
     const nextIndex = questionIndex + 1;
-  
+
     const updatedAnswers = [
       ...userAnswers,
       { index: questionIndex, isCorrect }
     ];
     setUserAnswers(updatedAnswers);
-  
+
     navigation.navigate('Answer', {
       isCorrect,
       answer: currentQuestion.correctAnswer,
@@ -64,8 +84,6 @@ const QuizScreen = ({ navigation, route }) => {
 
   return (
     <View style={styles.container}>
-      {/*<CustomText style={styles.title}>금융 용어를 배워볼게요</CustomText>*/}
-
       <View style={styles.questionBox}>
         <CustomText style={styles.questionText}>{`"${currentQuestion.question}"`}</CustomText>
       </View>
