@@ -238,8 +238,8 @@ const AccountScreen = () => {
         setStep('fetchAccounts');
       } else {
         // 토큰이 없거나 만료된 경우, 초기 화면으로
-        console.log('저장된 토큰이 없거나 만료되었습니다.');
-        setStep('home');
+        console.log('저장된 토큰이 없거나 만료되어 인증 화면으로 이동합니다');
+        setStep('auth');
       }
     })();
   }, [testBedAccount]);

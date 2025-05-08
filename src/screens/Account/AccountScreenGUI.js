@@ -205,7 +205,7 @@ const AccountScreenGUI = ({
   }
 
   // 인증 화면 렌더링
-  if (step === 'au1th') {
+  if (step === 'auth') {
     return (
       <WebView
         source={{ uri: AUTH_URL }}
