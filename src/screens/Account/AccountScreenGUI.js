@@ -1,4 +1,4 @@
-import React, {useRef, useState} from 'react';
+import React, { useRef, useState } from 'react';
 import {
   Modal,
   View,
@@ -15,10 +15,10 @@ import {
   Easing,
   Image,
 } from 'react-native';
-import {WebView} from 'react-native-webview';
+import { WebView } from 'react-native-webview';
 import CustomText from '../../components/CustomText';
-import {NumPad} from '@umit-turk/react-native-num-pad';
-import {TextInputMask} from 'react-native-masked-text';
+import { NumPad } from '@umit-turk/react-native-num-pad';
+import { TextInputMask } from 'react-native-masked-text';
 import CustomNumPad from '../../components/CustomNumPad';
 import LottieView from 'lottie-react-native';
 import { withdraw } from '../../database/mongoDB'
@@ -37,6 +37,7 @@ const AccountScreenGUI = ({
   accountBalances,
   handleReceiveMoney,
   confirmClearToken,
+  setTestBedAccount
 }) => {
   const [showWithdrawOverlay, setShowWithdrawOverlay] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
@@ -105,8 +106,7 @@ const AccountScreenGUI = ({
       await withdraw(selectedItem.fintech_use_num, selectedItem.bank_name, num);
       console.log('출금 요청 완료:', selectedItem.fintech_use_num, num);
       alert(
-        `${
-          selectedItem.bank_name || '계좌'
+        `${selectedItem.bank_name || '계좌'
         }에서 ${num.toLocaleString()}원 출금 요청 완료`,
       );
       setShowWithdrawOverlay(false);
@@ -165,7 +165,7 @@ const AccountScreenGUI = ({
 
   // 이미지에 적용할 Animated 스타일
   const animatedImageStyle = {
-    transform: [{translateY}, {scale}],
+    transform: [{ translateY }, { scale }],
     opacity: imageOpacity,
   };
 
@@ -187,16 +187,28 @@ const AccountScreenGUI = ({
     return (
       <View style={styles.container}>
         <Text style={styles.title}>{DEFAULT_TITLE}</Text>
-        <Button title="인증하기" onPress={() => setStep('auth')} />
+        <TouchableOpacity
+          style={[styles.button, styles.button1]}
+          onPress={() => setTestBedAccount('kmj')}
+        >
+          <Text style={styles.buttonText}>테스트 계정 김민준</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[styles.button, styles.button2]}
+          onPress={() => setTestBedAccount('hwc')}
+        >
+          <Text style={styles.buttonText}>테스트 계정 홍우창</Text>
+        </TouchableOpacity>
       </View>
     );
   }
 
   // 인증 화면 렌더링
-  if (step === 'auth') {
+  if (step === 'au1th') {
     return (
       <WebView
-        source={{uri: AUTH_URL}}
+        source={{ uri: AUTH_URL }}
         onNavigationStateChange={handleNavigationStateChange}
       />
     );
@@ -222,16 +234,16 @@ const AccountScreenGUI = ({
             autoPlay
             loop
             style={styles.animation}
-            // renderMode="HARDWARE" // GPU 가속 렌더링
-            // resizeMode="cover" // 화면에 꽉 차게, 비율 유지
+          // renderMode="HARDWARE" // GPU 가속 렌더링
+          // resizeMode="cover" // 화면에 꽉 차게, 비율 유지
           />
           <LottieView
             source={require('../../assets/animeAI2.json')}
             autoPlay
             loop
             style={styles.animation}
-            // renderMode="HARDWARE" // GPU 가속 렌더링
-            // resizeMode="cover" // 화면에 꽉 차게, 비율 유지
+          // renderMode="HARDWARE" // GPU 가속 렌더링
+          // resizeMode="cover" // 화면에 꽉 차게, 비율 유지
           />
         </View>
         <CustomText style={styles.mainTitle}>
@@ -241,7 +253,7 @@ const AccountScreenGUI = ({
         <FlatList
           data={accountList}
           keyExtractor={item => item.fintech_use_num}
-          renderItem={({item}) => {
+          renderItem={({ item }) => {
             // 배열에서 해당 계좌의 잔고 정보를 찾아 반환
             const balanceObj = accountBalances.find(
               b => b.fintech_use_num === item.fintech_use_num,
@@ -293,7 +305,7 @@ const AccountScreenGUI = ({
             styles.circle,
             {
               opacity: circleOpacity,
-              transform: [{scale: circleScale}],
+              transform: [{ scale: circleScale }],
             },
           ]}
         />
@@ -305,7 +317,7 @@ const AccountScreenGUI = ({
             styles.circle2,
             {
               opacity: circleOpacity,
-              transform: [{scale: circleScale}],
+              transform: [{ scale: circleScale }],
             },
           ]}
         />
@@ -330,7 +342,7 @@ const AccountScreenGUI = ({
           {/* 키보드 올라올 때 레이아웃 자동 조정 */}
           <KeyboardAvoidingView
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-            style={{flex: 1}}>
+            style={{ flex: 1 }}>
             {/* 바깥 터치로 닫기 */}
             <TouchableWithoutFeedback onPress={closeOverlay}>
               <View style={styles.overlay}>
@@ -397,6 +409,7 @@ const AccountScreenGUI = ({
   return (
     <View style={styles.container}>
       <Text>프로세스 진행 중...</Text>
+      <Text>이 화면 메시지도 바꾸고 로딩바로 만들고 등등</Text>
     </View>
   );
 };
@@ -446,7 +459,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginBottom: 10,
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 2,
@@ -557,7 +570,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     elevation: 5, // Android 그림자
     shadowColor: '#000', // iOS 그림자
-    shadowOffset: {width: 0, height: 2},
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
   },
   input: {
@@ -586,6 +599,28 @@ const styles = StyleSheet.create({
     width: 200,
     height: 200,
   },
+  button: {
+    width: '80%',
+    paddingVertical: 12,
+    borderRadius: 8,
+    marginVertical: 8,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOpacity: 0.5,
+    shadowRadius: 10,
+    elevation: 5,
+  },
+  kmjButton: {
+    backgroundColor: '#4A90E2'
+  },
+  hwcButton: {
+    backgroundColor: '#50E3C2'
+  },
+  buttonText: {
+    fontSize: 30,
+    color: '#000',
+    fontWeight: '600'
+  }
 });
 
 export default AccountScreenGUI;

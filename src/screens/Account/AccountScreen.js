@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   View,
   Text,
@@ -9,32 +9,52 @@ import {
   StyleSheet,
   Alert,
 } from 'react-native';
+import { db } from '../../database/firebase'; // Firebase 설정을 불러옴
+import { collection, doc, getDoc, setDoc } from 'firebase/firestore';
+import { WebView } from 'react-native-webview';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import AccountScreenGUI from './AccountScreenGUI'; // UI 관련 컴포넌트를 불러옴
 import {
-  KFTC_CLIENT_ID,
-  KFTC_CLIENT_SECRET,
+  // kmj
+  KFTC_CLIENT_ID_KMJ,
+  KFTC_CLIENT_SECRET_KMJ,
+  KFTC_TRAN_ID_KMJ,
+
+  // hwc
+  KFTC_CLIENT_ID_HWC,
+  KFTC_CLIENT_SECRET_HWC,
+  KFTC_TRAN_ID_HWC,
+
+  // 공통
   KFTC_REDIRECT_URI,
   KFTC_BASE_URL,
   KFTC_SCOPE,
   KFTC_STATE,
-  KFTC_TRAN_ID,
 } from '@env';
-import {db} from '../../database/firebase'; // Firebase 설정을 불러옴
-import {collection, doc, getDoc, setDoc} from 'firebase/firestore';
-import {WebView} from 'react-native-webview';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import AccountScreenGUI from './AccountScreenGUI'; // UI 관련 컴포넌트를 불러옴
+const CONFIG = {
+  kmj: {
+    CLIENT_ID: KFTC_CLIENT_ID_KMJ,
+    CLIENT_SECRET: KFTC_CLIENT_SECRET_KMJ,
+    TRAN_ID: KFTC_TRAN_ID_KMJ,
+  },
+  hwc: {
+    CLIENT_ID: KFTC_CLIENT_ID_HWC,
+    CLIENT_SECRET: KFTC_CLIENT_SECRET_HWC,
+    TRAN_ID: KFTC_TRAN_ID_HWC,
+  },
+};
 
-// 슬래시 제거
-const sanitizedBaseUrl = KFTC_BASE_URL.replace(/\/+$/, '');
+// 계정별 Firebase 문서 ID 반환 (kmj → "Token", hwc → "Token2")
+const getTokenDocId = account => account === 'hwc' ? 'Token2' : 'Token';
 
 // 사용자 인증을 위한 URL 생성
-const AUTH_URL = `${sanitizedBaseUrl}/oauth/2.0/authorize?response_type=code&client_id=${KFTC_CLIENT_ID}&redirect_uri=${encodeURIComponent(
-  KFTC_REDIRECT_URI,
-)}&scope=${KFTC_SCOPE}&state=${KFTC_STATE}&auth_type=0`;
+// const AUTH_URL = `${baseUrl}/oauth/2.0/authorize?response_type=code&client_id=${KFTC_CLIENT_ID}&redirect_uri=${encodeURIComponent(
+//   KFTC_REDIRECT_URI,
+// )}&scope=${KFTC_SCOPE}&state=${KFTC_STATE}&auth_type=0`;
 
-const TOKEN_URL = `${sanitizedBaseUrl}/oauth/2.0/token`;
-const USER_ME_URL = `${sanitizedBaseUrl}/v2.0/user/me`;
-const ACCOUNT_BALANCE_URL = `${sanitizedBaseUrl}/v2.0/account/balance/fin_num`;
+// const TOKEN_URL = `${baseUrl}/oauth/2.0/token`;
+// const USER_ME_URL = `${baseUrl}/v2.0/user/me`;
+// const ACCOUNT_BALANCE_URL = `${baseUrl}/v2.0/account/balance/fin_num`;
 
 const AccountScreen = () => {
   // 상태 관리: 각 단계별 진행상태
@@ -54,6 +74,33 @@ const AccountScreen = () => {
 
   const [secrets, setSecrets] = useState(null);
   const [vaultError, setVaultError] = useState(null); // Vault 데이터 fetch 과정에서 발생한 에러
+
+  const [testBedAccount, setTestBedAccount] = useState('');
+  const cfg = CONFIG[testBedAccount] || {};
+
+  // base URL 슬래시 제거는 한 번만
+  const baseUrl = useMemo(
+    () => KFTC_BASE_URL.replace(/\/+$/, ''),
+    []
+  );
+
+  // 계정별로 동적 생성되는 URL들
+  const AUTH_URL = useMemo(() => {
+    if (!cfg.CLIENT_ID) return null;
+    return (
+      `${baseUrl}/oauth/2.0/authorize?` +
+      `response_type=code` +
+      `&client_id=${cfg.CLIENT_ID}` +
+      `&redirect_uri=${encodeURIComponent(KFTC_REDIRECT_URI)}` +
+      `&scope=${KFTC_SCOPE}` +
+      `&state=${KFTC_STATE}` +
+      `&txnid=${cfg.TRAN_ID}`
+    );
+  }, [baseUrl, cfg]);
+
+  const TOKEN_URL = `${baseUrl}/oauth/2.0/token`;
+  const USER_ME_URL = `${baseUrl}/v2.0/user/me`;
+  const ACCOUNT_BALANCE_URL = `${baseUrl}/v2.0/account/balance/fin_num`;
 
   useEffect(() => {
     fetch('http://10.0.2.2:3000/vault-secret') // Android 에뮬레이터의 로컬 서버 접근 IP
@@ -93,49 +140,49 @@ const AccountScreen = () => {
   //     }
   // };
 
-  // 파이어베이스 토큰 저장 및 로드 (사용자 userID 없이 고정된 문서 사용)
-  const storeTokenDataFirebase = async data => {
+  // 파이어베이스 토큰 저장 (account, data 순서)
+  const storeTokenDataFirebase = async (account, data) => {
     try {
       const tokensColRef = collection(db, 'tokens');
-      const tokenDocRef = doc(tokensColRef, 'Token');
+      const docId = getTokenDocId(account);
+      const tokenDocRef = doc(tokensColRef, docId);
       const snap = await getDoc(tokenDocRef);
 
       if (snap.exists()) {
         const currentData = snap.data();
-        // 현재 저장된 access_token과 새로 받은 access_token 비교
         if (currentData.access_token !== data.access_token) {
           await setDoc(tokenDocRef, data);
-          console.log('Firebase에 토큰 데이터 업데이트 완료');
+          console.log(`${account}: Firebase에 토큰 데이터 업데이트 완료`);
         } else {
-          console.log('토큰 값이 동일하여 업데이트하지 않음');
+          console.log(`${account}: 토큰 값이 동일하여 업데이트하지 않음`);
         }
       } else {
-        // 문서가 없는 경우 새로 저장
         await setDoc(tokenDocRef, data);
-        console.log('Firebase에 토큰 데이터 저장 완료');
+        console.log(`${account}: Firebase에 토큰 데이터 저장 완료`);
       }
     } catch (error) {
-      console.error('Firebase 토큰 데이터 저장 에러:', error);
+      console.error(`${account}: Firebase 토큰 데이터 저장 에러:`, error);
     }
   };
 
-  const loadTokenDataFirebase = async () => {
+  // 파이어베이스 토큰 로드 (account 인자 추가)
+  const loadTokenDataFirebase = async account => {
     try {
-      // db, 컬렉션 ID, 문서 ID 순서로 한 방에
-      const tokenDocRef = doc(db, 'tokens', 'Token'); // ← doc(db, 'tokens', 'Token')
+      const docId = getTokenDocId(account);
+      const tokenDocRef = doc(db, 'tokens', docId);
       const snap = await getDoc(tokenDocRef);
 
       if (snap.exists()) {
         return snap.data();
       } else {
-        console.log('토큰 데이터가 존재하지 않습니다.');
+        console.log(`${account}: 토큰 데이터가 존재하지 않습니다.`);
         return null;
       }
     } catch (error) {
-      console.error('Firebase 토큰 데이터 로드 에러:', error);
+      console.error(`${account}: Firebase 토큰 데이터 로드 에러:`, error);
       return null;
     }
-  };
+  }
 
   // 잔고 데이터를 업데이트할 함수
   const handleReceiveMoney = item => {
@@ -149,7 +196,7 @@ const AccountScreen = () => {
         const updatedBalance =
           Number(prevBalances[index].balance_amt || 0) + 100000;
         return prevBalances.map((b, i) =>
-          i === index ? {...b, balance_amt: updatedBalance} : b,
+          i === index ? { ...b, balance_amt: updatedBalance } : b,
         );
       } else {
         // 해당 계좌 항목이 없으면 새 항목을 추가합니다.
@@ -168,23 +215,38 @@ const AccountScreen = () => {
   // 앱 시작 시 저장된 토큰 로드
   useEffect(() => {
     (async () => {
-      // const storedToken = await loadTokenData();
-      const storedToken = await loadTokenDataFirebase();
-      if (storedToken && storedToken.access_token) {
+      // 아직 계정이 선택되지 않았으면 아무 것도 하지 않음
+      if (!testBedAccount) {
+        return;
+      }
+      // 1) testBedAccount가 'kmj'나 'hwc'가 아니면 바로 리턴
+      if (!['kmj', 'hwc'].includes(testBedAccount)) {
+        console.warn('토큰이 저장된 문서를 찾을 수 없습니다');
+        return;
+      }
+      // 2) Firebase에서 토큰 불러오기
+      const storedToken = await loadTokenDataFirebase(testBedAccount);
+
+      // 3) 유효한 토큰이 있으면 다음 단계로
+      if (storedToken?.access_token) {
+        console.log(`${testBedAccount} 사용자로 접속 합니다...`);
         console.log(
           '저장된 토큰 데이터 로드:',
-          storedToken.access_token.substring(0, 20) + '...',
+          storedToken.access_token.substring(0, 20) + '…'
         );
-        // 앞 20자리만 출력
         setTokenData(storedToken);
         setStep('fetchAccounts');
+      } else {
+        // 토큰이 없거나 만료된 경우, 초기 화면으로
+        console.log('저장된 토큰이 없거나 만료되었습니다.');
+        setStep('home');
       }
     })();
-  }, []);
+  }, [testBedAccount]);
 
   // WebView의 URL 변경 감지: 리다이렉트 URL에서 code 추출
   const handleNavigationStateChange = navState => {
-    const {url} = navState;
+    const { url } = navState;
     console.log('URL 변경됨:', url.substring(0, 20) + '...');
     if (url.startsWith(KFTC_REDIRECT_URI)) {
       const codeMatch = url.match(/[?&]code=([^&]+)/);
@@ -197,31 +259,40 @@ const AccountScreen = () => {
     }
   };
 
-  // code를 받은 후 토큰 요청
+  // code 받은 이후 토큰 요청하기
   useEffect(() => {
-    if (step === 'fetchToken' && authCode) {
-      console.log('토큰 요청 시작 - code:', authCode.substring(0, 20) + '...');
+    if (step === 'fetchToken' && authCode && cfg.CLIENT_ID) {
+      console.log('토큰 요청 시작 - code:', authCode.substring(0, 20) + '…');
       setLoading(true);
+
+      const bodyParams = new URLSearchParams({
+        code: authCode,
+        client_id: cfg.CLIENT_ID,
+        client_secret: cfg.CLIENT_SECRET,
+        redirect_uri: KFTC_REDIRECT_URI,
+        grant_type: 'authorization_code',
+        txnid: cfg.TRAN_ID,
+      });
+
       fetch(TOKEN_URL, {
         method: 'POST',
-        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-        body: `code=${authCode}&client_id=${KFTC_CLIENT_ID}&client_secret=${KFTC_CLIENT_SECRET}&redirect_uri=${encodeURIComponent(
-          KFTC_REDIRECT_URI,
-        )}&grant_type=authorization_code`,
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: bodyParams.toString(),
       })
-        .then(response => {
-          console.log('토큰 응답 수신:', response.substring(0, 20) + '...');
+        .then(async response => {
+          const text = await response.clone().text();
+          console.log('토큰 응답(raw):', text.substring(0, 100) + '…');
           return response.json();
         })
-        .then(data => {
-          console.log('토큰 응답 데이터:', data.substring(0, 20) + '...');
+        .then(async data => {
+          console.log('토큰 응답 데이터:', JSON.stringify(data).substring(0, 100) + '…');
           if (data.access_token) {
             setTokenData(data);
-            // storeTokenData(data); // 토큰 저장
-            storeTokenDataFirebase(data); // 기존 storeTokenData(data) 대신 Firebase에 저장
+            // 계정별 Firebase 문서에 저장
+            await storeTokenDataFirebase(testBedAccount, data);
             setStep('fetchAccounts');
           } else {
-            console.error('토큰 요청 실패:', data.substring(0, 20) + '...');
+            console.error('토큰 요청 실패:', JSON.stringify(data));
             setError('토큰 요청 실패');
           }
         })
@@ -234,7 +305,7 @@ const AccountScreen = () => {
           setLoading(false);
         });
     }
-  }, [step, authCode]);
+  }, [step, authCode, cfg, TOKEN_URL]);
 
   // 사용자 계좌 목록 요청 (HTTP Method를 GET으로 수정)
   useEffect(() => {
@@ -246,7 +317,7 @@ const AccountScreen = () => {
       setLoading(true);
       fetch(`${USER_ME_URL}?user_seq_no=${tokenData.user_seq_no}`, {
         method: 'GET',
-        headers: {Authorization: `Bearer ${tokenData.access_token}`},
+        headers: { Authorization: `Bearer ${tokenData.access_token}` },
       })
         .then(response => {
           console.log('계좌 목록 응답 수신:', response.status);
@@ -276,75 +347,86 @@ const AccountScreen = () => {
 
   // accountList와 tokenData가 준비되면 모든 계좌의 잔고를 한 번에 가져오는 useEffect
   useEffect(() => {
-    if (accountList.length > 0 && tokenData) {
+    if (accountList.length > 0 && tokenData && cfg.TRAN_ID) {
       const fetchAllBalances = async () => {
-        let balances = [];
-        await Promise.all(
+        const balances = await Promise.all(
           accountList.map(async account => {
             // bankTranId는 한 줄로 생성 (총 20자리)
-            const bankTranId = `${KFTC_TRAN_ID}U${Math.floor(
-              Math.random() * 1e9,
-            )
-              //vault 사용 시 secrets.KFTC_TRAN_ID
+            // vault 사용 시 secrets.KFTC_TRAN_ID
+            const random9 = Math.floor(Math.random() * 1e9)
               .toString()
-              .padStart(9, '0')}`;
+              .padStart(9, '0');
+            const bankTranId = `${cfg.TRAN_ID}U${random9}`;
+
             const tranDTime = new Date()
               .toISOString()
               .replace(/[-:TZ.]/g, '')
               .slice(0, 14);
+
             try {
-              const response = await fetch(
-                `${ACCOUNT_BALANCE_URL}?bank_tran_id=${bankTranId}&fintech_use_num=${account.fintech_use_num}&tran_dtime=${tranDTime}`,
+              const res = await fetch(
+                `${ACCOUNT_BALANCE_URL}` +
+                `?bank_tran_id=${bankTranId}` +
+                `&fintech_use_num=${account.fintech_use_num}` +
+                `&tran_dtime=${tranDTime}`,
                 {
                   method: 'GET',
-                  headers: {Authorization: `Bearer ${tokenData.access_token}`},
-                },
+                  headers: {
+                    Authorization: `Bearer ${tokenData.access_token}`,
+                  },
+                }
               );
-              const data = await response.json();
+              const data = await res.json();
               if (data.balance_amt !== undefined) {
-                balances.push({
+                return {
                   fintech_use_num: account.fintech_use_num,
                   balance_amt: data.balance_amt,
-                  bank_name: data.bank_name, // 은행명 추가
-                });
+                  bank_name: data.bank_name,
+                };
               } else {
-                balances.push({
+                return {
                   fintech_use_num: account.fintech_use_num,
                   balance_amt: '잔고 조회 실패',
                   bank_name: '은행 조회 실패',
-                });
+                };
               }
             } catch (error) {
               console.error(
                 `잔고 조회 실패: ${account.fintech_use_num}`,
-                error,
+                error
               );
-              balances.push({
+              return {
                 fintech_use_num: account.fintech_use_num,
                 balance_amt: '오류',
-                bank_name: account.bank_name, // 또는 "은행 조회 실패"
-              });
+                bank_name: account.bank_name || '은행 조회 실패',
+              };
             }
-          }),
+          })
         );
         setAccountBalances(balances);
       };
       fetchAllBalances();
     }
-  }, [accountList, tokenData]);
+  }, [accountList, tokenData, cfg.TRAN_ID, ACCOUNT_BALANCE_URL]);
 
   // 토큰 캐시 삭제 함수
   const handleClearToken = async () => {
     try {
-      await firestore().collection('tokens').doc('Token').update({
-        access_token: firestore.FieldValue.delete(),
+      // 계정에 맞는 문서 ID(Token or Token2) 획득
+      const docId = getTokenDocId(testBedAccount);
+      const tokenDocRef = doc(db, 'tokens', docId);
+
+      // 해당 문서의 access_token 필드만 삭제
+      await updateDoc(tokenDocRef, {
+        access_token: deleteField(),
       });
-      console.log('파이어베이스 최신 토큰 필드 삭제됨');
+
+      console.log(`${testBedAccount}: Firebase ${docId} 문서의 access_token 필드 삭제됨`);
       setTokenData(null);
       setAccountList([]);
       setStep('home');
     } catch (error) {
-      console.error('파이어베이스 토큰 필드 삭제 에러:', error);
+      console.error(`${testBedAccount}: Firebase 토큰 삭제 에러:`, error);
     }
   };
 
@@ -354,10 +436,10 @@ const AccountScreen = () => {
       '토큰 삭제 확인',
       '정말로 파이어베이스 토큰 캐시를 삭제하시겠습니까?',
       [
-        {text: '아니오', style: 'cancel'},
-        {text: '예', onPress: handleClearToken},
+        { text: '아니오', style: 'cancel' },
+        { text: '예', onPress: handleClearToken },
       ],
-      {cancelable: false},
+      { cancelable: false },
     );
   };
 
@@ -408,6 +490,8 @@ const AccountScreen = () => {
       handleReceiveMoney={handleReceiveMoney}
       handleWithdraw={handleWithdraw}
       confirmClearToken={confirmClearToken}
+      testBedAccount={testBedAccount}
+      setTestBedAccount={setTestBedAccount}
     />
   );
 };
