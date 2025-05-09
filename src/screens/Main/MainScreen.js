@@ -72,9 +72,9 @@ const MainScreen = ({ navigation }) => {
     <LinearGradient colors={['#F8F8F8', '#ECECEC']} style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <LinearGradient colors={['#4B7BE5', '#6FA8DC']} style={styles.balanceCard}>
-          <CustomText style={styles.balanceLabel}>잔액</CustomText>
-          <CustomText style={styles.accountNumber}>111-222-4445543</CustomText>
-          <CustomText style={styles.balanceAmount}>123,456,789원</CustomText>
+          <CustomText style={styles.balanceLabel}>잔액 레이블</CustomText>
+          <CustomText style={styles.accountNumber}>계좌 번호는 개별 항목이므로 생략</CustomText>
+          <CustomText style={styles.balanceAmount}>총 금액은 account list 에서 sum</CustomText>
         </LinearGradient>
 
         <View style={styles.actionRow}>
