@@ -1,7 +1,8 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet, ActivityIndicator,TouchableOpacity } from 'react-native';
+import { View, Text, FlatList, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { createStackNavigator } from "@react-navigation/stack";
 import { NavigationContainer } from "@react-navigation/native";
+import LottieView from 'lottie-react-native';
 import { deposit, withdraw, accountUpsert, accountGet, accountGetAll } from '../../database/mongoDB'
 
 const AccountDetailScreen = ({ navigation, route }) => {
@@ -30,6 +31,25 @@ const AccountDetailScreen = ({ navigation, route }) => {
 
     return (
         <View style={{ flex: 1 }}>
+            <View style={styles.rowContainer}>
+                <LottieView
+                    source={require('../../assets/animeLoading.json')}
+                    autoPlay
+                    loop
+                    style={styles.animation}
+                // renderMode="HARDWARE" // GPU 가속 렌더링
+                // resizeMode="cover" // 화면에 꽉 차게, 비율 유지
+                />
+                <LottieView
+                    source={require('../../assets/animeLoading2.json')}
+                    autoPlay
+                    loop
+                    style={styles.animation}
+                // renderMode="HARDWARE" // GPU 가속 렌더링
+                // resizeMode="cover" // 화면에 꽉 차게, 비율 유지
+                />
+            </View>
+
             {/* 정렬 토글 버튼 */}
             <TouchableOpacity
                 style={styles.sortButton}
@@ -78,6 +98,16 @@ const styles = StyleSheet.create({
         padding: 12,
         borderBottomWidth: 1,
         borderColor: '#ddd',
+    },
+    rowContainer: {
+        flexDirection: 'row',            // ← 여기서 가로 방향 지정
+        justifyContent: 'space-around',  // ← 아이템 간 간격 조절
+        alignItems: 'center',            // ← 세로 정렬
+        // flex: 1,
+    },
+    animation: {
+        width: 200,
+        height: 200,
     },
 });
 
