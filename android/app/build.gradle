@@ -93,6 +93,7 @@ android {
         versionName "1.0"
 
         resValue "string", "build_config_package", "com.seniorfinance"
+        resValue "string", "LOGIN_KAKAO_KEY", project.env.get("LOGIN_KAKAO_KEY")
     }
     signingConfigs {
         debug {
