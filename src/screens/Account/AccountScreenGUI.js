@@ -450,7 +450,7 @@ const AccountScreenGUI = ({
                       style={styles.withdrawButton}
                       // onPress={() => handleWithdraw(item)}
                       onPress={() => onPressUpsert(item)}>
-                      <CustomText style={styles}>
+                      <CustomText>
                         리셋
                       </CustomText>
                     </TouchableOpacity>
