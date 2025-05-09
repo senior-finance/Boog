@@ -77,7 +77,7 @@ export default function LoginScreen({ navigation }) {
 
             <TouchableOpacity
                 style={[styles.button, styles.skip]}
-                onPress={() => navigation.navigate('Home')}
+                onPress={() => navigation.navigate('MainTabs')}
             >
                 <Text style={styles.buttonText}>로그인 없이 계속</Text>
             </TouchableOpacity>

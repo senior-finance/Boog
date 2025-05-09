@@ -74,7 +74,7 @@ const MainScreen = ({ navigation }) => {
         <LinearGradient colors={['#4B7BE5', '#6FA8DC']} style={styles.balanceCard}>
           <CustomText style={styles.balanceLabel}>잔액 레이블</CustomText>
           <CustomText style={styles.accountNumber}>계좌 번호는 개별 항목이므로 생략</CustomText>
-          <CustomText style={styles.balanceAmount}>총 금액은 account list 에서 sum</CustomText>
+          <CustomText style={styles.balanceAmount}>총 금액은 account list 에서 sum(ammount_all)</CustomText>
         </LinearGradient>
 
         <View style={styles.actionRow}>
