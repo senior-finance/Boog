@@ -33,11 +33,13 @@ import {
 } from '@env';
 const CONFIG = {
   kmj: {
+    dbName: 'kmj',
     CLIENT_ID: KFTC_CLIENT_ID_KMJ,
     CLIENT_SECRET: KFTC_CLIENT_SECRET_KMJ,
     TRAN_ID: KFTC_TRAN_ID_KMJ,
   },
   hwc: {
+    dbName: 'hwc',
     CLIENT_ID: KFTC_CLIENT_ID_HWC,
     CLIENT_SECRET: KFTC_CLIENT_SECRET_HWC,
     TRAN_ID: KFTC_TRAN_ID_HWC,
@@ -480,6 +482,7 @@ const AccountScreen = () => {
 
   return (
     <AccountScreenGUI
+      CONFIG={CONFIG}
       step={step}
       setStep={setStep}
       AUTH_URL={AUTH_URL}

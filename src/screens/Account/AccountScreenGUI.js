@@ -1,17 +1,19 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import {
-  Modal,
   View,
   Text,
-  TextInput,
+  Alert,
+  Modal,
   Button,
   FlatList,
+  TextInput,
   TouchableOpacity,
   TouchableWithoutFeedback,
   KeyboardAvoidingView,
   ActivityIndicator,
-  Animated,
   StyleSheet,
+  Pressable,
+  Animated,
   Easing,
   Image,
 } from 'react-native';
@@ -21,13 +23,16 @@ import { NumPad } from '@umit-turk/react-native-num-pad';
 import { TextInputMask } from 'react-native-masked-text';
 import CustomNumPad from '../../components/CustomNumPad';
 import LottieView from 'lottie-react-native';
-import { withdraw } from '../../database/mongoDB'
+import { deposit, withdraw, accountUpsert, accountGet } from '../../database/mongoDB'
+import CustomModal from '../../components/CustomModal.js'
+import { useNavigation } from '@react-navigation/native';
 
 // 내부에서 사용할 상수 변수 선언
 const DEFAULT_TITLE = '금융결제원 테스트베드';
 const LOADING_MESSAGE = '로딩 중...';
 
 const AccountScreenGUI = ({
+  CONFIG,
   step,
   setStep,
   AUTH_URL,
@@ -37,12 +42,43 @@ const AccountScreenGUI = ({
   accountBalances,
   handleReceiveMoney,
   confirmClearToken,
+  testBedAccount,
   setTestBedAccount
 }) => {
   const [showWithdrawOverlay, setShowWithdrawOverlay] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
-  const [amount, setAmount] = useState('');
+  const [amount, setAmount] = useState(''); // 금액 입력
   const [raw, setRaw] = useState(''); // 숫자만 담깁니다
+
+  const [dbAccounts, setDbAccounts] = useState([]);  // { accountId, accountNum, amount } 형태
+
+  const [isModalVisible, setModalVisible] = useState(false);
+  const [modalTitle, setModalTitle] = useState('');
+  const [modalMessage, setModalMessage] = useState('');
+
+  const navigation = useNavigation();
+
+  // DB에서 계좌 정보 가져오기
+  const fetchDbAccounts = async () => {
+    if (!testBedAccount || accountList.length === 0) return;
+    const { dbName } = CONFIG[testBedAccount];
+    try {
+      const results = await Promise.all(
+        accountList.map(item =>
+          accountGet(dbName, item.fintech_use_num)
+            .then(doc => doc && { accountId: item.fintech_use_num, ...doc })
+        )
+      );
+      setDbAccounts(results.filter(r => r));
+    } catch (err) {
+      console.error('DB 조회 실패', err);
+    }
+  };
+
+  // 마운트 시와 testBedAccount, accountList 변경 시만 실행
+  useEffect(() => {
+    fetchDbAccounts();
+  }, [testBedAccount, accountList]);
 
   // 한국식 단위 포맷 (예: 1234567890 → "12억3456만7890")
   const formatKorean = s => {
@@ -85,6 +121,45 @@ const AccountScreenGUI = ({
     setShowWithdrawOverlay(false);
   };
 
+  const onPressDeposit = item => {
+    const depositValue = 1000000;            // ① 로컬 상수로 금액 관리
+    setSelectedItem(item);
+    handleAnimateReceive();
+    setAmount(String(depositValue));          // ② 화면에 보여주고 싶으면 이건 그대로
+    handleDeposit(item, depositValue);        // ③ 금액은 파라미터로 넘기기
+  };
+
+  const handleDeposit = async (selectedItem, num) => {
+    // const num = parseFloat(amount);
+    if (!selectedItem || isNaN(num) || num <= 0) {
+      alert('유효한 금액을 입력하세요.');
+      return;
+    }
+    try {
+      // fintech_use_num 또는 accountId 필드 사용
+      await deposit(
+        CONFIG[testBedAccount].dbName,
+        selectedItem.fintech_use_num,
+        selectedItem.bank_name,
+        num
+      );
+      // console.log(CONFIG[testBedAccount].dbName);
+      console.log('입금 요청 완료:', selectedItem.fintech_use_num, num);
+      // alert(
+      //   `${selectedItem.bank_name || '계좌'
+      //   }에서 ${num.toLocaleString()}원 입금 요청 완료`,
+      // );
+      // setShowWithdrawOverlay(false);
+      setSelectedItem(null);
+      await fetchDbAccounts();
+      // DB에서 계좌 정보 다시 가져오기
+    } catch (err) {
+      console.error(err);
+      console.log(amount)
+      alert('입금 중 오류가 발생했습니다.');
+    }
+  };
+
   const onPressWithdraw = item => {
     setSelectedItem(item);
     setAmount('');
@@ -98,12 +173,14 @@ const AccountScreenGUI = ({
       return;
     }
     try {
-      // 임시 계좌번호 및 금액 (테스트용)
-      // const accountId = 'test_계좌번호';
-      // const amount = 8282;
-
       // fintech_use_num 또는 accountId 필드 사용
-      await withdraw(selectedItem.fintech_use_num, selectedItem.bank_name, num);
+      await withdraw(
+        CONFIG[testBedAccount].dbName,
+        selectedItem.fintech_use_num,
+        selectedItem.bank_name,
+        num
+      );
+      // console.log(CONFIG[testBedAccount].dbName);
       console.log('출금 요청 완료:', selectedItem.fintech_use_num, num);
       alert(
         `${selectedItem.bank_name || '계좌'
@@ -111,9 +188,63 @@ const AccountScreenGUI = ({
       );
       setShowWithdrawOverlay(false);
       setSelectedItem(null);
+      await fetchDbAccounts();
+      // DB에서 계좌 정보 다시 가져오기
     } catch (err) {
       console.error(err);
+      console.log(amount)
       alert('출금 중 오류가 발생했습니다.');
+    }
+  };
+
+  const onPressUpsert = item => {
+    setSelectedItem(item);
+    handleUpsert(item);
+  };
+
+  const handleUpsert = async item => {
+    // 1) 금액 파싱
+    setAmount('100000000'); // 금액 초기화
+    const num = parseFloat(amount);
+    // if (isNaN(num) || num <= 0) {
+    //   console.log('금액이 충전됐습니다');
+    // }
+
+    // 2) CONFIG에서 dbName만 꺼내기
+    const { dbName } = CONFIG[testBedAccount] || {};
+    if (!dbName) {
+      Alert.alert('테스트 계정을 먼저 선택하세요');
+      return;
+    }
+
+    // 3) item 검증 → 디스트럭처링
+    if (!item) {
+      console.log('item is null!');
+      Alert.alert('계좌를 먼저 선택하세요');
+      return;
+    }
+    const { fintech_use_num: accountId, bank_name: accountBank } = item;
+    // console.log('대상 계좌:', accountId, accountBank);
+
+    // 4) userName은 testBedAccount 그대로
+    const userName = testBedAccount;
+
+    try {
+      // 5) upsert 호출 (dbName 포함)
+      const upsertedId = await accountUpsert(
+        userName,
+        accountId,
+        accountBank,
+        num,
+      );
+      await fetchDbAccounts();
+      // DB에서 계좌 정보 다시 가져오기
+      console.log('Upserted ID:', upsertedId || '기존 문서 갱신됨');
+      Alert.alert('저장 완료');
+
+    } catch (err) {
+      console.error(err);
+      Alert.alert('저장에 실패했습니다');
     }
   };
 
@@ -141,6 +272,7 @@ const AccountScreenGUI = ({
       }),
     ]).start(() => {
       // 애니메이션 종료 후 필요한 추가 동작
+      setModalVisible(true);
     });
   };
 
@@ -249,7 +381,7 @@ const AccountScreenGUI = ({
         <CustomText style={styles.mainTitle}>
           ! 금융결제원 테스트베드 환경에 등록된 모의 계좌입니다
         </CustomText>
-        <CustomText style={styles.subTitle}>계좌 목록 </CustomText>
+        <CustomText style={styles.subTitle}>계좌 목록</CustomText>
         <FlatList
           data={accountList}
           keyExtractor={item => item.fintech_use_num}
@@ -258,41 +390,72 @@ const AccountScreenGUI = ({
             const balanceObj = accountBalances.find(
               b => b.fintech_use_num === item.fintech_use_num,
             );
+            // 2) DB에서 받은 upsert 정보
+            const dbObj = dbAccounts.find(
+              d => d.accountId === item.fintech_use_num,
+            );
             return (
               <View style={styles.accountItem}>
-                <View style={styles.accountInfo}>
-                  <CustomText style={styles.bankName}>
-                    은행명 :{' '}
-                    {balanceObj ? balanceObj.bank_name : '은행 조회 중...'}
-                  </CustomText>
-                  <CustomText style={styles.accountNumber}>
-                    계좌번호 : {item.account_num_masked || '정보없음'}
-                  </CustomText>
-                  <CustomText style={styles.balance}>
-                    잔액 :{' '}
+                <Pressable
+                  style={styles.accountItem}
+                  onPress={() =>
+                    navigation.navigate('AccountDetail', {
+                      userName: testBedAccount,
+                      fintechUseNum: item.fintech_use_num,
+                      bankName: item.bank_name,
+                      balance: dbObj?.amount ?? 0,
+                    })
+                  }
+                >
+                  <View style={styles.accountInfo}>
+                    <CustomText style={styles.bankName}>
+                      은행명 :{' '}
+                      {balanceObj ? balanceObj.bank_name : '은행 조회 중...'}
+                    </CustomText>
+                    <CustomText style={styles.accountNumber}>
+                      {/* 계좌번호 : {item.account_num_masked || '정보없음'} */}
+                      계좌번호 : {dbObj?.accountNum || '정보없음'}
+                      {/* const { dbName } = CONFIG[testBedAccount] || {}; 컬렉션에서 item.fintech_use_num == accountId 고유값 따라서 accountNum 가져오기 */}
+                    </CustomText>
+                    <CustomText style={styles.balance}>
+                      {/* 잔액 :{' '}
                     {balanceObj
                       ? Number(balanceObj.balance_amt).toLocaleString()
-                      : '잔액 조회 중...'}
-                  </CustomText>
-                </View>
-                <View style={styles.buttonContainer}>
-                  <TouchableOpacity
-                    style={styles.receiveButton}
-                    // onPress={() => handleReceiveMoney(item)}
-                    onPress={() => handleAnimateReceive(item)}>
-                    <CustomText style={styles.receiveButtonText}>
-                      지원금 받기
+                      : '잔액 조회 중...'} */}
+                      잔액:{' '}
+                      {dbObj?.amount != null
+                        ? Number(dbObj.amount).toLocaleString()
+                        : '정보없음'}
+                      {/* const { dbName } = CONFIG[testBedAccount] || {}; 컬렉션에서 item.fintech_use_num == accountId 고유값 따라서 ammount 가져오기 */}
                     </CustomText>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={styles.withdrawButton}
-                    // onPress={() => handleWithdraw(item)}
-                    onPress={() => onPressWithdraw(item)}>
-                    <CustomText style={styles.withdrawButtonText}>
-                      출금
-                    </CustomText>
-                  </TouchableOpacity>
-                </View>
+                  </View>
+                  <View style={styles.buttonContainer}>
+                    <TouchableOpacity
+                      style={styles.receiveButton}
+                      // onPress={() => handleReceiveMoney(item)}
+                      onPress={() => onPressDeposit(item)}>
+                      <CustomText style={styles.receiveButtonText}>
+                        지원금
+                      </CustomText>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={styles.withdrawButton}
+                      // onPress={() => handleWithdraw(item)}
+                      onPress={() => onPressWithdraw(item)}>
+                      <CustomText style={styles.withdrawButtonText}>
+                        출금
+                      </CustomText>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={styles.withdrawButton}
+                      // onPress={() => handleWithdraw(item)}
+                      onPress={() => onPressUpsert(item)}>
+                      <CustomText style={styles}>
+                        리셋
+                      </CustomText>
+                    </TouchableOpacity>
+                  </View>
+                </Pressable>
               </View>
             );
           }}
@@ -390,7 +553,6 @@ const AccountScreenGUI = ({
                         containerStyle={styles.numpadInner}
                       />
                     </View>
-
                     <View style={styles.buttonRow}>
                       <Button title="취소" onPress={closeOverlay} />
                       <Button title="확인" onPress={handleWithdraw} />
@@ -401,6 +563,20 @@ const AccountScreenGUI = ({
             </TouchableWithoutFeedback>
           </KeyboardAvoidingView>
         </Modal>
+        <CustomModal
+          visible={isModalVisible}
+          title={"지원금"}
+          message={"정부에서 지원금 100만원을 입금했습니다"}
+          buttons={[
+            {
+              text: '닫기',
+              onPress: () => setModalVisible(false),
+              color: '#ccc',
+              textColor: 'black',
+            }]}
+          onCancel={() => setModalVisible(false)}
+          onConfirm={() => setModalVisible(false)}
+        />
       </View>
     );
   }
@@ -541,16 +717,6 @@ const styles = StyleSheet.create({
     // left: 10,
   },
   // 오버레이
-  overlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0,0,0,0.5)', // 반투명 검정
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
   // overlayCircle: {
   //   width: "80%",
   //   height: "80%",

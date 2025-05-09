@@ -33,6 +33,7 @@ import LoginScreen from './src/screens/Login/LoginScreen';
 
 // 계좌
 import AccountScreen from './src/screens/Account/AccountScreen'; // 변경된 로그인 to 계좌목록 파일
+import AccountDetailScreen from './src/screens/Account/AccountDetailScreen'; // 변경된 로그인 to 계좌목록 파일
 
 // 내 정보
 import FontSizeSettingScreen from './src/screens/Info/FontSizeSettingScreen';
@@ -75,8 +76,7 @@ export default function App() {
           <Stack.Screen name="Login" component={LoginScreen} options={{ title: '환영합니다 로그인' }} />
 
           <Stack.Screen name="Account" component={AccountScreen} />
-          {/* <Stack.Screen name="Account2" component={Account2} /> */}
-          {/* <Stack.Screen name="WebView" component={WebViewScreen} /> */}
+          <Stack.Screen name="AccountDetail" component={AccountDetailScreen} />
 
           <Stack.Screen name="Learning" component={LearningScreen} options={{ title: '학습 콘텐츠' }} />
           <Stack.Screen name="QuizLevel" component={SelectLevelScreen} options={{ title: '금융 용어 학습 난이도 선택' }} />
