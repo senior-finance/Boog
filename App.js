@@ -55,6 +55,7 @@ import BiometricScreen from './src/screens/Biometric/BiometricScreen';
 import VoiceInputScreen from './src/screens/VoiceAssistant/VoiceInputScreen';
 import TTSSettingScreen from './src/screens/VoiceAssistant/TTSSettingScreen';
 import QuizResult from './src/screens/Learning/QuizResult';
+import FunctionScreen from './src/screens/Info/FunctionScreen';
 
 const Stack = createStackNavigator();
 
@@ -88,6 +89,7 @@ export default function App() {
           <Stack.Screen name="DepositStep4" component={DepositStep4} options={{ title: '입금 연습 - 확인하기' }} />
 
           <Stack.Screen name="MapView" component={MapViewScreen} />
+          <Stack.Screen name="FunctionScreen" component={FunctionScreen} />
 
           <Stack.Screen name="FontSize" component={FontSizeSettingScreen} />
           <Stack.Screen name="SoundVolume" component={SoundVolumeScreen} />

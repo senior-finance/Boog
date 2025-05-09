@@ -4,25 +4,24 @@ import NaverMapView, { Align, Marker } from "./map";
 import {
   PermissionsAndroid,
   Platform,
-  Text,
-  TouchableOpacity,
   View,
   FlatList,
   Pressable,
-  Alert,
   Linking,
+  TouchableOpacity,
 } from "react-native";
 import DropDownPicker from 'react-native-dropdown-picker';
 import axios from "axios";
 import Geolocation from 'react-native-geolocation-service';
 import CustomText from '../../components/CustomText';
-
+import CustomModal from '../../components/CustomModal';
 import { MAP_SEARCH_BACKEND_URL } from '@env';
 
 const MapViewScreen = ({ route, navigation }) => {
   const [selectedPlace, setSelectedPlace] = useState(null);
   const [isAppNotFoundModalVisible, setAppNotFoundModalVisible] = useState(false);
   const [isNoPlaceSelectedModalVisible, setNoPlaceSelectedModalVisible] = useState(false);
+  const [isLocationGranted, setIsLocationGranted] = useState(false);
 
   const [open, setOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('은행');
@@ -44,59 +43,101 @@ const MapViewScreen = ({ route, navigation }) => {
   });
 
   const [userLocation, setUserLocation] = useState(null);
-  const mapView = useRef(null);
-  const Divider = () => (
-    <View style={{ height: 1, backgroundColor: '#dcdcdc', width: '100%' }} />
-  );
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [locationDeniedModalVisible, setLocationDeniedModalVisible] = useState(false);
+  const [locationBlockedModalVisible, setLocationBlockedModalVisible] = useState(false);
 
-  // 길찾기 함수
+  const mapView = useRef(null);
+  const Divider = () => <View style={{ height: 1, backgroundColor: '#dcdcdc', width: '100%' }} />;
+
   const handleNavigatePress = () => {
     if (!selectedPlace) {
       setNoPlaceSelectedModalVisible(true);
       return;
     }
-    setIsModalVisible(true); // 모달 열기
+    setIsModalVisible(true);
   };
 
-  // 위치 권한 요청
+  const calculateDistanceKm = (lat1, lon1, lat2, lon2) => {
+    const toRad = (value) => (value * Math.PI) / 180;
+    const R = 6371;
+    const dLat = toRad(lat2 - lat1);
+    const dLon = toRad(lon2 - lon1);
+    const a =
+      Math.sin(dLat / 2) ** 2 +
+      Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return (R * c).toFixed(2);
+  };
+
+
+  const requestLocationPermission = async () => {
+    if (Platform.OS !== 'android') {
+      setIsLocationGranted(true);
+      getCurrentLocation();
+      return;
+    }
+
+    try {
+      const hasPermission = await PermissionsAndroid.check(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
+      );
+
+      if (hasPermission) {
+        setIsLocationGranted(true);
+        getCurrentLocation();
+        return;
+      }
+
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
+      );
+
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        setIsLocationGranted(true);
+        getCurrentLocation();
+      } else if (granted === PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN) {
+        setLocationBlockedModalVisible(true);
+      } else {
+        setLocationDeniedModalVisible(true);
+      }
+    } catch (err) {
+      console.warn('위치 권한 요청 실패:', err);
+    }
+  };
+
+  const getCurrentLocation = () => {
+    Geolocation.getCurrentPosition(
+      (position) => {
+        setUserLocation({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        });
+      },
+      (error) => {
+        console.error("위치 가져오기 실패:", error);
+        setLocationDeniedModalVisible(true);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 30000,
+        maximumAge: 0,
+        forceRequestLocation: true,
+        showLocationDialog: true,
+      }
+    );
+  };
+
   useEffect(() => {
     requestLocationPermission();
   }, []);
 
-  // 현재 위치 가져오기
   useEffect(() => {
-    setTimeout(() => {
-      Geolocation.getCurrentPosition(
-        (position) => {
-          setUserLocation({
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-          });
-        },
-        (error) => {
-          console.error("사용자 위치 가져오기 실패:", error);
-          Alert.alert('위치 오류', error.message);
-        },
-        {
-          enableHighAccuracy: true,
-          timeout: 30000,
-          maximumAge: 0,
-          forceRequestLocation: true,
-          showLocationDialog: true,
-        }
-      );
-    }, 0);
-  }, []);
-
-  // 현재 위치가 준비되면 검색 실행
-  useEffect(() => {
-    if (userLocation) {
+    if (userLocation && isLocationGranted) {
       fetchSearchResults('은행');
     }
-  }, [userLocation]);
+  }, [userLocation, isLocationGranted]);
 
-  // 사용자 위치를 지도 중앙으로 설정
   useEffect(() => {
     if (userLocation) {
       const newCenter = {
@@ -105,58 +146,35 @@ const MapViewScreen = ({ route, navigation }) => {
         zoom: zoomLevel,
       };
       setMapCenter(newCenter);
-      if (mapView.current) {
-        mapView.current.animateToCoordinate(
-          { latitude: newCenter.latitude, longitude: newCenter.longitude },
-          500
-        );
-      }
+      mapView.current?.animateToCoordinate(
+        { latitude: newCenter.latitude, longitude: newCenter.longitude },
+        500
+      );
     }
   }, [userLocation, zoomLevel]);
 
-  // 장소 검색 요청
   const fetchSearchResults = async (keyword) => {
-    if (!userLocation) return;
-
+    if (!userLocation || !isLocationGranted) return;
     try {
-
       const res = await axios.post(`${MAP_SEARCH_BACKEND_URL}searchPlace`, {
         placeName: keyword,
         x: userLocation.longitude,
         y: userLocation.latitude,
       });
-
-      // const res = await axios.post('http://10.0.2.2:4000/searchPlace', {
-      //   placeName: keyword,
-      //   x: userLocation.longitude,
-      //   y: userLocation.latitude,
-      // });
-
       const placesData = res.data.places.map((place) => ({
         placeName: place.placeName || '이름 없음',
         address: place.address || '주소 없음',
         mapx: place.mapx,
         mapy: place.mapy,
       }));
-
       const uniquePlaces = removeDuplicatesByNameAndAddress(placesData);
       setSearchResults(uniquePlaces);
-
-      const newZoom = calculateZoomLevel(uniquePlaces);
-      setZoomLevel(newZoom);
-
-      if (userLocation && mapView.current) {
-        mapView.current.animateToCoordinate(
-          { latitude: userLocation.latitude, longitude: userLocation.longitude },
-          500
-        );
-      }
+      setZoomLevel(calculateZoomLevel(uniquePlaces));
     } catch (err) {
       console.error('검색 실패:', err);
     }
   };
 
-  // 결과 리스트에서 주소 중복 제거
   const removeDuplicatesByNameAndAddress = (places) => {
     const seen = new Set();
     return places.filter(place => {
@@ -167,38 +185,18 @@ const MapViewScreen = ({ route, navigation }) => {
     });
   };
 
-  // 현재 위치와 은행 위치 거리 계산 (km)
-  const calculateDistanceKm = (lat1, lon1, lat2, lon2) => {
-    const toRad = (value) => (value * Math.PI) / 180;
-    const R = 6371; // km
-    const dLat = toRad(lat2 - lat1);
-    const dLon = toRad(lon2 - lon1);
-    const a =
-      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(toRad(lat1)) *
-      Math.cos(toRad(lat2)) *
-      Math.sin(dLon / 2) * Math.sin(dLon / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    return (R * c).toFixed(2);
-  };
-
-  // 거리 기반 zoom 수치 계산
   const calculateZoomLevel = (places) => {
     if (places.length <= 1) return 16;
-
     const latitudes = places.map(p => p.mapy);
     const longitudes = places.map(p => p.mapx);
     const avgLat = latitudes.reduce((a, b) => a + b, 0) / latitudes.length;
     const avgLng = longitudes.reduce((a, b) => a + b, 0) / longitudes.length;
-
     const distances = places.map(p => {
       const dx = p.mapx - avgLng;
       const dy = p.mapy - avgLat;
       return Math.sqrt(dx * dx + dy * dy);
     });
-
     const avgDistance = distances.reduce((a, b) => a + b, 0) / distances.length;
-
     if (avgDistance < 0.001) return 17;
     if (avgDistance < 0.002) return 16;
     if (avgDistance < 0.004) return 15;
@@ -208,37 +206,8 @@ const MapViewScreen = ({ route, navigation }) => {
     return 11;
   };
 
-  // 위치 권한 요청 함수
-  async function requestLocationPermission() {
-    if (Platform.OS !== 'android') return;
 
-    try {
-      const alreadyGranted = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
-      if (alreadyGranted) {
-        console.log('이미 위치 권한이 허용되어 있습니다.');
-        return;
-      }
 
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-        {
-          title: '위치 권한 요청',
-          message: '현재 위치를 표시하려면 위치 권한이 필요합니다.',
-          buttonNeutral: '나중에 묻기',
-          buttonNegative: '취소',
-          buttonPositive: '확인',
-        },
-      );
-
-      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        console.log('위치 권한이 허용되었습니다.');
-      } else {
-        console.log('위치 권한이 거부되었습니다.');
-      }
-    } catch (err) {
-      console.warn('위치 권한 요청 실패:', err);
-    }
-  }
   return (
     <View style={{ flex: 1 }}>
       {/* 드롭다운 & 검색 버튼 */}
@@ -250,7 +219,9 @@ const MapViewScreen = ({ route, navigation }) => {
               value={selectedCategory}
               items={categoryItems}
               setOpen={setOpen}
-              setValue={setSelectedCategory}
+              setValue={(val) => {
+                setSelectedCategory(val);
+              }}
               setItems={setCategoryItems}
               placeholder="카테고리 선택"
               containerStyle={{ height: 44 }}
@@ -278,6 +249,7 @@ const MapViewScreen = ({ route, navigation }) => {
             }}
             onPress={() => {
               console.log('선택된 카테고리:', selectedCategory);
+              setSelectedPlace(null); //  선택 초기화
               fetchSearchResults(selectedCategory);
             }}
           >
@@ -378,24 +350,29 @@ const MapViewScreen = ({ route, navigation }) => {
           keyExtractor={(item, index) => index.toString()}
           renderItem={({ item }) => {
             const distance = userLocation ? calculateDistanceKm(userLocation.latitude, userLocation.longitude, item.mapy, item.mapx) : null;
+            const isSelected = selectedPlace?.address === item.address;
             return (
               <Pressable
                 onPress={() => {
-                  if (mapView.current) {
-                    mapView.current.animateToCoordinate(
-                      {
-                        latitude: parseFloat(item.mapy),
-                        longitude: parseFloat(item.mapx),
-                      },
-                      500
-                    );
+                  if (isSelected) {
+                    setSelectedPlace(null); // 이미 선택된 항목 다시 누르면 해제
+                  } else {
+                    setSelectedPlace(item);
+                    if (mapView.current) {
+                      mapView.current.animateToCoordinate(
+                        {
+                          latitude: parseFloat(item.mapy),
+                          longitude: parseFloat(item.mapx),
+                        },
+                        500
+                      );
+                    }
                   }
-                  setSelectedPlace(item);
                 }}
                 style={({ pressed }) => [
                   {
                     marginBottom: 10,
-                    backgroundColor: selectedPlace?.address === item.address ? '#dce7ff' : '#f9f9f9',
+                    backgroundColor: isSelected ? '#dce7ff' : '#f9f9f9',
                     borderRadius: 8,
                     padding: 12,
                     borderWidth: 1,
@@ -426,126 +403,87 @@ const MapViewScreen = ({ route, navigation }) => {
           }}
         />
       </View>
-      {isNoPlaceSelectedModalVisible && (
-        <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', alignItems: 'center', zIndex: 3000 }}>
-          <View style={{ width: '80%', backgroundColor: 'white', borderRadius: 20, padding: 20, alignItems: 'center', shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.25, shadowRadius: 4, elevation: 5 }}>
-            <CustomText style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 10, textAlign: 'center', color: '#ff5c5c' }}>
-              장소를 선택하세요
-            </CustomText>
-            <CustomText style={{ fontSize: 16, textAlign: 'center', color: '#555', marginBottom: 20 }}>
-              먼저 이동할 장소를 선택해주세요.
-            </CustomText>
-            <TouchableOpacity onPress={() => setNoPlaceSelectedModalVisible(false)} style={{ backgroundColor: '#4B7BE5', paddingVertical: 10, paddingHorizontal: 20, borderRadius: 10 }}>
-              <CustomText style={{ color: 'white', fontSize: 16 }}>확인</CustomText>
-            </TouchableOpacity>
-          </View>
-        </View>
-      )}
-      {isModalVisible && (
-        <View
-          style={{
-            position: 'absolute',
-            top: 0, left: 0, right: 0, bottom: 0,
-            backgroundColor: 'rgba(0,0,0,0.5)',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 2000,
-          }}
-        >
-          <View
-            style={{
-              width: '80%',
-              backgroundColor: 'white',
-              borderRadius: 20,
-              padding: 20,
-              alignItems: 'center',
-              shadowColor: '#000',
-              shadowOffset: { width: 0, height: 2 },
-              shadowOpacity: 0.25,
-              shadowRadius: 4,
-              elevation: 5,
-            }}
-          >
-            {/* 제목 */}
-            <CustomText style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 10, textAlign: 'center', color: '#4B7BE5' }}>
-              {selectedPlace?.placeName}
-            </CustomText>
+      <CustomModal
+        visible={isNoPlaceSelectedModalVisible}
+        title="장소를 선택하세요"
+        message={`먼저 이동할 장소를 선택해주세요.`}
+        buttons={[
+          {
+            text: '확인',
+            onPress: () => setNoPlaceSelectedModalVisible(false),
+            color: '#4B7BE5',
+          },
+        ]}
+      />
 
-            {/* 설명 */}
-            <CustomText style={{ fontSize: 16, textAlign: 'center', color: '#555', marginBottom: 20 }}>
-              선택한 장소로 길찾기를 하시겠습니까?
-            </CustomText>
+      <CustomModal
+        visible={isModalVisible}
+        title={selectedPlace?.placeName || '장소 정보'}
+        message={`선택한 장소로 길찾기를 하시겠습니까?`}
+        buttons={[
+          {
+            text: '취소',
+            onPress: () => setIsModalVisible(false),
+            color: '#ccc',
+            textColor: 'black',
+          },
+          {
+            text: '확인',
+            onPress: () => {
+              if (userLocation && selectedPlace) {
+                const { latitude, longitude } = userLocation;
+                const destLat = selectedPlace.mapy;
+                const destLng = selectedPlace.mapx;
+                const naverMapUrl = `nmap://route/walk?slat=${latitude}&slng=${longitude}&sname=내+위치&dlat=${destLat}&dlng=${destLng}&dname=${encodeURIComponent(selectedPlace.placeName)}`;
+                Linking.openURL(naverMapUrl).catch(() => {
+                  setAppNotFoundModalVisible(true);
+                });
+              }
+              setIsModalVisible(false);
+            },
+            color: '#4B7BE5',
+          },
+        ]}
+      />
 
-            {/* 버튼 */}
-            <View style={{ flexDirection: 'row', marginTop: 10 }}>
-              <TouchableOpacity
-                style={{
-                  backgroundColor: '#ccc',
-                  paddingVertical: 10,
-                  paddingHorizontal: 20,
-                  borderRadius: 10,
-                  marginHorizontal: 10,
-                }}
-                onPress={() => setIsModalVisible(false)}
-              >
-                <CustomText style={{ color: 'black', fontSize: 16 }}>취소</CustomText>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={{
-                  backgroundColor: '#4B7BE5',
-                  paddingVertical: 10,
-                  paddingHorizontal: 20,
-                  borderRadius: 10,
-                  marginHorizontal: 10,
-                }}
-                onPress={() => {
-                  if (userLocation && selectedPlace) {
-                    const { latitude, longitude } = userLocation;
-                    const destLat = selectedPlace.mapy;
-                    const destLng = selectedPlace.mapx;
-
-                    const naverMapUrl = `nmap://route/walk?slat=${latitude}&slng=${longitude}&sname=내+위치&dlat=${destLat}&dlng=${destLng}&dname=${encodeURIComponent(selectedPlace.placeName)}`;
-
-                    console.log('네이버 지도 길찾기 URL:', naverMapUrl);
-
-                    // 네이버 지도 앱 열기
-                    Linking.openURL(naverMapUrl).catch(() => {
-                      setAppNotFoundModalVisible(true);
-                    });
-                  }
-                  setIsModalVisible(false);
-                }}
-              >
-                <CustomText style={{ color: 'white', fontSize: 16 }}>확인</CustomText>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      )}
-      {isAppNotFoundModalVisible && (
-        <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', alignItems: 'center', zIndex: 3000 }}>
-          <View style={{ width: '80%', backgroundColor: 'white', borderRadius: 20, padding: 20, alignItems: 'center', shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.25, shadowRadius: 4, elevation: 5 }}>
-            <CustomText style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 10, textAlign: 'center', color: '#ff5c5c' }}>
-              네이버 지도 앱 없음
-            </CustomText>
-            <CustomText style={{ fontSize: 16, textAlign: 'center', color: '#555', marginBottom: 20 }}>
-              네이버 지도 앱이 설치되어 있지 않습니다.{"\n"}플레이스토어로 이동하시겠습니까?
-            </CustomText>
-            <View style={{ flexDirection: 'row' }}>
-              <TouchableOpacity onPress={() => setAppNotFoundModalVisible(false)} style={{ backgroundColor: '#ccc', paddingVertical: 10, paddingHorizontal: 20, borderRadius: 10, marginHorizontal: 10 }}>
-                <CustomText style={{ color: 'black', fontSize: 16 }}>닫기</CustomText>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => {
-                setAppNotFoundModalVisible(false);
-                Linking.openURL('https://play.google.com/store/apps/details?id=com.nhn.android.nmap');
-              }} style={{ backgroundColor: '#4B7BE5', paddingVertical: 10, paddingHorizontal: 20, borderRadius: 10, marginHorizontal: 10 }}>
-                <CustomText style={{ color: 'white', fontSize: 16 }}>스토어 이동</CustomText>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      )}
+      <CustomModal
+        visible={isAppNotFoundModalVisible}
+        title="네이버 지도 앱 없음"
+        message={`네이버 지도 앱이 설치되어 있지 않습니다.
+플레이스토어로 이동하시겠습니까?`}
+        buttons={[
+          {
+            text: '닫기',
+            onPress: () => setAppNotFoundModalVisible(false),
+            color: '#ccc',
+            textColor: 'black',
+          },
+          {
+            text: '스토어 이동',
+            onPress: () => {
+              setAppNotFoundModalVisible(false);
+              Linking.openURL('https://play.google.com/store/apps/details?id=com.nhn.android.nmap');
+            },
+            color: '#4B7BE5',
+          },
+        ]}
+      />
+      <CustomModal
+        visible={locationDeniedModalVisible}
+        title="위치 권한 거부됨"
+        message="이 기능을 사용하려면 위치 권한이 필요합니다."
+        buttons={[{ text: '메뉴로 이동', onPress: () => navigation.navigate('FunctionScreen'), color: '#4B7BE5' }]}
+      />
+      <CustomModal
+        visible={locationBlockedModalVisible}
+        title="위치 권한 차단됨"
+        message={`위치 권한이 영구적으로 거부되었습니다.
+설정에서 수동으로 권한을 허용해주세요.`}
+        buttons={[
+          { text: '메뉴로 이동', onPress: () => navigation.navigate('FunctionScreen'), color: '#ccc', textColor: 'black', },
+          { text: '설정 이동', onPress: () => Linking.openSettings(), color: '#4B7BE5' }
+        ]}
+      />
     </View>
   );
 };
