@@ -515,6 +515,23 @@ const AccountScreenGUI = ({
                     <Text style={styles.withdrawTitle}>출금 금액 입력</Text>
 
                     <TextInputMask
+                      type="custom"
+                      options={{
+                        mask: '000-00-000000'  // 3자리-2자리-6자리 (예: 123-45-678901)
+                      }}
+                      value={accountNumber}
+                      onChangeText={text => setAccountNumber(text)}
+                      placeholder="123-45-678901"
+                      keyboardType="numeric"
+                      style={{
+                        borderWidth: 1,
+                        borderColor: '#ccc',
+                        padding: 10,
+                        borderRadius: 4
+                      }}
+                    />
+
+                    <TextInputMask
                       type={'money'}
                       options={{
                         precision: 0, // 소수점 없음
