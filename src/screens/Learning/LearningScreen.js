@@ -1,7 +1,8 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons'; // 아이콘 사용
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import CustomText from '../../components/CustomText';
+import HelpTooltipButton from '../../components/HelpTooltipButton';
 
 const LearningScreen = ({ navigation }) => {
   return (
@@ -21,20 +22,14 @@ const LearningScreen = ({ navigation }) => {
 
       <TouchableOpacity style={styles.card} onPress={() => navigation.navigate('VoicePhishingScreen')}>
         <Icon name="alert-circle-outline" size={36} color="#4B7BE5" />
-        <CustomText style={styles.cardText}>보이스피싱 사례{'\n'} </CustomText>
+        <CustomText style={styles.cardText}>보이스피싱 사례{'\n'}</CustomText>
       </TouchableOpacity>
 
-      {/* 도움 버튼 */}
-      <View style={styles.footer}>
-        <TouchableOpacity style={[styles.footerButton, styles.help]}>
-          <CustomText style={styles.footerText}>도움</CustomText>
-        </TouchableOpacity>
-      </View>
+      <HelpTooltipButton navigation={navigation} />
     </View>
   );
 };
 
-// 스타일
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -44,17 +39,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 40,
   },
-  title: {  
+  title: {
     fontWeight: 'bold',
     marginBottom: 40,
     color: 'black',
   },
   card: {
     width: '90%',
-    height: 125,
+    height: 135,
     borderRadius: 20,
     backgroundColor: 'white',
-    marginBottom: 30,
+    marginBottom: 40,
     padding: 20,
     justifyContent: 'center',
     alignItems: 'center',
@@ -64,31 +59,46 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     elevation: 5,
   },
-  cardText: { 
+  cardText: {
     color: 'black',
     fontWeight: 'bold',
     marginTop: 10,
     textAlign: 'center',
   },
-  // 도움 버튼
-  footer: {
+  floatingWrapper: {
     position: 'absolute',
-    bottom: 20,
-    width: '100%',
+    bottom: 30,
+    left: 20,
     alignItems: 'center',
   },
-  footerButton: {
-    width: '30%',
-    paddingVertical: 15,
-    borderRadius: 20,
-    alignItems: 'center',
+  tooltip: {
+    backgroundColor: '#D9E7F9',
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+    marginBottom: 10,
+    marginLeft: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 2,
   },
-  help: {
-    backgroundColor: '#DFEBF8',
-  },
-  footerText: {
+  tooltipText: {
     fontWeight: 'bold',
-    color: 'black',
+    color: '#4B7BE5',
+    textShadowColor: '#fff',
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 0.5,
+  },
+  fab: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: '#4B7BE5',
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 5,
   },
 });
 

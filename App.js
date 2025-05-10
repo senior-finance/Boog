@@ -80,8 +80,8 @@ export default function App() {
 
           <Stack.Screen name="Learning" component={LearningScreen} options={{ title: '학습 콘텐츠' }} />
           <Stack.Screen name="QuizLevel" component={SelectLevelScreen} options={{ title: '금융 용어 학습 난이도 선택' }} />
-          <Stack.Screen name="Quiz" component={QuizScreen} options={{ title: '금융 용어 학습하기' }} />
-          <Stack.Screen name="Answer" component={AnswerScreen} options={{ title: ' 정답 확인' }} />
+          <Stack.Screen name="Quiz" component={QuizScreen} options={{ title: '금융 용어 학습' }} />
+          <Stack.Screen name="Answer" component={AnswerScreen} options={{ title: '정답 확인' }} />
           <Stack.Screen name="QuizResult" component={QuizResult} options={{ title: ' 금융 용어 학습 결과' }} />
           <Stack.Screen name="DepositStep1" component={DepositStep1} options={{ title: '입금 연습 - 계좌 번호 입력' }} />
           <Stack.Screen name="DepositStep2" component={DepositStep2} options={{ title: '입금 연습 - 은행 선택' }} />

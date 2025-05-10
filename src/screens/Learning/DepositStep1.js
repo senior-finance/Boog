@@ -3,6 +3,7 @@ import { View, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform } fr
 import LinearGradient from 'react-native-linear-gradient';
 import CustomText from '../../components/CustomText';
 import CustomTextInput from '../../components/CustomTextInput';
+import HelpTooltipButton from '../../components/HelpTooltipButton';
 
 export default function DepositStep1({ navigation }) {
   const [accountNumber, setAccountNumber] = useState('');
@@ -43,16 +44,7 @@ export default function DepositStep1({ navigation }) {
         </View>
       </KeyboardAvoidingView>
 
-      {/* 하단 도움 요청 / 긴급 연락 */}
-      <View style={styles.footer}>
-        <TouchableOpacity style={[styles.footerButton, styles.help]}>
-          <CustomText style={styles.footerText}>도움</CustomText>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={[styles.footerButton, styles.emergency]}>
-          <CustomText style={styles.footerText}>긴급 연락 🚨</CustomText>
-        </TouchableOpacity>
-      </View>
+      <HelpTooltipButton navigation={navigation} />
     </LinearGradient>
   );
 }
@@ -111,6 +103,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     backgroundColor: '#ECECEC',
     marginBottom: 36,
+    color: "#444"
   },
   nextButton: {
     width: '100%',
@@ -120,32 +113,6 @@ const styles = StyleSheet.create({
   },
   nextButtonText: {
     fontWeight: 'bold',
-    color: 'white',
-  },
-  footer: {
-    position: 'absolute',
-    bottom: 20,
-    width: '90%',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignSelf: 'center',
-  },
-  footerButton: {
-    flex: 1,
-    paddingVertical: 14,
-    marginHorizontal: 8,
-    borderRadius: 12,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 1, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    elevation: 3,
-  },
-  help: { backgroundColor: '#D9E7F9' },
-  emergency: { backgroundColor: '#FFC1B1' },
-  footerText: {
-    fontWeight: 'bold',
-    color: '#333',
-  },
+    color: 'white'
+  }
 });

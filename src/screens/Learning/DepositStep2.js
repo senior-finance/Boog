@@ -3,6 +3,7 @@ import { View, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform } fr
 import { Picker } from '@react-native-picker/picker';
 import LinearGradient from 'react-native-linear-gradient';
 import CustomText from '../../components/CustomText';
+import HelpTooltipButton from '../../components/HelpTooltipButton';
 
 export default function DepositStep2({ navigation, route }) {
   const [selectedBank, setSelectedBank] = useState('');
@@ -49,16 +50,7 @@ export default function DepositStep2({ navigation, route }) {
         </View>
       </KeyboardAvoidingView>
 
-      {/* 하단 도움 요청 / 긴급 연락 */}
-      <View style={styles.footer}>
-        <TouchableOpacity style={[styles.footerButton, styles.help]}>
-          <CustomText style={styles.footerText}>도움 요청</CustomText>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={[styles.footerButton, styles.emergency]}>
-          <CustomText style={styles.footerText}>긴급 연락 🚨</CustomText>
-        </TouchableOpacity>
-      </View>
+      <HelpTooltipButton navigation={navigation} />
     </LinearGradient>
   );
 }

@@ -1,11 +1,14 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import CustomText from '../../components/CustomText';
+import HelpTooltipButton from '../../components/HelpTooltipButton';
 
 const SelectLevelScreen = ({ navigation }) => {
+
   return (
     <View style={styles.container}>
-      <CustomText style={styles.title}>난이도를 선택하세요</CustomText>
+      <CustomText style={styles.title}>문제의 난이도를 선택해주세요</CustomText>
 
       <TouchableOpacity
         style={styles.button}
@@ -20,6 +23,8 @@ const SelectLevelScreen = ({ navigation }) => {
       >
         <CustomText style={styles.buttonText}>어려운 문제</CustomText>
       </TouchableOpacity>
+
+      <HelpTooltipButton navigation={navigation} />
     </View>
   );
 };
@@ -27,21 +32,22 @@ const SelectLevelScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     alignItems: 'center',
     padding: 20,
     backgroundColor: '#F5F5F5',
   },
   title: {
     fontWeight: 'bold',
-    marginBottom: 40,
+    marginTop: 200,
+    marginBottom: 35,
   },
   button: {
     width: '90%',
-    height: 125,
+    height: 130,
     borderRadius: 20,
     backgroundColor: 'white',
-    marginBottom: 30,
+    marginBottom: 35,
     padding: 20,
     justifyContent: 'center',
     alignItems: 'center',
@@ -54,7 +60,7 @@ const styles = StyleSheet.create({
   buttonText: {
     fontWeight: 'bold',
     color: 'black',
-  },
+  }
 });
 
 export default SelectLevelScreen;

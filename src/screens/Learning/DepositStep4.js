@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { View, TouchableOpacity, StyleSheet, Modal, KeyboardAvoidingView, Platform } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import CustomText from '../../components/CustomText';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import HelpTooltipButton from '../../components/HelpTooltipButton';
 
 export default function DepositStep4({ navigation, route }) {
   const [modalVisible, setModalVisible] = useState(false);
@@ -36,6 +38,8 @@ export default function DepositStep4({ navigation, route }) {
         </View>
       </KeyboardAvoidingView>
 
+      <HelpTooltipButton navigation={navigation} />
+
       {/* 모달 */}
       <Modal
         animationType="slide"
@@ -45,21 +49,33 @@ export default function DepositStep4({ navigation, route }) {
       >
         <View style={styles.modalOverlay}>
           <View style={styles.modalContainer}>
-            <CustomText style={styles.modalTitle}>잘하셨어요! 👏</CustomText>
-            <CustomText style={styles.modalSubtitle}>연습하면서 도움이 필요하셨나요?</CustomText>
+          <View style={styles.iconRow}>
+            <Icon name="thumb-up-outline" size={28} color="#4B7BE5" style={{ marginRight: 8, paddingBottom: 5 }} />
+            <CustomText style={styles.modalTitle}>잘하셨어요!</CustomText>
+          </View>
+
+            <CustomText style={styles.modalSubtitle}>
+              연습하면서 도움이 필요하셨나요?
+            </CustomText>
 
             <View style={styles.buttonRow}>
-              <TouchableOpacity style={styles.modalButton} onPress={() => {
-                setModalVisible(false);
-                navigation.navigate('DepositStep1');
-              }}>
+              <TouchableOpacity
+                style={styles.modalButton}
+                onPress={() => {
+                  setModalVisible(false);
+                  navigation.navigate('DepositStep1');
+                }}
+              >
                 <CustomText style={styles.modalButtonText}>다시 연습</CustomText>
               </TouchableOpacity>
 
-              <TouchableOpacity style={styles.modalButton} onPress={() => {
-                setModalVisible(false);
-                navigation.navigate('MainTabs');
-              }}>
+              <TouchableOpacity
+                style={styles.modalButton}
+                onPress={() => {
+                  setModalVisible(false);
+                  navigation.navigate('MainTabs');
+                }}
+              >
                 <CustomText style={styles.modalButtonText}>홈화면</CustomText>
               </TouchableOpacity>
             </View>
@@ -157,14 +173,12 @@ const styles = StyleSheet.create({
     color: '#4B7BE5',
     textAlign: 'center',
     marginBottom: 10,
-    fontSize: 20,
   },
   modalSubtitle: {
     fontWeight: '600',
     color: '#333',
     textAlign: 'center',
     marginBottom: 30,
-    fontSize: 16,
   },
   buttonRow: {
     flexDirection: 'row',
@@ -188,5 +202,11 @@ const styles = StyleSheet.create({
   modalButtonText: {
     fontWeight: 'bold',
     color: '#333',
+  },
+  iconRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 10,
   },
 });

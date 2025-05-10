@@ -2,8 +2,10 @@ import React, { useState, useEffect, useLayoutEffect } from 'react';
 import { View, TouchableOpacity, StyleSheet } from 'react-native';
 import CustomText from '../../components/CustomText';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { getEasyQuiz } from '../../database/mongoDB'; // getEasyQuiz 임포트
 import { getHardQuiz } from '../../database/mongoDB'; // getHardQuiz 임포트
+import HelpTooltipButton from '../../components/HelpTooltipButton';
 
 const shuffleArray = (array) => {
   const shuffled = [...array];
@@ -106,6 +108,8 @@ const QuizScreen = ({ navigation, route }) => {
           <CustomText style={styles.buttonText}>그만둘래요</CustomText>
         </View>
       </TouchableOpacity>
+
+      <HelpTooltipButton navigation={navigation} />
     </View>
   );
 };
