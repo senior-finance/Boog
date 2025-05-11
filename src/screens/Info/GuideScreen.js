@@ -6,50 +6,66 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import CustomText from '../../components/CustomText';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
 
 export default function GuideScreen() {
   const navigation = useNavigation();
 
   const sectionDetails = {
-    home: {
-      title: '📱 홈 화면',
-      content: '잔액 확인, 송금, 입금, 출금 기능을 사용할 수 있어요.',
-    },
-    function: {
-      title: '🧩 기능 탭',
-      content: '퀴즈, 지도, AI 대화, 복지 기능 등을 사용할 수 있어요.',
+    deposit: {
+      icon: '💸',
+      title: '입출금 방법',
+      content: '은행, 계좌번호, 금액을 입력해 입출금을 연습해보세요.\n실제 송금은 되지 않아요.',
+      borderColor: '#A3D8F4',
     },
     ai: {
-      title: '🧠 AI 대화',
-      content: '말로 질문하면 챗봇이 기능을 안내해줘요.',
+      icon: '🧠',
+      title: 'AI 대화 사용법',
+      content: '말로 질문하면 챗봇이\n송금, 조회, 인증 등 기능을 안내해줘요.',
+      borderColor: '#D9CFFF',
     },
-    info: {
-      title: '⚙️ 내 정보',
-      content: '글자 크기, 음성 설정, 문의 내역 등을 확인하고 변경할 수 있어요.',
+    voicePhishing: {
+      icon: '🚨',
+      title: '보이스피싱 탐지법',
+      content: '의심되는 문자나 통화를 자동 분석해서\n위험 내용을 알려줘요.',
+      borderColor: '#FFB8B8',
+    },
+    location: {
+      icon: '🗺️',
+      title: '근처 은행/ATM 찾기',
+      content: '현재 위치 기준으로\n가장 가까운 ATM을 안내해줘요.',
+      borderColor: '#FDD974',
+    },
+    accessibility: {
+      icon: '🔊',
+      title: '글자/음향 크기 조절',
+      content: '글자 크기와 음향 크기를\n자유롭게 설정할 수 있어요.',
+      borderColor: '#B7E5B4',
     },
   };
 
   const goToDetail = (sectionKey) => {
     const { title, content } = sectionDetails[sectionKey];
-    navigation.navigate('GuideDetail', { title, content });
+    navigation.navigate('GuideDetail', { title, content, key: sectionKey });
   };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Ionicons name="book-outline" size={40} color="#4B7BE5" style={styles.icon} />
-      <CustomText style={styles.title}>앱 사용법</CustomText>
+      <CustomText style={styles.title}>앱 사용법 가이드</CustomText>
 
-      {Object.keys(sectionDetails).map((key) => (
-        <View style={styles.card} key={key}>
-          <CustomText style={styles.cardTitle}>{sectionDetails[key].title}</CustomText>
-          <CustomText style={styles.cardDesc}>{sectionDetails[key].content}</CustomText>
-          <TouchableOpacity style={styles.button} onPress={() => goToDetail(key)}>
-            <CustomText style={styles.buttonText}>자세히 보기</CustomText>
-          </TouchableOpacity>
-        </View>
-      ))}
+      {Object.keys(sectionDetails).map((key) => {
+        const item = sectionDetails[key];
+        return (
+          <View key={key} style={[styles.card, { borderColor: item.borderColor }]}>
+            <CustomText style={styles.icon}>{item.icon}</CustomText>
+            <CustomText style={styles.cardTitle}>{item.title}</CustomText>
+            <CustomText style={styles.cardDesc}>{item.content}</CustomText>
+            <TouchableOpacity style={styles.button} onPress={() => goToDetail(key)}>
+              <CustomText style={styles.buttonText}>자세히 보기</CustomText>
+            </TouchableOpacity>
+          </View>
+        );
+      })}
     </ScrollView>
   );
 }
@@ -57,45 +73,42 @@ export default function GuideScreen() {
 const styles = StyleSheet.create({
   container: {
     padding: 20,
-    backgroundColor: '#F8F8F8',
-  },
-  icon: {
-    alignSelf: 'center',
-    marginBottom: 10,
+    backgroundColor: '#FAFAFA',
   },
   title: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: '#333',
+    fontWeight: '900',
+    color: '#222',
     textAlign: 'center',
-    marginBottom: 20,
+    marginBottom: 30,
   },
   card: {
     backgroundColor: '#fff',
     borderRadius: 16,
-    padding: 20,
-    marginBottom: 16,
-    shadowColor: '#000',
-    shadowOpacity: 0.05,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 4,
+    padding: 16,
+    marginBottom: 14,
+    borderWidth: 2,
+    alignItems: 'center',
+  },
+  icon: {
+    marginBottom: 8,
   },
   cardTitle: {
-    fontSize: 18,
     fontWeight: 'bold',
-    color: '#4B7BE5',
-    marginBottom: 6,
+    color: '#111',
+    marginBottom: 4,
+    textAlign: 'center',
   },
   cardDesc: {
-    fontSize: 15,
     color: '#444',
-    marginBottom: 10,
+    textAlign: 'center',
+    lineHeight: 20,
+    marginBottom: 14,
   },
   button: {
     backgroundColor: '#4B7BE5',
-    borderRadius: 10,
-    paddingVertical: 10,
-    alignItems: 'center',
+    borderRadius: 999,
+    paddingVertical: 8,
+    paddingHorizontal: 20,
   },
   buttonText: {
     color: '#fff',
