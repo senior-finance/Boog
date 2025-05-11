@@ -7,24 +7,22 @@ buildscript {
         ndkVersion = "27.1.12297006"
         kotlinVersion = "1.8.22"
         googlePlayServicesLocationVersion = "21.0.1"
-
-        // ↓ 여기를 반드시 추가하세요 ↓
-        // versionCode 1
-        // versionName "1.0"
     }
     repositories {
         google()
         mavenCentral()
     }
     dependencies {
-        classpath("com.android.tools.build:gradle")
+        // classpath("com.android.tools.build:gradle")
+        classpath("com.android.tools.build:gradle:8.1.0")
         classpath("com.facebook.react:react-native-gradle-plugin")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin")
-//        classpath("com.google.gms:google-services:4.3.5")
+        // classpath("com.facebook.react:react-native-gradle-plugin:0.73.0")
+        // classpath("org.jetbrains.kotlin:kotlin-gradle-plugin")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.22") 
+        // classpath("com.google.gms:google-services:4.3.5")
         classpath("com.google.gms:google-services:4.4.0")
     }
 }
-
 allprojects {
     repositories {
         google()
@@ -32,7 +30,6 @@ allprojects {
         jcenter()
         maven { url "https://repository.map.naver.com/archive/maven" }
     }
-
     configurations.all {
         resolutionStrategy {
             force "com.google.android.gms:play-services-location:21.0.1"
@@ -41,5 +38,3 @@ allprojects {
         }
     }
 }
-
-apply plugin: "com.facebook.react.rootproject"

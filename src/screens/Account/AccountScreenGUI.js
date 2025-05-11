@@ -53,8 +53,7 @@ const AccountScreenGUI = ({
   const [dbAccounts, setDbAccounts] = useState([]);  // { accountId, accountNum, amount } 형태
 
   const [isModalVisible, setModalVisible] = useState(false);
-  const [modalTitle, setModalTitle] = useState('');
-  const [modalMessage, setModalMessage] = useState('');
+  const [accountNumber, setAccountNumber] = useState(''); // 계좌번호 입력
 
   const navigation = useNavigation();
 
@@ -515,16 +514,20 @@ const AccountScreenGUI = ({
                     <Text style={styles.withdrawTitle}>출금 금액 입력</Text>
 
                     <TextInputMask
-                      type="custom"
+                      type={'custom'}
                       options={{
-                        mask: '000-00-000000'  // 3자리-2자리-6자리 (예: 123-45-678901)
+                        // 10: 숫자 한 글자 placeholder
+                        // 3자리 → 하이픈 → 3자리 → 하이픈 → 4자리
+                        mask: '123-456-7890'
                       }}
                       value={accountNumber}
                       onChangeText={text => setAccountNumber(text)}
-                      placeholder="123-45-678901"
+                      placeholder="123-456-7890"
                       keyboardType="numeric"
                       style={{
-                        borderWidth: 1,
+                        fontSize: 24,
+                        textAlign: 'center',
+                        borderWidth: 5,
                         borderColor: '#ccc',
                         padding: 10,
                         borderRadius: 4

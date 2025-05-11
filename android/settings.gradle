@@ -1,4 +1,16 @@
+pluginManagement {
+  repositories {
+    gradlePluginPortal()   // for plugin DSL
+    google()               // Android plugin lives here
+    jcenter()
+    mavenCentral()
+    maven { url "https://repository.map.naver.com/archive/maven" }
+  }
+}
+
 rootProject.name = 'seniorFinance'
-apply from: file("../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesSettingsGradle(settings)
+apply from: file("../node_modules/@react-native-community/cli-platform-android/native_modules.gradle");
+applyNativeModulesSettingsGradle(settings)
 include ':app'
+// React Native Gradle Plugin 로컬 포함 (버전 없이 classpath("com.facebook.react:react-native-gradle-plugin")와 짝꿍)
 includeBuild('../node_modules/@react-native/gradle-plugin')
