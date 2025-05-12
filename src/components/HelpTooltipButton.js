@@ -1,9 +1,18 @@
 import React, { useEffect, useRef } from 'react';
-import { Animated, TouchableOpacity, StyleSheet, View } from 'react-native';
+import {
+  Animated,
+  TouchableOpacity,
+  StyleSheet,
+  View,
+} from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import CustomText from './CustomText';
 
-const HelpTooltipButton = ({ navigation }) => {
+const HelpTooltipButton = ({ currentRoute }) => {
+  const navigation = useNavigation();
+
+  // 초기 애니메이션
   const tooltipAnim = useRef(new Animated.Value(20)).current;
   const tooltipOpacity = useRef(new Animated.Value(0)).current;
 
@@ -18,7 +27,7 @@ const HelpTooltipButton = ({ navigation }) => {
         toValue: 1,
         duration: 400,
         useNativeDriver: true,
-      })
+      }),
     ]).start();
   }, []);
 
@@ -38,9 +47,9 @@ const HelpTooltipButton = ({ navigation }) => {
 
       <TouchableOpacity
         style={styles.fab}
-        onPress={() => navigation.navigate('VoiceInput')}
+        onPress={() => navigation.navigate('Guide')}
       >
-        <Icon name="chat-question-outline" size={32} color="#F5F5F5" />
+        <Icon name="chat-question-outline" size={35} color="#F5F5F5" />
       </TouchableOpacity>
     </View>
   );
@@ -49,15 +58,16 @@ const HelpTooltipButton = ({ navigation }) => {
 const styles = StyleSheet.create({
   floatingWrapper: {
     position: 'absolute',
-    bottom: 30,
+    bottom: 40,
     left: 40,
+    zIndex: 100,
     alignItems: 'flex-start',
   },
   tooltip: {
-    backgroundColor: '#D9E7F9',
+    backgroundColor: 'rgba(217, 231, 249, 0.85)',
     paddingVertical: 6,
     paddingHorizontal: 12,
-    borderRadius: 8,
+    borderRadius: 12,
     marginBottom: 10,
     marginLeft: -20,
     shadowColor: '#000',
@@ -69,15 +79,12 @@ const styles = StyleSheet.create({
   tooltipText: {
     fontWeight: 'bold',
     color: '#4B7BE5',
-    textShadowColor: '#fff',
-    textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 0.5,
   },
   fab: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: '#4B7BE5',
+    width: 60,
+    height: 60,
+    borderRadius: 40,
+    backgroundColor: 'rgba(75, 123, 229, 0.85)',
     justifyContent: 'center',
     alignItems: 'center',
     elevation: 5,

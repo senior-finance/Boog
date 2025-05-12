@@ -14,11 +14,12 @@ const Tab = createBottomTabNavigator();
 const TabNavigator = () => (
   <Tab.Navigator
     screenOptions={({ route }) => ({
+      tabBarHideOnKeyboard: true, // ✅ 키보드가 올라올 때 하단 탭 숨기기
       tabBarIcon: ({ color, size }) => {
         let iconName;
         if (route.name === 'Home') iconName = 'home';
         else if (route.name === 'Function') iconName = 'apps';
-        else if (route.name === 'VoiceAI') iconName = 'mic'; 
+        else if (route.name === 'VoiceInput') iconName = 'mic';
         else if (route.name === 'MyInfo') iconName = 'person';
         return <Ionicons name={iconName} size={size} color={color} />;
       },

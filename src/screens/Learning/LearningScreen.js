@@ -1,31 +1,87 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useRef, useState } from 'react';
+import {
+  View,
+  TouchableOpacity,
+  Animated,
+  StyleSheet,
+} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import CustomText from '../../components/CustomText';
-import HelpTooltipButton from '../../components/HelpTooltipButton';
 
 const LearningScreen = ({ navigation }) => {
+  const [pressedIndex, setPressedIndex] = useState(null);
+  const scaleAnimRefs = useRef([]);
+
+  const handlePressIn = index => {
+    setPressedIndex(index);
+    Animated.spring(scaleAnimRefs.current[index], {
+      toValue: 0.96,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const handlePressOut = index => {
+    Animated.spring(scaleAnimRefs.current[index], {
+      toValue: 1,
+      friction: 3,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const cards = [
+    {
+      title: '금융 용어 학습하기',
+      desc: '용어를 쉽게 배워보세요 >',
+      icon: 'school-outline',
+      nav: 'QuizLevel',
+    },
+    {
+      title: '입금 연습하기',
+      desc: '입금하는 방법을 배워보세요 >',
+      icon: 'bank-transfer',
+      nav: 'DepositStep1',
+    },
+    {
+      title: '보이스피싱 사례',
+      desc: '사기 문자 유형을 확인해보세요 >',
+      icon: 'alert-circle-outline',
+      nav: 'VoicePhishingScreen',
+    },
+  ];
+
+  // Initialize animated values
+  if (scaleAnimRefs.current.length !== cards.length) {
+    scaleAnimRefs.current = cards.map(() => new Animated.Value(1));
+  }
+
   return (
     <View style={styles.container}>
       <CustomText style={styles.title}>학습 콘텐츠</CustomText>
 
-      {/* 카드형 버튼들 */}
-      <TouchableOpacity style={styles.card} onPress={() => navigation.navigate('QuizLevel')}>
-        <Icon name="school-outline" size={36} color="#4B7BE5" />
-        <CustomText style={styles.cardText}>금융 용어 학습하기</CustomText>
-      </TouchableOpacity>
-
-      <TouchableOpacity style={styles.card} onPress={() => navigation.navigate('DepositStep1')}>
-        <Icon name="bank-transfer" size={36} color="#4B7BE5" />
-        <CustomText style={styles.cardText}>입금 연습하기</CustomText>
-      </TouchableOpacity>
-
-      <TouchableOpacity style={styles.card} onPress={() => navigation.navigate('VoicePhishingScreen')}>
-        <Icon name="alert-circle-outline" size={36} color="#4B7BE5" />
-        <CustomText style={styles.cardText}>보이스피싱 사례{'\n'}</CustomText>
-      </TouchableOpacity>
-
-      <HelpTooltipButton navigation={navigation} />
+      {cards.map((card, idx) => (
+        <Animated.View
+          key={idx}
+          style={{
+            transform: [{ scale: scaleAnimRefs.current[idx] }],
+            width: '100%',
+            marginBottom: 20,
+          }}
+        >
+          <TouchableOpacity
+            activeOpacity={0.9}
+            style={styles.card}
+            onPress={() => navigation.navigate(card.nav)}
+            onPressIn={() => handlePressIn(idx)}
+            onPressOut={() => handlePressOut(idx)}
+          >
+            <View style={styles.cardLeft}>
+              <CustomText style={styles.cardTitle}>{card.title}</CustomText>
+              <CustomText style={styles.cardDesc}>{card.desc}</CustomText>
+            </View>
+            <Icon name={card.icon} size={50} color="#4B7BE5" />
+          </TouchableOpacity>
+        </Animated.View>
+      ))}
     </View>
   );
 };
@@ -33,72 +89,50 @@ const LearningScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: '#FAFAFA',
     alignItems: 'center',
-    justifyContent: 'flex-start',
     paddingHorizontal: 20,
-    paddingTop: 40,
+    paddingTop: 50,
   },
   title: {
     fontWeight: 'bold',
-    marginBottom: 40,
-    color: 'black',
+    marginBottom: 50,
+    color: '#333',
+    //fontSize: 22,
+    textShadowColor: 'rgba(0, 0, 0, 0.2)',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 2,
   },
   card: {
-    width: '90%',
-    height: 135,
+    width: '95%',
     borderRadius: 20,
-    backgroundColor: 'white',
-    marginBottom: 40,
-    padding: 20,
-    justifyContent: 'center',
+    backgroundColor: '#fff', //'#EEF3F9',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
+    alignSelf: 'center',
+    marginBottom: 25,
+    padding: 50,
     shadowColor: '#000',
-    shadowOffset: { width: 2, height: 4 },
-    shadowOpacity: 0.2,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
     shadowRadius: 6,
     elevation: 5,
   },
-  cardText: {
-    color: 'black',
-    fontWeight: 'bold',
-    marginTop: 10,
-    textAlign: 'center',
+  cardLeft: {
+    flex: 1,
+    marginRight: 10,
   },
-  floatingWrapper: {
-    position: 'absolute',
-    bottom: 30,
-    left: 20,
-    alignItems: 'center',
-  },
-  tooltip: {
-    backgroundColor: '#D9E7F9',
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    borderRadius: 8,
-    marginBottom: 10,
-    marginLeft: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    elevation: 2,
-  },
-  tooltipText: {
+  cardTitle: {
     fontWeight: 'bold',
     color: '#4B7BE5',
-    textShadowColor: '#fff',
-    textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 0.5,
+    marginBottom: 6,
+    // textShadowColor: 'rgba(0, 0, 0, 0.2)',
+    // textShadowOffset: { width: 0, height: 2 },
+    // textShadowRadius: 2,
   },
-  fab: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: '#4B7BE5',
-    justifyContent: 'center',
-    alignItems: 'center',
-    elevation: 5,
+  cardDesc: {
+    color: '#555',
   },
 });
 

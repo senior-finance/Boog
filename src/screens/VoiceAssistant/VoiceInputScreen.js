@@ -197,34 +197,26 @@ const onSendText = async customText => {
     ['일', '월', '화', '수', '목', '금', '토'][today.getDay()]
   }요일`;
 
-  return (
-    <KeyboardAvoidingView
-      style={styles.wrapper}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-
-      {/* 애니메이션 오버레이 */}
-      <LottieView
-        source={require('../../assets/animeVoice.json')}
-        autoPlay
-        loop
-        pointerEvents="none" // 터치 투명화
-        style={styles.overlayAnimation} // 절대 위치 & 투명
-        colorFilters={[
-          { keypath: 'Background', color: 'transparent' },
-        ]}
-      />
-
+return (
+  <KeyboardAvoidingView
+    style={styles.wrapper}
+    behavior="padding" // ← 이걸로 고정
+    keyboardVerticalOffset={100} // 필요 시 조정
+  >
+    <View style={{ flex: 1 }}>
+      {/* 대화 스크롤 영역 */}
       <ScrollView
         ref={scrollViewRef}
-        contentContainerStyle={styles.container}
-        keyboardShouldPersistTaps="handled">
+        contentContainerStyle={[styles.container, { flexGrow: 1 }]}
+        keyboardShouldPersistTaps="handled"
+      >
         <CustomText style={styles.dateText}>{formattedDate}</CustomText>
 
         <View style={styles.botIntroContainer}>
           <View style={styles.botTextWrapper}>
             <CustomText style={styles.botText}>
               안녕하세요!{'\n'}
-              <CustomText style={{color: '#4B7BE5', fontWeight: 'bold'}}>
+              <CustomText style={{ color: '#4B7BE5', fontWeight: 'bold' }}>
                 상담원 부금이
               </CustomText>
               입니다.{'\n'}
@@ -245,63 +237,46 @@ const onSendText = async customText => {
           ].map((item, index) => (
             <TouchableOpacity
               key={index}
-              style={[styles.topicButton, {width: '30%'}]}
-              onPress={() => handleTopicClick(item)}>
+              style={[styles.topicButton, { width: '30%' }]}
+              onPress={() => handleTopicClick(item)}
+            >
               <CustomText style={styles.topicText}>{item}</CustomText>
             </TouchableOpacity>
           ))}
         </View>
 
         {isLoading && (
-          <ActivityIndicator size="large" style={{marginTop: 20}} />
+          <ActivityIndicator size="large" style={{ marginTop: 20 }} />
         )}
 
         {chatHistory.map((msg, idx) => (
           <View
             key={idx}
-            style={
-              msg.role === 'user' ? styles.chatBubbleUser : styles.chatBubbleBot
-            }>
-            <CustomText style={styles.chatText}>{msg.text}</CustomText>
+            style={[
+              styles.chatRow,
+              msg.role === 'user' ? styles.chatRowUser : styles.chatRowBot,
+            ]}
+          >
+            {msg.role === 'bot' && (
+              <Image source={require('../../assets/bot.png')} style={styles.avatar} />
+            )}
+
+            <View
+              style={
+                msg.role === 'user' ? styles.chatBubbleUser : styles.chatBubbleBot
+              }
+            >
+              <CustomText style={styles.chatText}>{msg.text}</CustomText>
+            </View>
+
+            {msg.role === 'user' && (
+              <Image source={require('../../assets/icon1.png')} style={styles.avatar} />
+            )}
           </View>
         ))}
       </ScrollView>
 
-      {showConfirmModal && (
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalBox}>
-            <CustomText style={styles.modalText}>
-              '{screenNameMap[confirmTarget] || confirmTarget}' 화면으로
-              이동할까요?
-            </CustomText>
-            <View style={styles.modalButtons}>
-              <TouchableOpacity
-                style={styles.modalBtn}
-                onPress={() => {
-                  navigation.navigate(confirmTarget);
-                  setShowConfirmModal(false);
-                  setConfirmTarget(null);
-                }}>
-                <CustomText style={styles.modalBtnText}>예</CustomText>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.modalBtn, {backgroundColor: '#ccc'}]}
-                onPress={() => {
-                  setShowConfirmModal(false);
-                  setConfirmTarget(null);
-                  setChatHistory(prev => [
-                    ...prev,
-                    {role: 'bot', text: '이동을 취소했어요.'},
-                  ]);
-                  Tts.speak('이동을 취소했어요.');
-                }}>
-                <CustomText style={styles.modalBtnText}>아니오</CustomText>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      )}
-
+      {/* 입력창 하단 바 */}
       <View style={styles.bottomBar}>
         <CustomTextInput
           style={styles.input}
@@ -312,7 +287,7 @@ const onSendText = async customText => {
           blurOnSubmit={false}
           returnKeyType="send"
           multiline={false}
-          onKeyPress={({nativeEvent}) => {
+          onKeyPress={({ nativeEvent }) => {
             if (nativeEvent.key === 'Enter') {
               onSendText();
             }
@@ -323,12 +298,51 @@ const onSendText = async customText => {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.voiceIconButton}
-          onPress={isRecording ? stopRecording : startRecording}>
+          onPress={isRecording ? stopRecording : startRecording}
+        >
           <Icon name={isRecording ? 'stop' : 'mic'} size={25} color="#fff" />
         </TouchableOpacity>
       </View>
-    </KeyboardAvoidingView>
-  );
+    </View>
+
+    {/* 확인 모달 */}
+    {showConfirmModal && (
+      <View style={styles.modalOverlay}>
+        <View style={styles.modalBox}>
+          <CustomText style={styles.modalText}>
+            '{screenNameMap[confirmTarget] || confirmTarget}' 화면으로 이동할까요?
+          </CustomText>
+          <View style={styles.modalButtons}>
+            <TouchableOpacity
+              style={styles.modalBtn}
+              onPress={() => {
+                navigation.navigate(confirmTarget);
+                setShowConfirmModal(false);
+                setConfirmTarget(null);
+              }}
+            >
+              <CustomText style={styles.modalBtnText}>예</CustomText>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.modalBtn, { backgroundColor: '#ccc' }]}
+              onPress={() => {
+                setShowConfirmModal(false);
+                setConfirmTarget(null);
+                setChatHistory(prev => [
+                  ...prev,
+                  { role: 'bot', text: '이동을 취소했어요.' },
+                ]);
+                Tts.speak('이동을 취소했어요.');
+              }}
+            >
+              <CustomText style={styles.modalBtnText}>아니오</CustomText>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
+    )}
+  </KeyboardAvoidingView>
+);
 }
 
 // const { width, height } = Dimensions.get('window');
@@ -455,24 +469,49 @@ const styles = StyleSheet.create({
     backgroundColor: '#CB4626',
   },
   chatBubbleUser: {
-    backgroundColor: '#f1f2f6',
+    backgroundColor: '#EEF3F9',
     alignSelf: 'flex-end',
     padding: 12,
-    borderRadius: 16,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 4, // ← 꼬리 느낌
     marginVertical: 5,
     maxWidth: '80%',
   },
   chatBubbleBot: {
-    backgroundColor: '#DBDBDB',
+    backgroundColor: '#B0CFE3',
     alignSelf: 'flex-start',
     padding: 12,
-    borderRadius: 16,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    borderBottomRightRadius: 20,
+    borderBottomLeftRadius: 4, // ← 꼬리 느낌
     marginVertical: 5,
     maxWidth: '80%',
   },
   chatText: {
-    //     lineHeight: 22,
     color: '#333',
+  },
+  chatRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    marginBottom: 10,
+  },
+
+  chatRowBot: {
+    justifyContent: 'flex-start',
+  },
+
+  chatRowUser: {
+    justifyContent: 'flex-end',
+  },
+
+  avatar: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    marginHorizontal: 8,
   },
   bottomBar: {
     flexDirection: 'row',
@@ -501,7 +540,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#4B7BE5',
     padding: 14,
     borderRadius: 50,
-    marginRight: 12,
+    marginLeft: 10,
+    marginRight: 10,
   },
   voiceIconButton: {
     backgroundColor: '#4B7BE5',

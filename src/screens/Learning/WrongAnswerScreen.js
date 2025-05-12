@@ -136,10 +136,12 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   imageOnly: {
-    width: 230,
-    height: 230,
-    marginBottom: 10,
-  },
+  width: 300,
+  height: 300,
+  alignSelf: 'center',
+  marginVertical: 16,
+  resizeMode: 'contain', // 추가
+},
   explanationBox: {
     width: '100%',
     backgroundColor: '#FDD8D8',
