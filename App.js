@@ -65,7 +65,7 @@ const Stack = createStackNavigator();
 
 export default function App() {
   return (
-    <PortraitWrapper>
+    // <PortraitWrapper>
       <FontSizeProvider>
         <NavigationContainer>
           <Stack.Navigator initialRouteName="Login">
@@ -121,6 +121,6 @@ export default function App() {
           </Stack.Navigator>
         </NavigationContainer>
       </FontSizeProvider>
-    </PortraitWrapper>
+    // </PortraitWrapper>
   );
 }
