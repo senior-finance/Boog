@@ -522,7 +522,7 @@ const AccountScreenGUI = ({
                       }}
                       value={accountNumber}
                       onChangeText={text => setAccountNumber(text)}
-                      placeholder="123-456-7890"
+                      placeholder="모의 계좌 번호 10자리"
                       keyboardType="numeric"
                       style={{
                         fontSize: 24,
@@ -532,6 +532,7 @@ const AccountScreenGUI = ({
                         padding: 10,
                         borderRadius: 4
                       }}
+                      showSoftInputOnFocus={false}
                     />
 
                     <TextInputMask
@@ -549,6 +550,7 @@ const AccountScreenGUI = ({
                       placeholder="금액 입력"
                       keyboardType="numeric"
                       returnKeyType="done"
+                      showSoftInputOnFocus={false}
                     />
 
                     <TextInput
@@ -562,6 +564,7 @@ const AccountScreenGUI = ({
                         setAmount(formatKorean(onlyNums)); // 포맷된 문자열 저장
                       }}
                       placeholder="금액 입력"
+                      showSoftInputOnFocus={false}
                     />
                     {/* <Text style={styles.unit}>원</Text> */}
 
@@ -573,9 +576,14 @@ const AccountScreenGUI = ({
                         containerStyle={styles.numpadInner}
                       />
                     </View>
+
                     <View style={styles.buttonRow}>
-                      <Button title="취소" onPress={closeOverlay} />
-                      <Button title="확인" onPress={handleWithdraw} />
+                      <TouchableOpacity style={styles.button2} onPress={closeOverlay}>
+                        <Text style={styles.buttonText2}>취소</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity style={styles.button2} onPress={handleWithdraw}>
+                        <Text style={styles.buttonText2}>확인</Text>
+                      </TouchableOpacity>
                     </View>
                   </View>
                 </TouchableWithoutFeedback>
@@ -796,6 +804,12 @@ const styles = StyleSheet.create({
     shadowRadius: 10,
     elevation: 5,
   },
+  button2: {
+    paddingVertical: 12,
+    borderRadius: 8,
+    marginVertical: 8,
+    alignItems: 'center',
+  },
   kmjButton: {
     backgroundColor: '#4A90E2'
   },
@@ -806,6 +820,11 @@ const styles = StyleSheet.create({
     fontSize: 30,
     color: '#000',
     fontWeight: '600'
+  },
+  buttonText2: {
+    fontSize: 30,
+    color: '#000',
+    // fontWeight: '100'
   }
 });
 
