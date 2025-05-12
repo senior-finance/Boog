@@ -75,9 +75,19 @@ export default function VoiceInputScreen() {
     });
   }, [navigation]);
 
-  const onSendText = async customText => {
-    const input = customText ?? textInput;
-    if (input.trim() === '') return;
+const onSendText = async customText => {
+  let input = customText ?? textInput;
+
+  // 문자열이 아니면 처리
+  if (typeof input !== 'string') {
+    if (typeof input === 'object' && input !== null) {
+      input = input.message ?? input.text ?? ''; // CSR 결과 예상 키들
+    } else {
+      input = '';
+    }
+  }
+
+  if (input.trim() === '') return;
 
     Tts.stop();
 
