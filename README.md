@@ -1,4 +1,5 @@
-![SOPIE Senior Of Finance   artificial IntelligEnce (2)](https://github.com/user-attachments/assets/dcbdffbf-28cb-486d-8013-43c76302d447)
+
+![2](https://github.com/user-attachments/assets/c38945f3-d8e2-4156-b7f5-8c1c0698c689)
 
 디스코드 > 실행 따라하기 필독!!
 
