@@ -98,7 +98,10 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 50,
     color: '#333',
-    //fontSize: 22,
+    backgroundColor: 'rgba(75, 123, 229, 0.1)', // 연한 블루
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderRadius: 15,
     textShadowColor: 'rgba(0, 0, 0, 0.2)',
     textShadowOffset: { width: 0, height: 2 },
     textShadowRadius: 2,
@@ -111,13 +114,15 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     alignSelf: 'center',
-    marginBottom: 25,
+    marginBottom: 30,
     padding: 50,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 6,
     elevation: 5,
+    borderWidth: 1.5,
+    borderColor: 'rgba(75, 123, 229, 0.5)'
   },
   cardLeft: {
     flex: 1,
@@ -127,9 +132,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#4B7BE5',
     marginBottom: 6,
-    // textShadowColor: 'rgba(0, 0, 0, 0.2)',
-    // textShadowOffset: { width: 0, height: 2 },
-    // textShadowRadius: 2,
   },
   cardDesc: {
     color: '#555',
