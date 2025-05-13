@@ -115,7 +115,7 @@ const MapViewScreen = ({ route, navigation }) => {
         });
       },
       (error) => {
-        console.error("위치 가져오기 실패:", error);
+        console.log("위치 가져오기 실패:", error);
         setLocationDeniedModalVisible(true);
       },
       {
@@ -171,7 +171,7 @@ const MapViewScreen = ({ route, navigation }) => {
       setSearchResults(uniquePlaces);
       setZoomLevel(calculateZoomLevel(uniquePlaces));
     } catch (err) {
-      console.error('검색 실패:', err);
+      console.log('검색 실패:', err);
     }
   };
 
@@ -248,7 +248,7 @@ const MapViewScreen = ({ route, navigation }) => {
               elevation: 2,
             }}
             onPress={() => {
-              console.log('선택된 카테고리:', selectedCategory);
+              //console.log('선택된 카테고리:', selectedCategory);
               setSelectedPlace(null); //  선택 초기화
               fetchSearchResults(selectedCategory);
             }}

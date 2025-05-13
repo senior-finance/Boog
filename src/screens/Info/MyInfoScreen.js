@@ -1,16 +1,65 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet, Alert, ScrollView } from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet, Alert, ScrollView, TextInput } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { launchImageLibrary } from 'react-native-image-picker';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { Modal } from 'react-native';
 import { ProfileContext } from './ProfileContext';
 import CustomText from '../../components/CustomText';
+import { useUser } from '../Login/UserContext';
+import CustomModal from '../../components/CustomModal';
 
 // 로컬 기본 이미지 사용 (이미지 경로에 맞게 조정)
 // const defaultProfile = Image.resolveAssetSource(require('../../assets/minecraft-skin-head-girl.png')).uri;
 
 const MyInfoScreen = ({ navigation }) => {
+  // 사용자 정보 선언
+  const { userInfo, setUserInfo } = useUser();
+  console.log("로그인 환경 : " + userInfo?.provider);
+  console.log("사용자 고유 ID : " + userInfo?.socialId);
+  console.log("사용자 이름 : " + userInfo?.username);
+  console.log("사용자 지정 이름 : " + userInfo?.nickname);
+
+  // 사용자 로그아웃 함수
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalConfig, setModalConfig] = useState({ title: '', message: '', buttons: [] });
+
+  const showModal = ({ title, message, buttons }) => {
+    setModalConfig({ title, message, buttons });
+    setModalVisible(true);
+  };
+  const confirmLogout = () => {
+    showModal({
+      title: '로그아웃',
+      message: '정말 로그아웃하시겠습니까?',
+      buttons: [
+        {
+          text: '취소',
+          onPress: () => setModalVisible(false),
+          color: '#999',
+          textColor: 'white',
+        },
+        {
+          text: '확인',
+          onPress: () => {
+            setModalVisible(false);
+            executeLogout();
+          },
+          color: '#4B7BE5',
+          textColor: 'white',
+        },
+      ],
+    });
+  };
+  const executeLogout = () => {
+    setUserInfo(null);  // 사용자 정보 초기화
+
+    navigation.reset({
+      index: 0,
+      routes: [{ name: 'Login' }],  // 로그인 화면으로 초기화
+    });
+  };
+
   const { profileUri, setProfileUri } = useContext(ProfileContext);
   const [selectModalVisible, setSelectModalVisible] = useState(false);
 
@@ -42,7 +91,10 @@ const MyInfoScreen = ({ navigation }) => {
             />
             <Ionicons name="camera-outline" size={24} color="#fff" style={styles.cameraIcon} />
           </TouchableOpacity>
-          <CustomText style={styles.name}>부금이</CustomText>
+          <CustomText style={styles.name}>
+            {userInfo?.nickname || '이름 없음'}
+          </CustomText>
+
           <CustomText style={styles.account}>111-222-4445543</CustomText>
         </View>
 
@@ -59,20 +111,24 @@ const MyInfoScreen = ({ navigation }) => {
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('FAQ')}>
-       <Ionicons name="help-circle-outline" size={22} color="#4B7BE5" style={styles.icon} />
-       <CustomText style={styles.menuText}>자주 묻는 질문</CustomText>
+          <Ionicons name="help-circle-outline" size={22} color="#4B7BE5" style={styles.icon} />
+          <CustomText style={styles.menuText}>자주 묻는 질문</CustomText>
         </TouchableOpacity>
 
-      <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('InquiryForm')}>
-       <Ionicons name="chatbubble-ellipses-outline" size={22} color="#4B7BE5" style={styles.icon} />
-       <CustomText style={styles.menuText}>1:1 문의하기</CustomText>
+        <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('InquiryForm')}>
+          <Ionicons name="chatbubble-ellipses-outline" size={22} color="#4B7BE5" style={styles.icon} />
+          <CustomText style={styles.menuText}>1:1 문의하기</CustomText>
         </TouchableOpacity>
 
-      <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('InquiryList')}>
-        <Ionicons name="document-text-outline" size={22} color="#4B7BE5" style={styles.icon} />
-       <CustomText style={styles.menuText}>문의 내역 확인</CustomText>
+        <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('InquiryList')}>
+          <Ionicons name="document-text-outline" size={22} color="#4B7BE5" style={styles.icon} />
+          <CustomText style={styles.menuText}>문의 내역 확인</CustomText>
         </TouchableOpacity>
 
+        <TouchableOpacity style={styles.menuItem} onPress={confirmLogout}>
+          <Ionicons name="log-out-outline" size={22} color="#4B7BE5" style={styles.icon} />
+          <CustomText style={styles.menuText}>로그아웃</CustomText>
+        </TouchableOpacity>
 
       </ScrollView>
 
@@ -101,8 +157,12 @@ const MyInfoScreen = ({ navigation }) => {
         </View>
       </Modal>
 
-
-
+      <CustomModal
+        visible={modalVisible}
+        title={modalConfig.title}
+        message={modalConfig.message}
+        buttons={modalConfig.buttons}
+      />
     </LinearGradient>
   );
 };
@@ -125,14 +185,14 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 50,
-    marginBottom: 10,
+    marginBottom: 20,
   },
   name: {
-        fontWeight: 'bold',
+    fontWeight: 'bold',
     color: '#333',
   },
   account: {
-        color: '#666',
+    color: '#666',
   },
   menuItem: {
     flexDirection: 'row',
@@ -141,7 +201,7 @@ const styles = StyleSheet.create({
     width: '85%',
     paddingVertical: 18,
     paddingHorizontal: 20,
-    marginVertical: 8,
+    marginVertical: 10,
     borderRadius: 12,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -153,7 +213,7 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
   menuText: {
-        fontWeight: '600',
+    fontWeight: '600',
     color: '#333',
   },
 
@@ -187,9 +247,65 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   selectText: {
-        fontWeight: '500',
+    fontWeight: '500',
     color: '#4B7BE5',
   },
+
+
+  /// 
+  nicknameBox: {
+    width: '80%',
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 20,
+    alignItems: 'center',
+  },
+
+  modalButton: {
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    marginHorizontal: 10,
+    alignItems: 'center',
+  },
+  modalButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 16,
+    color: '#4B7BE5',
+  },
+  nicknameInput: {
+    width: '100%',
+    borderWidth: 1,
+    borderColor: 'black',
+    borderRadius: 8,
+    padding: 10,
+    marginBottom: 20,
+  },
+  nicknameButtonRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+  },
+  nicknameButton: {
+    flex: 1,
+    paddingVertical: 12,
+    alignItems: 'center',
+  },
+  cancelText: {
+    color: '#999',
+    fontWeight: '600',
+  },
+  saveText: {
+    color: '#4B7BE5',
+    fontWeight: '600',
+  }
 
 
 });
