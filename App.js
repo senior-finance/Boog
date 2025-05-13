@@ -86,7 +86,7 @@ export default function App() {
               <Stack.Screen name="Account" component={AccountScreen} />
               <Stack.Screen name="AccountDetail" component={AccountDetailScreen} />
 
-              <Stack.Screen name="Learning" component={LearningScreen} options={{ title: ' ' }} />
+              <Stack.Screen name="Learning" component={LearningScreen} options={{ title: '학습 콘텐츠' }} />
               <Stack.Screen name="QuizLevel" component={SelectLevelScreen} options={{ title: '금융 용어 학습 난이도 선택' }} />
               <Stack.Screen name="Quiz" component={QuizScreen} options={{ title: '금융 용어 학습' }} />
               <Stack.Screen name="Answer" component={AnswerScreen} options={{ title: '정답 확인' }} />
