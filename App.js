@@ -23,7 +23,6 @@ import DepositStep2 from './src/screens/Learning/DepositStep2';
 import DepositStep3 from './src/screens/Learning/DepositStep3';
 import DepositStep4 from './src/screens/Learning/DepositStep4';
 import LearningScreen from './src/screens/Learning/LearningScreen';
-import GuideDetailScreen from './src/screens/Info/GuideDetailScreen';
 
 // 지도
 import MapViewScreen from './src/screens/Map/MapViewScreen';
@@ -41,18 +40,23 @@ import AccountDetailScreen from './src/screens/Account/AccountDetailScreen'; // 
 import FontSizeSettingScreen from './src/screens/Info/FontSizeSettingScreen';
 import SoundVolumeScreen from './src/screens/Info/SoundVolumeScreen';
 import SoundVolumeSettingScreen from './src/screens/Info/SoundVolumeSettingScreen';
-import VoicePhishingScreen from './src/screens/Info/VoicePhishingScreen';
-import VoicePhishingDetailScreen from './src/screens/Info/VoicePhishingDetailScreen';
-import FAQScreen from './src/screens/Info/FAQScreen';
-import InquiryFormScreen from './src/screens/Info/InquiryFormScreen';
-import InquiryListScreen from './src/screens/Info/InquiryListScreen';
 import NotificationScreen from './src/screens/Info/NotificationScreen';
-import ProfileIconSelect from './src/screens/Info/ProfileIconSelect';
-import { ProfileProvider } from './src/screens/ProfileContext';
-import WelfareScreen from './src/screens/Info/WelfareScreen';
+import { ProfileProvider } from './src/screens/Info/ProfileContext';
 import WebScreen from './src/screens/Info/WebScreen';
-import AutoPhoneAnalysisScreen from './src/screens/Info/AutoPhoneAnalysisScreen';
-import GuideScreen from './src/screens/Info/GuideScreen';
+
+// 내 정보 관련된 서포트 (사용법 가이드, 문의 및 질문답변, 보이스피싱, 전화문자 분석, 복지)
+import VoicePhishingScreen from './src/screens/InfoSupport/VoicePhishingScreen';
+import VoicePhishingDetailScreen from './src/screens/InfoSupport/VoicePhishingDetailScreen';
+import GuideScreen from './src/screens/InfoSupport/GuideScreen';
+import FAQScreen from './src/screens/InfoSupport/FAQScreen';
+import InquiryFormScreen from './src/screens/InfoSupport/InquiryFormScreen';
+import InquiryListScreen from './src/screens/InfoSupport/InquiryListScreen';
+import ProfileIconSelect from './src/screens/Info/ProfileIconSelect';
+import WelfareScreen from './src/screens/InfoSupport/WelfareScreen';
+import AutoPhoneAnalysisScreen from './src/screens/InfoSupport/AutoPhoneAnalysisScreen';
+import GuideDetailScreen from './src/screens/InfoSupport/GuideDetailScreen';
+
+
 // 기타
 import BiometricScreen from './src/screens/Biometric/BiometricScreen';
 import VoiceInputScreen from './src/screens/VoiceAssistant/VoiceInputScreen';

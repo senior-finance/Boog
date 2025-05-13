@@ -89,8 +89,8 @@ const MyInfoScreen = ({ navigation }) => {
               <Ionicons name="camera-outline" size={24} color="#fff" style={styles.cameraIcon} />
             </View>
           </TouchableOpacity>
-          <CustomText style={styles.name}>{userInfo?.nickname || '이름 없음'}</CustomText>
-          <CustomText style={styles.account}>111-222-4445543</CustomText>
+          <CustomText style={styles.name}>{userInfo?.nickname || '이름 없음 님'}</CustomText>
+          {/* <CustomText style={styles.account}>계좌</CustomText> */}
         </View>
 
         <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('FontSize')}>

@@ -12,7 +12,6 @@ const AccountDetailScreen = ({ navigation, route }) => {
     const [sortOrder, setSortOrder] = useState('desc');
     const [loading, setLoading] = useState(true);
 
-
     useEffect(() => {
         (async () => {
             const list = await accountGetAll(userName);

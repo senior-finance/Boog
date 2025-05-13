@@ -4,7 +4,6 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import LinearGradient from 'react-native-linear-gradient';
 import CustomText from '../../components/CustomText';
 
-
 const FunctionButton = ({ title, onPress, icon }) => (
   <TouchableOpacity style={styles.functionButton} onPress={onPress}>
     <Ionicons name={icon} size={30} color="#4B7BE5" />

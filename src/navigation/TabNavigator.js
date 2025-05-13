@@ -4,7 +4,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import MainScreen from '../screens/Main/MainScreen';
 import FunctionScreen from '../screens/Info/FunctionScreen';
-import GuideScreen from '../screens/Info/GuideScreen';
+import GuideScreen from '../screens/InfoSupport/GuideScreen';
 import MyInfoScreen from '../screens/Info/MyInfoScreen';
 import MyInfoStack from './MyInfoStack';
 import VoiceInputScreen from '../screens/VoiceAssistant/VoiceInputScreen';
