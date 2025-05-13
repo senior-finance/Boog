@@ -12,7 +12,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import CustomText from '../../components/CustomText';
 import CustomTextInput from '../../components/CustomTextInput';
 import { sendInquiry } from './Inquiry';
-import { sendInquiryEmail } from '../../utils/sendEmail'; 
+import { FIREBASE_FUNCTION_URL } from '@env';
 
 const InquiryFormScreen = () => {
   const [title, setTitle] = useState('');
@@ -25,14 +25,32 @@ const InquiryFormScreen = () => {
     }
 
     try {
-      await sendInquiry({ title, content }); // 🔹 Firestore 저장
-      await sendInquiryEmail({ title, content }); // 🔹 이메일 전송
+      await sendInquiry({ title, content }); // Firestore 저장
+
+      const response = await fetch(FIREBASE_FUNCTION_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: title, // 제목
+          content: content, // 내용
+          userName: "홍길동", // 보내는 사람
+          userEmail: "hwoochhh@gmail.com", // 보내는 사람 이메일
+        }),
+      });
+
+      const text = await response.text();
+      console.log('이메일 응답:', response.status, text);
+
+      if (!response.ok) {
+        throw new Error(text);
+      }
+
       Alert.alert('접수 완료', '문의가 저장되고 이메일이 전송되었습니다.');
       setTitle('');
       setContent('');
     } catch (err) {
       Alert.alert('전송 실패', '네트워크 또는 시스템 오류가 발생했습니다.');
-      console.error('문의 처리 오류:', err);
+      console.error('문의 처리 오류:', err.message || err);
     }
   };
 
@@ -77,7 +95,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 30,
     color: '#333',
-    
   },
   input: {
     width: '100%',
@@ -90,8 +107,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.08,
     shadowRadius: 3,
     elevation: 3,
-    borderWidth: 1,
-    borderColor: '#4B7BE5'
   },
   textArea: {
     width: '100%',
@@ -106,8 +121,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.08,
     shadowRadius: 3,
     elevation: 3,
-     borderWidth: 1,
-    borderColor: '#4B7BE5'
   },
   button: {
     width: '100%',

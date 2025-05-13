@@ -1,8 +1,7 @@
 {
   "functions": [
     {
-      "source": "functions",
-      "codebase": "default",
+      "source": "send_email",
       "ignore": [
         "node_modules",
         ".git",
@@ -10,7 +9,6 @@
         "firebase-debug.*.log",
         "*.local"
       ]
-      
     }
   ]
 }
