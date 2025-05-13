@@ -11,7 +11,7 @@ const MyInfoStack = () => {
     <ProfileProvider>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="MyInfoScreen" component={MyInfoScreen} />
-        <Stack.Screen name="ProfileIconSelect" component={ProfileIconSelect} />
+        <Stack.Screen name="ProfileIconSelect" component={ProfileIconSelect}/>
       </Stack.Navigator>
     </ProfileProvider>
   );

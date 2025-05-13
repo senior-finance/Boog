@@ -87,8 +87,8 @@ export default function App() {
               <Stack.Screen name="Login" component={LoginScreen} options={{ title: '환영합니다 로그인' }} />
               <Stack.Screen name="SetUserNameScreen" component={SetUserNameScreen} options={{ title: '환영합니다 로그인' }} />
 
-              <Stack.Screen name="Account" component={AccountScreen} />
-              <Stack.Screen name="AccountDetail" component={AccountDetailScreen} />
+              <Stack.Screen name="Account" component={AccountScreen} options={{ title: '내 계좌 정보' }}/>
+              <Stack.Screen name="AccountDetail" component={AccountDetailScreen} options={{ title: '상세 계좌 정보' }}/>
 
               <Stack.Screen name="Learning" component={LearningScreen} options={{ title: '학습 콘텐츠' }} />
               <Stack.Screen name="QuizLevel" component={SelectLevelScreen} options={{ title: '금융 용어 학습 난이도 선택' }} />
@@ -100,7 +100,7 @@ export default function App() {
               <Stack.Screen name="DepositStep3" component={DepositStep3} options={{ title: '입금 연습 - 금액 입력' }} />
               <Stack.Screen name="DepositStep4" component={DepositStep4} options={{ title: '입금 연습 - 확인하기' }} />
 
-              <Stack.Screen name="MapView" component={MapViewScreen} />
+              <Stack.Screen name="MapView" component={MapViewScreen} options={{ title: '지도 화면' }} />
               <Stack.Screen name="FunctionScreen" component={FunctionScreen} />
 
               <Stack.Screen name="FontSize" component={FontSizeSettingScreen} />

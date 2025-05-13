@@ -373,7 +373,7 @@ export default function LoginScreen({ navigation }) {
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.contentWrapper}>
           <Image
-            source={require('../../assets/logo.png')}
+            source={require('../../assets/logo2.png')}
             style={styles.logo}
           />
 
@@ -392,9 +392,9 @@ export default function LoginScreen({ navigation }) {
           </TouchableOpacity>
 
           {/* 테스트 용으로 로그인 안하고 메인화면으로 넘어갈 때 사용하는거 */}
-          { <TouchableOpacity style={[styles.button, styles.skip]} onPress={() => navigation.navigate('MainTabs')}>
+          {<TouchableOpacity style={[styles.button, styles.skip]} onPress={() => navigation.navigate('MainTabs')}>
             <Text style={styles.buttonText}>로그인 없이 계속</Text>
-          </TouchableOpacity> }
+          </TouchableOpacity>}
 
         </View>
       </ScrollView>
@@ -425,7 +425,6 @@ const styles = StyleSheet.create({
     marginBottom: 32,
     resizeMode: 'contain',
   },
-
   kakao: { backgroundColor: '#FEE500' },
   naver: { backgroundColor: '#03C75A' },
   buttonText: {

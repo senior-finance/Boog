@@ -473,7 +473,7 @@ const AccountScreenGUI = ({
                     {balanceObj
                       ? Number(balanceObj.balance_amt).toLocaleString()
                       : '잔액 조회 중...'} */}
-                        잔액:{''}
+                        잔액 : {''}
                         {dbObj?.amount != null
                           ? Number(dbObj.amount).toLocaleString()
                           : '정보없음'}
