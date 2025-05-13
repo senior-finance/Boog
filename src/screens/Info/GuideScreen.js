@@ -12,41 +12,37 @@ export default function GuideScreen() {
   const navigation = useNavigation();
 
   const sectionDetails = {
-    deposit: {
-      icon: '💸',
-      title: '입출금 방법',
-      content: '은행, 계좌번호, 금액을 입력해 입출금을 연습해보세요.\n실제 송금은 되지 않아요.',
-      borderColor: '#A3D8F4',
-    },
-    ai: {
-      icon: '🧠',
-      title: 'AI 대화 사용법',
-      content: '말로 질문하면 챗봇이\n송금, 조회, 인증 등 기능을 안내해줘요.',
-      borderColor: '#D9CFFF',
-    },
-    voicePhishing: {
-      icon: '🚨',
-      title: '보이스피싱 탐지법',
-      content: '의심되는 문자나 통화를 자동 분석해서\n위험 내용을 알려줘요.',
-      borderColor: '#FFB8B8',
-    },
-    location: {
-      icon: '🗺️',
-      title: '근처 은행/ATM 찾기',
-      content: '현재 위치 기준으로\n가장 가까운 ATM을 안내해줘요.',
-      borderColor: '#FDD974',
-    },
-    accessibility: {
-      icon: '🔊',
-      title: '글자/음향 크기 조절',
-      content: '글자 크기와 음향 크기를\n자유롭게 설정할 수 있어요.',
-      borderColor: '#B7E5B4',
-    },
-  };
+  deposit: {
+    icon: '💸',
+    title: '입출금 방법',
+    borderColor: '#2196F3',
+  },
+  ai: {
+    icon: '🧠',
+    title: 'AI 대화 사용법',
+    borderColor: '#9C27B0',
+  },
+  voicePhishing: {
+    icon: '🚨',
+    title: '보이스피싱 탐지법',
+    borderColor: '#F44336',
+  },
+  location: {
+    icon: '🗺️',
+    title: '근처 은행/ATM 찾기',
+    borderColor: '#FFC107',
+  },
+  accessibility: {
+    icon: '🔊',
+    title: '글자/음향 크기 조절',
+    borderColor: '#4CAF50',
+  },
+};
+
 
   const goToDetail = (sectionKey) => {
-    const { title, content } = sectionDetails[sectionKey];
-    navigation.navigate('GuideDetail', { title, content, key: sectionKey });
+    const { title } = sectionDetails[sectionKey];
+    navigation.navigate('GuideDetail', { title, key: sectionKey });
   };
 
   return (
@@ -56,14 +52,18 @@ export default function GuideScreen() {
       {Object.keys(sectionDetails).map((key) => {
         const item = sectionDetails[key];
         return (
-          <View key={key} style={[styles.card, { borderColor: item.borderColor }]}>
-            <CustomText style={styles.icon}>{item.icon}</CustomText>
-            <CustomText style={styles.cardTitle}>{item.title}</CustomText>
-            <CustomText style={styles.cardDesc}>{item.content}</CustomText>
-            <TouchableOpacity style={styles.button} onPress={() => goToDetail(key)}>
-              <CustomText style={styles.buttonText}>자세히 보기</CustomText>
-            </TouchableOpacity>
-          </View>
+          <TouchableOpacity
+            key={key}
+            style={[styles.card, { borderColor: item.borderColor }]}
+            onPress={() => goToDetail(key)}
+            activeOpacity={0.8}
+          >
+            <View style={styles.leftSection}>
+              <CustomText style={styles.icon}>{item.icon}</CustomText>
+              <CustomText style={styles.cardTitle}>{item.title}</CustomText>
+            </View>
+            <CustomText style={styles.arrow}>{'>'}</CustomText>
+          </TouchableOpacity>
         );
       })}
     </ScrollView>
@@ -74,44 +74,48 @@ const styles = StyleSheet.create({
   container: {
     padding: 20,
     backgroundColor: '#FAFAFA',
+    alignItems: 'center',
   },
   title: {
     fontWeight: '900',
     color: '#222',
     textAlign: 'center',
-    marginBottom: 30,
+    marginBottom: 50,
   },
   card: {
+    width: '100%',
     backgroundColor: '#fff',
-    borderRadius: 16,
-    padding: 16,
-    marginBottom: 14,
+    borderRadius: 14,
+    paddingVertical: 30,
+    paddingHorizontal: 20,
+    marginBottom: 40,
+
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+
     borderWidth: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  leftSection: {
+    flexDirection: 'row',
     alignItems: 'center',
   },
   icon: {
-    marginBottom: 8,
+    fontSize: 20,
+    marginRight: 10,
   },
   cardTitle: {
-    fontWeight: 'bold',
     color: '#111',
-    marginBottom: 4,
-    textAlign: 'center',
-  },
-  cardDesc: {
-    color: '#444',
-    textAlign: 'center',
-    lineHeight: 20,
-    marginBottom: 14,
-  },
-  button: {
-    backgroundColor: '#4B7BE5',
-    borderRadius: 999,
-    paddingVertical: 8,
-    paddingHorizontal: 20,
-  },
-  buttonText: {
-    color: '#fff',
     fontWeight: 'bold',
+  },
+  arrow: {
+    color: '#4B7BE5',
+    fontWeight: 'bold',
+    fontSize: 20,
   },
 });

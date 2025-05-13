@@ -38,12 +38,16 @@ export default function GuideDetailScreen({ route }) {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <CustomText style={styles.title}>{title}</CustomText>
+      <CustomText fontWeight="900" fontSize={22} style={{ textAlign: 'center', marginBottom: 30, color: '#1E1E1E' }}>
+        {title}
+      </CustomText>
+
       <View style={styles.stepWrapper}>
         {steps.map((step, index) => (
           <View key={index} style={styles.stepBox}>
-            <CustomText style={styles.stepText}>{step}</CustomText>
-            {/* 나중에 이미지 들어갈 자리 */}
+            <CustomText fontWeight="600" fontSize={15} style={{ color: '#333', lineHeight: 24 }}>
+              {step}
+            </CustomText>
             {/* <Image source={...} style={styles.stepImage} /> */}
           </View>
         ))}
@@ -56,36 +60,29 @@ const styles = StyleSheet.create({
   container: {
     padding: 24,
     backgroundColor: '#F5F6FA',
-  },
-  title: {
-    textAlign: 'center',
-    fontWeight: 'bold',
-    marginBottom: 28,
-    color: '#111',
+    alignItems: 'center',
   },
   stepWrapper: {
-    gap: 24,
+    width: '100%',
+    gap: 20,
   },
   stepBox: {
     backgroundColor: '#fff',
-    padding: 16,
-    borderRadius: 12,
+    borderRadius: 16,
+    padding: 20,
+    borderWidth: 2,
+    borderColor: '#4B7BE5',
     shadowColor: '#000',
-    shadowOpacity: 0.04,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  stepText: {
-    color: '#333',
-    lineHeight: 22,
-    fontWeight: '500',
+    shadowOpacity: 0.08,
+    shadowOffset: { width: 0, height: 3 },
+    shadowRadius: 6,
+    elevation: 4,
   },
   stepImage: {
     width: '100%',
     height: 160,
     marginTop: 12,
-    borderRadius: 8,
+    borderRadius: 10,
     backgroundColor: '#EEE',
   },
 });
