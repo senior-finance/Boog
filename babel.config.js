@@ -1,5 +1,5 @@
 module.exports = {
-  presets: ['module:metro-react-native-babel-preset'],
+   presets: ['module:metro-react-native-babel-preset'],
   plugins: [
     [
       // 여기에서 "react-native-dotenv"가 아니라
@@ -13,7 +13,7 @@ module.exports = {
         // blocklist: null,
         // safe: false,
         // allowUndefined: true,
-      },
+             },
     ],
   ],
 };
