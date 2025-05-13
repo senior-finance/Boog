@@ -77,6 +77,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 30,
     color: '#333',
+    
   },
   input: {
     width: '100%',
@@ -89,6 +90,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.08,
     shadowRadius: 3,
     elevation: 3,
+    borderWidth: 1,
+    borderColor: '#4B7BE5'
   },
   textArea: {
     width: '100%',
@@ -103,6 +106,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.08,
     shadowRadius: 3,
     elevation: 3,
+     borderWidth: 1,
+    borderColor: '#4B7BE5'
   },
   button: {
     width: '100%',
