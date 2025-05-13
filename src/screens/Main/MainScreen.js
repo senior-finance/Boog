@@ -5,12 +5,15 @@ import {
   TouchableOpacity,
   ScrollView,
   Modal,
+  Text,
   TextInput,
+  Pressable,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import CustomText from '../../components/CustomText';
 import CustomTextInput from '../../components/CustomTextInput';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 const FunctionButton = ({ title, onPress, icon, size = 'large' }) => (
   <TouchableOpacity
@@ -72,9 +75,20 @@ const MainScreen = ({ navigation }) => {
     <LinearGradient colors={['#F8F8F8', '#ECECEC']} style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <LinearGradient colors={['#4B7BE5', '#6FA8DC']} style={styles.balanceCard}>
-          <CustomText style={styles.balanceLabel}>잔액 레이블</CustomText>
-          <CustomText style={styles.accountNumber}>계좌 번호는 개별 항목이므로 생략</CustomText>
-          <CustomText style={styles.balanceAmount}>총 금액은 account list 에서 sum(ammount_all)</CustomText>
+          <TouchableOpacity
+            style={[styles.settingsButton, { flexDirection: 'row', alignItems: 'center' }]}
+            onPress={() => {
+              // 설정 화면으로 이동하거나 모달 열기 등
+            }}
+          >
+            <Icon name="gear" size={24} color="#fff" />
+            <Text style={{ color: '#fff', fontSize: 16, marginLeft: 5 }}>
+              설정
+            </Text>
+          </TouchableOpacity>
+          <CustomText style={styles.balanceLabel}>어서오세요 사용자 님</CustomText>
+          <CustomText style={styles.accountNumber}>대표 계좌 번호 : 1146566180</CustomText>
+          <CustomText style={styles.balanceAmount}>금액 104,000,000 원</CustomText>
         </LinearGradient>
 
         <View style={styles.actionRow}>
@@ -340,6 +354,15 @@ const styles = StyleSheet.create({
     color: '#333',
     textAlign: 'center',
     fontWeight: 'bold',
+  },
+  settingsButton: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    padding: 5,
+    borderRadius: 10,
+    backgroundColor: 'rgba(0,0,0,0.2)',  // 필요에 따라 배경 조정
+    // flexDirection, alignItems는 인라인으로 줘도 되고 여기에 넣어도 됩니다
   },
 });
 

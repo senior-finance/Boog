@@ -420,8 +420,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   logo: {
-    width: 160,
-    height: 160,
+    width: "80%",
+    height: 100,
     marginBottom: 32,
     resizeMode: 'contain',
   },
