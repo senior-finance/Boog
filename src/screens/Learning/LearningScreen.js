@@ -56,8 +56,14 @@ const LearningScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <CustomText style={styles.title}>학습 콘텐츠</CustomText>
-
+      <CustomText
+        style={[
+          styles.title,
+          { fontSize: (styles.title.fontSize || +30) }
+        ]}
+      >
+        학습 콘텐츠
+      </CustomText>
       {cards.map((card, idx) => (
         <Animated.View
           key={idx}
