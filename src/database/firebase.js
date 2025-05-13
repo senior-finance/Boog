@@ -1,5 +1,5 @@
 // src/firebase.js
-import { initializeApp, getApp } from 'firebase/app';
+import { initializeApp } from 'firebase/app';
 import {
   getFirestore,
   collection,
@@ -16,16 +16,16 @@ const projectId       = gs.project_info.project_id;
 const storageBucket   = gs.project_info.storage_bucket;
 const messagingSender = gs.project_info.project_number;
 
-// 클라이언트 배열 중 android 설정이 있는 항목 찾기
+// 3) android 클라이언트 정보 찾기
 const androidClient = gs.client.find(c =>
   c.client_info.android_client_info?.package_name === 'com.seniorfinance'
 );
 
-// 모바일 SDK 앱 ID와 API 키
+// 4) 모바일 SDK App ID / API 키 꺼내기
 const appId = androidClient.client_info.mobilesdk_app_id;
 const apiKey = androidClient.api_key[0].current_key;
 
-// 3) Web SDK용 설정 객체 생성
+// 5) Web SDK용 config 구성
 const firebaseConfig = {
   apiKey,
   authDomain: `${projectId}.firebaseapp.com`,
@@ -33,10 +33,13 @@ const firebaseConfig = {
   storageBucket,
   messagingSenderId: messagingSender,
   appId,
-  // measurementId 등 필요하면 추가
 };
 
-// 4) 초기화 & export
+// 6) Firebase 초기화 & Firestore 연결
 const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
+
+// 💡 필요한 경우 확장을 위해 다음도 추가 가능:
+// export const auth = getAuth(app); (추후 로그인 쓸 때)
+// export const storage = getStorage(app); (추후 파일 업로드 시)
 export default app;

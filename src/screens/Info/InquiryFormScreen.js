@@ -1,32 +1,39 @@
 import React, { useState } from 'react';
 import {
   View,
-  Text,
-  TextInput,
-  StyleSheet,
-  TouchableOpacity,
   Alert,
-  KeyboardAvoidingView,
   Platform,
   ScrollView,
+  StyleSheet,
+  KeyboardAvoidingView,
+  TouchableOpacity,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import CustomText from '../../components/CustomText';
 import CustomTextInput from '../../components/CustomTextInput';
+import { sendInquiry } from './Inquiry';
+import { sendInquiryEmail } from '../../utils/sendEmail'; 
 
 const InquiryFormScreen = () => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!title || !content) {
       Alert.alert('입력 오류', '제목과 내용을 모두 입력해주세요.');
       return;
     }
 
-    Alert.alert('접수 완료', '고객님의 문의가 접수되었습니다.');
-    setTitle('');
-    setContent('');
+    try {
+      await sendInquiry({ title, content }); // 🔹 Firestore 저장
+      await sendInquiryEmail({ title, content }); // 🔹 이메일 전송
+      Alert.alert('접수 완료', '문의가 저장되고 이메일이 전송되었습니다.');
+      setTitle('');
+      setContent('');
+    } catch (err) {
+      Alert.alert('전송 실패', '네트워크 또는 시스템 오류가 발생했습니다.');
+      console.error('문의 처리 오류:', err);
+    }
   };
 
   return (
@@ -67,7 +74,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   title: {
-  
     fontWeight: 'bold',
     marginBottom: 30,
     color: '#333',
@@ -77,7 +83,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     padding: 14,
     borderRadius: 10,
- 
     marginBottom: 20,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -91,7 +96,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     padding: 14,
     borderRadius: 10,
-   
     textAlignVertical: 'top',
     marginBottom: 20,
     shadowColor: '#000',
@@ -114,7 +118,6 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: '#fff',
-   
     fontWeight: 'bold',
   },
 });
