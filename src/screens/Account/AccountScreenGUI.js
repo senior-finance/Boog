@@ -7,6 +7,7 @@ import {
   Button,
   FlatList,
   TextInput,
+  ScrollView,
   TouchableOpacity,
   TouchableWithoutFeedback,
   KeyboardAvoidingView,
@@ -26,10 +27,22 @@ import LottieView from 'lottie-react-native';
 import { deposit, withdraw, accountUpsert, accountGet } from '../../database/mongoDB'
 import CustomModal from '../../components/CustomModal.js'
 import { useNavigation } from '@react-navigation/native';
+import LinearGradient from 'react-native-linear-gradient';
 
 // 내부에서 사용할 상수 변수 선언
 const DEFAULT_TITLE = '금융결제원 테스트베드';
 const LOADING_MESSAGE = '로딩 중...';
+
+const BANK_OPTIONS = ['전체', '신한', '국민', '하나', /* 필요한 만큼 추가 */];
+const GRADIENT_COLOR_SETS = [
+  ['rgba(190, 183, 255, 0.8)', 'transparent', 'rgba(255, 255, 255, 1)'], // set 0
+  ['rgba(196, 215, 255, 0.8)', 'transparent', 'rgba(255, 255, 255, 1)'], // set 1
+  ['rgba(255, 215, 196, 0.8)', 'transparent', 'rgba(255, 255, 255, 1)'], // set 2
+  ['rgba(255, 244, 181, 0.8)', 'transparent', 'rgba(255, 255, 255, 1)'], // set 3
+  ['rgba(224, 255, 181, 0.8)', 'transparent', 'rgba(255, 255, 255, 1)'], // set 4
+  // …원하는 만큼 추가
+];
+const BORDER_WIDTH = 3;
 
 const AccountScreenGUI = ({
   CONFIG,
@@ -54,6 +67,7 @@ const AccountScreenGUI = ({
 
   const [isModalVisible, setModalVisible] = useState(false);
   const [accountNumber, setAccountNumber] = useState(''); // 계좌번호 입력
+  const [selectedBank, setSelectedBank] = useState('전체');
 
   const navigation = useNavigation();
 
@@ -359,32 +373,61 @@ const AccountScreenGUI = ({
   if (step === 'accountList') {
     return (
       <View style={styles.container}>
+        <CustomText style={styles.mainTitle}>
+          ℹ️ 금융결제원 테스트베드 환경에 등록된 모의 계좌입니다
+        </CustomText>
         <View style={styles.rowContainer}>
-          <LottieView
-            source={require('../../assets/animeAI.json')}
-            autoPlay
-            loop
-            style={styles.animation}
-          // renderMode="HARDWARE" // GPU 가속 렌더링
-          // resizeMode="cover" // 화면에 꽉 차게, 비율 유지
-          />
-          <LottieView
+          {/* <LottieView
             source={require('../../assets/animeAI2.json')}
             autoPlay
             loop
             style={styles.animation}
           // renderMode="HARDWARE" // GPU 가속 렌더링
           // resizeMode="cover" // 화면에 꽉 차게, 비율 유지
-          />
+          /> */}
+          {/* <LottieView
+          source={require('../../assets/animeAI.json')}
+          autoPlay
+          loop
+          style={styles.animation}
+          // renderMode="HARDWARE" // GPU 가속 렌더링
+          // resizeMode="cover" // 화면에 꽉 차게, 비율 유지
+          /> */}
         </View>
-        <CustomText style={styles.mainTitle}>
-          ! 금융결제원 테스트베드 환경에 등록된 모의 계좌입니다
-        </CustomText>
-        <CustomText style={styles.subTitle}>계좌 목록</CustomText>
+        <CustomText style={styles.subTitle}>김민준 님의 계좌 목록이에요</CustomText>
+        {/* // 여기에 은행별로 고를수 잇게 옵션 버튼 넣어줘, 전체, 신한, 국민, 하나 등등등 */}
+
+        {/* 은행 옵션 버튼 */}
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.filterContainer}
+        >
+          {BANK_OPTIONS.map(bank => (
+            <TouchableOpacity
+              key={bank}
+              style={[
+                styles.filterButton,
+                selectedBank === bank && styles.filterButtonActive
+              ]}
+              onPress={() => setSelectedBank(bank)}
+            >
+              <Text
+                style={[
+                  styles.filterText,
+                  selectedBank === bank && styles.filterTextActive
+                ]}
+              >
+                {bank}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+
         <FlatList
           data={accountList}
           keyExtractor={item => item.fintech_use_num}
-          renderItem={({ item }) => {
+          renderItem={({ item, index }) => {
             // 배열에서 해당 계좌의 잔고 정보를 찾아 반환
             const balanceObj = accountBalances.find(
               b => b.fintech_use_num === item.fintech_use_num,
@@ -393,73 +436,83 @@ const AccountScreenGUI = ({
             const dbObj = dbAccounts.find(
               d => d.accountId === item.fintech_use_num,
             );
+            const colors = GRADIENT_COLOR_SETS[index % GRADIENT_COLOR_SETS.length];
             return (
-              <View style={styles.accountItem}>
-                <Pressable
-                  style={styles.accountItem}
-                  onPress={() =>
-                    navigation.navigate('AccountDetail', {
-                      userName: testBedAccount,
-                      fintechUseNum: item.fintech_use_num,
-                      bankName: item.bank_name,
-                      balance: dbObj?.amount ?? 0,
-                    })
-                  }
+              <View>
+                {/* 배경 알록달록 */}
+                <LinearGradient
+                  colors={colors}
+                  start={{ x: 0, y: 1 }}
+                  end={{ x: 1, y: 0 }}
+                  locations={[2, 0.5, 4]}
+                  style={styles.gradientBorder} // 외곽 그라데이션
                 >
-                  <View style={styles.accountInfo}>
-                    <CustomText style={styles.bankName}>
-                      은행명 :{' '}
-                      {balanceObj ? balanceObj.bank_name : '은행 조회 중...'}
-                    </CustomText>
-                    <CustomText style={styles.accountNumber}>
-                      {/* 계좌번호 : {item.account_num_masked || '정보없음'} */}
-                      계좌번호 : {dbObj?.accountNum || '정보없음'}
-                      {/* const { dbName } = CONFIG[testBedAccount] || {}; 컬렉션에서 item.fintech_use_num == accountId 고유값 따라서 accountNum 가져오기 */}
-                    </CustomText>
-                    <CustomText style={styles.balance}>
-                      {/* 잔액 :{' '}
+                  <Pressable
+                    style={[styles.accountItem]}
+                    onPress={() =>
+                      navigation.navigate('AccountDetail', {
+                        userName: testBedAccount,
+                        fintechUseNum: item.fintech_use_num,
+                        bankName: item.bank_name,
+                        balance: dbObj?.amount ?? 0,
+                      })
+                    }
+                  >
+                    <View style={styles.accountInfo}>
+                      <CustomText style={styles.bankName}>
+                        {''}
+                        {balanceObj ? balanceObj.bank_name : '은행 조회 중...'}
+                      </CustomText>
+                      <CustomText style={styles.accountNumber}>
+                        {/* 계좌번호 : {item.account_num_masked || '정보없음'} */}
+                        계좌번호 : {dbObj?.accountNum || '정보없음'}
+                        {/* const { dbName } = CONFIG[testBedAccount] || {}; 컬렉션에서 item.fintech_use_num == accountId 고유값 따라서 accountNum 가져오기 */}
+                      </CustomText>
+                      <CustomText style={styles.balance}>
+                        {/* 잔액 :{' '}
                     {balanceObj
                       ? Number(balanceObj.balance_amt).toLocaleString()
                       : '잔액 조회 중...'} */}
-                      잔액:{' '}
-                      {dbObj?.amount != null
-                        ? Number(dbObj.amount).toLocaleString()
-                        : '정보없음'}
-                      {/* const { dbName } = CONFIG[testBedAccount] || {}; 컬렉션에서 item.fintech_use_num == accountId 고유값 따라서 ammount 가져오기 */}
-                    </CustomText>
-                  </View>
-                  <View style={styles.buttonContainer}>
-                    <TouchableOpacity
-                      style={styles.receiveButton}
-                      // onPress={() => handleReceiveMoney(item)}
-                      onPress={() => onPressDeposit(item)}>
-                      <CustomText style={styles.receiveButtonText}>
-                        지원금
+                        잔액:{''}
+                        {dbObj?.amount != null
+                          ? Number(dbObj.amount).toLocaleString()
+                          : '정보없음'}
+                        {/* const { dbName } = CONFIG[testBedAccount] || {}; 컬렉션에서 item.fintech_use_num == accountId 고유값 따라서 ammount 가져오기 */}
                       </CustomText>
-                    </TouchableOpacity>
-                    <TouchableOpacity
+                    </View>
+                    <View style={styles.buttonContainer}>
+                      <TouchableOpacity
+                        style={styles.receiveButton}
+                        // onPress={() => handleReceiveMoney(item)}
+                        onPress={() => onPressDeposit(item)}>
+                        <CustomText style={styles.receiveButtonText}>
+                          가져오기
+                        </CustomText>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        style={styles.withdrawButton}
+                        // onPress={() => handleWithdraw(item)}
+                        onPress={() => onPressWithdraw(item)}>
+                        <CustomText style={styles.withdrawButtonText}>
+                          출금
+                        </CustomText>
+                      </TouchableOpacity>
+                      {/* <TouchableOpacity
                       style={styles.withdrawButton}
-                      // onPress={() => handleWithdraw(item)}
-                      onPress={() => onPressWithdraw(item)}>
-                      <CustomText style={styles.withdrawButtonText}>
-                        출금
-                      </CustomText>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      style={styles.withdrawButton}
-                      // onPress={() => handleWithdraw(item)}
                       onPress={() => onPressUpsert(item)}>
-                      <CustomText>
+                      <CustomText style={styles.resetButtonText}>
                         리셋
                       </CustomText>
-                    </TouchableOpacity>
-                  </View>
-                </Pressable>
+                    </TouchableOpacity> */}
+                    </View>
+                  </Pressable>
+                </LinearGradient>
               </View>
             );
-          }}
+          }
+          }
         />
-        <Button title="token 캐시 초기화" onPress={confirmClearToken} />
+        {/* <Button title="token 캐시 초기화" onPress={confirmClearToken} /> */}
         {/* 배경 원 1 */}
         <Animated.View
           pointerEvents="none"
@@ -511,7 +564,7 @@ const AccountScreenGUI = ({
                 {/* 내부 콘텐츠 터치만 막기 */}
                 <TouchableWithoutFeedback>
                   <View style={styles.modalContent}>
-                    <Text style={styles.withdrawTitle}>출금 금액 입력</Text>
+                    <Text style={styles.withdrawTitle}>임시 modal ... 출금 금액 입력</Text>
 
                     <TextInputMask
                       type={'custom'}
@@ -605,7 +658,7 @@ const AccountScreenGUI = ({
           onCancel={() => setModalVisible(false)}
           onConfirm={() => setModalVisible(false)}
         />
-      </View>
+      </View >
     );
   }
 
@@ -643,30 +696,44 @@ const styles = StyleSheet.create({
     backgroundColor: 'yellow',
   },
   subTitle: {
-    fontSize: 24,
+    fontSize: 30,
     fontWeight: 'bold',
     marginBottom: 20,
+    textAlign: 'right',
     // backgroundColor: 'yellow',
   },
   withdrawTitle: {
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
-    backgroundColor: 'green',
+    backgroundColor: 'pink',
+  },
+  // 외곽선만 담당 (그라데이션 + 테두리 두께)
+  gradientBorder: {
+    borderRadius: 20,
+    padding: -20,      // 테두리 두께
+    marginBottom: 5,
+    // 외곽 그림자 필요 시 여기 추가
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowRadius: 5,
+    elevation: 1,
   },
   accountItem: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     backgroundColor: '#f8f8f8',
-    padding: 15,
-    borderRadius: 8,
+    padding: 20,
+    borderRadius: 20,
     marginBottom: 10,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
-    shadowRadius: 4,
+    shadowRadius: 20,
     elevation: 2,
+    borderWidth: 4,
+    borderColor: 'rgba(75, 124, 229, 0.5)',
   },
   accountInfo: {
     flex: 1,
@@ -690,8 +757,8 @@ const styles = StyleSheet.create({
   },
   receiveButton: {
     backgroundColor: '#28a745',
-    paddingVertical: 8,
-    paddingHorizontal: 12,
+    paddingVertical: 16,
+    paddingHorizontal: 16,
     borderRadius: 5,
     marginRight: 8,
   },
@@ -701,9 +768,10 @@ const styles = StyleSheet.create({
   },
   withdrawButton: {
     backgroundColor: '#007bff',
-    paddingVertical: 8,
-    paddingHorizontal: 12,
+    paddingVertical: 16,
+    paddingHorizontal: 30,
     borderRadius: 5,
+    marginRight: 8,
   },
   withdrawButtonText: {
     color: '#fff',
@@ -825,7 +893,35 @@ const styles = StyleSheet.create({
     fontSize: 30,
     color: '#000',
     // fontWeight: '100'
-  }
+  },
+  filterContainer: {
+    paddingVertical: 10,
+    justifyContent: 'center',   // ← 수직 중앙 정렬
+    alignItems: 'center',       // ← 수평 중앙 정렬
+  },
+  filterButton: {
+    minHeight: 45,
+    paddingVertical: 5,
+    paddingHorizontal: 20,
+    borderRadius: 20,
+    borderWidth: 2,
+    borderColor: 'rgba(75, 124, 229, 0.5)',
+    marginRight: 8,
+    marginBottom: 10,
+    justifyContent: 'center',   // ← 수직 중앙 정렬
+    alignItems: 'center',       // ← 수평 중앙 정렬
+  },
+  filterButtonActive: {
+    backgroundColor: '#007AFF',
+    borderColor: 'rgba(75, 124, 229, 0.5)',
+  },
+  filterText: {
+    fontSize: 20,
+    color: '#444',
+  },
+  filterTextActive: {
+    color: '#fff',
+  },
 });
 
 export default AccountScreenGUI;
