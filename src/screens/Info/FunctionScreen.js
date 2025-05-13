@@ -48,18 +48,21 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   functionButton: {
-    width: '48%',
-    backgroundColor: '#fff',
-    borderRadius: 14,
-    paddingVertical: 40,
-    alignItems: 'center',
-    marginBottom: 30,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    elevation: 5,
-  },
+  width: '48%',
+  backgroundColor: '#fff',
+  borderRadius: 14,
+  paddingVertical: 40,
+  alignItems: 'center',
+  marginBottom: 30,
+  shadowColor: '#000',
+  shadowOffset: { width: 0, height: 2 },
+  shadowOpacity: 0.1,
+  shadowRadius: 3,
+  elevation: 5,
+  borderWidth: 0.9, // ✅ 테두리 두께
+  borderColor: '#4B7BE5', // ✅ 테두리 색 (아이콘 컬러와 맞춤)
+},
+
   functionText: {
     color: '#333',
     marginTop: 10,

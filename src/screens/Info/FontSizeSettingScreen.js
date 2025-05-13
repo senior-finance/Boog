@@ -43,18 +43,18 @@ const FontSizeSettingScreen = ({ navigation }) => {
         <CustomText style={[styles.previewText, { fontSize: tempFontSize }]}>
           변경하실 글자 예시입니다
         </CustomText>
+<Slider
+  style={styles.slider}
+  minimumValue={12}
+  maximumValue={23}
+  step={1}
+  value={tempFontSize}
+  onValueChange={value => setTempFontSize(value)}
+  minimumTrackTintColor="#4B7BE5"
+  maximumTrackTintColor="#ccc"
+  thumbTintColor="#4B7BE5"
+/>
 
-        <Slider
-          style={styles.slider}
-          minimumValue={12}
-          maximumValue={23}
-          step={1}
-          value={tempFontSize}
-          onValueChange={value => setTempFontSize(value)}
-          minimumTrackTintColor="#4B7BE5"
-          maximumTrackTintColor="#ccc"
-          thumbTintColor="#4B7BE5"
-        />
 
         <TouchableOpacity
           style={[styles.confirmButton, applied && styles.confirmButtonApplied]}
@@ -74,20 +74,21 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   card: {
-    width: '88%',
-    height: 360,
-    backgroundColor: '#fff',
-    borderRadius: 16,
-    paddingVertical: 30,
-    paddingHorizontal: 24,
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    elevation: 5,
-  },
+  width: '88%',
+  height: 440, // 기존보다 넉넉히
+  backgroundColor: '#fff',
+  borderRadius: 16,
+  paddingVertical: 30,
+  paddingHorizontal: 24,
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  shadowColor: '#000',
+  shadowOffset: { width: 0, height: 3 },
+  shadowOpacity: 0.1,
+  shadowRadius: 5,
+  elevation: 5,
+},
+
   title: {
     fontWeight: 'bold',
     color: '#333',
@@ -98,7 +99,11 @@ const styles = StyleSheet.create({
   },
   slider: {
     width: '90%',
-    height: 40,
+    height: 40,               // 터치 영역은 이 높이 만큼 확보
+    transform: [
+      { scaleY: 1.5 },        // 트랙 두께를 1.5배로
+      { scaleX: 1.0 },
+       ],
   },
   confirmButton: {
     backgroundColor: '#4B7BE5',
