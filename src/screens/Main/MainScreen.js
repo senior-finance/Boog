@@ -1,5 +1,6 @@
 import React, { useLayoutEffect, useState, useMemo } from 'react';
 import {
+  Text,
   View,
   StyleSheet,
   TouchableOpacity,
@@ -10,11 +11,12 @@ import LinearGradient from 'react-native-linear-gradient';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import CustomText from '../../components/CustomText';
 import CustomTextInput from '../../components/CustomTextInput';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 const FunctionButton = ({ title, onPress, icon }) => (
   <TouchableOpacity style={styles.functionButton} onPress={onPress}>
     <LinearGradient
-      colors={['rgba(255,255,255,1)', 'rgb(189, 223, 255)']}
+      colors={['rgb(255, 255, 255)', 'rgb(220, 240, 255)']}
       start={{ x: 0.5, y: 0 }}
       end={{ x: 0.5, y: 1 }}
       style={styles.functionButtonInner}
@@ -95,8 +97,23 @@ const MainScreen = ({ navigation }) => {
           <View style={[styles.circleDecor, styles.circleOffset]} />
           <View style={styles.arrowPattern} />
           <View style={styles.dottedLine} />
-          <CustomText style={styles.accountNum}>대표 계좌: 114-6566-180</CustomText>
-          <CustomText style={styles.balanceAmt}>₩104,000,000</CustomText>
+          <TouchableOpacity
+            style={[styles.settingsButton, { flexDirection: 'row', alignItems: 'center' }]}
+            onPress={() => {
+              // 설정 화면으로 이동하거나 모달 열기 등
+            }}
+          >
+            <Icon name="gear" size={24} color="#fff" />
+            <Text style={{ color: '#fff', fontSize: 16, marginLeft: 5 }}>
+              설정
+            </Text>
+          </TouchableOpacity>
+          <CustomText style={[styles.accountNum, { fontSize: (styles.accountNum.fontSize || +20) }]}>
+            대표 계좌: 114-6566-180
+          </CustomText>
+          <CustomText style={[styles.balanceAmt, { fontSize: (styles.balanceAmt.fontSize || +20) }]}>
+            ₩ 104,000,000
+          </CustomText>
         </View>
 
         <CustomText style={styles.sectionSubTitle}>주요 기능</CustomText>
@@ -220,9 +237,9 @@ const styles = StyleSheet.create({
   },
 
   accountNum: { color: '#E3F2FD', fontWeight: '700', marginBottom: 20 },
-  balanceAmt: { color: '#fff',  fontWeight: '900', letterSpacing: 2 },
+  balanceAmt: { color: '#fff', fontWeight: '900', letterSpacing: 2 },
 
-  sectionSubTitle: {  fontWeight: '600', color: '#4A90E2', marginBottom: 10 },
+  sectionSubTitle: { fontWeight: '600', color: '#4A90E2', marginBottom: 10 },
   sectionTitle: { fontWeight: 'bold', color: '#4A90E2' },
   toggleRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 },
 
@@ -230,55 +247,55 @@ const styles = StyleSheet.create({
   featureRow: { flexDirection: 'row', justifyContent: 'center', marginBottom: 32 },
 
   functionButton: { borderRadius: 20, overflow: 'hidden', width: '22%' },
-functionButtonInner: {
-  flex: 1,
-  paddingVertical: 12,
-  alignItems: 'center',
-  justifyContent: 'center',
-  width: '100%',
-  borderRadius: 20,
-  backgroundColor: '#FFFFFF', // 배경 밝게
+  functionButtonInner: {
+    flex: 1,
+    paddingVertical: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
+    borderRadius: 20,
+    backgroundColor: '#FFFFFF', // 배경 밝게
 
-  // 📏 그림자 강조 (아래 + 오른쪽)
-  shadowColor: '#000',
-  shadowOffset: { width: 3, height: 3 },
-  shadowOpacity: 0.2,
-  shadowRadius: 6,
-  elevation: 6,
+    // 📏 그림자 강조 (아래 + 오른쪽)
+    shadowColor: '#000',
+    shadowOffset: { width: 3, height: 3 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    elevation: 6,
 
-  // 🔲 테두리로 윤곽 강조
-  borderWidth: 1,
-  borderColor: '#C4DCFF',
-},
+    // 🔲 테두리로 윤곽 강조
+    borderWidth: 2,
+    borderColor: '#C4DCFF',
+  },
+
+  functionText: {
+    color: '#444444'
+    , marginTop: 6, fontWeight: '600'
+  },
+
+  circleButton: {
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+    marginHorizontal: 12,
+    backgroundColor: '#4A90E2',
+    justifyContent: 'center',
+    alignItems: 'center',
+
+    // ✅ 그림자 더 진하게
+    shadowColor: '#000',
+    shadowOffset: { width: 2, height: 2 },
+    shadowOpacity: 0.18,
+    shadowRadius: 4,
+    elevation: 5,
 
 
+    // ✅ 테두리 살짝 넣기 (흰 배경 대비)
+    borderWidth: 1,
+    borderColor: '#387FD8',
+  },
 
-  functionText: {color: '#444444' 
-, marginTop: 6, fontWeight: '600' },
-
- circleButton: {
-  width: 70,
-  height: 70,
-  borderRadius: 35,
-  marginHorizontal: 12,
-  backgroundColor: '#4A90E2',
-  justifyContent: 'center',
-  alignItems: 'center',
-
-  // ✅ 그림자 더 진하게
-  shadowColor: '#000',
- shadowOffset: { width: 2, height: 2 },
-shadowOpacity: 0.18,
-shadowRadius: 4,
-elevation: 5,
-
-
-  // ✅ 테두리 살짝 넣기 (흰 배경 대비)
-  borderWidth: 1,
-  borderColor: '#387FD8',
-},
-
-  circleButtonText: { position: 'absolute', bottom: -16, color: 'rgb(59, 101, 173)', textAlign: 'center' },
+  circleButtonText: { position: 'absolute', bottom: -24, color: 'rgb(59, 101, 173)', textAlign: 'center' },
 
   historyList: { width: '100%' },
   txCard: {
@@ -297,19 +314,27 @@ elevation: 5,
   },
   txInfo: { flex: 1 },
   txName: { fontWeight: '600', color: '#333' },
-  txDate: {  color: '#888', marginTop: 4 },
-  txAmt: {  fontWeight: 'bold' },
+  txDate: { color: '#888', marginTop: 4 },
+  txAmt: { fontWeight: 'bold' },
 
   modalBg: { flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', justifyContent: 'center', alignItems: 'center' },
   modalBox: { width: '80%', backgroundColor: '#fff', padding: 24, borderRadius: 16 },
   modalTitle: { fontWeight: 'bold', color: '#4A90E2', marginBottom: 12 },
   memoRow: { marginTop: 16 },
-  memoLabel: {fontWeight: '600', marginBottom: 8 },
+  memoLabel: { fontWeight: '600', marginBottom: 8 },
   memoInput: { backgroundColor: '#F0F0F0', borderRadius: 8, padding: 10, minHeight: 60 },
   saveBtn: { marginTop: 12, backgroundColor: '#4A90E2', paddingVertical: 10, borderRadius: 8 },
   saveText: { color: '#fff', textAlign: 'center', fontWeight: '600' },
   closeBtn: { marginTop: 16, backgroundColor: '#CCC', paddingVertical: 10, borderRadius: 8 },
   closeText: { textAlign: 'center', fontWeight: '600', color: '#333' },
+    settingsButton: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    padding: 5,
+    borderRadius: 10,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',  // 필요에 따라 배경 조정
+  },
 });
 
 export default MainScreen;

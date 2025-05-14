@@ -88,7 +88,7 @@ const MyInfoScreen = ({ navigation }) => {
       style={styles.cardWrapper} // 그림자와 외곽 처리용
     >
       <LinearGradient
-        colors={['rgba(255,255,255,1)', 'rgb(164, 211, 255)']}
+        colors={['rgb(255, 255, 255)', 'rgb(220, 240, 255)']}
         start={{ x: 0.5, y: 0 }}
         end={{ x: 0.5, y: 1 }}
         style={styles.menuCard}
@@ -247,7 +247,7 @@ const styles = StyleSheet.create({
   shadowOffset: { width: 2, height: 2 },
   shadowOpacity: 0.08,
   shadowRadius: 4,
-  elevation: 4,
+  elevation: 2,
 },
 
 menuCard: {

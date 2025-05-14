@@ -61,7 +61,7 @@ export default function GuideScreen() {
               style={styles.cardWrapper}
             >
               <LinearGradient
-                colors={['rgb(255, 255, 255)', 'rgb(172, 212, 250)']}
+                colors={['rgb(255, 255, 255)', 'rgb(220, 240, 255)']}
                 style={styles.listCard}
                 start={{ x: 0.5, y: 0 }}
                 end={{ x: 0.5, y: 1 }}
@@ -133,7 +133,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
-    elevation: 5,
+    elevation: 3,
 
     borderWidth: 1.5,
     borderColor: 'rgba(139, 177, 246, 0.2)',

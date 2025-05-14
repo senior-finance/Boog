@@ -206,8 +206,6 @@ const MapViewScreen = ({ route, navigation }) => {
     return 11;
   };
 
-
-
   return (
     <View style={{ flex: 1 }}>
       {/* 드롭다운 & 검색 버튼 */}
@@ -225,7 +223,7 @@ const MapViewScreen = ({ route, navigation }) => {
               setItems={setCategoryItems}
               placeholder="카테고리 선택"
               containerStyle={{ height: 44 }}
-              style={{ backgroundColor: '#fff', borderColor: '#4B7BE5', borderRadius: 8, height: 44 }}
+              style={{ backgroundColor: '#fff', borderColor: 'rgb(74, 144, 226)', borderRadius: 8, height: 44 }}
               dropDownContainerStyle={{ backgroundColor: '#f9f9f9', borderColor: '#4B7BE5', borderRadius: 8 }}
               textStyle={{ fontSize: 20, color: '#333' }}
               labelStyle={{ fontWeight: '500' }}
@@ -236,7 +234,7 @@ const MapViewScreen = ({ route, navigation }) => {
             style={{
               flex: 2,
               height: 50,
-              backgroundColor: '#4B7BE5',
+              backgroundColor: 'rgb(74, 144, 226)',
               marginLeft: 10,
               marginTop: 6,
               borderRadius: 8,
@@ -325,7 +323,7 @@ const MapViewScreen = ({ route, navigation }) => {
             position: 'absolute',
             bottom: 20,
             right: 20,
-            backgroundColor: '#4B7BE5',
+            backgroundColor: 'rgb(74, 144, 226)',
             paddingVertical: 12,
             paddingHorizontal: 20,
             borderRadius: 30,
@@ -376,7 +374,7 @@ const MapViewScreen = ({ route, navigation }) => {
                     borderRadius: 8,
                     padding: 12,
                     borderWidth: 1,
-                    borderColor: '#4B7BE5',
+                    borderColor: 'rgb(74, 144, 226)',
                     shadowColor: '#000',
                     shadowOffset: { width: 0, height: 1 },
                     shadowOpacity: 0.1,

@@ -372,7 +372,12 @@ const AccountScreenGUI = ({
   // 계좌 목록 화면 렌더링 (잔액 및 출금 버튼 포함)
   if (step === 'accountList') {
     return (
-      <View style={styles.container}>
+      <LinearGradient
+        colors={['rgb(216,236,255)', 'rgb(233,244,255)']}
+        style={styles.container}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+      >
         <CustomText style={styles.mainTitle}>
           ℹ️ 금융결제원 테스트베드 환경에 등록된 모의 계좌입니다
         </CustomText>
@@ -423,6 +428,7 @@ const AccountScreenGUI = ({
             </TouchableOpacity>
           ))}
         </ScrollView>
+
 
         <FlatList
           data={accountList}
@@ -658,7 +664,7 @@ const AccountScreenGUI = ({
           onCancel={() => setModalVisible(false)}
           onConfirm={() => setModalVisible(false)}
         />
-      </View >
+      </LinearGradient>
     );
   }
 
@@ -905,7 +911,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: 20,
     borderWidth: 2,
-    borderColor: 'rgba(75, 124, 229, 0.5)',
+    borderColor: 'rgba(74, 144, 226, 0.5)',
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
     marginRight: 8,
     marginBottom: 10,
     justifyContent: 'center',   // ← 수직 중앙 정렬
@@ -913,7 +920,7 @@ const styles = StyleSheet.create({
   },
   filterButtonActive: {
     backgroundColor: '#007AFF',
-    borderColor: 'rgba(75, 124, 229, 0.5)',
+    borderColor: 'rgb(74, 144, 226)',
   },
   filterText: {
     fontSize: 20,
