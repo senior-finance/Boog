@@ -59,7 +59,7 @@ const LearningScreen = ({ navigation }) => {
       <CustomText
         style={[
           styles.title,
-          { fontSize: (styles.title.fontSize || +30) }
+          { fontSize: (styles.title.fontSize || +25) }
         ]}
       >
         학습 콘텐츠

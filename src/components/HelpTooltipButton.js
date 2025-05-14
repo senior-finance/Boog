@@ -5,14 +5,15 @@ import {
   StyleSheet,
   View,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useNavigationState } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import CustomText from './CustomText';
 
-const HelpTooltipButton = ({ currentRoute }) => {
+const HelpTooltipButton = () => {
   const navigation = useNavigation();
+  const state = useNavigationState(state => state);
 
-  // 초기 애니메이션
+  // ✅ 모든 훅은 항상 호출되어야 함
   const tooltipAnim = useRef(new Animated.Value(20)).current;
   const tooltipOpacity = useRef(new Animated.Value(0)).current;
 
@@ -30,6 +31,15 @@ const HelpTooltipButton = ({ currentRoute }) => {
       }),
     ]).start();
   }, []);
+
+  // ✅ 렌더링 시점에서만 조건 분기
+  if (!state || !state.routes) return null;
+
+  const routes = state.routes;
+  const routeName = routes[routes.length - 1]?.name;
+
+  const hiddenRoutes = ['Login', 'SetUserNameScreen', 'VoiceInput', 'MapView'];
+  if (hiddenRoutes.includes(routeName)) return null;
 
   return (
     <View style={styles.floatingWrapper}>
@@ -58,7 +68,7 @@ const HelpTooltipButton = ({ currentRoute }) => {
 const styles = StyleSheet.create({
   floatingWrapper: {
     position: 'absolute',
-    bottom: 40,
+    bottom: 60,
     left: 40,
     zIndex: 100,
     alignItems: 'flex-start',
@@ -81,8 +91,8 @@ const styles = StyleSheet.create({
     color: '#4B7BE5',
   },
   fab: {
-    width: 60,
-    height: 60,
+    width: 50,
+    height: 50,
     borderRadius: 40,
     backgroundColor: 'rgba(75, 123, 229, 0.85)',
     justifyContent: 'center',

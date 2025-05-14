@@ -3,7 +3,7 @@ import { View, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform } fr
 import LinearGradient from 'react-native-linear-gradient';
 import CustomText from '../../components/CustomText';
 import CustomTextInput from '../../components/CustomTextInput';
-import HelpTooltipButton from '../../components/HelpTooltipButton';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 export default function DepositStep1({ navigation }) {
   const [accountNumber, setAccountNumber] = useState('');
@@ -14,37 +14,46 @@ export default function DepositStep1({ navigation }) {
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         style={styles.keyboardView}
       >
-        <View style={styles.card}>
-          <CustomText style={styles.title}>
-            입금 연습을 해볼게요{'\n'}실제로 입금이 되지는 않아요!
-          </CustomText>
+        <View style={styles.contentWrapper}>
+          <View style={styles.card}>
+            <CustomText style={styles.title}>
+              입금 연습을 해볼게요{'\n'}실제로 입금이 되지는 않아요!
+            </CustomText>
 
-          <CustomText style={styles.subtitle}>
-            아래 빈칸에 입금할 계좌 번호를 입력하면{'\n'}올바른 계좌인지 확인해드릴게요
-          </CustomText>
+            <CustomText style={styles.subtitle}>
+              아래 빈칸에 입금할 계좌 번호를 입력하면{'\n'}올바른 계좌인지 확인해드릴게요
+            </CustomText>
 
-          <CustomTextInput
-            style={styles.input}
-            placeholder="계좌 번호 입력"
-            keyboardType="numeric"
-            value={accountNumber}
-            onChangeText={setAccountNumber}
-          />
+            <CustomTextInput
+              style={styles.input}
+              placeholder="계좌 번호 입력"
+              keyboardType="numeric"
+              value={accountNumber}
+              onChangeText={setAccountNumber}
+            />
 
-          <TouchableOpacity
-            style={[
-              styles.nextButton,
-              { backgroundColor: accountNumber ? '#4B7BE5' : '#ccc' },
-            ]}
-            onPress={() => navigation.navigate('DepositStep2', { accountNumber })}
-            disabled={!accountNumber}
-          >
-            <CustomText style={styles.nextButtonText}>다음 화면</CustomText>
+            <TouchableOpacity
+              style={[
+                styles.nextButton,
+                { backgroundColor: accountNumber ? '#4B7BE5' : '#ccc' },
+              ]}
+              onPress={() => navigation.navigate('DepositStep2', { accountNumber })}
+              disabled={!accountNumber}
+            >
+              <CustomText style={styles.nextButtonText}>다음 화면</CustomText>
+            </TouchableOpacity>
+          </View>
+
+          <CustomText style={styles.quitGuide}>연습을 그만두고 싶다면</CustomText>
+
+          <TouchableOpacity style={styles.quitButton} onPress={() => navigation.navigate('MainTabs')}>
+            <View style={styles.quitContent}>
+              <Ionicons name="exit-outline" size={26} color="#4B7BE5" style={styles.quitIcon} />
+              <CustomText style={styles.buttonText}>그만둘래요</CustomText>
+            </View>
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
-
-      <HelpTooltipButton navigation={navigation} />
     </LinearGradient>
   );
 }
@@ -52,32 +61,34 @@ export default function DepositStep1({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F8F8F8',
+    backgroundColor: '#FAFAFA',
     paddingHorizontal: 20,
-    alignItems: 'center',
-    justifyContent: 'flex-start', 
-    paddingTop: 0,
   },
   keyboardView: {
     flex: 1,
-    width: '100%',
-    justifyContent: 'flex-start',   
+    justifyContent: 'flex-start',
     alignItems: 'center',
-    paddingTop: 0,       
+  },
+  contentWrapper: {
+    width: '100%',
+    alignItems: 'center',
+    marginTop: 80, // 세로 가운데보다 살짝 위쪽 배치
   },
   card: {
     backgroundColor: '#fff',
     width: '90%',
-    paddingVertical: 50, // 상하 여백 크게
+    paddingVertical: 50,
     paddingHorizontal: 24,
     borderRadius: 16,
     alignItems: 'center',
     shadowColor: '#000',
-    marginTop: 50, 
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
     elevation: 6,
+    marginBottom: 50,
+    borderWidth: 1.5,
+    borderColor: 'rgba(75, 123, 229, 0.5)'
   },
   title: {
     fontWeight: 'bold',
@@ -114,5 +125,36 @@ const styles = StyleSheet.create({
   nextButtonText: {
     fontWeight: 'bold',
     color: 'white'
+  },
+  quitGuide: {
+    color: '#999',
+    marginBottom: 10,
+    textAlign: 'center',
+  },
+  quitButton: {
+    backgroundColor: '#FFFFFF',
+    width: '90%',
+    paddingVertical: 25,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 1, height: 3 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 4,
+  },
+  quitContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  quitIcon: {
+    marginRight: 6,
+    marginTop: 1,
+  },
+  buttonText: {
+    fontWeight: 'bold',
+    color: 'black',
   }
 });

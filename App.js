@@ -1,7 +1,7 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { LogBox } from 'react-native';
+import { LogBox, View } from 'react-native';
 LogBox.ignoreLogs([
   '`new NativeEventEmitter()` was called with a non-null argument',
   'ReactImageView: Image source "null" doesn\'t exist'
@@ -64,6 +64,8 @@ import TTSSettingScreen from './src/screens/VoiceAssistant/TTSSettingScreen';
 import QuizResult from './src/screens/Learning/QuizResult';
 import FunctionScreen from './src/screens/Info/FunctionScreen';
 
+import HelpTooltipButton from './src/components/HelpTooltipButton';
+
 // 가로모드
 import PortraitWrapper from './src/utils/portraitWrapper';  // 파일 경로에 맞춰 수정
 
@@ -75,6 +77,7 @@ export default function App() {
       <FontSizeProvider>
         <UserProvider>
           <NavigationContainer>
+          <View style={{ flex: 1 }}>
             <Stack.Navigator initialRouteName="Login">
               {/* 탭 내비게이션이 포함된 메인 */}
               <Stack.Screen
@@ -122,11 +125,13 @@ export default function App() {
               <Stack.Screen name="InquiryList" component={InquiryListScreen} />
               <Stack.Screen name="NotificationScreen" component={NotificationScreen} />
               <Stack.Screen name="Biometric" component={BiometricScreen} />
-              <Stack.Screen name="VoiceInput" component={VoiceInputScreen} options={{ title: 'AI 대화하기' }} />
+              <Stack.Screen name="VoiceInput" component={VoiceInputScreen} options={{ title: 'AI 챗봇' }} />
               <Stack.Screen name="TTSSetting" component={TTSSettingScreen} options={{ title: '음성 설정' }} />
               <Stack.Screen name="AutoPhoneAnalysis" component={AutoPhoneAnalysisScreen} options={{ title: '자동 통화/문자 분석' }} />
 
             </Stack.Navigator>
+            <HelpTooltipButton />
+          </View>
           </NavigationContainer>
         </UserProvider>
       </FontSizeProvider>

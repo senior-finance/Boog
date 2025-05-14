@@ -56,6 +56,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 6,
     elevation: 5,
+    borderWidth: 1.5,
+    borderColor: 'rgba(75, 123, 229, 0.5)'
   },
   buttonText: {
     fontWeight: 'bold',

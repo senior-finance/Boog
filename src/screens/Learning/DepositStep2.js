@@ -3,7 +3,7 @@ import { View, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform } fr
 import { Picker } from '@react-native-picker/picker';
 import LinearGradient from 'react-native-linear-gradient';
 import CustomText from '../../components/CustomText';
-import HelpTooltipButton from '../../components/HelpTooltipButton';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 export default function DepositStep2({ navigation, route }) {
   const [selectedBank, setSelectedBank] = useState('');
@@ -14,43 +14,56 @@ export default function DepositStep2({ navigation, route }) {
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         style={styles.keyboardView}
       >
-        <View style={styles.card}>
-          <CustomText style={styles.title}>
-            입금 연습을 해볼게요{'\n'}실제로 입금이 되지는 않아요!
-          </CustomText>
+        <View style={styles.contentWrapper}>
+          <View style={styles.card}>
+            <CustomText style={styles.title}>
+              입금 연습을 해볼게요{'\n'}실제로 입금이 되지는 않아요!
+            </CustomText>
 
-          <CustomText style={styles.subtitle}>
-            어떤 은행인지 알려주세요
-          </CustomText>
+            <CustomText style={styles.subtitle}>어떤 은행인지 알려주세요</CustomText>
 
-          <View style={styles.pickerContainer}>
-            <Picker
-              selectedValue={selectedBank}
-              onValueChange={(itemValue) => setSelectedBank(itemValue)}
-              style={styles.picker}
+            <View style={styles.pickerContainer}>
+              <Picker
+                selectedValue={selectedBank}
+                onValueChange={(itemValue) => setSelectedBank(itemValue)}
+                style={styles.picker}
+              >
+                <Picker.Item label="은행을 선택하세요" value="" />
+                <Picker.Item label="국민은행" value="국민은행" />
+                <Picker.Item label="신한은행" value="신한은행" />
+                <Picker.Item label="우리은행" value="우리은행" />
+                <Picker.Item label="하나은행" value="하나은행" />
+              </Picker>
+            </View>
+
+            <TouchableOpacity
+              style={[
+                styles.nextButton,
+                { backgroundColor: selectedBank ? '#4B7BE5' : '#ccc' },
+              ]}
+              onPress={() =>
+                navigation.navigate('DepositStep3', {
+                  accountNumber: route.params.accountNumber,
+                  selectedBank,
+                })
+              }
+              disabled={!selectedBank}
             >
-              <Picker.Item label="은행을 선택하세요" value="" />
-              <Picker.Item label="국민은행" value="국민은행" />
-              <Picker.Item label="신한은행" value="신한은행" />
-              <Picker.Item label="우리은행" value="우리은행" />
-              <Picker.Item label="하나은행" value="하나은행" />
-            </Picker>
+              <CustomText style={styles.nextButtonText}>다음 화면</CustomText>
+            </TouchableOpacity>
           </View>
 
-          <TouchableOpacity
-            style={[
-              styles.nextButton,
-              { backgroundColor: selectedBank ? '#4B7BE5' : '#ccc' },
-            ]}
-            onPress={() => navigation.navigate('DepositStep3', { accountNumber: route.params.accountNumber, selectedBank })}
-            disabled={!selectedBank}
-          >
-            <CustomText style={styles.nextButtonText}>다음 화면</CustomText>
+          {/* 안내 텍스트 + 그만두기 버튼 */}
+          <CustomText style={styles.quitGuide}>연습을 그만두고 싶다면</CustomText>
+
+          <TouchableOpacity style={styles.quitButton} onPress={() => navigation.navigate('MainTabs')}>
+            <View style={styles.quitContent}>
+              <Ionicons name="exit-outline" size={26} color="#4B7BE5" style={styles.quitIcon} />
+              <CustomText style={styles.buttonText}>그만둘래요</CustomText>
+            </View>
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
-
-      <HelpTooltipButton navigation={navigation} />
     </LinearGradient>
   );
 }
@@ -59,15 +72,17 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 20,
-    backgroundColor: '#F8F8F8',
-    justifyContent: 'flex-start',
-    alignItems: 'center',
+    backgroundColor: '#FAFAFA',
   },
   keyboardView: {
     flex: 1,
-    width: '100%',
     justifyContent: 'flex-start',
     alignItems: 'center',
+  },
+  contentWrapper: {
+    width: '100%',
+    alignItems: 'center',
+    marginTop: 80,
   },
   card: {
     backgroundColor: '#fff',
@@ -76,12 +91,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     borderRadius: 16,
     alignItems: 'center',
-    marginTop: 50,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
     elevation: 6,
+    marginBottom: 50,
+    borderWidth: 1.5,
+    borderColor: 'rgba(75, 123, 229, 0.5)'
   },
   title: {
     fontWeight: 'bold',
@@ -121,30 +138,35 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: 'white',
   },
-  footer: {
-    position: 'absolute',
-    bottom: 20,
+  quitGuide: {
+    color: '#999',
+    marginBottom: 10,
+    textAlign: 'center',
+  },
+  quitButton: {
+    backgroundColor: '#FFFFFF',
     width: '90%',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignSelf: 'center',
-  },
-  footerButton: {
-    flex: 1,
-    paddingVertical: 14,
-    marginHorizontal: 8,
-    borderRadius: 12,
+    paddingVertical: 25,
+    borderRadius: 20,
     alignItems: 'center',
+    justifyContent: 'center',
     shadowColor: '#000',
-    shadowOffset: { width: 1, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    elevation: 3,
+    shadowOffset: { width: 1, height: 3 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 4,
   },
-  help: { backgroundColor: '#D9E7F9' },
-  emergency: { backgroundColor: '#FFC1B1' },
-  footerText: {
+  quitContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  quitIcon: {
+    marginRight: 6,
+    marginTop: 1,
+  },
+  buttonText: {
     fontWeight: 'bold',
-    color: '#333',
+    color: 'black',
   },
 });

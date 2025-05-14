@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useLayoutEffect, useRef} from 'react';
+import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import {
   View,
   Text,
@@ -19,11 +19,11 @@ import askClovaAI from './AIService';
 import RNFS from 'react-native-fs';
 import Icon from 'react-native-vector-icons/Ionicons';
 import botImage from '../../assets/bot.png';
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation, useIsFocused } from '@react-navigation/native';
 import Tts from 'react-native-tts';
+import LottieView from 'lottie-react-native';
 import CustomText from '../../components/CustomText';
 import CustomTextInput from '../../components/CustomTextInput';
-import LottieView from 'lottie-react-native';
 
 export default function VoiceInputScreen() {
   const navigation = useNavigation();
@@ -44,11 +44,33 @@ export default function VoiceInputScreen() {
 
   const filePath = `${RNFS.CachesDirectoryPath}/sound.wav`;
 
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <TouchableOpacity
+          onPress={handleResetChat}
+          style={{ flexDirection: 'row', alignItems: 'center', marginRight: 15 }}
+        >
+          <Icon name="refresh-outline" size={25} color="#4B7BE5" style={{ marginRight: 4}} />
+          <CustomText style={{ color: '#4B7BE5', fontWeight: 'bold' }}>대화 내용 초기화</CustomText>
+        </TouchableOpacity>
+      ),
+    });
+  }, [navigation]);
+
   useEffect(() => {
     return () => {
-      Tts.stop();
+      Tts.stop(); // unmount 시
     };
   }, []);
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('blur', () => {
+      Tts.stop(); // focus 잃을 때
+    });
+
+    return unsubscribe;
+  }, [navigation]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -60,20 +82,11 @@ export default function VoiceInputScreen() {
     return () => clearTimeout(timer);
   }, [chatHistory]);
 
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <TouchableOpacity onPress={() => navigation.navigate('TTSSetting')}>
-          <Icon
-            name="settings-outline"
-            size={30}
-            color="#000"
-            style={{marginRight: 20}}
-          />
-        </TouchableOpacity>
-      ),
-    });
-  }, [navigation]);
+const handleResetChat = () => {
+  setChatHistory([]);
+  setTextInput('');         
+  Tts.stop();               
+};  
 
 const onSendText = async customText => {
   let input = customText ?? textInput;
@@ -204,26 +217,43 @@ return (
     keyboardVerticalOffset={100} // 필요 시 조정
   >
     <View style={{ flex: 1 }}>
+      {isRecording && (
+        <LottieView
+          source={require('../../assets/animeMic.json')}
+          autoPlay
+          loop
+          style={{
+            position: 'absolute',
+            bottom: 90, 
+            right: 15, 
+            width: 60,
+            height: 60,
+            zIndex: 10,
+            opacity: 0.8,
+          }}
+        />
+      )}
       {/* 대화 스크롤 영역 */}
       <ScrollView
         ref={scrollViewRef}
         contentContainerStyle={[styles.container, { flexGrow: 1 }]}
         keyboardShouldPersistTaps="handled"
       >
+        
         <CustomText style={styles.dateText}>{formattedDate}</CustomText>
 
         <View style={styles.botIntroContainer}>
+          <Image source={botImage} style={styles.botImage} />
           <View style={styles.botTextWrapper}>
             <CustomText style={styles.botText}>
               안녕하세요!{'\n'}
-              <CustomText style={{ color: '#4B7BE5', fontWeight: 'bold' }}>
+              <CustomText style={styles.botNameText}>
                 상담원 부금이
               </CustomText>
               입니다.{'\n'}
               무엇을 도와드릴까요?
             </CustomText>
           </View>
-          <Image source={botImage} style={styles.botImage} />
         </View>
 
         <View style={styles.buttonGroup}>
@@ -268,10 +298,6 @@ return (
             >
               <CustomText style={styles.chatText}>{msg.text}</CustomText>
             </View>
-
-            {msg.role === 'user' && (
-              <Image source={require('../../assets/icon1.png')} style={styles.avatar} />
-            )}
           </View>
         ))}
       </ScrollView>
@@ -293,9 +319,16 @@ return (
             }
           }}
         />
-        <TouchableOpacity style={styles.sendButton} onPress={onSendText}>
-          <Icon name="send" size={24} color="#fff" />
-        </TouchableOpacity>
+
+        {/* ✅ 입력이 있을 때만 send 버튼 보이게 */}
+        {textInput.trim().length > 0 ? (
+          <TouchableOpacity style={styles.sendButton} onPress={onSendText}>
+            <Icon name="send" size={24} color="#fff" />
+          </TouchableOpacity>
+        ) : (
+          <View style={{ width: 24, height: 24, marginLeft: 10 }} /> // 공간 유지용
+        )}
+
         <TouchableOpacity
           style={styles.voiceIconButton}
           onPress={isRecording ? stopRecording : startRecording}
@@ -345,41 +378,47 @@ return (
 );
 }
 
-// const { width, height } = Dimensions.get('window');
 const styles = StyleSheet.create({
   wrapper: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#F0F6FD',
   },
   container: {
     padding: 24,
-    backgroundColor: '#fff',
+    backgroundColor: '#F0F6FD',
   },
   dateText: {
-    //     color: '#999',
     textAlign: 'center',
-    marginBottom: 16,
+    color: '#777',
+    fontSize: 17,
+    marginBottom: 10,
   },
   botIntroContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 20,
+    marginBottom: 10,
+    paddingHorizontal: 20,
+  },
+  botImage: {
+    width: 110,
+    height: 110,
+    resizeMode: 'contain',
+    marginRight: 15,
+    marginLeft: 30,
   },
   botTextWrapper: {
     flex: 1,
-    marginRight: 12,
   },
   botText: {
-    //    lineHeight: 24,
-    color: '#333',
-    marginLeft: 30,
+    color: '#555',
+    lineHeight: 25,
+    fontWeight: 'bold',
   },
-  botImage: {
-    width: 130,
-    height: 130,
-    resizeMode: 'contain',
-    marginRight: 30,
+  botNameText: {
+    color: '#4B7BE5',
+    fontWeight: 'bold',
+    backgroundColor: 'rgba(75, 123, 229, 0.1)',
   },
   buttonGroup: {
     flexDirection: 'row',
@@ -401,7 +440,8 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   topicText: {
-    //     color: '#333',
+    fontSize: 15,
+    fontWeight: 'bold',
   },
   modalOverlay: {
     position: 'absolute',
@@ -422,7 +462,6 @@ const styles = StyleSheet.create({
     width: '80%',
   },
   modalText: {
-    //     color: '#333',
     marginBottom: 20,
     textAlign: 'center',
   },
@@ -447,7 +486,6 @@ const styles = StyleSheet.create({
   modalBtnText: {
     color: 'white',
     textAlign: 'center',
-    //     fontWeight: 'bold',
   },
   micButton: {
     flexDirection: 'row',
@@ -460,7 +498,6 @@ const styles = StyleSheet.create({
   },
   micButtonText: {
     color: '#fff',
-    //       marginLeft: 10,
   },
   start: {
     backgroundColor: '#4B7BE5',
@@ -469,26 +506,36 @@ const styles = StyleSheet.create({
     backgroundColor: '#CB4626',
   },
   chatBubbleUser: {
-    backgroundColor: '#EEF3F9',
+    backgroundColor: '#D8EAFE',
     alignSelf: 'flex-end',
-    padding: 12,
+    padding: 8,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     borderBottomLeftRadius: 20,
-    borderBottomRightRadius: 4, // ← 꼬리 느낌
+    borderBottomRightRadius: 4, // ← 꼬리
     marginVertical: 5,
-    maxWidth: '80%',
+    maxWidth: '75%',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
   },
   chatBubbleBot: {
-    backgroundColor: '#B0CFE3',
+    backgroundColor: '#fff',
     alignSelf: 'flex-start',
-    padding: 12,
+    padding: 8,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     borderBottomRightRadius: 20,
-    borderBottomLeftRadius: 4, // ← 꼬리 느낌
+    borderBottomLeftRadius: 4, // ← 꼬리
     marginVertical: 5,
-    maxWidth: '80%',
+    maxWidth: '75%',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
   },
   chatText: {
     color: '#333',
@@ -498,15 +545,12 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
     marginBottom: 10,
   },
-
   chatRowBot: {
     justifyContent: 'flex-start',
   },
-
   chatRowUser: {
     justifyContent: 'flex-end',
   },
-
   avatar: {
     width: 36,
     height: 36,
@@ -529,34 +573,36 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    backgroundColor: '#f1f1f1',
-    borderRadius: 30,
-    paddingHorizontal: 20,
+    backgroundColor: '#EEF3F9', 
+    borderRadius: 25,          
+    paddingHorizontal: 15,
     paddingVertical: Platform.OS === 'ios' ? 14 : 10,
-    //    marginRight: 12,
     color: '#333',
   },
   sendButton: {
     backgroundColor: '#4B7BE5',
     padding: 14,
-    borderRadius: 50,
+    borderRadius: 30,
     marginLeft: 10,
     marginRight: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 6,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   voiceIconButton: {
     backgroundColor: '#4B7BE5',
     padding: 14,
-    borderRadius: 50,
-  },
-  overlayAnimation: {
-    position: 'absolute',
-    width: 100,
-    height: 100,
-    top: '10%',
-    left: '80%',
-    marginLeft: -100,  // width / 2
-    marginTop: -100,   // height / 2
-    backgroundColor: 'transparent',
-    zIndex: 2,
-  },
+    borderRadius: 30,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 6,
+    justifyContent: 'center',
+    alignItems: 'center',
+  }
 });
