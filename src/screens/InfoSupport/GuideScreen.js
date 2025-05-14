@@ -8,8 +8,8 @@ import {
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import CustomText from '../../components/CustomText';
-import { useNavigation } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { useNavigation } from '@react-navigation/native';
 
 export default function GuideScreen() {
   const navigation = useNavigation();
@@ -33,12 +33,12 @@ export default function GuideScreen() {
   };
 
   return (
-    <LinearGradient colors={['#B3D9FF', '#E6F2FF']} style={styles.container}>
+    <LinearGradient colors={['rgb(200, 230, 253)', 'rgb(228, 240, 252)']} style={styles.container}>
       <ScrollView contentContainerStyle={styles.content}>
-        {/* 📘 앱 사용법 제목 */}
+        {/* 타이틀 */}
         <CustomText style={styles.title}>📘 앱 사용법</CustomText>
 
-        {/* 🔍 검색창 (돋보기 아이콘 포함) */}
+        {/* 검색창 */}
         <View style={styles.searchContainer}>
           <Ionicons name="search" size={20} color="#888" style={styles.searchIcon} />
           <TextInput
@@ -56,15 +56,22 @@ export default function GuideScreen() {
           return (
             <TouchableOpacity
               key={key}
-              style={styles.listCard}
               onPress={() => goToDetail(key)}
               activeOpacity={0.85}
+              style={styles.cardWrapper}
             >
-              <View style={styles.rowWrap}>
-                <CustomText style={styles.icon}>{item.icon}</CustomText>
-                <CustomText style={styles.cardText}>{item.title}</CustomText>
-              </View>
-              <CustomText style={styles.arrow}>›</CustomText>
+              <LinearGradient
+                colors={['rgb(255, 255, 255)', 'rgb(172, 212, 250)']} 
+                style={styles.listCard}
+                start={{ x: 0.5, y: 0 }}
+                end={{ x: 0.5, y: 1 }}
+              >
+                <View style={styles.rowWrap}>
+                  <CustomText style={styles.icon}>{item.icon}</CustomText>
+                  <CustomText style={styles.cardText}>{item.title}</CustomText>
+                </View>
+                <Ionicons name="chevron-forward" size={28} color="#1B3C78" />
+              </LinearGradient>
             </TouchableOpacity>
           );
         })}
@@ -76,6 +83,7 @@ export default function GuideScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   content: { padding: 20, paddingBottom: 40 },
+
   title: {
     fontWeight: '900',
     fontSize: 22,
@@ -84,7 +92,6 @@ const styles = StyleSheet.create({
     marginBottom: 18,
   },
 
-  // 🔍 검색 영역
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -109,46 +116,40 @@ const styles = StyleSheet.create({
     color: '#222',
   },
 
-  // 카드 스타일
-listCard: {
-  backgroundColor: 'rgba(255, 255, 255, 0.25)', // 투명도 있는 흰 배경
-  borderRadius: 20,
-  paddingVertical: 20,
-  paddingHorizontal: 20,
-  marginBottom: 22,
+  cardWrapper: {
+    marginBottom: 20,
+    borderRadius: 20,
+  },
 
-  flexDirection: 'row',
-  alignItems: 'center',
-  justifyContent: 'space-between',
+  listCard: {
+    borderRadius: 20,
+    paddingVertical: 20,
+    paddingHorizontal: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
 
-  // ✨ 입체적인 그림자 효과
-  shadowColor: 'transparent',
-  shadowOffset: { width: 0, height: 8 },
-  shadowOpacity: 0.15,
-  shadowRadius: 16,
-  elevation: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 5,
 
-  borderWidth: 2,
-  borderColor: 'rgba(79, 192, 229, 0.4)',
-  backdropFilter: 'blur(10px)', // 웹에선 가능, RN에선 blurred lib 써야함
-},
-
+     borderWidth: 1.5,
+  borderColor: 'rgba(139, 177, 246, 0.2)', 
+  },
   rowWrap: {
     flexDirection: 'row',
     alignItems: 'center',
     flex: 1,
   },
   icon: {
-    fontSize: 22,
+    fontSize: 26,
     marginRight: 12,
   },
   cardText: {
     fontWeight: '600',
-    color: '#222',
-  },
-  arrow: {
-     fontSize: 25,     
-    fontWeight: 'bold',
-    color: '#4A90E2',
+    fontSize: 16,
+    color: '#1B3C78',
   },
 });
