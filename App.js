@@ -77,7 +77,7 @@ export default function App() {
       <FontSizeProvider>
         <UserProvider>
           <NavigationContainer>
-          <View style={{ flex: 1 }}>
+          <>
             <Stack.Navigator initialRouteName="Login">
               {/* 탭 내비게이션이 포함된 메인 */}
               <Stack.Screen
@@ -131,7 +131,7 @@ export default function App() {
 
             </Stack.Navigator>
             <HelpTooltipButton />
-          </View>
+          </>
           </NavigationContainer>
         </UserProvider>
       </FontSizeProvider>

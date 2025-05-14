@@ -61,7 +61,14 @@ const LearningScreen = ({ navigation }) => {
       style={styles.container}
     >
       <ScrollView contentContainerStyle={styles.content}>
-        <CustomText style={styles.title}>학습 콘텐츠</CustomText>
+      <CustomText
+        style={[
+          styles.title,
+          { fontSize: (styles.title.fontSize || +25) }
+        ]}
+      >
+        학습 콘텐츠
+      </CustomText>
 
         {cards.map((card, idx) => (
           <Animated.View
@@ -111,7 +118,7 @@ const styles = StyleSheet.create({
   card: {
     width: '95%',
     borderRadius: 20,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#F0F8FF',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',

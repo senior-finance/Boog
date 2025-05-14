@@ -62,6 +62,8 @@ const HelpTooltipButton = () => {
   const hiddenRoutes = ['Login', 'SetUserNameScreen', 'VoiceInput', 'MapView', 'MainTabs', 'Home'];
   if (hiddenRoutes.includes(currentRouteName)) return null;
 
+  if (!currentRouteName || hiddenRoutes.includes(currentRouteName)) return null;
+
   return (
     <Animated.View
       style={[styles.floatingWrapper, pan.getLayout()]}

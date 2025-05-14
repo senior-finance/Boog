@@ -9,7 +9,7 @@ export default function DepositStep4({ navigation, route }) {
   const [modalVisible, setModalVisible] = useState(false);
 
   return (
-    <LinearGradient colors={['#F8F8F8', '#ECECEC']} style={styles.container}>
+    <LinearGradient colors={['#D8ECFF', '#E9F4FF']} style={styles.container}>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         style={styles.keyboardView}
@@ -43,13 +43,12 @@ export default function DepositStep4({ navigation, route }) {
           <TouchableOpacity style={styles.quitButton} onPress={() => navigation.navigate('MainTabs')}>
             <View style={styles.quitContent}>
               <Ionicons name="exit-outline" size={26} color="#4B7BE5" style={styles.quitIcon} />
-              <CustomText style={styles.buttonText}>그만둘래요</CustomText>
+              <CustomText style={styles.quitText}>그만둘래요</CustomText>
             </View>
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
 
-      {/* 모달 */}
       <Modal
         animationType="slide"
         transparent={true}
@@ -99,7 +98,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 20,
-    backgroundColor: '#FAFAFA',
   },
   keyboardView: {
     flex: 1,
@@ -109,30 +107,30 @@ const styles = StyleSheet.create({
   contentWrapper: {
     width: '100%',
     alignItems: 'center',
-    marginTop: 80, // 가운데보다 살짝 위
+    marginTop: 80,
   },
   card: {
-    backgroundColor: '#fff',
+    backgroundColor: '#FFFFFF',
     width: '90%',
     paddingVertical: 40,
     paddingHorizontal: 24,
-    borderRadius: 16,
+    borderRadius: 20,
     alignItems: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(75, 123, 229, 0.3)',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.08,
     shadowRadius: 8,
     elevation: 6,
     marginBottom: 50,
-    borderWidth: 1.5,
-    borderColor: 'rgba(75, 123, 229, 0.5)'
   },
   title: {
     fontWeight: 'bold',
     color: '#4B7BE5',
     textAlign: 'center',
     marginBottom: 24,
-    lineHeight: 34,
+    lineHeight: 32,
   },
   subtitle: {
     fontWeight: '600',
@@ -144,10 +142,10 @@ const styles = StyleSheet.create({
   infoBox: {
     width: '100%',
     padding: 20,
-    backgroundColor: '#D9E7F9',
+    backgroundColor: '#F0F6FF',
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: '#bbb',
+    borderColor: '#AABDDC',
     alignItems: 'center',
     marginBottom: 36,
   },
@@ -180,9 +178,11 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
+    borderWidth: 1.2,
+    borderColor: 'rgba(75, 123, 229, 0.2)',
     shadowColor: '#000',
     shadowOffset: { width: 1, height: 3 },
-    shadowOpacity: 0.2,
+    shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 4,
   },
@@ -195,9 +195,9 @@ const styles = StyleSheet.create({
     marginRight: 6,
     marginTop: 1,
   },
-  buttonText: {
+  quitText: {
     fontWeight: 'bold',
-    color: 'black',
+    color: '#4B7BE5',
   },
   modalOverlay: {
     flex: 1,
@@ -207,16 +207,21 @@ const styles = StyleSheet.create({
   },
   modalContainer: {
     width: '90%',
-    backgroundColor: '#fff',
+    backgroundColor: '#FFFFFF',
     padding: 30,
     borderRadius: 20,
     alignItems: 'center',
+  },
+  iconRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
   },
   modalTitle: {
     fontWeight: 'bold',
     color: '#4B7BE5',
     textAlign: 'center',
-    marginBottom: 10,
+    fontSize: 16,
   },
   modalSubtitle: {
     fontWeight: '600',
@@ -235,8 +240,10 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     marginHorizontal: 8,
     borderRadius: 12,
-    backgroundColor: '#D9D9D9',
+    backgroundColor: '#F0F6FF',
     alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#AABDDC',
     shadowColor: '#000',
     shadowOffset: { width: 1, height: 2 },
     shadowOpacity: 0.1,
@@ -246,11 +253,5 @@ const styles = StyleSheet.create({
   modalButtonText: {
     fontWeight: 'bold',
     color: '#333',
-  },
-  iconRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 10,
   },
 });

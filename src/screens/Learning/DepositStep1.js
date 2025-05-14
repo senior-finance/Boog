@@ -9,7 +9,7 @@ export default function DepositStep1({ navigation }) {
   const [accountNumber, setAccountNumber] = useState('');
 
   return (
-    <LinearGradient colors={['#F8F8F8', '#ECECEC']} style={styles.container}>
+    <LinearGradient colors={['#D8ECFF', '#E9F4FF']} style={styles.container}>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         style={styles.keyboardView}
@@ -35,7 +35,9 @@ export default function DepositStep1({ navigation }) {
             <TouchableOpacity
               style={[
                 styles.nextButton,
-                { backgroundColor: accountNumber ? '#4B7BE5' : '#ccc' },
+                {
+                  backgroundColor: accountNumber ? '#4B7BE5' : '#B0C7E7',
+                },
               ]}
               onPress={() => navigation.navigate('DepositStep2', { accountNumber })}
               disabled={!accountNumber}
@@ -49,7 +51,7 @@ export default function DepositStep1({ navigation }) {
           <TouchableOpacity style={styles.quitButton} onPress={() => navigation.navigate('MainTabs')}>
             <View style={styles.quitContent}>
               <Ionicons name="exit-outline" size={26} color="#4B7BE5" style={styles.quitIcon} />
-              <CustomText style={styles.buttonText}>그만둘래요</CustomText>
+              <CustomText style={styles.quitText}>그만둘래요</CustomText>
             </View>
           </TouchableOpacity>
         </View>
@@ -61,7 +63,6 @@ export default function DepositStep1({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FAFAFA',
     paddingHorizontal: 20,
   },
   keyboardView: {
@@ -72,30 +73,30 @@ const styles = StyleSheet.create({
   contentWrapper: {
     width: '100%',
     alignItems: 'center',
-    marginTop: 80, // 세로 가운데보다 살짝 위쪽 배치
+    marginTop: 80,
   },
   card: {
-    backgroundColor: '#fff',
+    backgroundColor: '#FFFFFF',
     width: '90%',
     paddingVertical: 50,
     paddingHorizontal: 24,
-    borderRadius: 16,
+    borderRadius: 20,
     alignItems: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(75, 123, 229, 0.3)',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.08,
     shadowRadius: 8,
     elevation: 6,
     marginBottom: 50,
-    borderWidth: 1.5,
-    borderColor: 'rgba(75, 123, 229, 0.5)'
   },
   title: {
     fontWeight: 'bold',
     color: '#4B7BE5',
     textAlign: 'center',
     marginBottom: 24,
-    lineHeight: 34,
+    lineHeight: 32,
   },
   subtitle: {
     fontWeight: '600',
@@ -107,14 +108,14 @@ const styles = StyleSheet.create({
   input: {
     width: '100%',
     borderWidth: 1,
-    borderColor: '#bbb',
+    borderColor: '#AABDDC',
     borderRadius: 12,
     paddingVertical: 14,
     paddingHorizontal: 16,
     textAlign: 'center',
-    backgroundColor: '#ECECEC',
+    backgroundColor: '#F0F6FF',
     marginBottom: 36,
-    color: "#444"
+    color: '#444',
   },
   nextButton: {
     width: '100%',
@@ -124,7 +125,7 @@ const styles = StyleSheet.create({
   },
   nextButtonText: {
     fontWeight: 'bold',
-    color: 'white'
+    color: 'white',
   },
   quitGuide: {
     color: '#999',
@@ -138,9 +139,11 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
+    borderWidth: 1.2,
+    borderColor: 'rgba(75, 123, 229, 0.2)',
     shadowColor: '#000',
     shadowOffset: { width: 1, height: 3 },
-    shadowOpacity: 0.2,
+    shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 4,
   },
@@ -153,8 +156,8 @@ const styles = StyleSheet.create({
     marginRight: 6,
     marginTop: 1,
   },
-  buttonText: {
+  quitText: {
     fontWeight: 'bold',
-    color: 'black',
-  }
+    color: '#4B7BE5',
+  },
 });

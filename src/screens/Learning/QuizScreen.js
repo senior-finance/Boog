@@ -130,7 +130,7 @@ const styles = StyleSheet.create({
   content: {
     alignItems: 'center',
     padding: 20,
-    paddingTop: 60,
+    paddingTop: 80,
   },
   loadingContainer: {
     flex: 1,

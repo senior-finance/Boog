@@ -3,10 +3,10 @@ import {
   View,
   TouchableOpacity,
   StyleSheet,
-  Image,
   Animated,
   Easing
 } from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
 import Sound from 'react-native-sound';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import wrongImage from '../../assets/wrong_rabbit.png';
@@ -77,14 +77,14 @@ const WrongAnswerScreen = ({ route, navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
-      <CustomText style={styles.title}>틀렸어요</CustomText>
-      <CustomText style={styles.answerText}>정답은 "{answer}" 에요!</CustomText>
+    <LinearGradient colors={['#FEEEEE', '#FFF6F6']} style={styles.container}>
+      <CustomText style={styles.resultTitle}>틀렸어요!</CustomText>
+      <CustomText style={styles.resultAnswer}>정답은 "{answer}" 에요!</CustomText>
 
       <Animated.Image
         source={wrongImage}
         style={[
-          styles.imageOnly,
+          styles.rabbitImage,
           {
             transform: [
               { scale: scaleAnim },
@@ -107,56 +107,61 @@ const WrongAnswerScreen = ({ route, navigation }) => {
           <TouchableOpacity style={styles.quitButton} onPress={() => navigation.navigate('MainTabs')}>
             <View style={styles.quitContent}>
               <Ionicons name="exit-outline" size={26} color="#4B7BE5" style={styles.quitIcon} />
-              <CustomText style={styles.buttonText}>그만둘래요</CustomText>
+              <CustomText style={styles.quitText}>그만둘래요</CustomText>
             </View>
           </TouchableOpacity>
         </>
       )}
-    </View>
+    </LinearGradient>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
     alignItems: 'center',
     paddingHorizontal: 20,
     paddingTop: 60,
   },
-  title: {
+  resultTitle: {
     fontWeight: 'bold',
-    color: 'black',
-    marginBottom: 10,
-  },
-  answerText: {
-    fontWeight: 'bold',
-    color: 'black',
-    marginBottom: 20,
+    color: '#E55353',
     textAlign: 'center',
+    marginBottom: 6,
+    textShadowColor: 'rgba(0, 0, 0, 0.2)',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 3, 
   },
-  imageOnly: {
-  width: 300,
-  height: 300,
-  alignSelf: 'center',
-  marginVertical: 16,
-  resizeMode: 'contain', // 추가
-},
+  resultAnswer: {
+    fontWeight: 'bold',
+    color: '#333',
+    textAlign: 'center',
+    marginBottom: 16,
+  },
+  rabbitImage: {
+    width: 250,
+    height: 250,
+    resizeMode: 'contain',
+    alignSelf: 'center',
+    marginBottom: 5,
+  },
   explanationBox: {
     width: '100%',
     backgroundColor: '#FDD8D8',
     padding: 40,
     borderRadius: 20,
     marginBottom: 30,
+    borderWidth: 1,
+    borderColor: 'rgba(229, 83, 83, 0.2)',
     shadowColor: '#000',
     shadowOffset: { width: 2, height: 4 },
-    shadowOpacity: 0.2,
+    shadowOpacity: 0.1,
     shadowRadius: 6,
     elevation: 5,
   },
   explanationText: {
     fontWeight: 'bold',
-    color: 'black',
+    color: '#444',
     textAlign: 'center',
   },
   button: {
@@ -166,12 +171,18 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
+    marginBottom: 25,
+    borderWidth: 1.5,
+    borderColor: 'rgba(75, 123, 229, 0.3)',
     shadowColor: '#000',
     shadowOffset: { width: 1, height: 3 },
-    shadowOpacity: 0.2,
+    shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 4,
-    marginBottom: 30,
+  },
+  buttonText: {
+    fontWeight: 'bold',
+    color: '#4B7BE5',
   },
   quitButton: {
     backgroundColor: '#FFFFFF',
@@ -180,9 +191,11 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
+    borderWidth: 1.5,
+    borderColor: 'rgba(75, 123, 229, 0.2)',
     shadowColor: '#000',
     shadowOffset: { width: 1, height: 3 },
-    shadowOpacity: 0.2,
+    shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 4,
   },
@@ -195,9 +208,9 @@ const styles = StyleSheet.create({
     marginRight: 6,
     marginTop: 1,
   },
-  buttonText: {
+  quitText: {
     fontWeight: 'bold',
-    color: 'black',
+    color: '#4B7BE5',
   },
 });
 
