@@ -1,7 +1,7 @@
 import React from 'react';
+import { LogBox, View, Text, TextInput } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { LogBox, View } from 'react-native';
 LogBox.ignoreLogs([
   '`new NativeEventEmitter()` was called with a non-null argument',
   'ReactImageView: Image source "null" doesn\'t exist'
@@ -55,7 +55,6 @@ import ProfileIconSelect from './src/screens/Info/ProfileIconSelect';
 import WelfareScreen from './src/screens/InfoSupport/WelfareScreen';
 import AutoPhoneAnalysisScreen from './src/screens/InfoSupport/AutoPhoneAnalysisScreen';
 import GuideDetailScreen from './src/screens/InfoSupport/GuideDetailScreen';
-
 
 // 기타
 import BiometricScreen from './src/screens/Biometric/BiometricScreen';

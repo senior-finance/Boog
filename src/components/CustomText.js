@@ -8,6 +8,8 @@ const CustomText = ({ children, style, ...props }) => {
     <Text
       style={[
         {
+          fontFamily: 'Pretendard-SemiBold', // ✅ 기본 폰트 설정
+          fontSize: fontSize,             // ✅ 폰트 크기 설정
           fontSize,
           flexWrap: 'wrap',         // ✅ 줄바꿈 허용
           textAlignVertical: 'center', // ✅ 안드로이드에서 수직 정렬
