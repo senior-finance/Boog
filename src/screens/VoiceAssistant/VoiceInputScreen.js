@@ -224,12 +224,13 @@ return (
           loop
           style={{
             position: 'absolute',
-            bottom: 90, 
-            right: 15, 
-            width: 60,
-            height: 60,
+            top: '50%',
+            left: '50%',
+            transform: [{ translateX: -50 }, { translateY: -50 }], // 중앙 정렬
+            width: 100,
+            height: 100,
             zIndex: 10,
-            opacity: 0.8,
+            opacity: 0.9,
           }}
         />
       )}
