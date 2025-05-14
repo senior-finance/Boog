@@ -1,10 +1,9 @@
 import React, { useState, useEffect, useLayoutEffect } from 'react';
-import { View, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
 import CustomText from '../../components/CustomText';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { getEasyQuiz } from '../../database/mongoDB'; // getEasyQuiz 임포트
-import { getHardQuiz } from '../../database/mongoDB'; // getHardQuiz 임포트
+import { getEasyQuiz, getHardQuiz } from '../../database/mongoDB';
 
 const shuffleArray = (array) => {
   const shuffled = [...array];
@@ -37,24 +36,24 @@ const QuizScreen = ({ navigation, route }) => {
     const fetchQuiz = async () => {
       if (passedQuiz) return;
       try {
-        let quizData;
-        if (level === 'easy') {
-          quizData = await getEasyQuiz(); // 🔹 쉬운 퀴즈 불러오기
-        } else {
-          quizData = await getHardQuiz(); // 🔹 어려운 퀴즈 불러오기
-        }
-        const shuffled = shuffleArray(quizData);
-        setShuffledQuiz(shuffled);
+        const quizData = level === 'easy'
+          ? await getEasyQuiz()
+          : await getHardQuiz();
+        setShuffledQuiz(shuffleArray(quizData));
       } catch (err) {
         console.error('퀴즈 불러오기 실패:', err);
       }
     };
-  
+
     fetchQuiz();
   }, [level, passedQuiz]);
 
   if (!shuffledQuiz.length) {
-    return <CustomText>퀴즈를 불러오는 중입니다...</CustomText>;
+    return (
+      <View style={styles.loadingContainer}>
+        <CustomText>퀴즈를 불러오는 중입니다...</CustomText>
+      </View>
+    );
   }
 
   const questionIndex = nextQuestionIndex;
@@ -84,100 +83,102 @@ const QuizScreen = ({ navigation, route }) => {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.questionBox}>
-        <CustomText style={styles.questionText}>{`"${currentQuestion.question}"`}</CustomText>
-      </View>
-
-      {currentQuestion.options.map((option, index) => (
-        <TouchableOpacity
-          key={index}
-          style={index === 0 ? styles.optionButton1 : styles.optionButton2}
-          onPress={() => handleAnswerSelection(option)}
-        >
-          <CustomText style={styles.optionText}>{option}</CustomText>
-        </TouchableOpacity>
-      ))}
-
-      <CustomText style={styles.quitGuide}>선택을 그만두고 싶다면</CustomText>
-
-      <TouchableOpacity style={styles.quitButton} onPress={() => navigation.navigate('MainTabs')}>
-        <View style={styles.quitContent}>
-          <Ionicons name="exit-outline" size={26} color="#4B7BE5" style={styles.quitIcon} />
-          <CustomText style={styles.buttonText}>그만둘래요</CustomText>
+    <LinearGradient colors={['#D8ECFF', '#E9F4FF']} style={styles.container}>
+      <ScrollView contentContainerStyle={styles.content}>
+        <View style={styles.questionBox}>
+          <CustomText style={styles.questionText}>
+            "{currentQuestion.question}"
+          </CustomText>
         </View>
-      </TouchableOpacity>
-    </View>
+
+        {currentQuestion.options.map((option, index) => (
+          <TouchableOpacity
+            key={index}
+            style={styles.optionButton}
+            onPress={() => handleAnswerSelection(option)}
+            activeOpacity={0.9}
+          >
+            <CustomText style={styles.optionText}>{option}</CustomText>
+          </TouchableOpacity>
+        ))}
+
+        <CustomText style={styles.quitGuide}>선택을 그만두고 싶다면</CustomText>
+
+        <TouchableOpacity
+          style={styles.quitButton}
+          onPress={() => navigation.navigate('MainTabs')}
+        >
+          <View style={styles.quitContent}>
+            <Ionicons
+              name="exit-outline"
+              size={26}
+              color="#4B7BE5"
+              style={styles.quitIcon}
+            />
+            <CustomText style={styles.quitText}>그만둘래요</CustomText>
+          </View>
+        </TouchableOpacity>
+      </ScrollView>
+    </LinearGradient>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
-    alignItems: 'center',
-    paddingTop: 50
   },
-  title: {
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: 50,
-    color: 'black',
+  content: {
+    alignItems: 'center',
+    padding: 20,
+    paddingTop: 60,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   questionBox: {
     width: '90%',
-    backgroundColor: '#D5D5D5',
-    padding: 50,
-    borderRadius: 25,
-    alignItems: 'center',
-    marginBottom: 50,
+    backgroundColor: '#F0F5FF',
+    padding: 40,
+    borderRadius: 20,
+    borderWidth: 1.5,
+    borderColor: 'rgba(75, 123, 229, 0.3)',
     shadowColor: '#000',
     shadowOffset: { width: 2, height: 4 },
-    shadowOpacity: 0.2,
+    shadowOpacity: 0.1,
     shadowRadius: 6,
-    elevation: 5,
+    elevation: 4,
+    alignItems: 'center',
+    marginBottom: 50,
   },
   questionText: {
     fontWeight: 'bold',
-    color: 'black',
+    color: '#333',
     textAlign: 'center',
     lineHeight: 28,
   },
-  optionButton1: {
+  optionButton: {
     width: '90%',
-    height: 125,
+    height: 120,
     borderRadius: 20,
-    backgroundColor: 'white',
-    marginBottom: 30,
+    backgroundColor: '#FFFFFF',
+    marginBottom: 25,
     padding: 20,
     justifyContent: 'center',
     alignItems: 'center',
+    borderWidth: 1.5,
+    borderColor: 'rgba(75, 123, 229, 0.3)',
     shadowColor: '#000',
     shadowOffset: { width: 2, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 6,
-    elevation: 5,
-  },
-  optionButton2: {
-    width: '90%',
-    height: 125,
-    borderRadius: 20,
-    backgroundColor: 'white',
-    marginBottom: 30,
-    padding: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 2, height: 4 },
-    shadowOpacity: 0.2,
+    shadowOpacity: 0.1,
     shadowRadius: 6,
     elevation: 5,
   },
   optionText: {
     fontWeight: 'bold',
-    color: 'black',
+    color: '#444',
     textAlign: 'center',
-    textAlignVertical: 'center'
   },
   quitGuide: {
     color: '#999',
@@ -187,14 +188,16 @@ const styles = StyleSheet.create({
   quitButton: {
     backgroundColor: '#FFFFFF',
     width: '90%',
-    paddingVertical: 25,
+    paddingVertical: 20,
     borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 10,
+    borderWidth: 1.5,
+    borderColor: 'rgba(75, 123, 229, 0.3)',
     shadowColor: '#000',
     shadowOffset: { width: 1, height: 3 },
-    shadowOpacity: 0.2,
+    shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 4,
   },
@@ -207,10 +210,10 @@ const styles = StyleSheet.create({
     marginRight: 6,
     marginTop: 1,
   },
-  buttonText: {
+  quitText: {
     fontWeight: 'bold',
-    color: 'black',
-  }
+    color: '#4B7BE5',
+  },
 });
 
 export default QuizScreen;

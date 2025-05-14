@@ -4,6 +4,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   View,
+  PanResponder,
 } from 'react-native';
 import { useNavigation, useNavigationState } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -13,9 +14,12 @@ const HelpTooltipButton = () => {
   const navigation = useNavigation();
   const state = useNavigationState(state => state);
 
-  // ✅ 모든 훅은 항상 호출되어야 함
+  // 말풍선 애니메이션
   const tooltipAnim = useRef(new Animated.Value(20)).current;
   const tooltipOpacity = useRef(new Animated.Value(0)).current;
+
+  // 드래그 가능한 위치
+  const pan = useRef(new Animated.ValueXY({ x: 50, y: 600 })).current;
 
   useEffect(() => {
     Animated.parallel([
@@ -32,17 +36,37 @@ const HelpTooltipButton = () => {
     ]).start();
   }, []);
 
-  // ✅ 렌더링 시점에서만 조건 분기
-  if (!state || !state.routes) return null;
+  const panResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onPanResponderMove: Animated.event(
+        [null, { dx: pan.x, dy: pan.y }],
+        { useNativeDriver: false }
+      ),
+      onPanResponderRelease: () => {
+        pan.extractOffset();
+      },
+    })
+  ).current;
 
-  const routes = state.routes;
-  const routeName = routes[routes.length - 1]?.name;
+  // ✅ 중첩 구조 대응: 현재 실제 화면 이름 구하기
+  const getActiveRouteName = (navState) => {
+    if (!navState || !navState.routes) return null;
+    const route = navState.routes[navState.index];
+    return route.state ? getActiveRouteName(route.state) : route.name;
+  };
 
-  const hiddenRoutes = ['Login', 'SetUserNameScreen', 'VoiceInput', 'MapView'];
-  if (hiddenRoutes.includes(routeName)) return null;
+  const currentRouteName = getActiveRouteName(state);
+
+  // ❗ 이 화면들에서만 툴팁 안 보이게 하기
+  const hiddenRoutes = ['Login', 'SetUserNameScreen', 'VoiceInput', 'MapView', 'MainTabs', 'Home'];
+  if (hiddenRoutes.includes(currentRouteName)) return null;
 
   return (
-    <View style={styles.floatingWrapper}>
+    <Animated.View
+      style={[styles.floatingWrapper, pan.getLayout()]}
+      {...panResponder.panHandlers}
+    >
       <Animated.View
         style={[
           styles.tooltip,
@@ -52,24 +76,22 @@ const HelpTooltipButton = () => {
           },
         ]}
       >
-        <CustomText style={styles.tooltipText}>도움이 필요하신가요?</CustomText>
+        <CustomText style={styles.tooltipText}>챗봇에게 물어보기</CustomText>
       </Animated.View>
 
       <TouchableOpacity
         style={styles.fab}
-        onPress={() => navigation.navigate('Guide')}
+        onPress={() => navigation.navigate('VoiceInput')}
       >
         <Icon name="chat-question-outline" size={35} color="#F5F5F5" />
       </TouchableOpacity>
-    </View>
+    </Animated.View>
   );
 };
 
 const styles = StyleSheet.create({
   floatingWrapper: {
     position: 'absolute',
-    bottom: 60,
-    left: 40,
     zIndex: 100,
     alignItems: 'flex-start',
   },

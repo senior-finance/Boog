@@ -4,29 +4,15 @@ import {
   TouchableOpacity,
   Animated,
   StyleSheet,
+  ScrollView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import LinearGradient from 'react-native-linear-gradient';
 import CustomText from '../../components/CustomText';
 
 const LearningScreen = ({ navigation }) => {
   const [pressedIndex, setPressedIndex] = useState(null);
   const scaleAnimRefs = useRef([]);
-
-  const handlePressIn = index => {
-    setPressedIndex(index);
-    Animated.spring(scaleAnimRefs.current[index], {
-      toValue: 0.96,
-      useNativeDriver: true,
-    }).start();
-  };
-
-  const handlePressOut = index => {
-    Animated.spring(scaleAnimRefs.current[index], {
-      toValue: 1,
-      friction: 3,
-      useNativeDriver: true,
-    }).start();
-  };
 
   const cards = [
     {
@@ -49,86 +35,95 @@ const LearningScreen = ({ navigation }) => {
     },
   ];
 
-  // Initialize animated values
   if (scaleAnimRefs.current.length !== cards.length) {
     scaleAnimRefs.current = cards.map(() => new Animated.Value(1));
   }
 
+  const handlePressIn = index => {
+    setPressedIndex(index);
+    Animated.spring(scaleAnimRefs.current[index], {
+      toValue: 0.96,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const handlePressOut = index => {
+    Animated.spring(scaleAnimRefs.current[index], {
+      toValue: 1,
+      friction: 3,
+      useNativeDriver: true,
+    }).start();
+  };
+
   return (
-    <View style={styles.container}>
-      <CustomText
-        style={[
-          styles.title,
-          { fontSize: (styles.title.fontSize || +25) }
-        ]}
-      >
-        학습 콘텐츠
-      </CustomText>
-      {cards.map((card, idx) => (
-        <Animated.View
-          key={idx}
-          style={{
-            transform: [{ scale: scaleAnimRefs.current[idx] }],
-            width: '100%',
-            marginBottom: 20,
-          }}
-        >
-          <TouchableOpacity
-            activeOpacity={0.9}
-            style={styles.card}
-            onPress={() => navigation.navigate(card.nav)}
-            onPressIn={() => handlePressIn(idx)}
-            onPressOut={() => handlePressOut(idx)}
+    <LinearGradient
+      colors={['#D8ECFF', '#E9F4FF']}
+      style={styles.container}
+    >
+      <ScrollView contentContainerStyle={styles.content}>
+        <CustomText style={styles.title}>학습 콘텐츠</CustomText>
+
+        {cards.map((card, idx) => (
+          <Animated.View
+            key={idx}
+            style={{
+              transform: [{ scale: scaleAnimRefs.current[idx] }],
+              marginBottom: 20,
+            }}
           >
-            <View style={styles.cardLeft}>
-              <CustomText style={styles.cardTitle}>{card.title}</CustomText>
-              <CustomText style={styles.cardDesc}>{card.desc}</CustomText>
-            </View>
-            <Icon name={card.icon} size={50} color="#4B7BE5" />
-          </TouchableOpacity>
-        </Animated.View>
-      ))}
-    </View>
+            <TouchableOpacity
+              activeOpacity={0.9}
+              style={styles.card}
+              onPress={() => navigation.navigate(card.nav)}
+              onPressIn={() => handlePressIn(idx)}
+              onPressOut={() => handlePressOut(idx)}
+            >
+              <View style={styles.cardLeft}>
+                <CustomText style={styles.cardTitle}>{card.title}</CustomText>
+                <CustomText style={styles.cardDesc}>{card.desc}</CustomText>
+              </View>
+              <Icon name={card.icon} size={50} color="#4B7BE5" />
+            </TouchableOpacity>
+          </Animated.View>
+        ))}
+      </ScrollView>
+    </LinearGradient>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#FAFAFA',
+  container: { flex: 1 },
+  content: {
+    padding: 20,
     alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingTop: 50,
   },
   title: {
     fontWeight: 'bold',
-    marginBottom: 50,
-    color: '#333',
-    backgroundColor: 'rgba(75, 123, 229, 0.1)', // 연한 블루
+    color: '#4B7BE5',
+    backgroundColor: 'rgba(75, 123, 229, 0.1)',
     paddingHorizontal: 20,
     paddingVertical: 12,
     borderRadius: 15,
-    textShadowColor: 'rgba(0, 0, 0, 0.2)',
-    textShadowOffset: { width: 0, height: 2 },
-    textShadowRadius: 2,
+    marginTop: 30,
+    marginBottom: 35,
+    textAlign: 'center',
   },
   card: {
     width: '95%',
     borderRadius: 20,
-    backgroundColor: '#fff', //'#EEF3F9',
+    backgroundColor: '#FFFFFF',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    alignSelf: 'center',
-    marginBottom: 30,
     padding: 50,
+    marginBottom: 30,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: { width: 3, height: 3 },
     shadowOpacity: 0.1,
     shadowRadius: 6,
-    elevation: 5,
-    borderWidth: 1.5,
-    borderColor: 'rgba(75, 123, 229, 0.5)'
+    elevation: 6,
+    borderWidth: 1,
+    borderColor: 'rgba(75, 123, 229, 0.3)',
   },
   cardLeft: {
     flex: 1,
