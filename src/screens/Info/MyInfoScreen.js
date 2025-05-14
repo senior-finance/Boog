@@ -146,7 +146,7 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   scroll: { alignItems: 'center', padding: 24, paddingTop: 60 },
 
-  profileSection: { alignItems: 'center', marginBottom: 40 },
+  profileSection: { alignItems: 'center',marginTop: 0, marginBottom: 30 },
   profileCard: {
     width: 100,
     height: 100,
@@ -162,6 +162,15 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
   },
+
+  profileImageContainer: 
+{
+  position: 'absolute',
+  top: 0,
+  alignSelf: 'center',
+  zIndex: 1,
+},
+
   profileImage: {
     width: 94,
     height: 94,

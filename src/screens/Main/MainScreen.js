@@ -278,7 +278,7 @@ elevation: 5,
   borderColor: '#387FD8',
 },
 
-  circleButtonText: { position: 'absolute', bottom: -16, color: 'rgb(0, 0, 0)', textAlign: 'center' },
+  circleButtonText: { position: 'absolute', bottom: -16, color: 'rgb(59, 101, 173)', textAlign: 'center' },
 
   historyList: { width: '100%' },
   txCard: {

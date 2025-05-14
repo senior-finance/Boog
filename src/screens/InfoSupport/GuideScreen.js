@@ -61,7 +61,7 @@ export default function GuideScreen() {
               style={styles.cardWrapper}
             >
               <LinearGradient
-                colors={['rgb(255, 255, 255)', 'rgb(172, 212, 250)']} 
+                colors={['rgb(255, 255, 255)', 'rgb(172, 212, 250)']}
                 style={styles.listCard}
                 start={{ x: 0.5, y: 0 }}
                 end={{ x: 0.5, y: 1 }}
@@ -70,7 +70,7 @@ export default function GuideScreen() {
                   <CustomText style={styles.icon}>{item.icon}</CustomText>
                   <CustomText style={styles.cardText}>{item.title}</CustomText>
                 </View>
-                <Ionicons name="chevron-forward" size={28} color="#1B3C78" />
+                <Ionicons name="chevron-forward" size={23} color='rgb(100, 156, 228)' />
               </LinearGradient>
             </TouchableOpacity>
           );
@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
 
   title: {
     fontWeight: '900',
-    fontSize: 22,
+
     color: '#1B3C78',
     textAlign: 'center',
     marginBottom: 18,
@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
     borderRadius: 12,
     paddingHorizontal: 14,
-    paddingVertical: 8,
+    paddingVertical: 6,
     marginBottom: 24,
 
     shadowColor: '#000',
@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
 
   listCard: {
     borderRadius: 20,
-    paddingVertical: 20,
+    paddingVertical: 15,
     paddingHorizontal: 20,
     flexDirection: 'row',
     alignItems: 'center',
@@ -135,8 +135,8 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 5,
 
-     borderWidth: 1.5,
-  borderColor: 'rgba(139, 177, 246, 0.2)', 
+    borderWidth: 1.5,
+    borderColor: 'rgba(139, 177, 246, 0.2)',
   },
   rowWrap: {
     flexDirection: 'row',
@@ -144,12 +144,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   icon: {
-    fontSize: 26,
+    fontSize: 28,
     marginRight: 12,
   },
   cardText: {
     fontWeight: '600',
-    fontSize: 16,
+
     color: '#1B3C78',
   },
 });
