@@ -18,8 +18,8 @@ const TabNavigator = () => (
       tabBarIcon: ({ color, size }) => {
         let iconName;
         if (route.name === 'Home') iconName = 'home';
-        else if (route.name === 'Function') iconName = 'apps';
-        else if (route.name === 'VoiceInput') iconName = 'mic';
+        else if (route.name === 'Guide') iconName = 'book';
+
         else if (route.name === 'MyInfo') iconName = 'person';
         return <Ionicons name={iconName} size={size} color={color} />;
       },
@@ -31,14 +31,9 @@ const TabNavigator = () => (
   options={{ tabBarLabel: '홈' }}
 />
 <Tab.Screen
-  name="Function"
-  component={FunctionScreen}
-  options={{ tabBarLabel: '기능' }}
-/>
-<Tab.Screen
-  name="VoiceInput"
-  component={VoiceInputScreen}
-  options={{ tabBarLabel: 'AI 대화', title: 'AI 대화하기' }}
+  name="Guide"
+  component={GuideScreen}
+  options={{ tabBarLabel: '사용법' }}
 />
 
 <Tab.Screen

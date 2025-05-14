@@ -1,214 +1,161 @@
-import React, { useLayoutEffect, useState } from 'react';
+import React, { useLayoutEffect, useState, useMemo } from 'react';
 import {
   View,
   StyleSheet,
   TouchableOpacity,
   ScrollView,
   Modal,
-  Text,
-  TextInput,
-  Pressable,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import CustomText from '../../components/CustomText';
 import CustomTextInput from '../../components/CustomTextInput';
-import Icon from 'react-native-vector-icons/FontAwesome';
 
-const FunctionButton = ({ title, onPress, icon, size = 'large' }) => (
-  <TouchableOpacity
-    style={[styles.functionButton, size === 'pinned' && styles.pinnedButton]}
-    onPress={onPress}
-  >
-    <Ionicons name={icon} size={32} color="#4B7BE5" />
-    <CustomText style={styles.functionText}>{title}</CustomText>
+const FunctionButton = ({ title, onPress, icon }) => (
+  <TouchableOpacity style={styles.functionButton} onPress={onPress}>
+    <LinearGradient
+      colors={['rgba(255,255,255,1)', 'rgb(189, 223, 255)']}
+      start={{ x: 0.5, y: 0 }}
+      end={{ x: 0.5, y: 1 }}
+      style={styles.functionButtonInner}
+    >
+      <Ionicons name={icon} size={28} color='rgb(62, 146, 224)' />
+      <CustomText style={styles.functionText}>{title}</CustomText>
+    </LinearGradient>
+  </TouchableOpacity>
+);
+
+const CircleButton = ({ title, icon, onPress }) => (
+  <TouchableOpacity style={styles.circleButton} onPress={onPress}>
+    <Ionicons name={icon} size={28} color='rgb(211, 225, 237)' />
+    <CustomText style={styles.circleButtonText}>{title}</CustomText>
   </TouchableOpacity>
 );
 
 const MainScreen = ({ navigation }) => {
-  const [recentDepositsVisible, setRecentDepositsVisible] = useState(true);
-  const [recentTransfersVisible, setRecentTransfersVisible] = useState(true);
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [selectedTransaction, setSelectedTransaction] = useState(null);
-  const [memoText, setMemoText] = useState('');
-  const [isEditing, setIsEditing] = useState(false);
+  const [showHistory, setShowHistory] = useState(true);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedTx, setSelectedTx] = useState(null);
+  const [memo, setMemo] = useState('');
+  const [editing, setEditing] = useState(false);
 
-  const transferData = [
-    { name: '김민수', date: '2024-03-27', amount: '-₩50,000', type: '송금', memo: '' },
-    { name: '이영희', date: '2024-03-26', amount: '-₩120,000', type: '송금', memo: '' },
-    { name: '박철수', date: '2024-03-25', amount: '-₩75,000', type: '송금', memo: '' },
+  const actionButtons = [
+    { title: '송금', icon: 'swap-horizontal', onPress: () => navigation.navigate() },
+    { title: '퀴즈', icon: 'help-circle', onPress: () => navigation.navigate('Learning') },
+    { title: '지도', icon: 'map', onPress: () => navigation.navigate('MapView') },
+    { title: '복지혜택', icon: 'gift', onPress: () => navigation.navigate('Welfare') },
   ];
 
-  const depositData = [
-    { name: '신한은행', date: '2024-03-27', amount: '+₩200,000', type: '입금', memo: '' },
-    { name: '엄마', date: '2024-03-26', amount: '+₩100,000', type: '입금', memo: '' },
-    { name: '국민은행', date: '2024-03-25', amount: '+₩150,000', type: '입금', memo: '' },
+  const featureButtons = [
+    { title: 'AI 챗봇', icon: 'chatbubble-ellipses-outline', onPress: () => navigation.navigate('VoiceInput') },
+    { title: '통화·문자', icon: 'analytics-outline', onPress: () => navigation.navigate('AutoPhoneAnalysis') },
+    { title: '지문 인증', icon: 'finger-print', onPress: () => navigation.navigate('Biometric') },
   ];
+
+  const outgo = [
+    { name: '김민수', date: '2024-05-13', amount: '-₩50,000', isDeposit: false },
+    { name: '영희', date: '2024-05-12', amount: '-₩30,000', isDeposit: false },
+  ];
+  const income = [
+    { name: '신한은행', date: '2024-05-14', amount: '+₩200,000', isDeposit: true },
+    { name: '엄마', date: '2024-05-11', amount: '+₩100,000', isDeposit: true },
+  ];
+
+  const history = useMemo(() => [...outgo, ...income].sort((a, b) => new Date(b.date) - new Date(a.date)), []);
+
+  const openModal = tx => {
+    setSelectedTx(tx);
+    setMemo(tx.amount);
+    setEditing(false);
+    setModalVisible(true);
+  };
 
   useLayoutEffect(() => {
     navigation.setOptions({
       headerTitle: '',
       headerLeft: () => (
         <TouchableOpacity onPress={() => navigation.navigate('Account')} style={{ marginLeft: 16 }}>
-          <Ionicons name="log-in-outline" size={24} color="#4B7BE5" />
+          <Ionicons name="log-in-outline" size={24} color='rgb(85, 170, 250)' />
         </TouchableOpacity>
       ),
       headerRight: () => (
-        <TouchableOpacity
-          onPress={() => navigation.navigate('NotificationScreen')}
-          style={{ marginRight: 16 }}
-        >
-          <Ionicons name="notifications-outline" size={24} color="#4B7BE5" />
+        <TouchableOpacity onPress={() => navigation.navigate('NotificationScreen')} style={{ marginRight: 16 }}>
+          <Ionicons name="notifications-outline" size={24} color="#4A90E2" />
         </TouchableOpacity>
       ),
     });
   }, [navigation]);
 
-  const openModal = (transaction) => {
-    setSelectedTransaction(transaction);
-    setMemoText(transaction.memo || '');
-    setIsModalVisible(true);
-    setIsEditing(false);
-  };
-
   return (
-    <LinearGradient colors={['#F8F8F8', '#ECECEC']} style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <LinearGradient colors={['#4B7BE5', '#6FA8DC']} style={styles.balanceCard}>
-          <TouchableOpacity
-            style={[styles.settingsButton, { flexDirection: 'row', alignItems: 'center' }]}
-            onPress={() => {
-              // 설정 화면으로 이동하거나 모달 열기 등
-            }}
-          >
-            <Icon name="gear" size={24} color="#fff" />
-            <Text style={{ color: '#fff', fontSize: 16, marginLeft: 5 }}>
-              설정
-            </Text>
-          </TouchableOpacity>
-          <CustomText style={styles.balanceLabel}>어서오세요 사용자 님</CustomText>
-          <CustomText style={styles.accountNumber}>대표 계좌 번호 : 1146566180</CustomText>
-          <CustomText style={styles.balanceAmount}>금액 104,000,000 원</CustomText>
-        </LinearGradient>
+    <LinearGradient colors={['rgb(216, 236, 255)', 'rgb(233, 244, 255)']} style={styles.container}>
+      <ScrollView contentContainerStyle={styles.content}>
 
-        <View style={styles.actionRow}>
-          <FunctionButton title="입금" icon="wallet" onPress={() => { }} size="pinned" />
-          <FunctionButton title="출금" icon="send" onPress={() => { }} size="pinned" />
+        <View style={styles.balanceCard}>
+          <View style={styles.circleDecor} />
+          <View style={[styles.circleDecor, styles.circleOffset]} />
+          <View style={styles.arrowPattern} />
+          <View style={styles.dottedLine} />
+          <CustomText style={styles.accountNum}>대표 계좌: 114-6566-180</CustomText>
+          <CustomText style={styles.balanceAmt}>₩104,000,000</CustomText>
         </View>
 
-        <TouchableOpacity
-          onPress={() => setRecentTransfersVisible(!recentTransfersVisible)}
-          style={styles.expandToggle}
-        >
-          <CustomText style={styles.sectionTitle}>최근 송금 내역</CustomText>
-          <Ionicons
-            name={recentTransfersVisible ? 'chevron-up-outline' : 'chevron-down-outline'}
-            size={20}
-            color="#4B7BE5"
-          />
+        <CustomText style={styles.sectionSubTitle}>주요 기능</CustomText>
+        <View style={styles.actionRow}>
+          {actionButtons.map((btn, i) => <FunctionButton key={i} {...btn} />)}
+        </View>
+
+        <CustomText style={styles.sectionSubTitle}>스마트 기능</CustomText>
+        <View style={styles.featureRow}>
+          {featureButtons.map((btn, i) => <CircleButton key={i} {...btn} />)}
+        </View>
+
+        <TouchableOpacity style={styles.toggleRow} onPress={() => setShowHistory(v => !v)}>
+          <CustomText style={styles.sectionTitle}>거래 내역</CustomText>
+          <Ionicons name={showHistory ? 'chevron-up-outline' : 'chevron-down-outline'} size={20} color="#4A90E2" />
         </TouchableOpacity>
 
-        {recentTransfersVisible && (
-          <View style={styles.historyContainer}>
-            {transferData.map((item, index) => (
-              <TouchableOpacity
-                key={index}
-                style={styles.historyCard}
-                onPress={() => openModal(item)}
-              >
-                <Ionicons name="person-circle-outline" size={32} color="#4B7BE5" />
-                <View style={styles.historyText}>
-                  <CustomText style={styles.name}>{item.name}</CustomText>
-                  <CustomText style={styles.date}>{item.date}</CustomText>
+        {showHistory && (
+          <View style={styles.historyList}>
+            {history.map((tx, idx) => (
+              <TouchableOpacity key={idx} style={styles.txCard} onPress={() => openModal(tx)}>
+                <View style={styles.txInfo}>
+                  <CustomText style={styles.txName}>{tx.name}</CustomText>
+                  <CustomText style={styles.txDate}>{tx.date}</CustomText>
                 </View>
-                <CustomText style={[styles.amount, { color: '#DC3545' }]}>{item.amount}</CustomText>
+                <CustomText style={[styles.txAmt, { color: tx.isDeposit ? '#4A90E2' : '#FF6B81' }]}>{tx.amount}</CustomText>
               </TouchableOpacity>
             ))}
           </View>
         )}
 
-        <TouchableOpacity
-          onPress={() => setRecentDepositsVisible(!recentDepositsVisible)}
-          style={styles.expandToggle}
-        >
-          <CustomText style={styles.sectionTitle}>최근 입금 내역</CustomText>
-          <Ionicons
-            name={recentDepositsVisible ? 'chevron-up-outline' : 'chevron-down-outline'}
-            size={20}
-            color="#4B7BE5"
-          />
-        </TouchableOpacity>
-
-        {recentDepositsVisible && (
-          <View style={styles.historyContainer}>
-            {depositData.map((item, index) => (
-              <TouchableOpacity
-                key={index}
-                style={styles.historyCard}
-                onPress={() => openModal(item)}
-              >
-                <Ionicons name="person-circle-outline" size={32} color="#4B7BE5" />
-                <View style={styles.historyText}>
-                  <CustomText style={styles.name}>{item.name}</CustomText>
-                  <CustomText style={styles.date}>{item.date}</CustomText>
-                </View>
-                <CustomText style={styles.depositAmount}>{item.amount}</CustomText>
-              </TouchableOpacity>
-            ))}
-          </View>
-        )}
       </ScrollView>
 
-      <Modal visible={isModalVisible} transparent animationType="fade">
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <CustomText style={styles.modalTitle}>
-              {selectedTransaction?.type} 상세 내역
-            </CustomText>
-            <CustomText>이름: {selectedTransaction?.name}</CustomText>
-            <CustomText>날짜: {selectedTransaction?.date}</CustomText>
-            <CustomText>금액: {selectedTransaction?.amount}</CustomText>
+      <Modal visible={modalVisible} transparent animationType="fade">
+        <View style={styles.modalBg}>
+          <View style={styles.modalBox}>
+            <CustomText style={styles.modalTitle}>상세 내역</CustomText>
+            <CustomText>이름: {selectedTx?.name}</CustomText>
+            <CustomText>날짜: {selectedTx?.date}</CustomText>
+            <CustomText>금액: {selectedTx?.amount}</CustomText>
 
             <View style={styles.memoRow}>
-              <CustomText style={{ fontWeight: 'bold' }}>메모:</CustomText>
-
-              {!isEditing ? (
-                <View style={styles.memoDisplayRow}>
-                  <CustomText style={styles.memoText}>
-                    {selectedTransaction?.memo ? ` ${selectedTransaction.memo}` : ' '}
-                  </CustomText>
-                  <TouchableOpacity onPress={() => setIsEditing(true)}>
-                    <Ionicons name="create-outline" size={20} color="#4B7BE5" style={{ marginLeft: 8 }} />
-                  </TouchableOpacity>
-                </View>
+              <CustomText style={styles.memoLabel}>메모:</CustomText>
+              {!editing ? (
+                <TouchableOpacity onPress={() => setEditing(true)}>
+                  <Ionicons name="create-outline" size={20} color="#4A90E2" />
+                </TouchableOpacity>
               ) : (
                 <>
-                  <CustomTextInput
-                    value={memoText}
-                    onChangeText={setMemoText}
-                    placeholder="메모를 입력하세요"
-                    style={styles.memoInput}
-                    multiline
-                  />
-                  <TouchableOpacity
-                    onPress={() => {
-                      selectedTransaction.memo = memoText;
-                      setIsEditing(false);
-                      alert('메모가 저장되었습니다!');
-                    }}
-                    style={styles.saveButton}
-                  >
-                    <CustomText style={styles.saveButtonText}>저장</CustomText>
+                  <CustomTextInput value={memo} onChangeText={setMemo} placeholder="메모 입력" style={styles.memoInput} multiline />
+                  <TouchableOpacity onPress={() => { selectedTx.memo = memo; setEditing(false); }} style={styles.saveBtn}>
+                    <CustomText style={styles.saveText}>저장</CustomText>
                   </TouchableOpacity>
                 </>
               )}
             </View>
 
-            <TouchableOpacity
-              onPress={() => setIsModalVisible(false)}
-              style={styles.modalCloseButton}
-            >
-              <CustomText style={styles.modalCloseText}>닫기</CustomText>
+            <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.closeBtn}>
+              <CustomText style={styles.closeText}>닫기</CustomText>
             </TouchableOpacity>
           </View>
         </View>
@@ -219,151 +166,150 @@ const MainScreen = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  scrollContainer: { padding: 20, alignItems: 'center' },
+  content: { padding: 20 },
+
   balanceCard: {
-    width: '90%',
-    paddingVertical: 24,
-    borderRadius: 8,
+    backgroundColor: '#4A90E2',
+    borderRadius: 20,
+    padding: 50,
     alignItems: 'center',
-    marginBottom: 20,
-    shadowColor: '#000',
+    marginBottom: 32,
+    shadowColor: '#AD4F5',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.3,
+    elevation: 8,
+    overflow: 'hidden',
+  },
+  circleDecor: {
+    position: 'absolute',
+    width: 120,
+    height: 120,
+    backgroundColor: 'rgba(255,255,255,0.12)',
+    borderRadius: 60,
+    top: 10,
+    left: 20,
+  },
+  circleOffset: {
+    top: 60,
+    left: 150,
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: 'rgba(255,255,255,0.08)',
+  },
+  arrowPattern: {
+    position: 'absolute',
+    top: 40,
+    right: 20,
+    width: 100,
+    height: 3,
+    backgroundColor: '#9ED0FF',
+    transform: [{ rotate: '0deg' }],
+    opacity: 0.4,
+  },
+  dottedLine: {
+    position: 'absolute',
+    bottom: 10,
+    left: 20,
+    right: 20,
+    height: 1,
+    borderStyle: 'dotted',
+    borderWidth: 1,
+    borderColor: '#fff',
+    opacity: 0.3,
+  },
+
+  accountNum: { color: '#E3F2FD', fontWeight: '700', marginBottom: 20 },
+  balanceAmt: { color: '#fff',  fontWeight: '900', letterSpacing: 2 },
+
+  sectionSubTitle: {  fontWeight: '600', color: '#4A90E2', marginBottom: 10 },
+  sectionTitle: { fontWeight: 'bold', color: '#4A90E2' },
+  toggleRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 },
+
+  actionRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 32 },
+  featureRow: { flexDirection: 'row', justifyContent: 'center', marginBottom: 32 },
+
+  functionButton: { borderRadius: 20, overflow: 'hidden', width: '22%' },
+functionButtonInner: {
+  flex: 1,
+  paddingVertical: 12,
+  alignItems: 'center',
+  justifyContent: 'center',
+  width: '100%',
+  borderRadius: 20,
+  backgroundColor: '#FFFFFF', // 배경 밝게
+
+  // 📏 그림자 강조 (아래 + 오른쪽)
+  shadowColor: '#000',
+  shadowOffset: { width: 3, height: 3 },
+  shadowOpacity: 0.2,
+  shadowRadius: 6,
+  elevation: 6,
+
+  // 🔲 테두리로 윤곽 강조
+  borderWidth: 1,
+  borderColor: '#C4DCFF',
+},
+
+
+
+  functionText: {color: '#444444' 
+, marginTop: 6, fontWeight: '600' },
+
+ circleButton: {
+  width: 70,
+  height: 70,
+  borderRadius: 35,
+  marginHorizontal: 12,
+  backgroundColor: '#4A90E2',
+  justifyContent: 'center',
+  alignItems: 'center',
+
+  // ✅ 그림자 더 진하게
+  shadowColor: '#000',
+ shadowOffset: { width: 2, height: 2 },
+shadowOpacity: 0.18,
+shadowRadius: 4,
+elevation: 5,
+
+
+  // ✅ 테두리 살짝 넣기 (흰 배경 대비)
+  borderWidth: 1,
+  borderColor: '#387FD8',
+},
+
+  circleButtonText: { position: 'absolute', bottom: -16, color: 'rgb(0, 0, 0)', textAlign: 'center' },
+
+  historyList: { width: '100%' },
+  txCard: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    backgroundColor: '#fff',
+    padding: 16,
+    borderRadius: 20,
+    marginBottom: 12,
+    shadowColor: '#AAD4F5',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
-    elevation: 8,
-  },
-  balanceLabel: { color: 'white', marginBottom: 6 },
-  balanceAmount: { color: 'white', fontWeight: 'bold' },
-  accountNumber: {
-    color: 'white',
-    marginBottom: 6,
-    textDecorationLine: 'underline',
-  },
-  actionRow: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    width: '90%',
-    marginBottom: 24,
-  },
-  sectionTitle: { fontWeight: 'bold', color: '#333' },
-  expandToggle: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    width: '90%',
-    marginTop: 10,
-    marginBottom: 8,
-  },
-  historyContainer: {
-    width: '100%',
-    alignItems: 'center',
-    marginBottom: 30,
-  },
-  historyCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-    width: '90%',
-    padding: 16,
-    borderRadius: 12,
-    marginBottom: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  historyText: { flex: 1, marginLeft: 12 },
-  name: { fontWeight: '600', color: '#333' },
-  date: { color: '#999' },
-  amount: { fontWeight: 'bold' },
-  depositAmount: {
-    fontWeight: 'bold',
-    color: '#4B7BE5',
-  },
-  functionButton: {
-    width: '48%',
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    paddingVertical: 20,
-    alignItems: 'center',
-    marginBottom: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    elevation: 5,
-  },
-  pinnedButton: { width: '36%', marginHorizontal: 8 },
-  functionText: { color: '#333', marginTop: 8, fontWeight: '600' },
-
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.4)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  modalContent: {
-    backgroundColor: '#fff',
-    padding: 24,
-    borderRadius: 12,
-    width: '85%',
-  },
-  modalTitle: {
-    fontWeight: 'bold',
-    color: '#4B7BE5',
-    marginBottom: 12,
-  },
-  memoRow: {
-    marginTop: 12,
-  },
-  memoDisplayRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 4,
-  },
-  memoText: {
-    color: '#333',
-  },
-  memoInput: {
+    elevation: 4,
     borderWidth: 1,
-    borderColor: '#ccc',
-    padding: 10,
-    borderRadius: 8,
-    minHeight: 60,
-    marginTop: 8,
-    textAlignVertical: 'top',
+    borderColor: 'rgb(189, 222, 240)',
   },
-  saveButton: {
-    marginTop: 12,
-    backgroundColor: '#4B7BE5',
-    paddingVertical: 10,
-    borderRadius: 8,
-  },
-  saveButtonText: {
-    color: 'white',
-    textAlign: 'center',
-    fontWeight: 'bold',
-  },
-  modalCloseButton: {
-    marginTop: 12,
-    paddingVertical: 10,
-    backgroundColor: '#ccc',
-    borderRadius: 8,
-  },
-  modalCloseText: {
-    color: '#333',
-    textAlign: 'center',
-    fontWeight: 'bold',
-  },
-  settingsButton: {
-    position: 'absolute',
-    top: 10,
-    right: 10,
-    padding: 5,
-    borderRadius: 10,
-    backgroundColor: 'rgba(0,0,0,0.2)',  // 필요에 따라 배경 조정
-    // flexDirection, alignItems는 인라인으로 줘도 되고 여기에 넣어도 됩니다
-  },
+  txInfo: { flex: 1 },
+  txName: { fontWeight: '600', color: '#333' },
+  txDate: {  color: '#888', marginTop: 4 },
+  txAmt: {  fontWeight: 'bold' },
+
+  modalBg: { flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', justifyContent: 'center', alignItems: 'center' },
+  modalBox: { width: '80%', backgroundColor: '#fff', padding: 24, borderRadius: 16 },
+  modalTitle: { fontWeight: 'bold', color: '#4A90E2', marginBottom: 12 },
+  memoRow: { marginTop: 16 },
+  memoLabel: {fontWeight: '600', marginBottom: 8 },
+  memoInput: { backgroundColor: '#F0F0F0', borderRadius: 8, padding: 10, minHeight: 60 },
+  saveBtn: { marginTop: 12, backgroundColor: '#4A90E2', paddingVertical: 10, borderRadius: 8 },
+  saveText: { color: '#fff', textAlign: 'center', fontWeight: '600' },
+  closeBtn: { marginTop: 16, backgroundColor: '#CCC', paddingVertical: 10, borderRadius: 8 },
+  closeText: { textAlign: 'center', fontWeight: '600', color: '#333' },
 });
 
 export default MainScreen;
