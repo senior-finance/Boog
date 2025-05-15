@@ -37,6 +37,7 @@ import AccountScreen from './src/screens/Account/AccountScreen'; // 변경된 �
 import AccountDetailScreen from './src/screens/Account/AccountDetailScreen'; // 변경된 로그인 to 계좌목록 파일
 
 // 내 정보
+import MyInfoScreen from './src/screens/Info/MyInfoScreen';
 import FontSizeSettingScreen from './src/screens/Info/FontSizeSettingScreen';
 import SoundVolumeScreen from './src/screens/Info/SoundVolumeScreen';
 import SoundVolumeSettingScreen from './src/screens/Info/SoundVolumeSettingScreen';
@@ -127,6 +128,8 @@ export default function App() {
               <Stack.Screen name="VoiceInput" component={VoiceInputScreen} options={{ title: 'AI 챗봇' }} />
               <Stack.Screen name="TTSSetting" component={TTSSettingScreen} options={{ title: '음성 설정' }} />
               <Stack.Screen name="AutoPhoneAnalysis" component={AutoPhoneAnalysisScreen} options={{ title: '자동 통화/문자 분석' }} />
+
+              <Stack.Screen name="MyInfo" component={MyInfoScreen} options={{ title: '내 정보 테스트' }} />
 
             </Stack.Navigator>
             <HelpTooltipButton />

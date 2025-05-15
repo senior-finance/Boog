@@ -56,7 +56,10 @@ const TabNavigator = () => (
       <Tab.Screen
         name="MyInfo"
         component={MyInfoStack}
-        options={{ tabBarLabel: '내 정보' }}
+        options={{
+          tabBarLabel: '내 정보',    // 탭 바 라벨
+          headerTitle: '내 정보',    // 탭 헤더 타이틀
+        }}
       />
     </Tab.Navigator>
   </View>
@@ -70,17 +73,17 @@ const styles = StyleSheet.create({
     borderTopWidth: 0,
     elevation: 5,
   },
-centerWrapper: {
-  position: 'absolute',
-  top: -25,
-  left: '50%',
-  transform: [{ translateX: -35 }], // 70(width)의 절반만큼 왼쪽으로 이동
-  width: 70,
-  height: 70,
-  justifyContent: 'center',
-  alignItems: 'center',
-  zIndex: 10,
-},
+  centerWrapper: {
+    position: 'absolute',
+    top: -25,
+    left: '50%',
+    transform: [{ translateX: -35 }], // 70(width)의 절반만큼 왼쪽으로 이동
+    width: 70,
+    height: 70,
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 10,
+  },
 
   homeButton: {
     width: 70,

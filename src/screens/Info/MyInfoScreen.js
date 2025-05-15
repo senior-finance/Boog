@@ -80,25 +80,25 @@ const MyInfoScreen = ({ navigation }) => {
           <CustomText style={styles.userName}>{userInfo?.nickname || '이름 없음'} 님</CustomText>
         </View>
 
-<View style={styles.menuContainer}>
-  {MENU.map((item, idx) => (
-    <TouchableOpacity
-      key={idx}
-      onPress={() => item.to ? navigation.navigate(item.to) : item.action?.()}
-      style={styles.cardWrapper} // 그림자와 외곽 처리용
-    >
-      <LinearGradient
-        colors={['rgb(255, 255, 255)', 'rgb(220, 240, 255)']}
-        start={{ x: 0.5, y: 0 }}
-        end={{ x: 0.5, y: 1 }}
-        style={styles.menuCard}
-      >
-        <Ionicons name={item.icon} size={22} color="rgb(0, 106, 255)" style={styles.menuIcon} />
-        <CustomText style={styles.menuText}>{item.text}</CustomText>
-      </LinearGradient>
-    </TouchableOpacity>
-  ))}
-</View>
+        <View style={styles.menuContainer}>
+          {MENU.map((item, idx) => (
+            <TouchableOpacity
+              key={idx}
+              onPress={() => item.to ? navigation.navigate(item.to) : item.action?.()}
+              style={styles.cardWrapper} // 그림자와 외곽 처리용
+            >
+              <LinearGradient
+                colors={['rgb(255, 255, 255)', 'rgb(220, 240, 255)']}
+                start={{ x: 0.5, y: 0 }}
+                end={{ x: 0.5, y: 1 }}
+                style={styles.menuCard}
+              >
+                <Ionicons name={item.icon} size={22} color="rgb(0, 106, 255)" style={styles.menuIcon} />
+                <CustomText style={styles.menuText}>{item.text}</CustomText>
+              </LinearGradient>
+            </TouchableOpacity>
+          ))}
+        </View>
       </ScrollView>
 
       <Modal visible={selectModalVisible} transparent animationType="fade">
@@ -146,7 +146,7 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   scroll: { alignItems: 'center', padding: 24, paddingTop: 60 },
 
-  profileSection: { alignItems: 'center',marginTop: 0, marginBottom: 30 },
+  profileSection: { alignItems: 'center', marginTop: 0, marginBottom: 30 },
   profileCard: {
     width: 100,
     height: 100,
@@ -163,13 +163,13 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
 
-  profileImageContainer: 
-{
-  position: 'absolute',
-  top: 0,
-  alignSelf: 'center',
-  zIndex: 1,
-},
+  profileImageContainer:
+  {
+    position: 'absolute',
+    top: 0,
+    alignSelf: 'center',
+    zIndex: 1,
+  },
 
   profileImage: {
     width: 94,
@@ -241,26 +241,26 @@ const styles = StyleSheet.create({
     color: '#4A90E2',
   },
   cardWrapper: {
-  borderRadius: 16,
-  marginBottom: 16,
-  shadowColor: '#000',
-  shadowOffset: { width: 2, height: 2 },
-  shadowOpacity: 0.08,
-  shadowRadius: 4,
-  elevation: 2,
-},
+    borderRadius: 16,
+    marginBottom: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 2, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 2,
+  },
 
-menuCard: {
-  flexDirection: 'row',
-  alignItems: 'center',
-  borderRadius: 16,
-  paddingVertical: 16,
-  paddingHorizontal: 20,
-},
+  menuCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: 16,
+    paddingVertical: 16,
+    paddingHorizontal: 20,
+  },
 
-menuIcon: {
-  marginRight: 16,
-},
+  menuIcon: {
+    marginRight: 16,
+  },
 
 
 });
