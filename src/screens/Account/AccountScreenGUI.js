@@ -394,7 +394,6 @@ const AccountScreenGUI = ({
           ))}
         </ScrollView>
 
-
         <FlatList
           data={accountList}
           keyExtractor={item => item.fintech_use_num}

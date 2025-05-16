@@ -1,24 +1,45 @@
 // screens/WithdrawAmountScreen.tsx
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
-import { useRoute, useNavigation } from '@react-navigation/native';
+import {
+  Tab,
+  View,
+  Text,
+  Alert,
+  Modal,
+  Button,
+  FlatList,
+  TextInput,
+  ScrollView,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  KeyboardAvoidingView,
+  ActivityIndicator,
+  StyleSheet,
+  Pressable,
+  Animated,
+  Easing,
+  Image,
+} from 'react-native'; import { useRoute, useNavigation } from '@react-navigation/native';
 import CustomText from '../../components/CustomText';
 import { NumPad } from '@umit-turk/react-native-num-pad';
 import { TextInputMask } from 'react-native-masked-text';
 import CustomNumPad from '../../components/CustomNumPad';
+import LinearGradient from 'react-native-linear-gradient';
 
 export default function WithdrawAmountScreen() {
   const { accountNumber, bank } = useRoute().params;
   const nav = useNavigation();
   const [amount, setAmount] = useState('');
+  // const [accountAmount, setAccountAmount] = useState(''); // 금액 입력
+  const [raw, setRaw] = useState('');
 
   const handlePress = digit => {
-    if (digit === '지우기' || digit === '지우') {
+    if (digit === '모두 지우기') {
+      // 모두 지우기
+      setAmount('');
+    } else if (digit === '한칸 지우기') {
       // 한 글자씩 삭제
       setAmount(prev => prev.slice(0, -1));
-    } else if (digit === '모두 지우기') {
-      // 전체 초기화
-      setAmount('');
     } else {
       // 숫자 또는 '000' 등 입력
       setAmount(prev => prev + digit);
@@ -48,16 +69,22 @@ export default function WithdrawAmountScreen() {
   };
 
   return (
-    <View style={{ flex: 1, padding: 16 }}>
+    <LinearGradient
+      colors={['rgb(216,236,255)', 'rgb(233,244,255)']}
+      style={styles.container}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+    >
+      <Text style={styles.title}>금액을 입력해</Text>
       <Text>계좌: {accountNumber}</Text>
       <Text>은행: {bank}</Text>
-      <TextInput
+      {/* <TextInput
         placeholder="출금 금액 입력"
         value={amount}
         onChangeText={setAmount}
         keyboardType="numeric"
         style={{ borderBottomWidth: 1, fontSize: 18, marginVertical: 20 }}
-      />
+      /> */}
       <TextInputMask
         type={'money'}
         options={{
@@ -102,10 +129,21 @@ export default function WithdrawAmountScreen() {
         disabled={!amount}
         onPress={() => nav.navigate('WithdrawAuth', { accountNumber, bank, amount })}
       />
-    </View>
+    </LinearGradient>
   );
 }
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    // justifyContent: 'center',   // 세로 가운데
+    // alignItems: 'center',       // 가로 가운데
+  },
+  title: {
+    textAlign: 'center',        // 텍스트 가운데 정렬
+    fontSize: 24,               // 글자 크게 (원하는 크기로 조정)
+    color: 'yellow',            // 노란색
+    fontWeight: 'bold',         // 조금 더 강조하고 싶으면
+  },
   numpadInner: {
     flexDirection: 'row',
     justifyContent: 'space-between',

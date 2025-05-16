@@ -1,15 +1,16 @@
 import React from 'react';
-import {View, TouchableOpacity, Text, StyleSheet} from 'react-native';
+import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
 
 const KEY_ROWS = [
   ['1', '2', '3'],
   ['4', '5', '6'],
   ['7', '8', '9'],
-  ['000', '0', '지우기'],
-  ['모두 지우기', '지우개',],
+  ['000', '0'],
+  [], [], [],
+  ['모두 지우기', '한칸 지우기',],
 ];
 
-export default function CustomNumPad({onPress}) {
+export default function CustomNumPad({ onPress }) {
   return (
     <View style={styles.container}>
       {KEY_ROWS.map((row, i) => (
@@ -40,12 +41,15 @@ const styles = StyleSheet.create({
   },
   button: {
     flex: 1,
-    marginHorizontal: 4,
+    marginHorizontal: 5,
     height: 80,            // 원하는 높이로 조정
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 8,
     backgroundColor: '#f0f0f0',
+    borderWidth: 5,
+    borderRadius: 50,
+    borderColor: '#ccc',
     shadowColor: '#000',
     shadowOpacity: 0.5,
     shadowRadius: 4,

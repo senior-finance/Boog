@@ -1,11 +1,30 @@
 // screens/WithdrawAccountScreen.tsx
 import React, { useState } from 'react';
-import { View, TextInput, Button, StyleSheet } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import {
+  Tab,
+  View,
+  Text,
+  Alert,
+  Modal,
+  Button,
+  FlatList,
+  TextInput,
+  ScrollView,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  KeyboardAvoidingView,
+  ActivityIndicator,
+  StyleSheet,
+  Pressable,
+  Animated,
+  Easing,
+  Image,
+} from 'react-native'; import { useNavigation } from '@react-navigation/native';
 import CustomText from '../../components/CustomText';
 import { NumPad } from '@umit-turk/react-native-num-pad';
 import { TextInputMask } from 'react-native-masked-text';
 import CustomNumPad from '../../components/CustomNumPad';
+import LinearGradient from 'react-native-linear-gradient';
 
 export default function WithdrawAccountScreen() {
   const nav = useNavigation();
@@ -13,12 +32,12 @@ export default function WithdrawAccountScreen() {
   const [accountNumber, setAccountNumber] = useState(''); // 계좌번호 입력
 
   const handlePress = digit => {
-    if (digit === '지우기' || digit === '지우') {
+    if (digit === '모두 지우기') {
+      // 모두 지우기
+      setAccountNumber('');
+    } else if (digit === '한칸 지우기') {
       // 한 글자씩 삭제
       setAccountNumber(prev => prev.slice(0, -1));
-    } else if (digit === '모두 지우기') {
-      // 전체 초기화
-      setAccountNumber('');
     } else {
       // 숫자 또는 '000' 등 입력
       setAccountNumber(prev => prev + digit);
@@ -26,7 +45,13 @@ export default function WithdrawAccountScreen() {
   };
 
   return (
-    <View style={{ flex: 1, padding: 16 }}>
+    <LinearGradient
+      colors={['rgb(216,236,255)', 'rgb(233,244,255)']}
+      style={styles.container}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+    >
+      <Text style={styles.title}>계좌 번호 10자리를 입력하세요</Text>
       <TextInputMask
         type={'money'}
         options={{
@@ -63,10 +88,23 @@ export default function WithdrawAccountScreen() {
         disabled={!accountNumber}
         onPress={() => nav.navigate('WithdrawBank', { accountNumber })}
       />
-    </View>
+    </LinearGradient>
   );
 }
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    // justifyContent: 'center',   // 세로 가운데
+    // alignItems: 'center',       // 가로 가운데
+  },
+  title: {
+    textAlign: 'center',        // 텍스트 가운데 정렬
+    fontSize: 24,               // 글자 크게 (원하는 크기로 조정)
+    color: 'yellow',            // 노란색
+    fontWeight: 'bold',         // 조금 더 강조하고 싶으면
+    marginTop: 20,           // 아래 여백
+    marginBottom: 20,           // 아래 여백
+  },
   numpadInner: {
     flexDirection: 'row',
     justifyContent: 'space-between',
