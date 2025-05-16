@@ -214,7 +214,7 @@ return (
   <KeyboardAvoidingView
     style={styles.wrapper}
     behavior="padding" // ← 이걸로 고정
-    keyboardVerticalOffset={100} // 필요 시 조정
+    keyboardVerticalOffset={0} // 필요 시 조정
   >
     <View style={{ flex: 1 }}>
       {isRecording && (
