@@ -118,35 +118,59 @@ export default function WithdrawBankScreen() {
           </View>
         </View>
       </Modal>
-      <LinearGradient
-        colors={['#4C6EF5', '#3B5BDB']}      // 원하는 그라데이션 컬러
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 0 }}
-        style={{
-          borderRadius: 25,                 // 둥글게
-          marginVertical: 20,
-        }}
-      >
-        <TouchableOpacity
-          disabled={!selected}         // accountNumber 없으면 비활성화
-          onPress={() => nav.navigate('WithdrawAmount', {
-            accountNumber, bank: selected                                       // ← selected를 넘기기
-          })}
+      <View style={styles.buttonRow}>
+        <LinearGradient
+          colors={['#4C6EF5', '#3B5BDB']}      // 원하는 그라데이션 컬러
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
           style={{
-            paddingVertical: 14,
-            alignItems: 'center',
-            opacity: selected ? 1 : 0.6,  // 비활성 시 반투명
+            borderRadius: 25,                 // 둥글게
+            marginVertical: 20,
           }}
         >
-          <Text style={{ color: '#FFF', fontSize: 16, fontWeight: '600' }}>
-            다음
-          </Text>
-        </TouchableOpacity>
-      </LinearGradient>
+          <TouchableOpacity
+            onPress={() => nav.goBack()}
+            style={{
+              width: 160,
+              paddingVertical: 20,
+              alignItems: 'center',
+            }}
+          >
+            <Text style={{ color: '#FFF', fontSize: 16, fontWeight: '600' }}>
+              이전
+            </Text>
+          </TouchableOpacity>
+        </LinearGradient>
+        <LinearGradient
+          colors={['#4C6EF5', '#3B5BDB']}      // 원하는 그라데이션 컬러
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          style={{
+            borderRadius: 25,                 // 둥글게
+            marginVertical: 20,
+          }}
+        >
+          <TouchableOpacity
+            disabled={!selected}         // accountNumber 없으면 비활성화
+            onPress={() => nav.navigate('WithdrawAmount', {
+              accountNumber, bank: selected                                       // ← selected를 넘기기
+            })}
+            style={{
+              width: 160,
+              paddingVertical: 20,
+              alignItems: 'center',
+              opacity: selected ? 1 : 0.6,  // 비활성 시 반투명
+            }}
+          >
+            <Text style={{ color: '#FFF', fontSize: 16, fontWeight: '600' }}>
+              다음
+            </Text>
+          </TouchableOpacity>
+        </LinearGradient>
+      </View>
     </LinearGradient >
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -207,6 +231,13 @@ const styles = StyleSheet.create({
   item: { flexDirection: 'row', alignItems: 'center', padding: 12 },
   icon: { width: 80, height: 80, marginBottom: 10 },
   label: { textAlign: 'center', fontSize: 16 },
+  buttonRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between', // 좌우 끝에 배치
+    alignItems: 'center',
+    width: '100%',                    // 부모 너비 100%
+    paddingHorizontal: 16,            // 양쪽 여백(필요에 따라 조정)
+  },
   accountText: {
     textAlign: 'center', // 텍스트 가운데 정렬
     color: '#3498DB',

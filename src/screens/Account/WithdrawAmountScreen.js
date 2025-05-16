@@ -31,7 +31,7 @@ export default function WithdrawAmountScreen() {
   const [amount, setAmount] = useState('');
   const [raw, setRaw] = useState('');
   const [error, setError] = useState('');
-  
+
   const MAX_RAW = 10000000000; // 100억
 
   const handlePress = digit => {
@@ -47,26 +47,38 @@ export default function WithdrawAmountScreen() {
     }
   };
 
-  // 한국식 단위 포맷 (예: 1234567890 → "12억3456만7890")
+  // 한국식 단위 포맷 (예: 1234567890 → "12억 3456만 7890원", 100만 → "100만 원")
   const formatKorean = s => {
     let n = BigInt(s.replace(/\D/g, '') || '0');
     if (n === 0n) return '';
+
+    // 조·억·만 단위만 처리
     const units = [
-      [10n ** 12n, ' 조 '],
-      [10n ** 8n, ' 억 '],
-      [10n ** 4n, ' 만 '],
-      [1n, ' 원'],
+      [10n ** 12n, '조'],
+      [10n ** 8n, '억'],
+      [10n ** 4n, '만'],
     ];
     let res = '';
+
     for (const [u, label] of units) {
       const q = n / u;
       if (q) {
-        res += q + label;
+        res += `${q}${label} `;
         n %= u;
       }
     }
-    if (n) res += n; // 4자리 미만 남은 수
-    return res;
+
+    res = res.trim();          // 마지막 공백 제거
+    if (!res) {
+      // 1만 미만인 경우: 그냥 숫자 + 원
+      return `${n}원`;
+    }
+    if (n > 0n) {
+      // 단위 뒤에 남은 숫자가 있으면 “단위 숫자원”
+      return `${res} ${n}원`;
+    }
+    // 남은 숫자가 없으면 “단위 원”
+    return `${res} 원`;
   };
 
   return (
@@ -127,29 +139,54 @@ export default function WithdrawAmountScreen() {
         />
       </View>
       {/* <Text style={styles.unit}>원</Text> */}
-      <LinearGradient
-        colors={['#4C6EF5', '#3B5BDB']}      // 원하는 그라데이션 컬러
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 0 }}
-        style={{
-          borderRadius: 25,                 // 둥글게
-          marginVertical: 20,
-        }}
-      >
-        <TouchableOpacity
-          disabled={!amount}         // accountNumber 없으면 비활성화
-          onPress={() => nav.navigate('WithdrawAuth', { accountNumber, bank, formattedAmount: formatKorean(amount) })}
+      <View style={styles.buttonRow}>
+        <LinearGradient
+          colors={['#4C6EF5', '#3B5BDB']}      // 원하는 그라데이션 컬러
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
           style={{
-            paddingVertical: 14,
-            alignItems: 'center',
-            opacity: amount ? 1 : 0.6,  // 비활성 시 반투명
+            borderRadius: 25,                 // 둥글게
+            marginVertical: 20,
           }}
         >
-          <Text style={{ color: '#FFF', fontSize: 16, fontWeight: '600' }}>
-            다음
-          </Text>
-        </TouchableOpacity>
-      </LinearGradient>
+          <TouchableOpacity
+            onPress={() => nav.goBack()}
+            style={{
+              width: 160,
+              paddingVertical: 20,
+              alignItems: 'center',
+            }}
+          >
+            <Text style={{ color: '#FFF', fontSize: 16, fontWeight: '600' }}>
+              이전
+            </Text>
+          </TouchableOpacity>
+        </LinearGradient>
+        <LinearGradient
+          colors={['#4C6EF5', '#3B5BDB']}      // 원하는 그라데이션 컬러
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          style={{
+            borderRadius: 25,                 // 둥글게
+            marginVertical: 20,
+          }}
+        >
+          <TouchableOpacity
+            disabled={!amount}         // accountNumber 없으면 비활성화
+            onPress={() => nav.navigate('WithdrawAuth', { accountNumber, bank, formattedAmount: formatKorean(amount) })}
+            style={{
+              width: 160,
+              paddingVertical: 20,
+              alignItems: 'center',
+              opacity: amount ? 1 : 0.6,  // 비활성 시 반투명
+            }}
+          >
+            <Text style={{ color: '#FFF', fontSize: 16, fontWeight: '600' }}>
+              다음
+            </Text>
+          </TouchableOpacity>
+        </LinearGradient>
+      </View>
     </LinearGradient>
   );
 }
@@ -199,6 +236,13 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 2,
+  },
+  buttonRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between', // 좌우 끝에 배치
+    alignItems: 'center',
+    width: '100%',                    // 부모 너비 100%
+    paddingHorizontal: 16,            // 양쪽 여백(필요에 따라 조정)
   },
   accountText: {
     textAlign: 'center', // 텍스트 가운데 정렬

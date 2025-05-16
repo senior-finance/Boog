@@ -27,6 +27,7 @@ import LinearGradient from 'react-native-linear-gradient';
 
 export default function WithdrawAccountScreen() {
   const nav = useNavigation();
+
   const [account, setAccount] = useState('');
   const [accountNumber, setAccountNumber] = useState(''); // 계좌번호 입력
 
@@ -112,30 +113,55 @@ export default function WithdrawAccountScreen() {
           containerStyle={styles.numpadInner}
         />
       </View>
-      <LinearGradient
-        colors={['#4C6EF5', '#3B5BDB']}      // 원하는 그라데이션 컬러
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 0 }}
-        style={{
-          borderRadius: 25,                 // 둥글게
-          marginVertical: 20,
-        }}
-      >
-        <TouchableOpacity
-          disabled={!accountNumber}         // accountNumber 없으면 비활성화
-          onPress={handleNext}
+      <View style={styles.buttonRow}>
+        <LinearGradient
+          colors={['#4C6EF5', '#3B5BDB']}      // 원하는 그라데이션 컬러
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
           style={{
-            paddingVertical: 14,
-            alignItems: 'center',
-            opacity: accountNumber ? 1 : 0.6,  // 비활성 시 반투명
+            borderRadius: 25,                 // 둥글게
+            marginVertical: 20,
           }}
         >
-          <Text style={{ color: '#FFF', fontSize: 16, fontWeight: '600' }}>
-            다음
-          </Text>
-        </TouchableOpacity>
-      </LinearGradient>
-    </LinearGradient>
+          <TouchableOpacity
+            onPress={() => nav.goBack()}
+            style={{
+              width: 160,
+              paddingVertical: 20,
+              alignItems: 'center',
+            }}
+          >
+            <Text style={{ color: '#FFF', fontSize: 16, fontWeight: '600' }}>
+              이전
+            </Text>
+          </TouchableOpacity>
+        </LinearGradient>
+        <LinearGradient
+          colors={['#4C6EF5', '#3B5BDB']}      // 원하는 그라데이션 컬러
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          style={{
+            borderRadius: 25,                 // 둥글게
+            marginVertical: 20,
+          }}
+        >
+          <TouchableOpacity
+            disabled={!accountNumber}         // accountNumber 없으면 비활성화
+            onPress={handleNext}
+            style={{
+              width: 160,
+              paddingVertical: 20,
+              alignItems: 'center',
+              opacity: accountNumber ? 1 : 0.6,  // 비활성 시 반투명
+            }}
+          >
+            <Text style={{ color: '#FFF', fontSize: 16, fontWeight: '600' }}>
+              다음
+            </Text>
+          </TouchableOpacity>
+        </LinearGradient>
+      </View>
+    </LinearGradient >
   );
 }
 const styles = StyleSheet.create({
@@ -165,6 +191,13 @@ const styles = StyleSheet.create({
     // 버튼 텍스트 스타일
     fontSize: 30,
     fontWeight: '800',
+  },
+  buttonRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between', // 좌우 끝에 배치
+    alignItems: 'center',
+    width: '100%',                    // 부모 너비 100%
+    paddingHorizontal: 16,            // 양쪽 여백(필요에 따라 조정)
   },
   accountText: {
     color: '#3498DB',   // 빨간색

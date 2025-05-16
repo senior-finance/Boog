@@ -44,15 +44,81 @@ export default function WithdrawAuthScreen() {
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
     >
-      <Text style={styles.accountText}>출금할 계좌 번호 : {accountNumber}</Text>
-      <Text style={styles.bankText}>출금할 은행 : {bank}</Text>
-      <Text style={styles.amountText}>입력된 금액 : {formattedAmount}</Text>
+      <Text style={styles.accountText}>출금할 계좌 번호{'\n'}{accountNumber}</Text>
+      <Text style={styles.bankText}>출금할 은행{'\n'}{bank}</Text>
+      <Text style={styles.amountText}>입력된 금액{'\n'}{formattedAmount}</Text>
       <Text style={styles.title}>계좌 번호, 금액이 정말 맞으신가요?{'\n'}한번 더 확인해보세요!{'\n'}인증을 진행하면 출금이 완료돼요</Text>
-      <Button title="인증하고 출금 완료하기" onPress={handleAuthSuccess} />
+      <LinearGradient
+        colors={['#4C6EF5', '#3B5BDB']}      // 원하는 그라데이션 컬러
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 0 }}
+        style={{
+          borderRadius: 25,                 // 둥글게
+          marginVertical: 20,
+        }}
+      >
+        <TouchableOpacity
+          onPress={{}}
+          style={{
+            width: 160,
+            paddingVertical: 20,
+            alignItems: 'center',
+          }}
+        >
+          <Text style={{ color: '#FFF', fontSize: 16, fontWeight: '600' }}>
+            인증하고 출금할게요
+          </Text>
+        </TouchableOpacity>
+      </LinearGradient>
+      <View style={styles.buttonRow}>
+        <LinearGradient
+          colors={['#4C6EF5', '#3B5BDB']}      // 원하는 그라데이션 컬러
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          style={{
+            borderRadius: 25,                 // 둥글게
+            marginVertical: 20,
+          }}
+        >
+          <TouchableOpacity
+            onPress={() => nav.goBack()}
+            style={{
+              width: 160,
+              paddingVertical: 20,
+              alignItems: 'center',
+            }}
+          >
+            <Text style={{ color: '#FFF', fontSize: 16, fontWeight: '600' }}>
+              이전으로 돌아갈게요
+            </Text>
+          </TouchableOpacity>
+        </LinearGradient>
+        <LinearGradient
+          colors={['#4C6EF5', '#3B5BDB']}      // 원하는 그라데이션 컬러
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          style={{
+            borderRadius: 25,                 // 둥글게
+            marginVertical: 20,
+          }}
+        >
+          <TouchableOpacity
+            onPress={() => nav.navigate('MainTabs')}
+            style={{
+              width: 160,
+              paddingVertical: 20,
+              alignItems: 'center',
+            }}
+          >
+            <Text style={{ color: '#FFF', fontSize: 16, fontWeight: '600' }}>
+              처음 화면으로 갈게요
+            </Text>
+          </TouchableOpacity>
+        </LinearGradient>
+      </View>
     </LinearGradient>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -80,6 +146,13 @@ const styles = StyleSheet.create({
     // 버튼 텍스트 스타일
     fontSize: 30,
     fontWeight: '800',
+  },
+  buttonRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between', // 좌우 끝에 배치
+    alignItems: 'center',
+    width: '100%',                    // 부모 너비 100%
+    paddingHorizontal: 16,            // 양쪽 여백(필요에 따라 조정)
   },
   accountText: {
     textAlign: 'center', // 텍스트 가운데 정렬
