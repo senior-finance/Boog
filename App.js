@@ -66,6 +66,8 @@ import FunctionScreen from './src/screens/Info/FunctionScreen';
 
 import HelpTooltipButton from './src/components/HelpTooltipButton';
 
+import { SeniorModeProvider } from './src/components/SeniorModeContext';
+
 // 가로모드
 import PortraitWrapper from './src/utils/portraitWrapper';  // 파일 경로에 맞춰 수정
 
@@ -76,6 +78,7 @@ export default function App() {
     // <PortraitWrapper>
       <FontSizeProvider>
         <UserProvider>
+          <SeniorModeProvider>
           <NavigationContainer>
           <>
             <Stack.Navigator initialRouteName="Login">
@@ -135,6 +138,7 @@ export default function App() {
             <HelpTooltipButton />
           </>
           </NavigationContainer>
+          </SeniorModeProvider>
         </UserProvider>
       </FontSizeProvider>
     // </PortraitWrapper>

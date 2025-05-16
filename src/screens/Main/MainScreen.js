@@ -1,38 +1,55 @@
 import React, { useLayoutEffect, useState, useMemo } from 'react';
 import {
-  Text,
   View,
   StyleSheet,
   TouchableOpacity,
   ScrollView,
   Modal,
+  Switch,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import CustomText from '../../components/CustomText';
 import CustomTextInput from '../../components/CustomTextInput';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { useSeniorMode } from '../../components/SeniorModeContext';
 
-const FunctionButton = ({ title, onPress, icon }) => (
-  <TouchableOpacity style={styles.functionButton} onPress={onPress}>
-    <LinearGradient
-      colors={['rgb(255, 255, 255)', 'rgb(220, 240, 255)']}
-      start={{ x: 0.5, y: 0 }}
-      end={{ x: 0.5, y: 1 }}
-      style={styles.functionButtonInner}
+const FunctionButton = ({ title, onPress, icon }) => {
+  const { seniorMode } = useSeniorMode();
+  const size = seniorMode ? 40 : 28;
+  const paddingVertical = seniorMode ? 24 : 12;
+  const buttonWidth = seniorMode ? '45%' : '22%';
+
+  return (
+    <TouchableOpacity style={[styles.functionButton, { width: buttonWidth }]} onPress={onPress}>
+      <LinearGradient
+        colors={['#FFFFFF', '#DCF0FF']}
+        start={{ x: 0.5, y: 0 }}
+        end={{ x: 0.5, y: 1 }}
+        style={[styles.functionButtonInner, { paddingVertical }]}
+      >
+        <Ionicons name={icon} size={size} color='#3E92E0' />
+        <CustomText style={[styles.functionText, { marginTop: 6 }]}>{title}</CustomText>
+      </LinearGradient>
+    </TouchableOpacity>
+  );
+};
+
+const CircleButton = ({ title, icon, onPress }) => {
+  const { seniorMode } = useSeniorMode();
+  const size = seniorMode ? 90 : 70;
+  const iconSize = seniorMode ? 36 : 28;
+
+  return (
+    <TouchableOpacity 
+      style={[styles.circleButton, { width: size, height: size, borderRadius: size / 2 }]} 
+      onPress={onPress}
     >
-      <Ionicons name={icon} size={28} color='rgb(62, 146, 224)' />
-      <CustomText style={styles.functionText}>{title}</CustomText>
-    </LinearGradient>
-  </TouchableOpacity>
-);
-
-const CircleButton = ({ title, icon, onPress }) => (
-  <TouchableOpacity style={styles.circleButton} onPress={onPress}>
-    <Ionicons name={icon} size={28} color='rgb(211, 225, 237)' />
-    <CustomText style={styles.circleButtonText}>{title}</CustomText>
-  </TouchableOpacity>
-);
+      <Ionicons name={icon} size={iconSize} color='rgb(211, 225, 237)' />
+      <CustomText style={styles.circleButtonText}>{title}</CustomText>
+    </TouchableOpacity>
+  );
+};
 
 const MainScreen = ({ navigation }) => {
   const [showHistory, setShowHistory] = useState(true);
@@ -40,6 +57,7 @@ const MainScreen = ({ navigation }) => {
   const [selectedTx, setSelectedTx] = useState(null);
   const [memo, setMemo] = useState('');
   const [editing, setEditing] = useState(false);
+  const { seniorMode, setSeniorMode } = useSeniorMode();
 
   const actionButtons = [
     { title: '송금', icon: 'swap-horizontal', onPress: () => navigation.navigate() },
@@ -89,35 +107,34 @@ const MainScreen = ({ navigation }) => {
   }, [navigation]);
 
   return (
-    <LinearGradient colors={['rgb(216, 236, 255)', 'rgb(233, 244, 255)']} style={styles.container}>
+    <LinearGradient colors={['#D8ECFF', '#E9F4FF']} style={styles.container}>
       <ScrollView contentContainerStyle={styles.content}>
+        <View style={styles.seniorModeToggleContainer}>
+          <CustomText style={styles.seniorModeText}>시니어 모드</CustomText>
+          <Switch
+            value={seniorMode}
+            onValueChange={setSeniorMode}
+            thumbColor={seniorMode ? '#4B7BE5' : '#ccc'}
+            trackColor={{ false: '#aaa', true: '#A9C7EE' }}
+          />
+        </View>
 
         <View style={styles.balanceCard}>
           <View style={styles.circleDecor} />
           <View style={[styles.circleDecor, styles.circleOffset]} />
           <View style={styles.arrowPattern} />
           <View style={styles.dottedLine} />
-          <TouchableOpacity
-            style={[styles.settingsButton, { flexDirection: 'row', alignItems: 'center' }]}
-            onPress={() => {
-              // 설정 화면으로 이동하거나 모달 열기 등
-            }}
-          >
+
+          <TouchableOpacity style={styles.settingsButton}>
             <Icon name="gear" size={24} color="#fff" />
-            <Text style={{ color: '#fff', fontSize: 16, marginLeft: 5 }}>
-              설정
-            </Text>
           </TouchableOpacity>
-          <CustomText style={[styles.accountNum, { fontSize: (styles.accountNum.fontSize || +20) }]}>
-            대표 계좌: 114-6566-180
-          </CustomText>
-          <CustomText style={[styles.balanceAmt, { fontSize: (styles.balanceAmt.fontSize || +20) }]}>
-            ₩ 104,000,000
-          </CustomText>
+
+          <CustomText style={styles.accountNum}>대표 계좌: 114-6566-180</CustomText>
+          <CustomText style={styles.balanceAmt}>₩ 104,000,000</CustomText>
         </View>
 
         <CustomText style={styles.sectionSubTitle}>주요 기능</CustomText>
-        <View style={styles.actionRow}>
+        <View style={[styles.actionRow, seniorMode && { flexWrap: 'wrap', justifyContent: 'space-around', rowGap: 20 }]}>
           {actionButtons.map((btn, i) => <FunctionButton key={i} {...btn} />)}
         </View>
 
@@ -144,47 +161,27 @@ const MainScreen = ({ navigation }) => {
             ))}
           </View>
         )}
-
       </ScrollView>
-
-      <Modal visible={modalVisible} transparent animationType="fade">
-        <View style={styles.modalBg}>
-          <View style={styles.modalBox}>
-            <CustomText style={styles.modalTitle}>상세 내역</CustomText>
-            <CustomText>이름: {selectedTx?.name}</CustomText>
-            <CustomText>날짜: {selectedTx?.date}</CustomText>
-            <CustomText>금액: {selectedTx?.amount}</CustomText>
-
-            <View style={styles.memoRow}>
-              <CustomText style={styles.memoLabel}>메모:</CustomText>
-              {!editing ? (
-                <TouchableOpacity onPress={() => setEditing(true)}>
-                  <Ionicons name="create-outline" size={20} color="#4A90E2" />
-                </TouchableOpacity>
-              ) : (
-                <>
-                  <CustomTextInput value={memo} onChangeText={setMemo} placeholder="메모 입력" style={styles.memoInput} multiline />
-                  <TouchableOpacity onPress={() => { selectedTx.memo = memo; setEditing(false); }} style={styles.saveBtn}>
-                    <CustomText style={styles.saveText}>저장</CustomText>
-                  </TouchableOpacity>
-                </>
-              )}
-            </View>
-
-            <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.closeBtn}>
-              <CustomText style={styles.closeText}>닫기</CustomText>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
     </LinearGradient>
   );
 };
 
+
 const styles = StyleSheet.create({
   container: { flex: 1 },
   content: { padding: 20 },
+  seniorModeToggleContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
 
+  seniorModeText: {
+    color: '#4A90E2',
+    fontWeight: 'bold',
+    marginRight: 10,
+  },
   balanceCard: {
     backgroundColor: '#4A90E2',
     borderRadius: 20,
@@ -274,29 +271,32 @@ const styles = StyleSheet.create({
   },
 
   circleButton: {
-    width: 70,
-    height: 70,
-    borderRadius: 35,
-    marginHorizontal: 12,
+    width: 90,                // 기존보다 넓게
+    height: 90,
+    borderRadius: 45,
+    marginHorizontal: 20,     // 간격 살짝 넓게
     backgroundColor: '#4A90E2',
     justifyContent: 'center',
     alignItems: 'center',
 
-    // ✅ 그림자 더 진하게
     shadowColor: '#000',
     shadowOffset: { width: 2, height: 2 },
     shadowOpacity: 0.18,
     shadowRadius: 4,
     elevation: 5,
 
-
-    // ✅ 테두리 살짝 넣기 (흰 배경 대비)
     borderWidth: 1,
     borderColor: '#387FD8',
   },
 
-  circleButtonText: { position: 'absolute', bottom: -24, color: 'rgb(59, 101, 173)', textAlign: 'center' },
-
+  circleButtonText: {
+    position: 'absolute',
+    bottom: -24,
+    color: 'rgb(59, 101, 173)',
+    textAlign: 'center',
+    minWidth: 90,              // 버튼 넓이와 동일하게 설정
+    includeFontPadding: false, // (Android에서 텍스트 정렬 개선)
+  },
   historyList: { width: '100%' },
   txCard: {
     flexDirection: 'row',
