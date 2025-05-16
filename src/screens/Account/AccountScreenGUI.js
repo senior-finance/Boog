@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import {
+  Tab,
   View,
   Text,
   Alert,
@@ -66,7 +67,6 @@ const AccountScreenGUI = ({
   const [dbAccounts, setDbAccounts] = useState([]);  // { accountId, accountNum, amount } 형태
 
   const [isModalVisible, setModalVisible] = useState(false);
-  const [accountNumber, setAccountNumber] = useState(''); // 계좌번호 입력
   const [selectedBank, setSelectedBank] = useState('전체');
 
   const navigation = useNavigation();
@@ -92,41 +92,6 @@ const AccountScreenGUI = ({
   useEffect(() => {
     fetchDbAccounts();
   }, [testBedAccount, accountList]);
-
-  // 한국식 단위 포맷 (예: 1234567890 → "12억3456만7890")
-  const formatKorean = s => {
-    let n = BigInt(s.replace(/\D/g, '') || '0');
-    if (n === 0n) return '';
-    const units = [
-      [1000000000000n, '조 '],
-      [100000000n, '억 '],
-      [10000n, '만 '],
-      // [1n, ' 원'],
-    ];
-    let res = '';
-    for (const [u, label] of units) {
-      const q = n / u;
-      if (q) {
-        res += q + label;
-        n %= u;
-      }
-    }
-    if (n) res += n; // 4자리 미만 남은 수
-    return res;
-  };
-
-  const handlePress = digit => {
-    if (digit === '지우기' || digit === '지우') {
-      // 한 글자씩 삭제
-      setAmount(prev => prev.slice(0, -1));
-    } else if (digit === '모두 지우기') {
-      // 전체 초기화
-      setAmount('');
-    } else {
-      // 숫자 또는 '000' 등 입력
-      setAmount(prev => prev + digit);
-    }
-  };
 
   const openOverlay = () => setShowWithdrawOverlay(true);
   const closeOverlay = () => {
@@ -498,7 +463,9 @@ const AccountScreenGUI = ({
                       <TouchableOpacity
                         style={styles.withdrawButton}
                         // onPress={() => handleWithdraw(item)}
-                        onPress={() => onPressWithdraw(item)}>
+                        // onPress={() => onPressWithdraw(item)}
+                        onPress={() => navigation.navigate('WithdrawAccount')}
+                      >
                         <CustomText style={styles.withdrawButtonText}>
                           출금
                         </CustomText>
@@ -571,70 +538,6 @@ const AccountScreenGUI = ({
                 <TouchableWithoutFeedback>
                   <View style={styles.modalContent}>
                     <Text style={styles.withdrawTitle}>임시 modal ... 출금 금액 입력</Text>
-
-                    <TextInputMask
-                      type={'custom'}
-                      options={{
-                        // 10: 숫자 한 글자 placeholder
-                        // 3자리 → 하이픈 → 3자리 → 하이픈 → 4자리
-                        mask: '123-456-7890'
-                      }}
-                      value={accountNumber}
-                      onChangeText={text => setAccountNumber(text)}
-                      placeholder="모의 계좌 번호 10자리"
-                      keyboardType="numeric"
-                      style={{
-                        fontSize: 24,
-                        textAlign: 'center',
-                        borderWidth: 5,
-                        borderColor: '#ccc',
-                        padding: 10,
-                        borderRadius: 4
-                      }}
-                      showSoftInputOnFocus={false}
-                    />
-
-                    <TextInputMask
-                      type={'money'}
-                      options={{
-                        precision: 0, // 소수점 없음
-                        separator: '', // 소수점 구분자
-                        delimiter: ',', // 천 단위 구분자
-                        unit: '', // 앞에 붙는 단위
-                        // suffixUnit: '원', // 뒤에 붙는 단위
-                      }}
-                      value={amount}
-                      onChangeText={text => setAmount(text)}
-                      style={styles.input}
-                      placeholder="금액 입력"
-                      keyboardType="numeric"
-                      returnKeyType="done"
-                      showSoftInputOnFocus={false}
-                    />
-
-                    <TextInput
-                      style={styles.input}
-                      keyboardType="numeric"
-                      returnKeyType="done"
-                      value={formatKorean(amount)}
-                      onChangeText={text => {
-                        const onlyNums = text.replace(/\D/g, '');
-                        setRaw(onlyNums); // 순수 숫자 저장
-                        setAmount(formatKorean(onlyNums)); // 포맷된 문자열 저장
-                      }}
-                      placeholder="금액 입력"
-                      showSoftInputOnFocus={false}
-                    />
-                    {/* <Text style={styles.unit}>원</Text> */}
-
-                    <View style={styles.keypadContainer}>
-                      <CustomNumPad
-                        onPress={handlePress}
-                        decimalSeparator=","
-                        buttonTextStyle={styles.keypadText}
-                        containerStyle={styles.numpadInner}
-                      />
-                    </View>
 
                     <View style={styles.buttonRow}>
                       <TouchableOpacity style={styles.button2} onPress={closeOverlay}>

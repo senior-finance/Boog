@@ -33,8 +33,12 @@ import { UserProvider } from './src/screens/Login/UserContext';
 import SetUserNameScreen from './src/screens/Login/SetUserNameScreen';
 
 // 계좌
-import AccountScreen from './src/screens/Account/AccountScreen'; // 변경된 로그인 to 계좌목록 파일
-import AccountDetailScreen from './src/screens/Account/AccountDetailScreen'; // 변경된 로그인 to 계좌목록 파일
+import AccountScreen from './src/screens/Account/AccountScreen'; // 금결원 사용자 PASS 인증 ~ 계좌 생성하는 함수들
+import AccountDetailScreen from './src/screens/Account/AccountDetailScreen'; // 
+import WithdrawAccountScreen from './src/screens/Account/WithdrawAccountScreen';
+import WithdrawBankScreen from './src/screens/Account/WithdrawBankScreen';
+import WithdrawAmountScreen from './src/screens/Account/WithdrawAmountScreen';
+import WithdrawAuthScreen from './src/screens/Account/WithdrawAuthScreen';
 
 // 내 정보
 import MyInfoScreen from './src/screens/Info/MyInfoScreen';
@@ -76,71 +80,75 @@ const Stack = createStackNavigator();
 export default function App() {
   return (
     // <PortraitWrapper>
-      <FontSizeProvider>
-        <UserProvider>
-          <SeniorModeProvider>
+    <FontSizeProvider>
+      <UserProvider>
+        <SeniorModeProvider>
           <NavigationContainer>
-          <>
-            <Stack.Navigator initialRouteName="Login">
-              {/* 탭 내비게이션이 포함된 메인 */}
-              <Stack.Screen
-                name="MainTabs"
-                component={TabNavigator}
-                options={{ headerShown: false }}
-              />
+            <>
+              <Stack.Navigator initialRouteName="Login">
+                {/* 탭 내비게이션이 포함된 메인 */}
+                <Stack.Screen
+                  name="MainTabs"
+                  component={TabNavigator}
+                  options={{ headerShown: false }}
+                />
 
-              {/* 탭 외부로 이동할 화면들 */}
-              <Stack.Screen name="Login" component={LoginScreen} options={{ title: '환영합니다 로그인' }} />
-              <Stack.Screen name="SetUserNameScreen" component={SetUserNameScreen} options={{ title: '환영합니다 로그인' }} />
+                {/* 탭 외부로 이동할 화면들 */}
+                <Stack.Screen name="Login" component={LoginScreen} options={{ title: '환영합니다 로그인' }} />
+                <Stack.Screen name="SetUserNameScreen" component={SetUserNameScreen} options={{ title: '환영합니다 로그인' }} />
 
-              <Stack.Screen name="Account" component={AccountScreen} options={{ title: '내 계좌 정보' }}/>
-              <Stack.Screen name="AccountDetail" component={AccountDetailScreen} options={{ title: '상세 계좌 정보' }}/>
+                <Stack.Screen name="Account" component={AccountScreen} options={{ title: '내 계좌 정보' }} />
+                <Stack.Screen name="AccountDetail" component={AccountDetailScreen} options={{ title: '상세 계좌 정보' }} />
+                <Stack.Screen name="WithdrawAccount" component={WithdrawAccountScreen} />
+                <Stack.Screen name="WithdrawBank" component={WithdrawBankScreen} />
+                <Stack.Screen name="WithdrawAmount" component={WithdrawAmountScreen} />
+                <Stack.Screen name="WithdrawAuth" component={WithdrawAuthScreen} />
 
-              <Stack.Screen name="Learning" component={LearningScreen} options={{ title: '학습 콘텐츠' }} />
-              <Stack.Screen name="QuizLevel" component={SelectLevelScreen} options={{ title: '금융 용어 학습 난이도 선택' }} />
-              <Stack.Screen name="Quiz" component={QuizScreen} options={{ title: '금융 용어 학습' }} />
-              <Stack.Screen name="Answer" component={AnswerScreen} options={{ title: '정답 확인' }} />
-              <Stack.Screen name="QuizResult" component={QuizResult} options={{ title: ' 금융 용어 학습 결과' }} />
-              <Stack.Screen name="DepositStep1" component={DepositStep1} options={{ title: '입금 연습 - 계좌 번호 입력' }} />
-              <Stack.Screen name="DepositStep2" component={DepositStep2} options={{ title: '입금 연습 - 은행 선택' }} />
-              <Stack.Screen name="DepositStep3" component={DepositStep3} options={{ title: '입금 연습 - 금액 입력' }} />
-              <Stack.Screen name="DepositStep4" component={DepositStep4} options={{ title: '입금 연습 - 확인하기' }} />
+                <Stack.Screen name="Learning" component={LearningScreen} options={{ title: '학습 콘텐츠' }} />
+                <Stack.Screen name="QuizLevel" component={SelectLevelScreen} options={{ title: '금융 용어 학습 난이도 선택' }} />
+                <Stack.Screen name="Quiz" component={QuizScreen} options={{ title: '금융 용어 학습' }} />
+                <Stack.Screen name="Answer" component={AnswerScreen} options={{ title: '정답 확인' }} />
+                <Stack.Screen name="QuizResult" component={QuizResult} options={{ title: ' 금융 용어 학습 결과' }} />
+                <Stack.Screen name="DepositStep1" component={DepositStep1} options={{ title: '입금 연습 - 계좌 번호 입력' }} />
+                <Stack.Screen name="DepositStep2" component={DepositStep2} options={{ title: '입금 연습 - 은행 선택' }} />
+                <Stack.Screen name="DepositStep3" component={DepositStep3} options={{ title: '입금 연습 - 금액 입력' }} />
+                <Stack.Screen name="DepositStep4" component={DepositStep4} options={{ title: '입금 연습 - 확인하기' }} />
 
-              <Stack.Screen name="MapView" component={MapViewScreen} options={{ title: '지도 화면' }} />
-              <Stack.Screen name="FunctionScreen" component={FunctionScreen} />
+                <Stack.Screen name="MapView" component={MapViewScreen} options={{ title: '지도 화면' }} />
+                <Stack.Screen name="FunctionScreen" component={FunctionScreen} />
 
-              <Stack.Screen name="FontSize" component={FontSizeSettingScreen} />
-              <Stack.Screen name="SoundVolume" component={SoundVolumeScreen} />
-              <Stack.Screen name="SoundVolumeSetting" component={SoundVolumeSettingScreen} options={{ title: '음성 및 효과음 설정' }} />
-              <Stack.Screen name="VoicePhishingScreen" component={VoicePhishingScreen} options={{ presentation: 'modal' }} />
+                <Stack.Screen name="FontSize" component={FontSizeSettingScreen} />
+                <Stack.Screen name="SoundVolume" component={SoundVolumeScreen} />
+                <Stack.Screen name="SoundVolumeSetting" component={SoundVolumeSettingScreen} options={{ title: '음성 및 효과음 설정' }} />
+                <Stack.Screen name="VoicePhishingScreen" component={VoicePhishingScreen} options={{ presentation: 'modal' }} />
 
-              <Stack.Screen name="VoicePhishingDetail" component={VoicePhishingDetailScreen} />
+                <Stack.Screen name="VoicePhishingDetail" component={VoicePhishingDetailScreen} />
 
-              <Stack.Screen name="Guide" component={GuideScreen} options={{ title: '앱 사용법' }} />
-              <Stack.Screen name="GuideDetail" component={GuideDetailScreen} options={{ title: '상세 설명' }} />
+                <Stack.Screen name="Guide" component={GuideScreen} options={{ title: '앱 사용법' }} />
+                <Stack.Screen name="GuideDetail" component={GuideDetailScreen} options={{ title: '상세 설명' }} />
 
-              <Stack.Screen name="FAQ" component={FAQScreen} />
-              <Stack.Screen name="ProfileIconSelect" component={ProfileIconSelect} />
-              <Stack.Screen name="Welfare" component={WelfareScreen} />
-              <Stack.Screen name="Web" component={WebScreen} />
+                <Stack.Screen name="FAQ" component={FAQScreen} />
+                <Stack.Screen name="ProfileIconSelect" component={ProfileIconSelect} />
+                <Stack.Screen name="Welfare" component={WelfareScreen} />
+                <Stack.Screen name="Web" component={WebScreen} />
 
-              <Stack.Screen name="InquiryForm" component={InquiryFormScreen} />
-              <Stack.Screen name="InquiryList" component={InquiryListScreen} />
-              <Stack.Screen name="NotificationScreen" component={NotificationScreen} />
-              <Stack.Screen name="Biometric" component={BiometricScreen} />
-              <Stack.Screen name="VoiceInput" component={VoiceInputScreen} options={{ title: 'AI 챗봇' }} />
-              <Stack.Screen name="TTSSetting" component={TTSSettingScreen} options={{ title: '음성 설정' }} />
-              <Stack.Screen name="AutoPhoneAnalysis" component={AutoPhoneAnalysisScreen} options={{ title: '자동 통화/문자 분석' }} />
+                <Stack.Screen name="InquiryForm" component={InquiryFormScreen} />
+                <Stack.Screen name="InquiryList" component={InquiryListScreen} />
+                <Stack.Screen name="NotificationScreen" component={NotificationScreen} />
+                <Stack.Screen name="Biometric" component={BiometricScreen} />
+                <Stack.Screen name="VoiceInput" component={VoiceInputScreen} options={{ title: 'AI 챗봇' }} />
+                <Stack.Screen name="TTSSetting" component={TTSSettingScreen} options={{ title: '음성 설정' }} />
+                <Stack.Screen name="AutoPhoneAnalysis" component={AutoPhoneAnalysisScreen} options={{ title: '자동 통화/문자 분석' }} />
 
-              <Stack.Screen name="MyInfo" component={MyInfoScreen} options={{ title: '내 정보 테스트' }} />
+                <Stack.Screen name="MyInfo" component={MyInfoScreen} options={{ title: '내 정보 테스트' }} />
 
-            </Stack.Navigator>
-            <HelpTooltipButton />
-          </>
+              </Stack.Navigator>
+              <HelpTooltipButton />
+            </>
           </NavigationContainer>
-          </SeniorModeProvider>
-        </UserProvider>
-      </FontSizeProvider>
+        </SeniorModeProvider>
+      </UserProvider>
+    </FontSizeProvider>
     // </PortraitWrapper>
   );
 }
