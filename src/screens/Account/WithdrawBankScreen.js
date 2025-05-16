@@ -1,7 +1,6 @@
 // screens/WithdrawBankScreen.tsx
 import React, { useState } from 'react';
 import {
-  Tab,
   View,
   Text,
   Alert,
@@ -36,7 +35,6 @@ export default function WithdrawBankScreen() {
 
   const BANKS = [
     { label: 'KDB산업은행', value: 'KDB산업은행', icon: require('../../assets/banks/KDB.png') },
-    { label: 'MG새마을금고', value: 'MG새마을금고', icon: require('../../assets/banks/MG새마을금고.png') },
     { label: 'SBI저축은행', value: 'SBI저축은행', icon: require('../../assets/banks/SBI.png') },
     { label: 'SC제일은행', value: 'SC제일은행', icon: require('../../assets/banks/SC제일.png') },
     { label: 'Sh수협은행', value: 'Sh수협은행', icon: require('../../assets/banks/Sh수협.png') },
@@ -52,8 +50,9 @@ export default function WithdrawBankScreen() {
     { label: '케이뱅크', value: '케이뱅크', icon: require('../../assets/banks/케이뱅크.png') },
     { label: '토스뱅크', value: '토스뱅크', icon: require('../../assets/banks/토스.png') },
     { label: '하나은행', value: '하나은행', icon: require('../../assets/banks/하나.png') },
-    { label: 'IBK기업은행', value: 'IBK기업은행', icon: require('../../assets/banks/IBK.png') },
     { label: 'KB국민은행', value: 'KB국민은행', icon: require('../../assets/banks/KB.png') },
+    { label: 'IBK기업은행', value: 'IBK기업은행', icon: require('../../assets/banks/IBK.png') },
+    { label: 'MG새마을금고', value: 'MG새마을금고', icon: require('../../assets/banks/MG새마을금고.png') },
   ];
 
   return (
@@ -64,7 +63,9 @@ export default function WithdrawBankScreen() {
       end={{ x: 1, y: 1 }}
     >
       <Text style={styles.title}>은행명을 골라주세요</Text>
-      <Text>계좌: {accountNumber}</Text>
+      <Text style={styles.accountText}>출금할 계좌 번호 : {accountNumber}</Text>
+      {/* <Text style={styles.bankText}>출금할 은행: {bank}</Text>
+      <Text style={styles.amountText}>입력된 금액: {amount}</Text> */}
       {/* <Picker
         selectedValue={bank}
         onValueChange={(v) => setBank(v)}
@@ -97,9 +98,9 @@ export default function WithdrawBankScreen() {
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             <FlatList
-              data={BANKS}
+              data={[...BANKS].sort((a, b) => a.label.localeCompare(b.label))}
               keyExtractor={item => item.value}
-              numColumns={2}                                // ★ 2열로 설정
+              numColumns={3}                                // ★ 2열로 설정
               columnWrapperStyle={styles.row}               // 한 행당 justifyContent 조정
               renderItem={({ item }) => (
                 <TouchableOpacity
@@ -117,13 +118,31 @@ export default function WithdrawBankScreen() {
           </View>
         </View>
       </Modal>
-      <Button
-        title="다음"
-        disabled={!selected}
-        onPress={() => nav.navigate('WithdrawAmount', {
-          accountNumber, bank: selected                                       // ← selected를 넘기기
-        })}
-      />
+      <LinearGradient
+        colors={['#4C6EF5', '#3B5BDB']}      // 원하는 그라데이션 컬러
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 0 }}
+        style={{
+          borderRadius: 25,                 // 둥글게
+          marginVertical: 20,
+        }}
+      >
+        <TouchableOpacity
+          disabled={!selected}         // accountNumber 없으면 비활성화
+          onPress={() => nav.navigate('WithdrawAmount', {
+            accountNumber, bank: selected                                       // ← selected를 넘기기
+          })}
+          style={{
+            paddingVertical: 14,
+            alignItems: 'center',
+            opacity: selected ? 1 : 0.6,  // 비활성 시 반투명
+          }}
+        >
+          <Text style={{ color: '#FFF', fontSize: 16, fontWeight: '600' }}>
+            다음
+          </Text>
+        </TouchableOpacity>
+      </LinearGradient>
     </LinearGradient >
   );
 }
@@ -137,8 +156,10 @@ const styles = StyleSheet.create({
   title: {
     textAlign: 'center',        // 텍스트 가운데 정렬
     fontSize: 24,               // 글자 크게 (원하는 크기로 조정)
-    color: 'yellow',            // 노란색
+    color: 'black',            // 노란색
     fontWeight: 'bold',         // 조금 더 강조하고 싶으면
+    marginTop: 20,           // 아래 여백
+    marginBottom: 20,           // 아래 여백
   },
   numpadInner: {
     flexDirection: 'row',
@@ -158,14 +179,14 @@ const styles = StyleSheet.create({
     /* 기존 스타일 유지 */
     paddingVertical: 12,
     paddingHorizontal: 16,
-    borderWidth: 1,
+    borderWidth: 5,
     borderColor: '#ccc',
     borderRadius: 8,
     backgroundColor: '#fff',
   },
   selectedButtonContent: {
     flexDirection: 'row',
-    alignItems: 'center',
+    justifyContent: 'center', alignItems: 'center'
   },
   modalOverlay: {
     flex: 2, backgroundColor: 'rgba(0,0,0,0.3)',
@@ -185,5 +206,21 @@ const styles = StyleSheet.create({
   },
   item: { flexDirection: 'row', alignItems: 'center', padding: 12 },
   icon: { width: 80, height: 80, marginBottom: 10 },
-  label: { fontSize: 16 },
+  label: { textAlign: 'center', fontSize: 16 },
+  accountText: {
+    textAlign: 'center', // 텍스트 가운데 정렬
+    color: '#3498DB',
+    fontSize: 16,
+    marginBottom: 20,
+  },
+  bankText: {
+    textAlign: 'center',
+    color: '#3498DB',   // 파란색
+    fontSize: 16,
+  },
+  amountText: {
+    textAlign: 'center',
+    color: '#3498DB',
+    fontSize: 16,
+  },
 });

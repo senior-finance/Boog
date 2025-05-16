@@ -1,7 +1,6 @@
 // screens/WithdrawAmountScreen.tsx
 import React, { useState } from 'react';
 import {
-  Tab,
   View,
   Text,
   Alert,
@@ -30,8 +29,10 @@ export default function WithdrawAmountScreen() {
   const { accountNumber, bank } = useRoute().params;
   const nav = useNavigation();
   const [amount, setAmount] = useState('');
-  // const [accountAmount, setAccountAmount] = useState(''); // 금액 입력
   const [raw, setRaw] = useState('');
+  const [error, setError] = useState('');
+  
+  const MAX_RAW = 10000000000; // 100억
 
   const handlePress = digit => {
     if (digit === '모두 지우기') {
@@ -51,10 +52,10 @@ export default function WithdrawAmountScreen() {
     let n = BigInt(s.replace(/\D/g, '') || '0');
     if (n === 0n) return '';
     const units = [
-      [1000000000000n, '조 '],
-      [100000000n, '억 '],
-      [10000n, '만 '],
-      // [1n, ' 원'],
+      [10n ** 12n, ' 조 '],
+      [10n ** 8n, ' 억 '],
+      [10n ** 4n, ' 만 '],
+      [1n, ' 원'],
     ];
     let res = '';
     for (const [u, label] of units) {
@@ -75,17 +76,10 @@ export default function WithdrawAmountScreen() {
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
     >
-      <Text style={styles.title}>금액을 입력해</Text>
-      <Text>계좌: {accountNumber}</Text>
-      <Text>은행: {bank}</Text>
-      {/* <TextInput
-        placeholder="출금 금액 입력"
-        value={amount}
-        onChangeText={setAmount}
-        keyboardType="numeric"
-        style={{ borderBottomWidth: 1, fontSize: 18, marginVertical: 20 }}
-      /> */}
-      <TextInputMask
+      <Text style={styles.title}>출금할 금액을 입력 해주세요</Text>
+      <Text style={styles.accountText}>출금할 계좌 번호 : {accountNumber}</Text>
+      <Text style={styles.bankText}>출금할 은행 : {bank}</Text>
+      {/* <TextInputMask
         type={'money'}
         options={{
           precision: 0, // 소수점 없음
@@ -101,19 +95,28 @@ export default function WithdrawAmountScreen() {
         keyboardType="numeric"
         returnKeyType="done"
         showSoftInputOnFocus={false}
-      />
+        style={styles.inputBox}
+      /> */}
       <TextInput
         // style={styles.input}
         keyboardType="numeric"
         returnKeyType="done"
         value={formatKorean(amount)}
         onChangeText={text => {
-          const onlyNums = text.replace(/\D/g, '');
-          setRaw(onlyNums); // 순수 숫자 저장
-          setAmount(formatKorean(onlyNums)); // 포맷된 문자열 저장
+          let onlyNums = text.replace(/\D/g, '');
+          // 최대값 체크
+          if (Number(onlyNums) > MAX_RAW) {
+            setError('최대 입력 가능 금액은 100억입니다.');
+            onlyNums = MAX_RAW.toString();
+          } else {
+            setError('');
+          }
+          setRaw(onlyNums);
+          setAmount(formatKorean(onlyNums));
         }}
         placeholder="금액 입력"
         showSoftInputOnFocus={false}
+        style={[styles.inputBox]}
       />
       <View style={styles.keypadContainer}>
         <CustomNumPad
@@ -124,11 +127,29 @@ export default function WithdrawAmountScreen() {
         />
       </View>
       {/* <Text style={styles.unit}>원</Text> */}
-      <Button
-        title="다음"
-        disabled={!amount}
-        onPress={() => nav.navigate('WithdrawAuth', { accountNumber, bank, amount })}
-      />
+      <LinearGradient
+        colors={['#4C6EF5', '#3B5BDB']}      // 원하는 그라데이션 컬러
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 0 }}
+        style={{
+          borderRadius: 25,                 // 둥글게
+          marginVertical: 20,
+        }}
+      >
+        <TouchableOpacity
+          disabled={!amount}         // accountNumber 없으면 비활성화
+          onPress={() => nav.navigate('WithdrawAuth', { accountNumber, bank, formattedAmount: formatKorean(amount) })}
+          style={{
+            paddingVertical: 14,
+            alignItems: 'center',
+            opacity: amount ? 1 : 0.6,  // 비활성 시 반투명
+          }}
+        >
+          <Text style={{ color: '#FFF', fontSize: 16, fontWeight: '600' }}>
+            다음
+          </Text>
+        </TouchableOpacity>
+      </LinearGradient>
     </LinearGradient>
   );
 }
@@ -141,8 +162,10 @@ const styles = StyleSheet.create({
   title: {
     textAlign: 'center',        // 텍스트 가운데 정렬
     fontSize: 24,               // 글자 크게 (원하는 크기로 조정)
-    color: 'yellow',            // 노란색
+    color: 'black',            // 노란색
     fontWeight: 'bold',         // 조금 더 강조하고 싶으면
+    marginTop: 20,           // 아래 여백
+    marginBottom: 20,           // 아래 여백
   },
   numpadInner: {
     flexDirection: 'row',
@@ -157,5 +180,40 @@ const styles = StyleSheet.create({
     // 버튼 텍스트 스타일
     fontSize: 30,
     fontWeight: '800',
+  },
+  inputBox: {
+    fontSize: 30,
+    fontWeight: '500',
+    textAlign: 'center',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    marginVertical: 8,
+    backgroundColor: '#fff',
+    // Android 그림자
+    elevation: 2,
+    // iOS 그림자
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+  },
+  accountText: {
+    textAlign: 'center', // 텍스트 가운데 정렬
+    color: '#3498DB',
+    fontSize: 16,
+    marginBottom: 2,
+  },
+  bankText: {
+    textAlign: 'center',
+    color: '#3498DB',   // 파란색
+    fontSize: 16,
+  },
+  amountText: {
+    textAlign: 'center',
+    color: '#3498DB',
+    fontSize: 16,
   },
 });

@@ -1,7 +1,6 @@
 // screens/WithdrawAuthScreen.tsx
 import React from 'react';
 import {
-  Tab,
   View,
   Text,
   Alert,
@@ -28,7 +27,7 @@ import LinearGradient from 'react-native-linear-gradient';
 // 실제 지문/Pin 인증 모듈을 연동하세요
 
 export default function WithdrawAuthScreen() {
-  const { accountNumber, bank, amount } = useRoute().params;
+  const { accountNumber, bank, formattedAmount } = useRoute().params;
   const nav = useNavigation();
 
   const handleAuthSuccess = async () => {
@@ -45,9 +44,9 @@ export default function WithdrawAuthScreen() {
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
     >
-      <Text style={styles.accountText}>계좌: {accountNumber}</Text>
-      <Text style={styles.bankText}>은행: {bank}</Text>
-      <Text style={styles.amountText}>금액: {amount}</Text>
+      <Text style={styles.accountText}>출금할 계좌 번호 : {accountNumber}</Text>
+      <Text style={styles.bankText}>출금할 은행 : {bank}</Text>
+      <Text style={styles.amountText}>입력된 금액 : {formattedAmount}</Text>
       <Text style={styles.title}>계좌 번호, 금액이 정말 맞으신가요?{'\n'}한번 더 확인해보세요!{'\n'}인증을 진행하면 출금이 완료돼요</Text>
       <Button title="인증하고 출금 완료하기" onPress={handleAuthSuccess} />
     </LinearGradient>
@@ -63,8 +62,10 @@ const styles = StyleSheet.create({
   title: {
     textAlign: 'center',        // 텍스트 가운데 정렬
     fontSize: 24,               // 글자 크게 (원하는 크기로 조정)
-    color: 'yellow',            // 노란색
+    color: 'black',            // 노란색
     fontWeight: 'bold',         // 조금 더 강조하고 싶으면
+    marginTop: 20,           // 아래 여백
+    marginBottom: 20,           // 아래 여백
   },
   numpadInner: {
     flexDirection: 'row',
@@ -80,16 +81,22 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: '800',
   },
-    accountText: {
-    color: '#E74C3C',   // 빨간색
-    fontSize: 16,
+  accountText: {
+    textAlign: 'center', // 텍스트 가운데 정렬
+    color: '#3498DB',
+    fontSize: 36,
+    marginTop: 20,
+    marginBottom: 20,
   },
   bankText: {
+    textAlign: 'center',
     color: '#3498DB',   // 파란색
-    fontSize: 16,
+    fontSize: 36,
+    marginBottom: 20,
   },
   amountText: {
-    color: '#27AE60',   // 초록색
-    fontSize: 16,
+    textAlign: 'center',
+    color: '#3498DB',
+    fontSize: 36,
   },
 });

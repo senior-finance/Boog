@@ -1,7 +1,6 @@
 // screens/WithdrawAccountScreen.tsx
 import React, { useState } from 'react';
 import {
-  Tab,
   View,
   Text,
   Alert,
@@ -31,17 +30,45 @@ export default function WithdrawAccountScreen() {
   const [account, setAccount] = useState('');
   const [accountNumber, setAccountNumber] = useState(''); // 계좌번호 입력
 
-  const handlePress = digit => {
+  // 1) 포맷 함수: 하이픈 제거 → 3글자씩 묶어서 다시 하이픈 삽입
+  function formatAccount(raw) {
+    const digits = raw.replace(/-/g, '');
+    const groups = digits.match(/.{1,3}/g) || [];
+    return groups.join('-');
+  }
+
+  const handlePress = (digit) => {
     if (digit === '모두 지우기') {
-      // 모두 지우기
       setAccountNumber('');
-    } else if (digit === '한칸 지우기') {
-      // 한 글자씩 삭제
-      setAccountNumber(prev => prev.slice(0, -1));
-    } else {
-      // 숫자 또는 '000' 등 입력
-      setAccountNumber(prev => prev + digit);
     }
+    else if (digit === '한칸 지우기') {
+      setAccountNumber(prev => {
+        // 하이픈 제거 후 마지막 숫자 하나 제거 → 다시 포맷
+        const trimmed = prev.replace(/-/g, '').slice(0, -1);
+        return formatAccount(trimmed);
+      });
+    }
+    else {
+      setAccountNumber(prev => {
+        // 하이픈 제거 후 숫자 길이 제한(10자리)
+        const digits = prev.replace(/-/g, '');
+        if (digits.length >= 10) return prev;
+        // 새 숫자 추가 → 다시 포맷
+        return formatAccount(digits + digit);
+      });
+    }
+  };
+  const handleNext = () => {
+    const digitsOnly = accountNumber.replace(/-/g, '');
+    if (digitsOnly.length < 10 || digitsOnly.length > 10) {
+      // 계좌번호가 10자리가 아닐 때
+      Alert.alert(
+        '알림',
+        '계좌번호는 10자리여야 해요',
+      );
+      return;
+    }
+    nav.navigate('WithdrawBank', { accountNumber });
   };
 
   return (
@@ -65,13 +92,15 @@ export default function WithdrawAccountScreen() {
         onChangeText={text => setAccountNumber(text)}
         // placeholder="모의 계좌 번호 10자리"
         keyboardType="numeric"
+        maxLength={13} // '-' 포함 14자리       
         style={{
           fontSize: 24,
           textAlign: 'center',
           borderWidth: 5,
           borderColor: '#ccc',
           padding: 10,
-          borderRadius: 4
+          margin: 10,
+          borderRadius: 20
         }}
         showSoftInputOnFocus={false}
       />
@@ -83,11 +112,29 @@ export default function WithdrawAccountScreen() {
           containerStyle={styles.numpadInner}
         />
       </View>
-      <Button
-        title="다음"
-        disabled={!accountNumber}
-        onPress={() => nav.navigate('WithdrawBank', { accountNumber })}
-      />
+      <LinearGradient
+        colors={['#4C6EF5', '#3B5BDB']}      // 원하는 그라데이션 컬러
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 0 }}
+        style={{
+          borderRadius: 25,                 // 둥글게
+          marginVertical: 20,
+        }}
+      >
+        <TouchableOpacity
+          disabled={!accountNumber}         // accountNumber 없으면 비활성화
+          onPress={handleNext}
+          style={{
+            paddingVertical: 14,
+            alignItems: 'center',
+            opacity: accountNumber ? 1 : 0.6,  // 비활성 시 반투명
+          }}
+        >
+          <Text style={{ color: '#FFF', fontSize: 16, fontWeight: '600' }}>
+            다음
+          </Text>
+        </TouchableOpacity>
+      </LinearGradient>
     </LinearGradient>
   );
 }
@@ -100,7 +147,7 @@ const styles = StyleSheet.create({
   title: {
     textAlign: 'center',        // 텍스트 가운데 정렬
     fontSize: 24,               // 글자 크게 (원하는 크기로 조정)
-    color: 'yellow',            // 노란색
+    color: 'black',            // 노란색
     fontWeight: 'bold',         // 조금 더 강조하고 싶으면
     marginTop: 20,           // 아래 여백
     marginBottom: 20,           // 아래 여백
@@ -118,5 +165,17 @@ const styles = StyleSheet.create({
     // 버튼 텍스트 스타일
     fontSize: 30,
     fontWeight: '800',
+  },
+  accountText: {
+    color: '#3498DB',   // 빨간색
+    fontSize: 16,
+  },
+  bankText: {
+    color: '#3498DB',   // 파란색
+    fontSize: 16,
+  },
+  amountText: {
+    color: '#3498DB',   // 초록색
+    fontSize: 16,
   },
 });
