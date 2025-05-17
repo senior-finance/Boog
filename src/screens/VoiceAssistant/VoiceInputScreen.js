@@ -24,9 +24,12 @@ import Tts from 'react-native-tts';
 import LottieView from 'lottie-react-native';
 import CustomText from '../../components/CustomText';
 import CustomTextInput from '../../components/CustomTextInput';
+import { handleFunctionCalling } from './functionHandler';
+import { useVolume } from '../../contexts/VolumeContext';
 
 export default function VoiceInputScreen() {
   const navigation = useNavigation();
+  const { setSystemVolume } = useVolume();
   const [isRecording, setIsRecording] = useState(false);
   const [recordedPath, setRecordedPath] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -82,61 +85,47 @@ export default function VoiceInputScreen() {
     return () => clearTimeout(timer);
   }, [chatHistory]);
 
-const handleResetChat = () => {
-  setChatHistory([]);
-  setTextInput('');         
-  Tts.stop();               
-};  
+  const handleResetChat = () => {
+    setChatHistory([]);
+    setTextInput('');         
+    Tts.stop();               
+  };  
 
-const onSendText = async customText => {
-  let input = customText ?? textInput;
+  const onSendText = async (customText) => {
+    let input = customText ?? textInput;
 
-  // 문자열이 아니면 처리
-  if (typeof input !== 'string') {
-    if (typeof input === 'object' && input !== null) {
-      input = input.message ?? input.text ?? ''; // CSR 결과 예상 키들
-    } else {
-      input = '';
+    if (typeof input !== 'string') {
+      if (typeof input === 'object' && input !== null) {
+        input = input.message ?? input.text ?? '';
+      } else {
+        input = '';
+      }
     }
-  }
 
-  if (input.trim() === '') return;
+    if (input.trim() === '') return;
 
     Tts.stop();
 
-    const userMessage = {role: 'user', text: input};
+    const userMessage = { role: 'user', text: input };
     setChatHistory(prev => [...prev, userMessage]);
     setIsLoading(true);
 
     try {
-      // askGPT로 수정 예정
       const reply = await askClovaAI(input);
 
-      if (reply.type === 'navigate-confirm') {
-        setConfirmTarget(reply.target);
-        setShowConfirmModal(true);
-
-        const readableName = screenNameMap[reply.target] || reply.target;
-
-        const visibleText = `'${readableName}' 화면으로 이동할까요?`;
-        const spokenText = `'${readableName}' 화면으로 이동할까요?`;
-
-        setChatHistory(prev => [...prev, {role: 'bot', text: visibleText}]);
-        Tts.speak(spokenText);
-      } else if (reply.type === 'navigate') {
-        navigation.navigate(reply.target);
-      } else if (reply.type === 'action') {
-        // TODO: 액션 처리
-      } else {
-        setChatHistory(prev => [...prev, {role: 'bot', text: reply.text}]);
-        Tts.speak(reply.text);
-      }
-
-      setTextInput('');
+      await handleFunctionCalling({
+        reply,
+        navigation,
+        setChatHistory,
+        setConfirmTarget,
+        setShowConfirmModal,
+        setSystemVolume,
+      });
     } catch (err) {
       console.error('텍스트 질문 처리 오류:', err);
     } finally {
       setIsLoading(false);
+      setTextInput('');
     }
   };
 

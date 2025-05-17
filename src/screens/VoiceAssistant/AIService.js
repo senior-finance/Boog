@@ -26,8 +26,12 @@ export default async function askClovaAI(userText) {
             - [복지, 지원 제도, 금융 복지] → { "type": "navigate", "target": "Welfare" }
 
           2. 다음 키워드에 대해서는 다음 형식으로 응답하세요:
-            - [소리 키워, 볼륨 높여, 음량 줄여] → { "type": "action", "target": "increaseVolume" 또는 "decreaseVolume" }  
-            - [글자 크게, 글씨 확대, 글자 작게] → { "type": "action", "target": "increaseFontSize" 또는 "decreaseFontSize" }
+            - [소리 키워, 볼륨 높여] → { "type": "action", "target": "increaseVolume" }
+            - [소리 줄여, 볼륨 낮춰, 음량 줄여] → { "type": "action", "target": "decreaseVolume" }
+            - [소리 최대로, 소리 최대, 볼륨 최대로] → { "type": "action", "target": "maxVolume" }
+            - [현재 소리 크기, 볼륨 상태, 음량 얼마야] → { "type": "action", "target": "checkVolume" }
+            - [글자 크게, 글씨 확대] → { "type": "action", "target": "increaseFontSize" }
+            - [글자 작게, 글씨 축소] → { "type": "action", "target": "decreaseFontSize" }
 
           3. 위 키워드가 포함되지 않은 질문에는 절대로 JSON 형식으로 응답하지 마세요.  
             → 순수 자연어 텍스트로만 대답하세요.

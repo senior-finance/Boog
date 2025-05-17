@@ -20,12 +20,14 @@ import {
   saveSetting,
   STORAGE_KEY,
 } from '../../utils/settingStorage';
+import { useVolume } from '../../contexts/VolumeContext';
 
 const SoundVolumeSettingScreen = () => {
   const [ttsRate, setRate] = useState(0.5);
   const [ttsPitch, setPitch] = useState(1);
-  const [systemVolume, setSystemVolume] = useState(0.5);
   const [selectedVoice, setSelectedVoice] = useState('ko-KR-language');
+
+  const { systemVolume, setSystemVolume } = useVolume();
 
   const INITIAL_SETTINGS = {
     ttsRate: 0.5,
@@ -42,6 +44,16 @@ const SoundVolumeSettingScreen = () => {
     { id: 'ko-kr-x-koc-local', name: '남성2 (차분함)' },
   ];
 
+  // 1. 시스템 볼륨 슬라이더 초기화
+  useEffect(() => {
+    const syncSystemVolume = async () => {
+      const current = await SystemSetting.getVolume();
+      setSystemVolume(current); // ✅ 현재 볼륨 기반으로 슬라이더 설정
+    };
+    syncSystemVolume();
+  }, []);
+
+  // 2. TTS 관련 설정만 로딩
   useEffect(() => {
     loadSound();
     (async () => {
@@ -49,18 +61,15 @@ const SoundVolumeSettingScreen = () => {
       if (saved) {
         setRate(saved.ttsRate);
         setPitch(saved.ttsPitch);
-        setSystemVolume(saved.systemVolume);
         setSelectedVoice(saved.selectedVoice);
 
         Tts.setDefaultRate(saved.ttsRate);
         Tts.setDefaultPitch(saved.ttsPitch);
         Tts.setDefaultVoice(saved.selectedVoice);
-        SystemSetting.setVolume(saved.systemVolume);
       } else {
         Tts.setDefaultRate(INITIAL_SETTINGS.ttsRate);
         Tts.setDefaultPitch(INITIAL_SETTINGS.ttsPitch);
         Tts.setDefaultVoice(INITIAL_SETTINGS.selectedVoice);
-        SystemSetting.setVolume(INITIAL_SETTINGS.systemVolume);
       }
     })();
   }, []);
@@ -186,8 +195,6 @@ const SoundVolumeSettingScreen = () => {
   );
 };
 
-export default SoundVolumeSettingScreen;
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -280,3 +287,5 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
+
+export default SoundVolumeSettingScreen;
