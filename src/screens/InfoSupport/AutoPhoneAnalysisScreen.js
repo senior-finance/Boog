@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import {
   View,
   TouchableOpacity,
-  ScrollView,
   StyleSheet,
   Linking,
   Alert,
@@ -11,6 +10,7 @@ import {
 import LinearGradient from 'react-native-linear-gradient';
 import { NativeModules, PermissionsAndroid } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import LottieView from 'lottie-react-native';
 import { checkSpamForNumber } from './PhoneUtils';
 import CustomText from '../../components/CustomText';
 
@@ -31,6 +31,7 @@ const isToday = (timestamp) => {
 const AutoPhoneAnalysisScreen = () => {
   const [resultText, setResultText] = useState('');
   const [suspiciousList, setSuspiciousList] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const requestPermissions = async () => {
     const smsGranted = await PermissionsAndroid.request(
@@ -52,6 +53,9 @@ const AutoPhoneAnalysisScreen = () => {
       setResultText('❗ 권한이 거부되었습니다. 설정에서 권한을 허용해주세요.');
       return;
     }
+
+    setLoading(true);
+    setTimeout(() => setLoading(false), 2000); // 최소 2초 로딩 보장
 
     let found = [];
 
@@ -114,8 +118,8 @@ const AutoPhoneAnalysisScreen = () => {
       setTimeout(() => {
         Alert.alert(
           '📊 분석 요소소',
-          `총 ${autoCheckedFound.length}개개의 의심 기록이 발견되었습니다.\n\n` +
-          `💬 문자: ${smsCount}개\n📞 통화: ${callCount}건건`
+          `총 ${autoCheckedFound.length}개의 의심 기록이 발견되었습니다.\n\n` +
+          `💬 문자: ${smsCount}개\n📞 통화: ${callCount}건`
         );
       }, 500);
     }
@@ -133,61 +137,95 @@ const AutoPhoneAnalysisScreen = () => {
   };
 
   return (
-    <LinearGradient colors={['#F8F8F8', '#F8F8F8']} style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <CustomText style={styles.title}>📱 오늘의 통화/문자 분석</CustomText>
+    <LinearGradient colors={['#D4E6FF', '#EAF4FF']} style={styles.container}>
+      <View style={styles.content}>
+        <View style={styles.top}>
+          <CustomText style={styles.title}>📱 오늘의 통화/문자 분석</CustomText>
 
-        <TouchableOpacity style={styles.analyzeButton} onPress={analyze}>
-          <CustomText style={styles.analyzeButtonText}>🔍 오늘 기록 스캔하기</CustomText>
-        </TouchableOpacity>
+          {loading ? (
+            <LottieView
+              source={require('../../assets/loading.json')}
+              autoPlay
+              loop
+              style={styles.loadingAnimation}
+            />
+          ) : (
+            <>
+              <TouchableOpacity style={styles.analyzeButton} onPress={analyze}>
+                <CustomText style={styles.analyzeButtonText}>🔍 오늘 기록 스캔하기</CustomText>
+              </TouchableOpacity>
+              <CustomText style={styles.resultText}>{resultText}</CustomText>
+              {suspiciousList.map((item, index) => (
+                <TouchableOpacity key={index} style={styles.itemBox} onPress={() => handleItemPress(item)}>
+                  <View style={styles.itemHeader}>
+                    { item.type === 'sms' ? (
+                      <Ionicons name="chatbubble-outline" size={20} color="#4B7BE5" style={styles.icon} />
+                    ) : (
+                      <Ionicons name="call-outline" size={20} color="#4B7BE5" style={styles.icon} />
+                    )}
+                    <CustomText style={styles.itemSender}>
+                      {item.sender} { item.type === 'sms' ? '(문자)' : '(통화)' }
+                    </CustomText>
+                  </View>
 
-        <CustomText style={styles.resultText}>{resultText}</CustomText>
-
-        {suspiciousList.map((item, index) => (
-          <TouchableOpacity key={index} style={styles.itemBox} onPress={() => handleItemPress(item)}>
-            <View style={styles.itemHeader}>
-              { item.type === 'sms' ? (
-                <Ionicons name="chatbubble-outline" size={20} color="#4B7BE5" style={styles.icon} />
-              ) : (
-                <Ionicons name="call-outline" size={20} color="#4B7BE5" style={styles.icon} />
-              )}
-              <CustomText style={styles.itemSender}>
-                {item.sender} { item.type === 'sms' ? '(문자)' : '(통화)' }
-              </CustomText>
-            </View>
-
-            <CustomText style={styles.itemText}>{item.text}</CustomText>
-            <CustomText style={styles.itemText}>⚠️ 의심: {item.keywords.join(', ')}</CustomText>
-            { item.type === 'call' && item.whowhoResult !== null && (
-              <CustomText style={styles.itemText}>
-                통화 분석 결과: {item.whowhoResult ? '스팸(의심)' : '정상'}
-              </CustomText>
-            )}
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
+                  <CustomText style={styles.itemText}>{item.text}</CustomText>
+                  <CustomText style={styles.itemText}>⚠️ 의심: {item.keywords.join(', ')}</CustomText>
+                  { item.type === 'call' && item.whowhoResult !== null && (
+                    <CustomText style={styles.itemText}>
+                      통화 분석 결과: {item.whowhoResult ? '스팸(의심)' : '정상'}
+                    </CustomText>
+                  )}
+                </TouchableOpacity>
+              ))}
+            </>
+          )}
+        </View>
+      </View>
     </LinearGradient>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, paddingHorizontal: 20 },
-  scrollContainer: { paddingBottom: 40 },
-  title: { marginTop: 30, fontWeight: 'bold', textAlign: 'center', color: '#333', marginBottom: 20 },
-  analyzeButton: {
-    backgroundColor: '#3B82F6',
-    paddingVertical: 18,
-    borderRadius: 12,
-    alignItems: 'center',
+  container: { flex: 1 },
+  content: { flex: 1, padding: 20 },
+  top: { flex: 1, justifyContent: 'flex-start', alignItems: 'center' },
+  loadingAnimation: {
+    width: 180,
+    height: 180,
+    justifyContent: 'center',
+    alignSelf: 'center',
+    marginVertical: 40,
+  },
+  title: {
+    marginTop: 30,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    color: '#1A237E',
     marginBottom: 20,
   },
+  analyzeButton: {
+    backgroundColor: 'rgba(49, 116, 199, 0.97)',
+    paddingVertical: 16,
+    borderRadius: 12,
+    alignItems: 'center',
+    marginBottom: 30,
+    width: '80%',
+  },
   analyzeButtonText: { fontWeight: 'bold', color: '#FFFFFF' },
-  resultText: { textAlign: 'center', color: '#333', marginBottom: 15 },
-  itemBox: { backgroundColor: '#FFF', borderRadius: 12, padding: 15, marginBottom: 15, elevation: 2 },
+  resultText: { textAlign: 'center', color: '#1A237E', marginBottom: 15 },
+  itemBox: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    padding: 15,
+    marginBottom: 15,
+    elevation: 2,
+    borderWidth: 1,
+    borderColor: '#B3D1FF',
+  },
   itemHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 5 },
   icon: { marginRight: 8 },
-  itemSender: { color: '#333', fontWeight: 'bold' },
-  itemText: { color: '#333', marginBottom: 5 },
+  itemSender: { color: '#0052CC', fontWeight: 'bold' },
+  itemText: { color: '#0052CC', marginBottom: 5 },
 });
 
 export default AutoPhoneAnalysisScreen;
