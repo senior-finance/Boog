@@ -23,12 +23,12 @@ const FunctionButton = ({ title, onPress, icon }) => {
   return (
     <TouchableOpacity style={[styles.functionButton, { width: buttonWidth }]} onPress={onPress}>
       <LinearGradient
-        colors={['#FFFFFF', '#DCF0FF']}
+        colors={['#FFFFFF', '#b3d6fe']}
         start={{ x: 0.5, y: 0 }}
         end={{ x: 0.5, y: 1 }}
         style={[styles.functionButtonInner, { paddingVertical }]}
       >
-        <Ionicons name={icon} size={size} color='#3E92E0' />
+        <Ionicons name={icon} size={size} color='rgb(58, 135, 235)' />
         <CustomText style={[styles.functionText, { marginTop: 6 }]}>{title}</CustomText>
       </LinearGradient>
     </TouchableOpacity>
@@ -45,7 +45,7 @@ const CircleButton = ({ title, icon, onPress }) => {
       style={[styles.circleButton, { width: size, height: size, borderRadius: size / 2 }]} 
       onPress={onPress}
     >
-      <Ionicons name={icon} size={iconSize} color='rgb(211, 225, 237)' />
+      <Ionicons name={icon} size={iconSize} color='rgb(232, 245, 255)' />
       <CustomText style={styles.circleButtonText}>{title}</CustomText>
     </TouchableOpacity>
   );
@@ -95,19 +95,19 @@ const MainScreen = ({ navigation }) => {
       headerTitle: '',
       headerLeft: () => (
         <TouchableOpacity onPress={() => navigation.navigate('Account')} style={{ marginLeft: 16 }}>
-          <Ionicons name="log-in-outline" size={24} color='rgb(85, 170, 250)' />
+          <Ionicons name="log-in-outline" size={24} color='#0052CC' />
         </TouchableOpacity>
       ),
       headerRight: () => (
         <TouchableOpacity onPress={() => navigation.navigate('NotificationScreen')} style={{ marginRight: 16 }}>
-          <Ionicons name="notifications-outline" size={24} color="#4A90E2" />
+          <Ionicons name="notifications-outline" size={24} color="#0052CC" />
         </TouchableOpacity>
       ),
     });
   }, [navigation]);
 
   return (
-    <LinearGradient colors={['#D8ECFF', '#E9F4FF']} style={styles.container}>
+    <LinearGradient colors={['rgba(159, 193, 219, 0.66)', '#e0f0ff']} style={styles.container}>
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.seniorModeToggleContainer}>
           <CustomText style={styles.seniorModeText}>시니어 모드</CustomText>
@@ -156,7 +156,7 @@ const MainScreen = ({ navigation }) => {
                   <CustomText style={styles.txName}>{tx.name}</CustomText>
                   <CustomText style={styles.txDate}>{tx.date}</CustomText>
                 </View>
-                <CustomText style={[styles.txAmt, { color: tx.isDeposit ? '#4A90E2' : '#FF6B81' }]}>{tx.amount}</CustomText>
+                <CustomText style={[styles.txAmt, { color: tx.isDeposit ?'rgb(32, 111, 214)' : '#FF6B81' }]}>{tx.amount}</CustomText>
               </TouchableOpacity>
             ))}
           </View>
@@ -176,23 +176,25 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 16,
   },
-
   seniorModeText: {
-    color: '#4A90E2',
+    color: '#0052CC',
     fontWeight: 'bold',
     marginRight: 10,
   },
   balanceCard: {
-    backgroundColor: '#4A90E2',
+    backgroundColor: 'rgba(49, 116, 199, 0.97)',
     borderRadius: 20,
     padding: 50,
     alignItems: 'center',
     marginBottom: 32,
-    shadowColor: '#AD4F5',
+    shadowColor: '#004AAD',
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.3,
     elevation: 8,
     overflow: 'hidden',
+    borderWidth: 2,
+    borderColor:'rgba(30, 105, 202, 0.98)' // 또는 원하는 색상
+
   },
   circleDecor: {
     position: 'absolute',
@@ -217,7 +219,7 @@ const styles = StyleSheet.create({
     right: 20,
     width: 100,
     height: 3,
-    backgroundColor: '#9ED0FF',
+    backgroundColor: '#66B2FF',
     transform: [{ rotate: '0deg' }],
     opacity: 0.4,
   },
@@ -232,12 +234,11 @@ const styles = StyleSheet.create({
     borderColor: '#fff',
     opacity: 0.3,
   },
-
   accountNum: { color: '#E3F2FD', fontWeight: '700', marginBottom: 20 },
   balanceAmt: { color: '#fff', fontWeight: '900', letterSpacing: 2 },
 
-  sectionSubTitle: { fontWeight: '600', color: '#4A90E2', marginBottom: 10 },
-  sectionTitle: { fontWeight: 'bold', color: '#4A90E2' },
+  sectionSubTitle: { fontWeight: '600', color: '#0052CC', marginBottom: 10 },
+  sectionTitle: { fontWeight: 'bold', color: '#0052CC' },
   toggleRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 },
 
   actionRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 32 },
@@ -251,31 +252,30 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     width: '100%',
     borderRadius: 20,
-    backgroundColor: '#FFFFFF', // 배경 밝게
+    backgroundColor: '#FFFFFF',
 
-    // 📏 그림자 강조 (아래 + 오른쪽)
     shadowColor: '#000',
     shadowOffset: { width: 3, height: 3 },
     shadowOpacity: 0.2,
     shadowRadius: 6,
     elevation: 6,
 
-    // 🔲 테두리로 윤곽 강조
     borderWidth: 2,
-    borderColor: '#C4DCFF',
+    borderColor: 'rgba(14, 94, 233, 0.24)',
   },
 
   functionText: {
-    color: '#444444'
-    , marginTop: 6, fontWeight: '600'
+    color: '#333',
+    marginTop: 6,
+    fontWeight: '600'
   },
 
   circleButton: {
-    width: 90,                // 기존보다 넓게
+    width: 90,
     height: 90,
     borderRadius: 45,
-    marginHorizontal: 20,     // 간격 살짝 넓게
-    backgroundColor: '#4A90E2',
+    marginHorizontal: 20,
+    backgroundColor: 'rgba(61, 136, 228, 0.97)',
     justifyContent: 'center',
     alignItems: 'center',
 
@@ -286,17 +286,18 @@ const styles = StyleSheet.create({
     elevation: 5,
 
     borderWidth: 1,
-    borderColor: '#387FD8',
+    borderColor: '#004AAD',
   },
 
   circleButtonText: {
     position: 'absolute',
     bottom: -24,
-    color: 'rgb(59, 101, 173)',
+    color: '#004AAD',
     textAlign: 'center',
-    minWidth: 90,              // 버튼 넓이와 동일하게 설정
-    includeFontPadding: false, // (Android에서 텍스트 정렬 개선)
+    minWidth: 90,
+    includeFontPadding: false,
   },
+
   historyList: { width: '100%' },
   txCard: {
     flexDirection: 'row',
@@ -305,12 +306,12 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 20,
     marginBottom: 12,
-    shadowColor: '#AAD4F5',
+    shadowColor: '#66B2FF',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
     elevation: 4,
     borderWidth: 1,
-    borderColor: 'rgb(189, 222, 240)',
+    borderColor: 'rgba(49, 84, 223, 0.85)',
   },
   txInfo: { flex: 1 },
   txName: { fontWeight: '600', color: '#333' },
@@ -319,21 +320,21 @@ const styles = StyleSheet.create({
 
   modalBg: { flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', justifyContent: 'center', alignItems: 'center' },
   modalBox: { width: '80%', backgroundColor: '#fff', padding: 24, borderRadius: 16 },
-  modalTitle: { fontWeight: 'bold', color: '#4A90E2', marginBottom: 12 },
+  modalTitle: { fontWeight: 'bold', color: '#0052CC', marginBottom: 12 },
   memoRow: { marginTop: 16 },
   memoLabel: { fontWeight: '600', marginBottom: 8 },
   memoInput: { backgroundColor: '#F0F0F0', borderRadius: 8, padding: 10, minHeight: 60 },
-  saveBtn: { marginTop: 12, backgroundColor: '#4A90E2', paddingVertical: 10, borderRadius: 8 },
+  saveBtn: { marginTop: 12, backgroundColor: '#0052CC', paddingVertical: 10, borderRadius: 8 },
   saveText: { color: '#fff', textAlign: 'center', fontWeight: '600' },
   closeBtn: { marginTop: 16, backgroundColor: '#CCC', paddingVertical: 10, borderRadius: 8 },
   closeText: { textAlign: 'center', fontWeight: '600', color: '#333' },
-    settingsButton: {
+  settingsButton: {
     position: 'absolute',
     top: 10,
     right: 10,
     padding: 5,
     borderRadius: 10,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',  // 필요에 따라 배경 조정
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
   },
 });
 

@@ -37,7 +37,7 @@ const MyInfoScreen = ({ navigation }) => {
         {
           text: '확인',
           onPress: () => { setModalVisible(false); setUserInfo(null); navigation.reset({ index: 0, routes: [{ name: 'Login' }] }); },
-          color: '#4A90E2',
+          color: '#1446D8',
           textColor: '#fff'
         },
       ],
@@ -63,7 +63,7 @@ const MyInfoScreen = ({ navigation }) => {
   ];
 
   return (
-    <LinearGradient colors={['rgb(216, 236, 255)', 'rgb(233, 244, 255)']} style={styles.container}>
+    <LinearGradient colors={['rgba(131, 178, 221, 0.69)', '#e0f0ff']} style={styles.container}>
       <ScrollView contentContainerStyle={styles.scroll}>
         <View style={styles.profileSection}>
           <TouchableOpacity onPress={() => setSelectModalVisible(true)}>
@@ -73,7 +73,7 @@ const MyInfoScreen = ({ navigation }) => {
                 style={styles.profileImage}
               />
               <View style={styles.cameraBadge}>
-                <Ionicons name="camera-outline" size={18} color="#4A90E2" />
+                <Ionicons name="camera-outline" size={18} color="#1446D8" />
               </View>
             </View>
           </TouchableOpacity>
@@ -85,15 +85,15 @@ const MyInfoScreen = ({ navigation }) => {
             <TouchableOpacity
               key={idx}
               onPress={() => item.to ? navigation.navigate(item.to) : item.action?.()}
-              style={styles.cardWrapper} // 그림자와 외곽 처리용
+              style={styles.cardWrapper}
             >
               <LinearGradient
-                colors={['rgb(255, 255, 255)', 'rgb(220, 240, 255)']}
+                colors={['#ffffff', '#d6eaff']}
                 start={{ x: 0.5, y: 0 }}
                 end={{ x: 0.5, y: 1 }}
                 style={styles.menuCard}
               >
-                <Ionicons name={item.icon} size={22} color="rgb(0, 106, 255)" style={styles.menuIcon} />
+                <Ionicons name={item.icon} size={22} color="#1446D8" style={styles.menuIcon} />
                 <CustomText style={styles.menuText}>{item.text}</CustomText>
               </LinearGradient>
             </TouchableOpacity>
@@ -146,14 +146,14 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   scroll: { alignItems: 'center', padding: 24, paddingTop: 60 },
 
-  profileSection: { alignItems: 'center', marginTop: 0, marginBottom: 30 },
+  profileSection: { alignItems: 'center', marginBottom: 30 },
   profileCard: {
     width: 100,
     height: 100,
     borderRadius: 50,
     backgroundColor: '#fff',
     borderWidth: 2,
-    borderColor: '#4A90E2',
+    borderColor: '#1446D8',
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: '#000',
@@ -162,15 +162,6 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
   },
-
-  profileImageContainer:
-  {
-    position: 'absolute',
-    top: 0,
-    alignSelf: 'center',
-    zIndex: 1,
-  },
-
   profileImage: {
     width: 94,
     height: 94,
@@ -184,38 +175,40 @@ const styles = StyleSheet.create({
     padding: 4,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#4A90E2',
+    borderColor: '#1446D8',
   },
   userName: {
     marginTop: 16,
     fontWeight: '700',
     fontSize: 16,
-    color: '#4A90E2',
+    color: 'rgb(4, 63, 150)',
   },
 
   menuContainer: { width: '100%' },
-  menuCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-    marginBottom: 16,
-    paddingVertical: 16,
-    paddingHorizontal: 20,
+  cardWrapper: {
     borderRadius: 16,
-    borderWidth: 1,
-    borderColor: '#C4DCFF',
+    marginBottom: 16,
     shadowColor: '#000',
     shadowOffset: { width: 2, height: 2 },
     shadowOpacity: 0.08,
     shadowRadius: 4,
-    elevation: 4,
+    elevation: 2,
+  },
+  menuCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 16,
+    paddingHorizontal: 20,
+    borderRadius: 16,
+    borderWidth: 1.5,
+    borderColor: 'rgba(21, 70, 216, 0.24)',
   },
   menuIcon: {
     marginRight: 16,
   },
   menuText: {
     fontWeight: '600',
-    color: 'rgb(91, 108, 132)',
+    color: 'rgb(39, 39, 39)',
   },
 
   modalOverlay: {
@@ -238,31 +231,8 @@ const styles = StyleSheet.create({
   },
   selectText: {
     fontWeight: '500',
-    color: '#4A90E2',
+    color: '#1446D8',
   },
-  cardWrapper: {
-    borderRadius: 16,
-    marginBottom: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 2, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-
-  menuCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderRadius: 16,
-    paddingVertical: 16,
-    paddingHorizontal: 20,
-  },
-
-  menuIcon: {
-    marginRight: 16,
-  },
-
-
 });
 
 export default MyInfoScreen;

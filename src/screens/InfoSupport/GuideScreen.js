@@ -33,24 +33,21 @@ export default function GuideScreen() {
   };
 
   return (
-    <LinearGradient colors={['rgb(200, 230, 253)', 'rgb(228, 240, 252)']} style={styles.container}>
+    <LinearGradient colors={['rgba(74, 153, 213, 0.53)', '#e0f0ff']} style={styles.container}>
       <ScrollView contentContainerStyle={styles.content}>
-        {/* 타이틀 */}
         <CustomText style={styles.title}>📘 앱 사용법</CustomText>
 
-        {/* 검색창 */}
         <View style={styles.searchContainer}>
-          <Ionicons name="search" size={20} color="#888" style={styles.searchIcon} />
+          <Ionicons name="search" size={20} color='rgb(39, 39, 39)' style={styles.searchIcon} />
           <TextInput
             style={styles.searchInput}
             placeholder="검색어를 입력하세요..."
             value={searchText}
             onChangeText={setSearchText}
-            placeholderTextColor="#888"
+            placeholderTextColor='rgb(39, 39, 39)'
           />
         </View>
 
-        {/* 카드 리스트 */}
         {filteredSections.map((key) => {
           const item = sectionDetails[key];
           return (
@@ -61,7 +58,7 @@ export default function GuideScreen() {
               style={styles.cardWrapper}
             >
               <LinearGradient
-                colors={['rgb(255, 255, 255)', 'rgb(220, 240, 255)']}
+                colors={['#ffffff', '#d6eaff']}
                 style={styles.listCard}
                 start={{ x: 0.5, y: 0 }}
                 end={{ x: 0.5, y: 1 }}
@@ -70,7 +67,7 @@ export default function GuideScreen() {
                   <CustomText style={styles.icon}>{item.icon}</CustomText>
                   <CustomText style={styles.cardText}>{item.title}</CustomText>
                 </View>
-                <Ionicons name="chevron-forward" size={23} color='rgb(100, 156, 228)' />
+                <Ionicons name="chevron-forward" size={23} color="#1446D8" />
               </LinearGradient>
             </TouchableOpacity>
           );
@@ -86,8 +83,7 @@ const styles = StyleSheet.create({
 
   title: {
     fontWeight: '900',
-
-    color: '#1B3C78',
+    color: '#1446D8',
     textAlign: 'center',
     marginBottom: 18,
   },
@@ -136,7 +132,7 @@ const styles = StyleSheet.create({
     elevation: 3,
 
     borderWidth: 1.5,
-    borderColor: 'rgba(139, 177, 246, 0.2)',
+    borderColor: 'rgba(21, 70, 216, 0.24)',
   },
   rowWrap: {
     flexDirection: 'row',
@@ -149,7 +145,6 @@ const styles = StyleSheet.create({
   },
   cardText: {
     fontWeight: '600',
-
-    color: '#1B3C78',
+    color: 'rgb(39, 39, 39)',
   },
 });
