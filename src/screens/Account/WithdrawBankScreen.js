@@ -52,7 +52,7 @@ export default function WithdrawBankScreen() {
     { label: '하나은행', value: '하나은행', icon: require('../../assets/banks/하나.png') },
     { label: 'KB국민은행', value: 'KB국민은행', icon: require('../../assets/banks/KB.png') },
     { label: 'IBK기업은행', value: 'IBK기업은행', icon: require('../../assets/banks/IBK.png') },
-    { label: 'MG새마을금고', value: 'MG새마을금고', icon: require('../../assets/banks/MG새마을금고.png') },
+    { label: '새마을금고', value: '새마을금고', icon: require('../../assets/banks/MG새마을금고.png') },
   ];
 
   return (
@@ -102,6 +102,7 @@ export default function WithdrawBankScreen() {
               keyExtractor={item => item.value}
               numColumns={3}                                // ★ 2열로 설정
               columnWrapperStyle={styles.row}               // 한 행당 justifyContent 조정
+              ItemSeparatorComponent={() => <View style={styles.separator} />}    // ← 여기에
               renderItem={({ item }) => (
                 <TouchableOpacity
                   style={styles.gridItem}
@@ -228,9 +229,14 @@ const styles = StyleSheet.create({
     flex: 2,                          // 한 행에 3개 중 1개가 flex:1
     alignItems: 'center',
   },
+  separator: {
+    height: 1,
+    backgroundColor: '#128ae0',
+    marginBottom: 10,
+  },
   item: { flexDirection: 'row', alignItems: 'center', padding: 12 },
   icon: { width: 80, height: 80, marginBottom: 10 },
-  label: { textAlign: 'center', fontSize: 16 },
+  label: { textAlign: 'center', fontSize: 16, fontWeight: 'bold' },
   buttonRow: {
     flexDirection: 'row',
     justifyContent: 'space-between', // 좌우 끝에 배치

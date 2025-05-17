@@ -1,7 +1,9 @@
 import React from 'react';
 import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
 
-const KEY_ROWS = [
+// 기본 키패드 배열
+// 
+const DEFAULT_KEY_ROWS = [
   ['1', '2', '3'],
   ['4', '5', '6'],
   ['7', '8', '9'],
@@ -10,19 +12,30 @@ const KEY_ROWS = [
   ['모두 지우기', '한칸 지우기',],
 ];
 
-export default function CustomNumPad({ onPress }) {
+export default function CustomNumPad({
+  onPress,
+  keyRows = DEFAULT_KEY_ROWS,  // 화면에서 전달된 배열이 없으면 기본값 사용
+  textStyle = {},           // ① 외부에서 넘어올 텍스트 스타일
+}) {
   return (
     <View style={styles.container}>
-      {KEY_ROWS.map((row, i) => (
-        <View key={i} style={styles.row}>
-          {row.map(key => (
-            <TouchableOpacity
-              key={key}
-              style={styles.button}
-              onPress={() => onPress(key)}>
-              <Text style={styles.buttonText}>{key}</Text>
-            </TouchableOpacity>
-          ))}
+      {keyRows.map((row, rowIndex) => (
+        <View key={`row-${rowIndex}`} style={styles.row}>
+          {row.map((key, colIndex) => {
+            const reactKey = `r${rowIndex}-c${colIndex}`;  // 유니크 키
+            if (!key) {
+              return <View key={reactKey} style={styles.placeholder} />;
+            }
+            return (
+              <TouchableOpacity
+                key={reactKey}
+                style={styles.button}
+                onPress={() => onPress(key)}
+              >
+                <Text style={[styles.buttonTextp, textStyle]}>{key}</Text>
+              </TouchableOpacity>
+            );
+          })}
         </View>
       ))}
     </View>
@@ -56,7 +69,13 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   buttonText: {
-    fontSize: 30,
+    fontSize: 20,
     fontWeight: '800',
+  },
+  placeholder: {
+    flex: 1,
+    marginHorizontal: 5,
+    // 보이지 않지만 자리 차지
+    backgroundColor: 'transparent',
   },
 });

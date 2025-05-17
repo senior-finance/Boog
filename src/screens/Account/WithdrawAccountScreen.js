@@ -31,6 +31,14 @@ export default function WithdrawAccountScreen() {
   const [account, setAccount] = useState('');
   const [accountNumber, setAccountNumber] = useState(''); // 계좌번호 입력
 
+  // 화면 전용 키 레이아웃
+  const myKeyRows = [
+    ['1', '2', '3'],
+    ['4', '5', '6'],
+    ['7', '8', '9'],
+    ['모두 지우기', '0', '한칸 지우기'],
+  ];
+
   // 1) 포맷 함수: 하이픈 제거 → 3글자씩 묶어서 다시 하이픈 삽입
   function formatAccount(raw) {
     const digits = raw.replace(/-/g, '');
@@ -97,6 +105,7 @@ export default function WithdrawAccountScreen() {
         style={{
           fontSize: 24,
           textAlign: 'center',
+          backgroundColor: '#fff',
           borderWidth: 5,
           borderColor: '#ccc',
           padding: 10,
@@ -108,8 +117,9 @@ export default function WithdrawAccountScreen() {
       <View style={styles.keypadContainer}>
         <CustomNumPad
           onPress={handlePress}
+          keyRows={myKeyRows}
           decimalSeparator=","
-          buttonTextStyle={styles.keypadText}
+          textStyle={styles.keypadText}
           containerStyle={styles.numpadInner}
         />
       </View>
@@ -189,7 +199,7 @@ const styles = StyleSheet.create({
   },
   keypadText: {
     // 버튼 텍스트 스타일
-    fontSize: 30,
+    fontSize: 22,
     fontWeight: '800',
   },
   buttonRow: {

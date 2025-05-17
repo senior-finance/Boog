@@ -32,6 +32,15 @@ export default function WithdrawAmountScreen() {
   const [raw, setRaw] = useState('');
   const [error, setError] = useState('');
 
+  // 화면 전용 키 레이아웃
+  const myKeyRows = [
+    ['1', '2', '3'],
+    ['4', '5', '6'],
+    ['7', '8', '9'],
+    ['000', '00', '0'],
+    ['모두 지우기', '한칸 지우기'],
+  ];
+
   const MAX_RAW = 10000000000; // 100억
 
   const handlePress = digit => {
@@ -133,6 +142,8 @@ export default function WithdrawAmountScreen() {
       <View style={styles.keypadContainer}>
         <CustomNumPad
           onPress={handlePress}
+          keyRows={myKeyRows}
+          textStyle={styles.keypadText}
           decimalSeparator=","
           buttonTextStyle={styles.keypadText}
           containerStyle={styles.numpadInner}
@@ -215,7 +226,7 @@ const styles = StyleSheet.create({
   },
   keypadText: {
     // 버튼 텍스트 스타일
-    fontSize: 30,
+    fontSize: 24,
     fontWeight: '800',
   },
   inputBox: {
