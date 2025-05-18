@@ -368,12 +368,10 @@ export default function LoginScreen({ navigation }) {
 
   return (
     <SafeAreaView style={styles.container}>
-
-
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.contentWrapper}>
           <Image
-            source={require('../../assets/logo2.png')}
+            source={require('../../assets/logo4.png')}
             style={styles.logo}
           />
 
