@@ -1,5 +1,5 @@
 import 'react-native-gesture-handler';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useLayoutEffect } from 'react';
 import NaverMapView, { Align, Marker } from "./map";
 import {
   PermissionsAndroid,
@@ -9,7 +9,9 @@ import {
   Pressable,
   Linking,
   TouchableOpacity,
+  BackHandler,
 } from "react-native";
+import { useFocusEffect } from '@react-navigation/native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import axios from "axios";
 import Geolocation from 'react-native-geolocation-service';
@@ -18,6 +20,34 @@ import CustomModal from '../../components/CustomModal';
 import { MAP_SEARCH_BACKEND_URL } from '@env';
 
 const MapViewScreen = ({ route, navigation }) => {
+  // 상단 돌아가기 버튼 클릭시 메인화면
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerLeft: () => (
+        <TouchableOpacity
+          onPress={() => navigation.navigate('MainTabs')}
+          style={{ paddingHorizontal: 16 }}
+        >
+          <CustomText style={{ fontSize: 18 }}>←</CustomText>
+        </TouchableOpacity>
+      ),
+    });
+  }, [navigation]);
+
+  // 하단 돌아가기 버튼 클릭시 메인화면
+  useFocusEffect(
+    React.useCallback(() => {
+      const onBackPress = () => {
+        navigation.navigate('MainTabs');
+        return true;
+      };
+
+      BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+      return () => BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+    }, [])
+  );
+
   const [selectedPlace, setSelectedPlace] = useState(null);
   const [isAppNotFoundModalVisible, setAppNotFoundModalVisible] = useState(false);
   const [isNoPlaceSelectedModalVisible, setNoPlaceSelectedModalVisible] = useState(false);
@@ -470,7 +500,7 @@ const MapViewScreen = ({ route, navigation }) => {
         visible={locationDeniedModalVisible}
         title="위치 권한 거부됨"
         message="이 기능을 사용하려면 위치 권한이 필요합니다."
-        buttons={[{ text: '메뉴로 이동', onPress: () => navigation.navigate('FunctionScreen'), color: '#4B7BE5' }]}
+        buttons={[{ text: '메뉴로 이동', onPress: () => navigation.navigate('MainTabs'), color: '#4B7BE5' }]}
       />
       <CustomModal
         visible={locationBlockedModalVisible}
@@ -478,7 +508,7 @@ const MapViewScreen = ({ route, navigation }) => {
         message={`위치 권한이 영구적으로 거부되었습니다.
 설정에서 수동으로 권한을 허용해주세요.`}
         buttons={[
-          { text: '메뉴로 이동', onPress: () => navigation.navigate('FunctionScreen'), color: '#ccc', textColor: 'black', },
+          { text: '메뉴로 이동', onPress: () => navigation.navigate('MainTabs'), color: '#ccc', textColor: 'black', },
           { text: '설정 이동', onPress: () => Linking.openSettings(), color: '#4B7BE5' }
         ]}
       />
