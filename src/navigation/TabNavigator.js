@@ -30,8 +30,8 @@ const TabNavigator = () => (
         tabBarIcon: ({ color, size }) => {
           let iconName;
           if (route.name === 'Home') iconName = 'home';
-          else if (route.name === 'Guide') iconName = 'book';
-          else if (route.name === 'MyInfo') iconName = 'person';
+          else if (route.name === '사용법') iconName = 'book';
+          else if (route.name === '내 정보') iconName = 'person';
           return <Ionicons name={iconName} size={size} color={color} />;
         },
       })}

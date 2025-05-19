@@ -119,7 +119,7 @@ const styles = StyleSheet.create({
 
   listCard: {
     borderRadius: 20,
-    paddingVertical: 15,
+    paddingVertical: 20,
     paddingHorizontal: 20,
     flexDirection: 'row',
     alignItems: 'center',
