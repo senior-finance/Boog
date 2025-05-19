@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { View, StyleSheet, ScrollView } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import CustomText from '../../components/CustomText';
@@ -25,17 +25,17 @@ const FAQScreen = () => {
   ];
 
   return (
-    <LinearGradient colors={['#F8F8F8', '#ECECEC']} style={styles.container}>
+    <LinearGradient colors={['rgb(208, 224, 241)', 'rgb(213, 225, 236)']} style={styles.container}>
       <CustomText style={styles.title}>자주 묻는 질문</CustomText>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         {faqs.map((item, idx) => (
           <View key={idx} style={styles.card}>
             <View style={styles.row}>
-              <Ionicons name="chatbubble-ellipses-outline" size={24} color="#4B7BE5" style={styles.icon} />
+              <Ionicons name="chatbubble-ellipses-outline" size={24} color="#1A4DCC" style={styles.icon} />
               <CustomText style={styles.question}>{item.question}</CustomText>
             </View>
             <View style={styles.row}>
-              <Ionicons name="information-circle-outline" size={22} color="#999" style={styles.icon} />
+              <Ionicons name="information-circle-outline" size={22} color="#4B7BE5" style={styles.icon} />
               <CustomText style={styles.answer}>{item.answer}</CustomText>
             </View>
           </View>
@@ -58,25 +58,27 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 30,
     textAlign: 'center',
-    color: '#333',
+    color: '#1A4DCC',
+    fontSize: 20,
+    lineHeight: 28,
   },
   card: {
     backgroundColor: '#fff',
-    borderRadius: 14,
-    padding: 18,
-    marginBottom: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    borderRadius: 20,
+    padding: 20,
+    marginBottom: 20,
+    borderWidth: 2,
+    borderColor: 'rgba(33, 113, 245, 0.6)',
+    shadowColor: '#4B7BE5',
+    shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.1,
-    shadowRadius: 4,
+    shadowRadius: 6,
     elevation: 5,
-    borderWidth: 1,
-    borderColor: '#4B7BE5'
   },
   row: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    marginBottom: 10,
+    marginBottom: 12,
   },
   icon: {
     marginRight: 10,
@@ -84,12 +86,14 @@ const styles = StyleSheet.create({
   },
   question: {
     fontWeight: '600',
-    color: '#333',
+    color: '#1A4DCC',
     flexShrink: 1,
+    lineHeight: 22,
   },
   answer: {
-    color: '#555',
+    color: '#333',
     flexShrink: 1,
+    lineHeight: 22,
   },
 });
 

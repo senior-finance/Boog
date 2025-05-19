@@ -63,7 +63,7 @@ const MyInfoScreen = ({ navigation }) => {
   ];
 
   return (
-    <LinearGradient colors={['rgba(131, 178, 221, 0.69)', '#e0f0ff']} style={styles.container}>
+    <LinearGradient colors={['rgba(140, 182, 222, 0.69)', '#e0f0ff']} style={styles.container}>
       <ScrollView contentContainerStyle={styles.scroll}>
         <View style={styles.profileSection}>
           <TouchableOpacity onPress={() => setSelectModalVisible(true)}>

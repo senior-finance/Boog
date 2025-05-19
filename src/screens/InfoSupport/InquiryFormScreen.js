@@ -25,25 +25,23 @@ const InquiryFormScreen = () => {
     }
 
     try {
-      await sendInquiry({ title, content }); // Firestore 저장
+      await sendInquiry({ title, content });
 
       const response = await fetch(FIREBASE_FUNCTION_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          title: title, // 제목
-          content: content, // 내용
-          userName: "홍길동", // 보내는 사람
-          userEmail: "hwoochhh@gmail.com", // 보내는 사람 이메일
+          title,
+          content,
+          userName: "홍길동",
+          userEmail: "hwoochhh@gmail.com",
         }),
       });
 
       const text = await response.text();
       console.log('이메일 응답:', response.status, text);
 
-      if (!response.ok) {
-        throw new Error(text);
-      }
+      if (!response.ok) throw new Error(text);
 
       Alert.alert('접수 완료', '문의가 저장되고 이메일이 전송되었습니다.');
       setTitle('');
@@ -55,7 +53,7 @@ const InquiryFormScreen = () => {
   };
 
   return (
-    <LinearGradient colors={['#F8F8F8', '#ECECEC']} style={styles.gradient}>
+    <LinearGradient colors={['rgb(208, 224, 241)', 'rgb(213, 225, 236)']} style={styles.gradient}>
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
         <ScrollView contentContainerStyle={styles.container}>
           <CustomText style={styles.title}>1:1 문의하기</CustomText>
@@ -93,16 +91,19 @@ const styles = StyleSheet.create({
   },
   title: {
     fontWeight: 'bold',
+    fontSize: 20,
     marginBottom: 30,
-    color: '#333',
+    color: '#1A4DCC',
   },
   input: {
     width: '100%',
     backgroundColor: '#fff',
     padding: 14,
-    borderRadius: 10,
+    borderRadius: 14,
     marginBottom: 20,
-    shadowColor: '#000',
+    borderWidth: 2,
+    borderColor: 'rgba(33, 113, 245, 0.5)',
+    shadowColor: '#4B7BE5',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.08,
     shadowRadius: 3,
@@ -113,10 +114,12 @@ const styles = StyleSheet.create({
     height: 140,
     backgroundColor: '#fff',
     padding: 14,
-    borderRadius: 10,
+    borderRadius: 14,
     textAlignVertical: 'top',
     marginBottom: 20,
-    shadowColor: '#000',
+    borderWidth: 2,
+    borderColor: 'rgba(33, 113, 245, 0.5)',
+    shadowColor: '#4B7BE5',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.08,
     shadowRadius: 3,
@@ -126,9 +129,9 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: '#4B7BE5',
     paddingVertical: 16,
-    borderRadius: 12,
+    borderRadius: 14,
     alignItems: 'center',
-    shadowColor: '#000',
+    shadowColor: '#4B7BE5',
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.15,
     shadowRadius: 4,
@@ -137,6 +140,7 @@ const styles = StyleSheet.create({
   buttonText: {
     color: '#fff',
     fontWeight: 'bold',
+    fontSize: 16,
   },
 });
 

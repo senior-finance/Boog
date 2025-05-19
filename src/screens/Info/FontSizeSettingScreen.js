@@ -35,14 +35,15 @@ const FontSizeSettingScreen = ({ navigation }) => {
   };
 
   return (
-    <LinearGradient colors={['#F8F8F8', '#F8F8F8']} style={styles.container}>
+    <LinearGradient colors={['rgb(208, 224, 241)', 'rgb(213, 225, 236)']} style={styles.container}>
       <View style={styles.card}>
-        <Ionicons name="text-outline" size={30} color="#4B7BE5" style={{ marginBottom: 16 }} />
+        <Ionicons name="text-outline" size={32} color="#1A4DCC" style={{ marginBottom: 12 }} />
         <CustomText style={styles.title}>글자 크기 설정</CustomText>
 
         <CustomText style={[styles.previewText, { fontSize: tempFontSize }]}>
           변경하실 글자 예시입니다
         </CustomText>
+
         <Slider
           style={styles.slider}
           minimumValue={12}
@@ -50,15 +51,16 @@ const FontSizeSettingScreen = ({ navigation }) => {
           step={1}
           value={tempFontSize}
           onValueChange={value => setTempFontSize(value)}
-          minimumTrackTintColor="#4B7BE5"
+          minimumTrackTintColor="#1A4DCC"
           maximumTrackTintColor="#ccc"
-          thumbTintColor="#4B7BE5"
+          thumbTintColor="#1A4DCC"
         />
+
         <TouchableOpacity
           style={[styles.confirmButton, applied && styles.confirmButtonApplied]}
           onPress={handleConfirm}
         >
-          <CustomText style={styles.confirmButtonText}>확인</CustomText>
+          <CustomText style={styles.confirmButtonText}>적용하기</CustomText>
         </TouchableOpacity>
       </View>
     </LinearGradient>
@@ -72,46 +74,48 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   card: {
-    width: '88%',
-    height: 440, // 기존보다 넉넉히
+    width: '90%',
+    height: 440,
     backgroundColor: '#fff',
-    borderRadius: 16,
+    borderRadius: 20,
     paddingVertical: 30,
     paddingHorizontal: 24,
     alignItems: 'center',
     justifyContent: 'space-between',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    elevation: 5,
-    borderWidth: 1,
-    borderColor: '#4B7BE5',
 
+    borderWidth: 2,
+    borderColor: 'rgba(33, 113, 245, 0.6)',
+    shadowColor: '#4B7BE5',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 5,
   },
 
   title: {
     fontWeight: 'bold',
-    color: '#333',
+    fontSize: 18,
+    color: '#1A4DCC',
+    marginBottom: 10,
   },
   previewText: {
     color: '#333',
     marginVertical: 16,
+    textAlign: 'center',
+    lineHeight: 28,
   },
   slider: {
     width: '90%',
-    height: 40,               // 터치 영역은 이 높이 만큼 확보
-    transform: [
-      { scaleY: 1.5 },        // 트랙 두께를 1.5배로
-      { scaleX: 1.0 },
-    ],
+    height: 40,
+    transform: [{ scaleY: 1.4 }],
   },
   confirmButton: {
     backgroundColor: '#4B7BE5',
-    paddingVertical: 12,
-    paddingHorizontal: 32,
-    borderRadius: 8,
+    paddingVertical: 14,
+    paddingHorizontal: 40,
+    borderRadius: 12,
     marginTop: 10,
+    elevation: 4,
   },
   confirmButtonApplied: {
     backgroundColor: '#2F5AE5',
@@ -119,6 +123,7 @@ const styles = StyleSheet.create({
   confirmButtonText: {
     color: '#fff',
     fontWeight: 'bold',
+    fontSize: 16,
   },
 });
 

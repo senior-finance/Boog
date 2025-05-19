@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, FlatList } from 'react-native';
+import { View, StyleSheet, FlatList } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import CustomText from '../../components/CustomText';
@@ -19,7 +19,7 @@ const InquiryListScreen = () => {
   ];
 
   return (
-    <LinearGradient colors={['#F8F8F8', '#ECECEC']} style={styles.container}>
+    <LinearGradient colors={['rgb(208, 224, 241)', 'rgb(213, 225, 236)']} style={styles.container}>
       <CustomText style={styles.title}>📋 내 문의 내역</CustomText>
 
       <FlatList
@@ -29,10 +29,12 @@ const InquiryListScreen = () => {
         renderItem={({ item }) => (
           <View style={styles.itemBox}>
             <View style={styles.row}>
-              <Ionicons name="chatbubble-ellipses-outline" size={24} color="#4B7BE5" style={styles.icon} />
+              <Ionicons name="chatbubble-ellipses-outline" size={24} color="#1A4DCC" style={styles.icon} />
               <CustomText style={styles.itemTitle}>{item.title}</CustomText>
             </View>
-            <CustomText style={styles.status}>{item.status}</CustomText>
+            <CustomText style={[styles.status, item.status.includes('✅') ? styles.complete : styles.pending]}>
+              {item.status}
+            </CustomText>
           </View>
         )}
       />
@@ -50,40 +52,50 @@ const styles = StyleSheet.create({
     paddingBottom: 30,
   },
   title: {
-        fontWeight: 'bold',
+    fontWeight: 'bold',
+    fontSize: 20,
     marginBottom: 20,
     textAlign: 'center',
-    color: '#333',
+    color: '#1A4DCC',
   },
   itemBox: {
     backgroundColor: '#fff',
-    padding: 18,
-    borderRadius: 12,
+    padding: 20,
+    borderRadius: 18,
     marginBottom: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    borderWidth: 2,
+    borderColor: 'rgba(33, 113, 245, 0.5)',
+    shadowColor: '#4B7BE5',
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.08,
-    shadowRadius: 4,
-    elevation: 4,
-     borderWidth: 1,
-    borderColor: '#4B7BE5'
+    shadowRadius: 6,
+    elevation: 5,
   },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 6,
+    marginBottom: 8,
   },
   icon: {
     marginRight: 8,
   },
   itemTitle: {
-        fontWeight: '600',
-    color: '#333',
+    fontWeight: '600',
+    color: '#1A4DCC',
+    flexShrink: 1,
+    fontSize: 16,
+    lineHeight: 22,
   },
   status: {
-        color: '#4B7BE5',
     fontWeight: '500',
+    fontSize: 14,
     marginLeft: 32,
+  },
+  complete: {
+    color: '#2E8B57', // 진한 초록
+  },
+  pending: {
+    color: '#E67300', // 진한 주황
   },
 });
 

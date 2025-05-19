@@ -3,7 +3,7 @@ import { View, StyleSheet, ScrollView, Text } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import LinearGradient from 'react-native-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { addNotification, getNotifications } from '../../database/mongoDB'; // 🔥 정확한 경로
+import { addNotification, getNotifications } from '../../database/mongoDB';
 
 export default function NotificationScreen() {
   const [notifications, setNotifications] = useState([]);
@@ -11,7 +11,6 @@ export default function NotificationScreen() {
   useEffect(() => {
     const fetchData = async () => {
       const userId = await AsyncStorage.getItem('userId') || 'test-user';
-      console.log('👤 userId:', userId);
 
       const defaultNotifications = [
         {
@@ -36,16 +35,13 @@ export default function NotificationScreen() {
 
       try {
         const result = await getNotifications(userId);
-        console.log('📥 가져온 알림 수:', result.length);
 
         if (result.length > 0) {
           setNotifications(result);
         } else {
           setNotifications(defaultNotifications);
           for (const noti of defaultNotifications) {
-            console.log('🚀 저장 시도:', noti.content);
             await addNotification(userId, noti.icon, noti.iconColor, noti.borderColor, noti.content);
-            console.log('✅ 저장 완료:', noti.content);
           }
         }
       } catch (err) {
@@ -58,10 +54,14 @@ export default function NotificationScreen() {
   }, []);
 
   return (
-    <LinearGradient colors={['#F8F8F8', '#ECECEC']} style={styles.container}>
+    <LinearGradient
+      colors={['rgb(208, 224, 241)', 'rgb(213, 225, 236)']}
+      style={styles.container}
+    >
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         {notifications.map((item, index) => (
-          <View key={index} style={[styles.card, { borderColor: item.borderColor }]}>
+        <View key={index} style={styles.card}>
+
             <View style={styles.cardHeader}>
               <Ionicons name={item.icon} size={22} color={item.iconColor} style={styles.icon} />
               <Text style={styles.cardContent}>{item.content}</Text>
@@ -75,21 +75,38 @@ export default function NotificationScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  scrollContainer: { padding: 20 },
+  scrollContainer: {
+    padding: 24,
+    paddingBottom: 40,
+  },
   card: {
-    borderWidth: 1.5,
-    borderRadius: 14,
     backgroundColor: '#fff',
+    borderRadius: 20,
+    borderWidth: 2,
     paddingVertical: 20,
-    paddingHorizontal: 15,
+    paddingHorizontal: 18,
     marginBottom: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
+    borderColor: 'rgba(33, 113, 245, 0.5)', 
+   
+    shadowColor: '#4B7BE5',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 6,
     elevation: 5,
   },
-  cardHeader: { flexDirection: 'row', alignItems: 'flex-start' },
-  icon: { marginRight: 10, marginTop: 3 },
-  cardContent: { flex: 1, fontWeight: '500', color: '#333', lineHeight: 23 },
+  cardHeader: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+  },
+  icon: {
+    marginRight: 10,
+    marginTop: 3,
+  },
+  cardContent: {
+    flex: 1,
+    color: '#1A4DCC',
+    fontWeight: '500',
+    fontSize: 15,
+    lineHeight: 23,
+  },
 });

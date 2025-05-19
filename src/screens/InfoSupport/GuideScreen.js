@@ -36,7 +36,7 @@ const sectionDetails = {
   };
 
   return (
-    <LinearGradient colors={['rgba(74, 153, 213, 0.53)', '#e0f0ff']} style={styles.container}>
+    <LinearGradient colors={['rgba(140, 182, 222, 0.69)', '#e0f0ff']} style={styles.container}>
       <ScrollView contentContainerStyle={styles.content}>
         <CustomText style={styles.title}>📘 앱 사용법</CustomText>
 

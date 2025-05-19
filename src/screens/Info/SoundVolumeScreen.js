@@ -1,5 +1,14 @@
-import React, {useEffect, useState} from 'react';
-import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
+// ⚙️ UI만 리팩토링 된 SoundVolumeScreen.js
+
+import React, { useState, useEffect } from 'react';
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  ToastAndroid,
+  Platform,
+  Alert,
+} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Slider from '@react-native-community/slider';
 import SystemSetting from 'react-native-system-setting';
@@ -9,14 +18,12 @@ import CustomText from '../../components/CustomText';
 
 const SoundVolumeScreen = () => {
   const [volume, setVolume] = useState(0.5);
-  const [selectedVoice, setSelectedVoice] = useState(
-    'com.google.android.tts:ko-kr-x-ism-local',
-  );
+  const [selectedVoice, setSelectedVoice] = useState('com.google.android.tts:ko-kr-x-ism-local');
 
   const voices = [
-    {id: 'com.google.android.tts:ko-kr-x-ism-local', name: '여성1 (기본)'},
-    {id: 'com.google.android.tts:ko-KR', name: '여성2'},
-    {id: 'com.google.android.tts:ko-KR-language', name: '남성1'},
+    { id: 'com.google.android.tts:ko-kr-x-ism-local', name: '여성1 (기본)' },
+    { id: 'com.google.android.tts:ko-KR', name: '여성2' },
+    { id: 'com.google.android.tts:ko-KR-language', name: '남성1' },
   ];
 
   useEffect(() => {
@@ -41,17 +48,16 @@ const SoundVolumeScreen = () => {
   };
 
   return (
-    <LinearGradient colors={['#F8F8F8', '#F8F8F8']} style={styles.container}>
+    <LinearGradient colors={['rgb(192, 211, 231)', 'rgb(199, 215, 230)']} style={styles.container}>
       <View style={styles.card}>
         <Ionicons
           name="volume-high-outline"
           size={32}
-          color="#4B7BE5"
-          style={{marginBottom: 10}}
+          color="#1A4DCC"
+          style={{ marginBottom: 10 }}
         />
         <CustomText style={styles.title}>음향 크기 설정</CustomText>
 
-        {/* 음성 선택 */}
         <CustomText style={styles.subtitle}>음성 선택</CustomText>
         {voices.map(voice => (
           <TouchableOpacity
@@ -60,15 +66,17 @@ const SoundVolumeScreen = () => {
             style={[
               styles.voiceOption,
               {
-                backgroundColor:
-                  selectedVoice === voice.id ? '#4B7BE5' : '#fff',
+                backgroundColor: selectedVoice === voice.id ? '#4B7BE5' : '#fff',
+                borderColor: selectedVoice === voice.id ? '#4B7BE5' : '#ccc',
               },
-            ]}>
+            ]}
+          >
             <CustomText
               style={{
                 color: selectedVoice === voice.id ? '#fff' : '#333',
                 fontWeight: '600',
-              }}>
+              }}
+            >
               {voice.name}
             </CustomText>
           </TouchableOpacity>
@@ -85,9 +93,9 @@ const SoundVolumeScreen = () => {
           value={volume}
           step={0.01}
           onValueChange={onVolumeChange}
-          minimumTrackTintColor="#4B7BE5"
-          maximumTrackTintColor="#ddd"
-          thumbTintColor="#4B7BE5"
+          minimumTrackTintColor="#1A4DCC"
+          maximumTrackTintColor="#ccc"
+          thumbTintColor="#1A4DCC"
         />
       </View>
     </LinearGradient>
@@ -101,39 +109,42 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   card: {
-    width: '88%',
+    width: '90%',
     paddingVertical: 30,
     paddingHorizontal: 24,
     backgroundColor: '#fff',
-    borderRadius: 16,
+    borderRadius: 20,
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 4},
+
+    
+    borderWidth: 2,
+    borderColor: 'rgba(33, 113, 245, 0.6)',
+    shadowColor: '#4B7BE5',
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
-    shadowRadius: 5,
+    shadowRadius: 6,
     elevation: 6,
   },
   title: {
     fontWeight: 'bold',
     marginBottom: 20,
-    color: '#333',
+    color: '#1A4DCC',
+    fontSize: 18,
   },
   subtitle: {
     fontWeight: '600',
     marginBottom: 10,
-    color: '#333',
+    color: '#1A4DCC',
     alignSelf: 'flex-start',
+    fontSize: 15,
   },
   voiceOption: {
     width: '100%',
     padding: 14,
-    borderRadius: 10,
+    borderRadius: 12,
     marginBottom: 10,
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.07,
-    shadowRadius: 2,
+    borderWidth: 1,
     elevation: 2,
   },
   previewButton: {
@@ -141,7 +152,8 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 20,
     borderRadius: 10,
-    marginTop: 10,
+    marginTop: 14,
+    elevation: 3,
   },
   previewText: {
     color: '#fff',
@@ -151,6 +163,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 40,
     marginTop: 30,
+    transform: [{ scaleY: 1.3 }],
   },
 });
 
