@@ -148,6 +148,7 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   tooltipText: {
+    fontSize: 17,
     fontWeight: 'bold',
     color: '#4B7BE5',
   },
