@@ -7,7 +7,7 @@ import { deposit, withdraw, accountUpsert, accountGet, accountGetAll } from '../
 
 const AccountDetailScreen = ({ navigation, route }) => {
 
-    const { userName, fintechUseNum, bankName, balance } = route.params;
+    const { userName, fintechUseNum, bankName, balance, account } = route.params;
     const [transactions, setTransactions] = useState([]);
     const [sortOrder, setSortOrder] = useState('desc');
     const [loading, setLoading] = useState(true);
@@ -68,6 +68,7 @@ const AccountDetailScreen = ({ navigation, route }) => {
                     <View style={styles.item}>
                         <Text>거래ID: {item._id}</Text>
                         <Text>계좌ID: {item.accountId}</Text>
+                        <Text>계좌번호: {item.accountNum}</Text>
                         <Text>은행명: {item.accountBank}</Text>
                         <Text>금액: {Number(item.amount).toLocaleString()}원</Text>
                         <Text>일시: {new Date(item.createdAt).toLocaleString()}</Text>

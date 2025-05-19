@@ -424,6 +424,7 @@ const AccountScreenGUI = ({
                         fintechUseNum: item.fintech_use_num,
                         bankName: item.bank_name,
                         balance: dbObj?.amount ?? 0,
+                        accountNum: dbObj?.accountNum ?? '정보없음',
                       })
                     }
                   >
@@ -446,7 +447,7 @@ const AccountScreenGUI = ({
                         {dbObj?.amount != null
                           ? Number(dbObj.amount).toLocaleString()
                           : '정보없음'}
-                        {/* const { dbName } = CONFIG[testBedAccount] || {}; 컬렉션에서 item.fintech_use_num == accountId 고유값 따라서 ammount 가져오기 */}
+                        {/* const { dbName } = CONFIG[testBedAccount] || {}; 컬렉션에서 item.fintech_use_num == accountId 고유값 따라서 amount 가져오기 */}
                       </CustomText>
                     </View>
                     <View style={styles.buttonContainer}>
@@ -462,7 +463,11 @@ const AccountScreenGUI = ({
                         style={styles.withdrawButton}
                         // onPress={() => handleWithdraw(item)}
                         // onPress={() => onPressWithdraw(item)}
-                        onPress={() => navigation.navigate('WithdrawAccount')}
+                        onPress={() => navigation.navigate('WithdrawAccount', {
+                          amount: dbObj?.amount || 0,
+                          bankName: item.bank_name,
+                          accountNum: dbObj?.accountNum || '정보없음',
+                        })}
                       >
                         <CustomText style={styles.withdrawButtonText}>
                           출금

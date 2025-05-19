@@ -18,7 +18,8 @@ import {
   Animated,
   Easing,
   Image,
-} from 'react-native'; import { Picker } from '@react-native-picker/picker';
+} from 'react-native';
+import { Picker } from '@react-native-picker/picker';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import CustomText from '../../components/CustomText';
 import { NumPad } from '@umit-turk/react-native-num-pad';
@@ -27,9 +28,11 @@ import CustomNumPad from '../../components/CustomNumPad';
 import LinearGradient from 'react-native-linear-gradient';
 
 export default function WithdrawBankScreen() {
-  const { accountNumber } = useRoute().params;
+  const { accountNumTo } = useRoute().params;
+  const { amount, bankName, accountNum } = useRoute().params;
+
   const nav = useNavigation();
-  const [bank, setBank] = useState('');
+  const [bankTo, setBankTo] = useState('');
   const [selected, setSelected] = useState('');
   const [visible, setVisible] = useState(false);
 
@@ -63,7 +66,7 @@ export default function WithdrawBankScreen() {
       end={{ x: 1, y: 1 }}
     >
       <Text style={styles.title}>은행명을 골라주세요</Text>
-      <Text style={styles.accountText}>출금할 계좌 번호 : {accountNumber}</Text>
+      <Text style={styles.accountText}>출금할 계좌 번호 : {accountNumTo}</Text>
       {/* <Text style={styles.bankText}>출금할 은행: {bank}</Text>
       <Text style={styles.amountText}>입력된 금액: {amount}</Text> */}
       {/* <Picker
@@ -152,9 +155,10 @@ export default function WithdrawBankScreen() {
           }}
         >
           <TouchableOpacity
-            disabled={!selected}         // accountNumber 없으면 비활성화
+            disabled={!selected}         // accountNumTo 없으면 비활성화
             onPress={() => nav.navigate('WithdrawAmount', {
-              accountNumber, bank: selected                                       // ← selected를 넘기기
+              accountNumTo, bankTo: selected, // ← selected를 넘기기
+              accountNum, bankName, amount,
             })}
             style={{
               width: 160,

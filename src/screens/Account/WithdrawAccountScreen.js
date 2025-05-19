@@ -18,7 +18,8 @@ import {
   Animated,
   Easing,
   Image,
-} from 'react-native'; import { useNavigation } from '@react-navigation/native';
+} from 'react-native';
+import { useRoute, useNavigation } from '@react-navigation/native';
 import CustomText from '../../components/CustomText';
 import { NumPad } from '@umit-turk/react-native-num-pad';
 import { TextInputMask } from 'react-native-masked-text';
@@ -28,8 +29,10 @@ import LinearGradient from 'react-native-linear-gradient';
 export default function WithdrawAccountScreen() {
   const nav = useNavigation();
 
+  const { amount, bankName, accountNum } = useRoute().params;
+
   const [account, setAccount] = useState('');
-  const [accountNumber, setAccountNumber] = useState(''); // 계좌번호 입력
+  const [accountNumTo, setaccountNumTo] = useState(''); // 계좌번호 입력
 
   // 화면 전용 키 레이아웃
   const myKeyRows = [
@@ -48,17 +51,17 @@ export default function WithdrawAccountScreen() {
 
   const handlePress = (digit) => {
     if (digit === '모두 지우기') {
-      setAccountNumber('');
+      setaccountNumTo('');
     }
     else if (digit === '한칸 지우기') {
-      setAccountNumber(prev => {
+      setaccountNumTo(prev => {
         // 하이픈 제거 후 마지막 숫자 하나 제거 → 다시 포맷
         const trimmed = prev.replace(/-/g, '').slice(0, -1);
         return formatAccount(trimmed);
       });
     }
     else {
-      setAccountNumber(prev => {
+      setaccountNumTo(prev => {
         // 하이픈 제거 후 숫자 길이 제한(10자리)
         const digits = prev.replace(/-/g, '');
         if (digits.length >= 10) return prev;
@@ -68,7 +71,7 @@ export default function WithdrawAccountScreen() {
     }
   };
   const handleNext = () => {
-    const digitsOnly = accountNumber.replace(/-/g, '');
+    const digitsOnly = accountNumTo.replace(/-/g, '');
     if (digitsOnly.length < 10 || digitsOnly.length > 10) {
       // 계좌번호가 10자리가 아닐 때
       Alert.alert(
@@ -77,7 +80,7 @@ export default function WithdrawAccountScreen() {
       );
       return;
     }
-    nav.navigate('WithdrawBank', { accountNumber });
+    nav.navigate('WithdrawBank', { accountNumTo, bankName, amount, accountNum });
   };
 
   return (
@@ -97,8 +100,8 @@ export default function WithdrawAccountScreen() {
           unit: '', // 앞에 붙는 단위
           // suffixUnit: '원', // 뒤에 붙는 단위
         }}
-        value={accountNumber}
-        onChangeText={text => setAccountNumber(text)}
+        value={accountNumTo}
+        onChangeText={text => setaccountNumTo(text)}
         // placeholder="모의 계좌 번호 10자리"
         keyboardType="numeric"
         maxLength={13} // '-' 포함 14자리       
@@ -156,13 +159,13 @@ export default function WithdrawAccountScreen() {
           }}
         >
           <TouchableOpacity
-            disabled={!accountNumber}         // accountNumber 없으면 비활성화
+            disabled={!accountNumTo}         // accountNumTo 없으면 비활성화
             onPress={handleNext}
             style={{
               width: 160,
               paddingVertical: 20,
               alignItems: 'center',
-              opacity: accountNumber ? 1 : 0.6,  // 비활성 시 반투명
+              opacity: accountNumTo ? 1 : 0.6,  // 비활성 시 반투명
             }}
           >
             <Text style={{ color: '#FFF', fontSize: 16, fontWeight: '600' }}>

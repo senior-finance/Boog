@@ -18,7 +18,8 @@ import {
   Animated,
   Easing,
   Image,
-} from 'react-native'; import { useRoute, useNavigation } from '@react-navigation/native';
+} from 'react-native';
+import { useRoute, useNavigation } from '@react-navigation/native';
 import CustomText from '../../components/CustomText';
 import { NumPad } from '@umit-turk/react-native-num-pad';
 import { TextInputMask } from 'react-native-masked-text';
@@ -26,11 +27,20 @@ import CustomNumPad from '../../components/CustomNumPad';
 import LinearGradient from 'react-native-linear-gradient';
 
 export default function WithdrawAmountScreen() {
-  const { accountNumber, bank } = useRoute().params;
+  const { accountNumTo, bankTo } = useRoute().params;
+  const { amount, bankName, accountNum } = useRoute().params;
+
   const nav = useNavigation();
-  const [amount, setAmount] = useState('');
+  const [amountTo, setAmountTo] = useState('');
   const [raw, setRaw] = useState('');
   const [error, setError] = useState('');
+
+  // 포맷 함수 추가
+  const formatWithCommas = numStr =>
+    numStr.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+  // 상태 분리 (콤마용)
+  const [amountToComma, setAmountToComma] = useState('');
 
   // 화면 전용 키 레이아웃
   const myKeyRows = [
@@ -41,18 +51,37 @@ export default function WithdrawAmountScreen() {
     ['모두 지우기', '한칸 지우기'],
   ];
 
-  const MAX_RAW = 10000000000; // 100억
-
+  // digit 기반으로 raw.length만 체크
   const handlePress = digit => {
     if (digit === '모두 지우기') {
-      // 모두 지우기
-      setAmount('');
+      setRaw('');
+      setAmountTo('');
+      setAmountToComma('');
     } else if (digit === '한칸 지우기') {
-      // 한 글자씩 삭제
-      setAmount(prev => prev.slice(0, -1));
+      const newRaw = raw.slice(0, -1);
+      setRaw(newRaw);
+      const kor = formatKorean(newRaw);
+      const comma = formatWithCommas(newRaw);
+      setAmountTo(kor);
+      setAmountToComma(comma);
     } else {
-      // 숫자 또는 '000' 등 입력
-      setAmount(prev => prev + digit);
+      const available = 10 - raw.length;
+      if (available <= 0) return;
+
+      // 붙일 문자열 자르기
+      const toAppend = digit.length > available
+        ? digit.slice(0, available)
+        : digit;
+
+      // raw가 비어있고, toAppend가 모두 0이면 무시
+      if (raw === '' && /^0+$/.test(toAppend)) return;
+
+      const newRaw = raw + toAppend;
+      setRaw(newRaw);
+      const kor = formatKorean(newRaw);
+      const comma = formatWithCommas(newRaw);
+      setAmountTo(kor);
+      setAmountToComma(comma);
     }
   };
 
@@ -98,47 +127,54 @@ export default function WithdrawAmountScreen() {
       end={{ x: 1, y: 1 }}
     >
       <Text style={styles.title}>출금할 금액을 입력 해주세요</Text>
-      <Text style={styles.accountText}>출금할 계좌 번호 : {accountNumber}</Text>
-      <Text style={styles.bankText}>출금할 은행 : {bank}</Text>
-      {/* <TextInputMask
-        type={'money'}
-        options={{
-          precision: 0, // 소수점 없음
-          separator: '', // 소수점 구분자
-          delimiter: ',', // 천 단위 구분자
-          unit: '', // 앞에 붙는 단위
-          // suffixUnit: '원', // 뒤에 붙는 단위
-        }}
-        value={amount}
-        onChangeText={text => setAmount(text)}
-        // style={styles.input}
-        placeholder="금액 입력"
-        keyboardType="numeric"
-        returnKeyType="done"
-        showSoftInputOnFocus={false}
-        style={styles.inputBox}
-      /> */}
+      <Text style={styles.accountText}>출금할 계좌 번호 : {accountNumTo}</Text>
+      <Text style={styles.bankText}>출금할 은행 : {bankTo}</Text>
       <TextInput
-        // style={styles.input}
         keyboardType="numeric"
         returnKeyType="done"
-        value={formatKorean(amount)}
+        value={amountTo}
         onChangeText={text => {
-          let onlyNums = text.replace(/\D/g, '');
-          // 최대값 체크
-          if (Number(onlyNums) > MAX_RAW) {
-            setError('최대 입력 가능 금액은 100억입니다.');
-            onlyNums = MAX_RAW.toString();
-          } else {
-            setError('');
+          const onlyNums = text.replace(/\D/g, '').slice(0, 10);
+          // 순수 0만 있으면 빈 문자열로
+          if (/^0+$/.test(onlyNums)) {
+            setRaw('');
+            setAmountTo('');
+            setAmountToComma('');
+            return;
           }
           setRaw(onlyNums);
-          setAmount(formatKorean(onlyNums));
+          const kor = formatKorean(onlyNums);
+          const comma = formatWithCommas(onlyNums);
+          setAmountTo(kor);
+          setAmountToComma(comma);
         }}
-        placeholder="금액 입력"
+        placeholder="금액을 원화 단위로"
         showSoftInputOnFocus={false}
         style={[styles.inputBox]}
       />
+      <TextInput
+        keyboardType="numeric"
+        returnKeyType="done"
+        value={amountToComma}
+        onChangeText={text => {
+          const onlyNums = text.replace(/\D/g, '').slice(0, 10);
+          if (/^0+$/.test(onlyNums)) {
+            setRaw('');
+            setAmountTo('');
+            setAmountToComma('');
+            return;
+          }
+          setRaw(onlyNums);
+          const kor = formatKorean(onlyNums);
+          const comma = formatWithCommas(onlyNums);
+          setAmountTo(kor);
+          setAmountToComma(comma);
+        }}
+        placeholder="금액을 쉼표 단위로"
+        showSoftInputOnFocus={false}
+        style={styles.inputBox}
+      />
+      <Text style={styles.remain}>출금 가능한 잔액 : {formatKorean(String(amount))}</Text>
       <View style={styles.keypadContainer}>
         <CustomNumPad
           onPress={handlePress}
@@ -183,13 +219,27 @@ export default function WithdrawAmountScreen() {
           }}
         >
           <TouchableOpacity
-            disabled={!amount}         // accountNumber 없으면 비활성화
-            onPress={() => nav.navigate('WithdrawAuth', { accountNumber, bank, formattedAmount: formatKorean(amount) })}
+            disabled={!amountTo}         // accountNumber 없으면 비활성화
+            onPress={() => {
+              if (amount < raw) {
+                Alert.alert('잔액이 부족합니다', '출금 가능한 금액을 초과했습니다.');
+                return;
+              }
+              // 금액 검사 통과 시에만 화면 이동
+              nav.navigate('WithdrawAuth', {
+                accountNumTo,
+                bankTo,
+                formattedAmount: amountTo,
+                accountNum,
+                bankName,
+                amount,
+              });
+            }}
             style={{
               width: 160,
               paddingVertical: 20,
               alignItems: 'center',
-              opacity: amount ? 1 : 0.6,  // 비활성 시 반투명
+              opacity: amountTo ? 1 : 0.6,  // 비활성 시 반투명
             }}
           >
             <Text style={{ color: '#FFF', fontSize: 16, fontWeight: '600' }}>
@@ -230,10 +280,10 @@ const styles = StyleSheet.create({
     fontWeight: '800',
   },
   inputBox: {
-    fontSize: 30,
+    fontSize: 24,
     fontWeight: '500',
     textAlign: 'center',
-    borderWidth: 1,
+    borderWidth: 5,
     borderColor: '#ccc',
     borderRadius: 12,
     paddingHorizontal: 16,
@@ -254,6 +304,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',                    // 부모 너비 100%
     paddingHorizontal: 16,            // 양쪽 여백(필요에 따라 조정)
+  },
+  remain: {
+    textAlign: 'center', // 텍스트 가운데 정렬
+    color: '#3498DB',
+    fontSize: 24,
+    marginBottom: 10,
   },
   accountText: {
     textAlign: 'center', // 텍스트 가운데 정렬
