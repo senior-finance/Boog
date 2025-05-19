@@ -68,7 +68,7 @@ const MainScreen = ({ navigation }) => {
 
   const featureButtons = [
     { title: 'AI 챗봇', icon: 'chatbubble-ellipses-outline', onPress: () => navigation.navigate('VoiceInput') },
-    { title: '통화·문자', icon: 'analytics-outline', onPress: () => navigation.navigate('AutoPhoneAnalysis') },
+    { title: '통화.문자', icon: 'analytics-outline', onPress: () => navigation.navigate('AutoPhoneAnalysis') },
     { title: '지문 인증', icon: 'finger-print', onPress: () => navigation.navigate('Biometric') },
   ];
 
