@@ -69,7 +69,7 @@ const MainScreen = ({ navigation }) => {
   const featureButtons = [
   { title: 'AI 챗봇', icon: 'chatbubble-ellipses-outline', onPress: () => navigation.navigate('VoiceInput') },
   { title: '통화.문자', icon: 'analytics-outline', onPress: () => navigation.navigate('AutoPhoneAnalysis') },
-  { title: '보이스피싱', icon: 'alert-circle-outline', onPress: () => navigation.navigate('VoicePhishingScreen') },
+  { title: '보이스 피싱', icon: 'alert-circle-outline', onPress: () => navigation.navigate('VoicePhishingScreen') },
 ];
 
 
@@ -185,7 +185,7 @@ const styles = StyleSheet.create({
   balanceCard: {
     backgroundColor: 'rgba(49, 116, 199, 0.97)',
     borderRadius: 20,
-    padding: 50,
+    padding: 60,
     alignItems: 'center',
     marginBottom: 32,
     shadowColor: '#004AAD',

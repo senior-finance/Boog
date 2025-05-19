@@ -70,13 +70,24 @@ const VoicePhishingScreen = ({ navigation }) => {
       onPress={() => navigation.navigate('VoicePhishingDetail', item)}
     >
       <Image source={item.image} style={styles.image} />
-      <CustomText style={styles.title}>{item.title}</CustomText>
-      <CustomText style={styles.summary}>{item.summary}</CustomText>
+
+      <CustomText
+        style={styles.title}
+        numberOfLines={2}
+      >
+        {item.title}
+      </CustomText>
+
+      <CustomText
+        style={styles.summary}
+      >
+        {item.summary}
+      </CustomText>
     </TouchableOpacity>
   );
 
   return (
-    <LinearGradient colors={['#F8F8F8', '#F8F8F8']} style={styles.container}>
+    <LinearGradient colors={['#E3F2FD', '#ffffff']} style={styles.container}>
       <FlatList
         data={data}
         renderItem={renderItem}
@@ -90,9 +101,10 @@ const VoicePhishingScreen = ({ navigation }) => {
                 url: 'https://search.naver.com/search.naver?query=보이스피싱'
               })
             }
-            
           >
-            <CustomText style={styles.newsButtonText}>📰 보이스피싱 관련 최신 뉴스 더 보러가기</CustomText>
+            <CustomText style={styles.newsButtonText}>
+              📰 보이스피싱 관련 최신 뉴스 더 보러가기
+            </CustomText>
           </TouchableOpacity>
         }
       />
@@ -105,46 +117,57 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   list: {
-    padding: 16,
+    padding: 20,
   },
   card: {
-    backgroundColor: '#ffffff',
-    borderRadius: 16,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
     padding: 16,
-    marginBottom: 16,
-    elevation: 4,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    marginBottom: 20,
+    borderWidth: 2,
+    borderColor: 'rgba(33, 113, 245, 0.6)',
+    shadowColor: '#4B7BE5',
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
-    shadowRadius: 4,
+    shadowRadius: 6,
+    elevation: 5,
+    alignItems: 'flex-start',
   },
   image: {
     width: '100%',
     height: 180,
-    borderRadius: 12,
+    borderRadius: 16,
     marginBottom: 12,
   },
   title: {
-        fontWeight: 'bold',
     color: '#1A4DCC',
+    fontWeight: 'bold',
+    fontSize: 16,
     marginBottom: 6,
+    lineHeight: 24,
+    flexWrap: 'wrap',
+    includeFontPadding: false,
   },
   summary: {
-        color: '#333',
+    color: '#333',
+    lineHeight: 22,
+    flexWrap: 'wrap',
+    includeFontPadding: false,
   },
   newsButton: {
     marginTop: 24,
     marginBottom: 48,
     padding: 16,
-    backgroundColor: '#eaf0ff',
+    backgroundColor: '#dce8ff',
     borderRadius: 16,
     alignItems: 'center',
-    elevation: 2,
+    elevation: 3,
   },
   newsButtonText: {
     color: '#1A4DCC',
     fontWeight: 'bold',
-        textDecorationLine: 'underline',
+    textDecorationLine: 'underline',
+    fontSize: 15,
   },
 });
 
