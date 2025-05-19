@@ -27,12 +27,7 @@ const LearningScreen = ({ navigation }) => {
       icon: 'bank-transfer',
       nav: 'DepositStep1',
     },
-    {
-      title: '보이스피싱 사례',
-      desc: '사기 문자 유형을 확인해보세요 >',
-      icon: 'alert-circle-outline',
-      nav: 'VoicePhishingScreen',
-    },
+
   ];
 
   if (scaleAnimRefs.current.length !== cards.length) {

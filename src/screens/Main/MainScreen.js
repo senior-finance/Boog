@@ -67,10 +67,11 @@ const MainScreen = ({ navigation }) => {
   ];
 
   const featureButtons = [
-    { title: 'AI 챗봇', icon: 'chatbubble-ellipses-outline', onPress: () => navigation.navigate('VoiceInput') },
-    { title: '통화.문자', icon: 'analytics-outline', onPress: () => navigation.navigate('AutoPhoneAnalysis') },
-    { title: '지문 인증', icon: 'finger-print', onPress: () => navigation.navigate('Biometric') },
-  ];
+  { title: 'AI 챗봇', icon: 'chatbubble-ellipses-outline', onPress: () => navigation.navigate('VoiceInput') },
+  { title: '통화.문자', icon: 'analytics-outline', onPress: () => navigation.navigate('AutoPhoneAnalysis') },
+  { title: '보이스피싱', icon: 'alert-circle-outline', onPress: () => navigation.navigate('VoicePhishingScreen') },
+];
+
 
   const outgo = [
     { name: '김민수', date: '2024-05-13', amount: '-₩50,000', isDeposit: false },
