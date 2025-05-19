@@ -312,7 +312,10 @@ return (
 
         {/* ✅ 입력이 있을 때만 send 버튼 보이게 */}
         {textInput.trim().length > 0 ? (
-          <TouchableOpacity style={styles.sendButton} onPress={onSendText}>
+          <TouchableOpacity
+            style={styles.sendButton}
+            onPress={() => onSendText(textInput)}
+          >
             <Icon name="send" size={24} color="#fff" />
           </TouchableOpacity>
         ) : (
