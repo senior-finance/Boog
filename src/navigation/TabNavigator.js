@@ -37,7 +37,7 @@ const TabNavigator = () => (
       })}
     >
       <Tab.Screen
-        name="Guide"
+        name="사용법"
         component={GuideScreen}
         options={{ tabBarLabel: '사용법' }}
       />
@@ -54,7 +54,7 @@ const TabNavigator = () => (
         }}
       />
       <Tab.Screen
-        name="MyInfo"
+        name="내 정보"
         component={MyInfoStack}
         options={{ tabBarLabel: '내 정보' }}
       />
