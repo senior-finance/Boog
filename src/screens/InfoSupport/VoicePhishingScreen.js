@@ -64,111 +64,104 @@ const data = [
 ];
 
 const VoicePhishingScreen = ({ navigation }) => {
-  const renderItem = ({ item }) => (
-    <TouchableOpacity
-      style={styles.card}
-      onPress={() => navigation.navigate('VoicePhishingDetail', item)}
-    >
+ const renderItem = ({ item }) => (
+    <LinearGradient colors={['#f8fbff', '#f0f6ff']} style={styles.card}>
+      {/* 왼쪽 이미지 */}
       <Image source={item.image} style={styles.image} />
 
-      <CustomText
-        style={styles.title}
-        numberOfLines={2}
-      >
-        {item.title}
-      </CustomText>
+      {/* 오른쪽 텍스트 */}
+      <View style={styles.content}>
+        <CustomText style={styles.title} numberOfLines={1}>
+          {item.title}
+        </CustomText>
+        <CustomText style={styles.summary} numberOfLines={2}>
+          {item.summary}
+        </CustomText>
 
-      <CustomText
-        style={styles.summary}
-      >
-        {item.summary}
-      </CustomText>
-    </TouchableOpacity>
+        {/* 파란 버튼 */}
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => navigation.navigate('VoicePhishingDetail', item)}
+        >
+          <CustomText style={styles.buttonText}>자세히</CustomText>
+        </TouchableOpacity>
+      </View>
+    </LinearGradient>
   );
 
   return (
-    <LinearGradient colors={['#E3F2FD', '#ffffff']} style={styles.container}>
+    <View style={styles.container}>
       <FlatList
         data={data}
         renderItem={renderItem}
-        keyExtractor={item => item.id}
+        keyExtractor={(item) => item.id}
         contentContainerStyle={styles.list}
-        ListFooterComponent={
-          <TouchableOpacity
-            style={styles.newsButton}
-            onPress={() =>
-              navigation.navigate('Web', {
-                url: 'https://search.naver.com/search.naver?query=보이스피싱'
-              })
-            }
-          >
-            <CustomText style={styles.newsButtonText}>
-              📰 보이스피싱 관련 최신 뉴스 더 보러가기
-            </CustomText>
-          </TouchableOpacity>
-        }
       />
-    </LinearGradient>
+    </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#e0f0ff',
   },
   list: {
-    padding: 20,
-  },
-  card: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 20,
     padding: 16,
-    marginBottom: 20,
-    borderWidth: 2,
-    borderColor: 'rgba(33, 113, 245, 0.6)',
-    shadowColor: '#4B7BE5',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 6,
-    elevation: 5,
-    alignItems: 'flex-start',
+    paddingBottom: 40,
   },
+card: {
+  flexDirection: 'row',
+  backgroundColor: '#ffffff',
+  borderRadius: 20,
+  padding: 12,
+  marginBottom: 16,
+  alignItems: 'center',
+  borderWidth: 1.5,
+  borderColor: '#1A4DCC',
+
+  // ✅ 그림자는 선택 (지우고 싶으면 아래 4줄 삭제)
+  shadowColor: '#c0d9ff',
+  shadowOffset: { width: 0, height: 4 },
+  shadowOpacity: 0.2,
+  shadowRadius: 6,
+  elevation: 4,
+},
+
   image: {
-    width: '100%',
-    height: 180,
+    width: 80,
+    height: 80,
     borderRadius: 16,
-    marginBottom: 12,
+    marginRight: 12,
+  },
+  content: {
+    flex: 1,
   },
   title: {
-    color: '#1A4DCC',
+   
     fontWeight: 'bold',
-    fontSize: 16,
-    marginBottom: 6,
-    lineHeight: 24,
-    flexWrap: 'wrap',
-    includeFontPadding: false,
+    color: '#1A4DCC',
+    marginBottom: 4,
   },
   summary: {
-    color: '#333',
-    lineHeight: 22,
-    flexWrap: 'wrap',
-    includeFontPadding: false,
+    
+    color: '#555',
+    marginBottom: 8,
   },
-  newsButton: {
-    marginTop: 24,
-    marginBottom: 48,
-    padding: 16,
-    backgroundColor: '#dce8ff',
-    borderRadius: 16,
-    alignItems: 'center',
-    elevation: 3,
-  },
-  newsButtonText: {
-    color: '#1A4DCC',
+  button: {
+    backgroundColor: 'rgb(45, 115, 208)',
+    paddingVertical: 6,
+    paddingHorizontal: 18,
+    borderRadius: 20,
+    alignSelf: 'flex-start',
+
+},
+
+ 
+  buttonText: {
+    color: '#fff',
     fontWeight: 'bold',
-    textDecorationLine: 'underline',
-    fontSize: 15,
+   
   },
 });
-
 export default VoicePhishingScreen;

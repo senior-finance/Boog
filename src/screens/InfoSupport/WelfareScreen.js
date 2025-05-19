@@ -47,6 +47,7 @@ const WelfareScreen = ({ navigation }) => {
           <CustomText
             fontWeight="bold"
             style={{
+              color: 'rgb(41, 43, 46)',
               marginBottom: 8,
               flexWrap: 'wrap',
               includeFontPadding: false,
@@ -58,7 +59,7 @@ const WelfareScreen = ({ navigation }) => {
 
           <CustomText
             style={{
-              color: '#555',
+              color: 'rgb(91, 98, 106)',
               marginBottom: 12,
               lineHeight: 24,
               flexWrap: 'wrap',
@@ -72,7 +73,7 @@ const WelfareScreen = ({ navigation }) => {
             <CustomText
               fontWeight="600"
               style={{
-                color: '#4B7BE5',
+                color: 'rgb(79, 136, 211)',
                 flexWrap: 'wrap',
                 includeFontPadding: false,
               }}

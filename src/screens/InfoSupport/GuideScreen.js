@@ -15,13 +15,16 @@ export default function GuideScreen() {
   const navigation = useNavigation();
   const [searchText, setSearchText] = useState('');
 
-  const sectionDetails = {
-    deposit: { icon: '💸', title: '입출금 방법' },
-    ai: { icon: '🧠', title: 'AI 대화 사용법' },
-    voicePhishing: { icon: '🚨', title: '보이스피싱 탐지법' },
-    location: { icon: '🗺️', title: '근처 은행/ATM 찾기' },
-    accessibility: { icon: '🔊', title: '글자/음향 크기 조절' },
-  };
+const sectionDetails = {
+  deposit: { icon: '💸', title: '입출금 방법' },
+  ai: { icon: '🧠', title: 'AI 대화 사용법' },
+  voicePhishing: { icon: '🚨', title: '보이스피싱 탐지법' },
+  location: { icon: '🗺️', title: '근처 은행/ATM 찾기' },
+  accessibility: { icon: '🔊', title: '글자/음향 크기 조절' },
+  quiz: { icon: '❓', title: '금융 퀴즈 이용법' }, // 🆕 추가
+  welfare: { icon: '🎁', title: '복지혜택 확인 방법' }, // 🆕 추가
+};
+
 
   const filteredSections = Object.keys(sectionDetails).filter((key) =>
     sectionDetails[key].title.toLowerCase().includes(searchText.toLowerCase())
@@ -119,7 +122,7 @@ const styles = StyleSheet.create({
 
   listCard: {
     borderRadius: 20,
-    paddingVertical: 20,
+    paddingVertical: 15,
     paddingHorizontal: 20,
     flexDirection: 'row',
     alignItems: 'center',

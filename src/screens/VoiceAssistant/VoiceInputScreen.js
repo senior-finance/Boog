@@ -414,6 +414,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(75, 123, 229, 0.1)',
   },
   buttonGroup: {
+    
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'center',
@@ -433,7 +434,7 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   topicText: {
-    fontSize: 15,
+    fontSize: 13,
     fontWeight: 'bold',
   },
   modalOverlay: {
