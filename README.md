@@ -1,90 +1,48 @@
+![SOPIE Senior Of Finance   artificial IntelligEnce (1)](https://github.com/user-attachments/assets/20cdc6d9-204c-4274-b759-c2e4f830d3ef)
 
-![2](https://github.com/user-attachments/assets/c38945f3-d8e2-4156-b7f5-8c1c0698c689)
+# 👵👴 시니어 금융 플랫폼 - 부금이
 
-디스코드 > 실행 따라하기 필독!!
+노년층을 위한 쉽고 안전한 금융 서비스 플랫폼입니다.  
+간편한 인터페이스, 큰 글씨, 보이스 안내 등 사용자 친화적인 기능을 제공합니다.
 
-모든 패키지 설치는 npm install --legacy-peer-deps 명령어 실행
-처음 만들어서 최초로 impoort 할 떄는 개별로 설치해야 됨
+---
 
+## 🧭 목차 (Table of Contents)
 
-````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````
+- [소개 (About)](#소개-about)
+- [주요 기능 (Features)](#주요-기능-features)
+- [기술 스택 (Tech Stack)](#기술-스택-tech-stack)
+- [설치 방법 (Installation)](#설치-방법-installation)
+- [스크린샷 (Screenshots)](#스크린샷-screenshots)
+- [기여 방법 (Contributing)](#기여-방법-contributing)
+- [라이선스 (License)](#라이선스-license)
 
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+---
 
-# Getting Started
+## 📌 소개 (About)
 
->**Note**: Make sure you have completed the [React Native - Environment Setup](https://reactnative.dev/docs/environment-setup) instructions till "Creating a new application" step, before proceeding.
+**부금이**는 디지털 환경에 익숙하지 않은 **노인분들도 쉽게 사용할 수 있는 금융 플랫폼**입니다.  
+보이스 안내, 큰 버튼, 단순한 흐름 중심의 UI/UX로 편리한 금융 생활을 지원합니다.
 
-## Step 1: Start the Metro Server
+---
 
-First, you will need to start **Metro**, the JavaScript _bundler_ that ships _with_ React Native.
+## ✨ 주요 기능 (Features)
 
-To start Metro, run the following command from the _root_ of your React Native project:
+- 🔐 간편한 로그인 (지문/얼굴 인식 지원)
+- 🏦 내 계좌 한눈에 보기
+- 💸 송금 & 출금 기능 (음성 지원 포함)
+- 🗺️ 가까운 ATM/지점 찾기 (지도 제공)
+- 🧾 금융 거래 내역 음성 리포트
+- 🔊 글자 확대 & 음성 안내 지원
+- 🛟 피싱 방지 및 보안 경고
 
-```bash
-# using npm
-npm start
+---
 
-# OR using Yarn
-yarn start
-```
+## 🛠️ 기술 스택 (Tech Stack)
 
-## Step 2: Start your Application
+- **React Native** - 모바일 앱 개발
+- **Firebase** - 인증 및 실시간 데이터 처리
+- **MongoDB Atlas** - 사용자 정보 및 거래 기록 저장
+- **Naver Maps API** - ATM 위치 제공
+- **Firebase API + Gmail** - 고객 문의 메일 처리
 
-Let Metro Bundler run in its _own_ terminal. Open a _new_ terminal from the _root_ of your React Native project. Run the following command to start your _Android_ or _iOS_ app:
-
-### For Android
-
-```bash
-# using npm
-npm run android
-
-# OR using Yarn
-yarn android
-```
-
-### For iOS
-
-```bash
-# using npm
-npm run ios
-
-# OR using Yarn
-yarn ios
-```
-
-If everything is set up _correctly_, you should see your new app running in your _Android Emulator_ or _iOS Simulator_ shortly provided you have set up your emulator/simulator correctly.
-
-This is one way to run your app — you can also run it directly from within Android Studio and Xcode respectively.
-
-## Step 3: Modifying your App
-
-Now that you have successfully run the app, let's modify it.
-
-1. Open `App.tsx` in your text editor of choice and edit some lines.
-2. For **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Developer Menu** (<kbd>Ctrl</kbd> + <kbd>M</kbd> (on Window and Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (on macOS)) to see your changes!
-
-   For **iOS**: Hit <kbd>Cmd ⌘</kbd> + <kbd>R</kbd> in your iOS Simulator to reload the app and see your changes!
-
-## Congratulations! :tada:
-
-You've successfully run and modified your React Native App. :partying_face:
-
-### Now what?
-
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [Introduction to React Native](https://reactnative.dev/docs/getting-started).
-
-# Troubleshooting
-
-If you can't get this to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
