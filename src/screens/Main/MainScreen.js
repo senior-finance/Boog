@@ -41,13 +41,24 @@ const CircleButton = ({ title, icon, onPress }) => {
   const iconSize = seniorMode ? 36 : 28;
 
   return (
-    <TouchableOpacity 
-      style={[styles.circleButton, { width: size, height: size, borderRadius: size / 2 }]} 
-      onPress={onPress}
-    >
-      <Ionicons name={icon} size={iconSize} color='rgb(232, 245, 255)' />
-      <CustomText style={styles.circleButtonText}>{title}</CustomText>
-    </TouchableOpacity>
+    <View style={{ alignItems: 'center', marginHorizontal: 12 }}>
+      <TouchableOpacity 
+        style={[styles.circleButton, { width: size, height: size, borderRadius: size / 2 }]} 
+        onPress={onPress}
+      >
+        <Ionicons name={icon} size={iconSize} color='rgb(232, 245, 255)' />
+      </TouchableOpacity>
+      <CustomText
+        style={{
+          color: '#004AAD',
+          marginTop: 1,
+          textAlign: 'center',
+          fontWeight: '600',
+        }}
+      >
+        {title}
+      </CustomText>
+    </View>
   );
 };
 
