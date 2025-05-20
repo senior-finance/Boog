@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import {
   View,
-  Alert,
   Platform,
   ScrollView,
   StyleSheet,
@@ -14,15 +13,36 @@ import CustomText from '../../components/CustomText';
 import CustomTextInput from '../../components/CustomTextInput';
 import { sendInquiry } from './Inquiry';
 import { FIREBASE_FUNCTION_URL } from '@env';
+import CustomModal from '../../components/CustomModal';
 
 const InquiryFormScreen = () => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
+
+  // 이메일 전송 후 로딩 화면
   const [loading, setLoading] = useState(false);
+
+  // 커스텀모달
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalConfig, setModalConfig] = useState({ title: '', message: '', buttons: [] });
+  const showModal = ({ title, message, buttons }) => {
+    setModalConfig({ title, message, buttons });
+    setModalVisible(true);
+  };
 
   const handleSubmit = async () => {
     if (!title || !content) {
-      Alert.alert('입력 오류', '제목과 내용을 모두 입력해주세요.');
+      showModal({
+        title: '입력 오류',
+        message: '제목과 내용을 모두 입력해주세요.',
+        buttons: [
+          {
+            text: '확인',
+            onPress: () => setModalVisible(false),
+            color: '#4B7BE5',
+          },
+        ],
+      });
       return;
     }
 
@@ -47,11 +67,35 @@ const InquiryFormScreen = () => {
 
       if (!response.ok) throw new Error(text);
 
-      Alert.alert('접수 완료', '문의가 저장되고 이메일이 전송되었습니다.');
+      showModal({
+        title: '접수 완료',
+        message: '문의가 저장되고 이메일이 전송되었습니다.',
+        buttons: [
+          {
+            text: '확인',
+            onPress: () => {
+              setModalVisible(false);
+              setTitle('');
+              setContent('');
+            },
+            color: '#4B7BE5',
+          },
+        ],
+      });
       setTitle('');
       setContent('');
     } catch (err) {
-      Alert.alert('전송 실패', '네트워크 또는 시스템 오류가 발생했습니다.');
+      showModal({
+        title: '전송 실패',
+        message: '네트워크 또는 시스템 오류가 발생했습니다.',
+        buttons: [
+          {
+            text: '확인',
+            onPress: () => setModalVisible(false),
+            color: '#4B7BE5',
+          },
+        ],
+      });
       console.error('문의 처리 오류:', err.message || err);
     } finally {
       setLoading(false); // 로딩 종료
@@ -91,6 +135,12 @@ const InquiryFormScreen = () => {
             <ActivityIndicator size="large" color="#4B7BE5" />
           </View>
         )}
+        <CustomModal
+          visible={modalVisible}
+          title={modalConfig.title}
+          message={modalConfig.message}
+          buttons={modalConfig.buttons}
+        />
       </KeyboardAvoidingView>
     </LinearGradient>
 
