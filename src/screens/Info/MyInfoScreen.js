@@ -14,6 +14,7 @@ import { ProfileContext } from './ProfileContext';
 import CustomText from '../../components/CustomText';
 import { useUser } from '../Login/UserContext';
 import CustomModal from '../../components/CustomModal';
+import { logoutSession } from '../Login/AutoLogin';
 
 const MyInfoScreen = ({ navigation }) => {
   const { userInfo, setUserInfo } = useUser();
@@ -36,9 +37,14 @@ const MyInfoScreen = ({ navigation }) => {
         { text: '취소', onPress: () => setModalVisible(false), color: 'transparent', textColor: '#999' },
         {
           text: '확인',
-          onPress: () => { setModalVisible(false); setUserInfo(null); navigation.reset({ index: 0, routes: [{ name: 'Login' }] }); },
+          onPress: async () => {
+            setModalVisible(false);
+            await logoutSession();
+            setUserInfo(null);
+            navigation.reset({ index: 0, routes: [{ name: 'Login' }] });
+          },
           color: '#1446D8',
-          textColor: '#fff'
+          textColor: '#fff',
         },
       ],
     });
@@ -77,7 +83,7 @@ const MyInfoScreen = ({ navigation }) => {
               </View>
             </View>
           </TouchableOpacity>
-          <CustomText style={styles.userName}>{userInfo?.nickname || '이름 없음'} 님</CustomText>
+          <CustomText style={styles.userName}>{userInfo?.username || '이름 없음'} 님</CustomText>
         </View>
 
         <View style={styles.menuContainer}>

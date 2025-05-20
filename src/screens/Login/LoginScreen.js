@@ -14,7 +14,8 @@ import * as KakaoLogin from '@react-native-seoul/kakao-login';
 import { LOGIN_NAVER_KEY, LOGIN_NAVER_SECRET } from '@env';
 import CustomModal from '../../components/CustomModal';
 import { useUser } from './UserContext';
-import { upsertSocialLoginUser } from '../../database/mongoDB';
+import { upsertSocialLoginUser, mongoDB } from '../../database/mongoDB';
+import { storeAuthSession } from './AutoLogin';
 
 // 높이 계산
 const screenHeight = Dimensions.get('window').height;
@@ -68,7 +69,7 @@ export default function LoginScreen({ navigation }) {
   };
 
   // 공통 유저 저장 함수
-  const saveSocialUser = async ({ provider, socialId, username, nickname }) => {
+  const saveSocialUser = async ({ provider, socialId, username, nickname, accessToken }) => {
     const user = {
       provider,
       socialId,
@@ -79,6 +80,7 @@ export default function LoginScreen({ navigation }) {
 
     try {
       const result = await upsertSocialLoginUser(user); // ← 중복 방지 포함
+      await storeAuthSession({ provider, accessToken, userInfo: user }); // ✅ 이 줄 추가
       if (result.upsertedId) {
         console.log('신규 사용자 생성됨:', result.upsertedId);
       } else {
@@ -92,35 +94,41 @@ export default function LoginScreen({ navigation }) {
   };
 
   // 유저가 처음인지 확인 및 DB 정보 삽입
-  const countNew = async () => {
-
-    // 이미 고유 ID가 존재하는 기존 유저라면 바로 메인화면으로
-    // 고유 ID가 존재하지 않는 새로운 유저라면 loginCount 0으로 설정 및 DB 저장
-
-    // 1. 사용자 존재 여부 및 로그인 횟수 조회
-    let loginCount = 0; // 실제 값 가져와야함
-
-    // 2. 로그인 횟수 +1
-    loginCount += 1;
-
-    // 3. 사용자 정보 저장/업데이트
-    // 로그인 횟수같은거
-
-    // 4. 최초 로그인 여부에 따라 다른 화면
-
-    //테스트 변수
-    loginCount = 1;
-    // loginCount = 2;
-    if (loginCount === 1) {
-      navigation.reset({
-        index: 0,
-        routes: [{ name: 'SetUserNameScreen' }],
+  const countNew = async (socialId, profile, accessToken) => {
+    try {
+      const res = await mongoDB('find', 'user', 'info', {
+        query: { socialId },
+        projection: { nickname: 1 },
       });
-    } else {
-      navigation.reset({
-        index: 0,
-        routes: [{ name: 'MainTabs' }],
-      });
+
+      const user = Array.isArray(res) ? res[0] : res.documents?.[0];
+
+      if (user?.nickname) {
+        // 기존 사용자 → 메인 이동
+        setUserInfo(user);  // 로컬 상태에도 저장
+        await storeAuthSession({ provider: profile.provider, accessToken, userInfo: user });
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'MainTabs' }],
+        });
+      } else {
+        // 신규 사용자 → DB에 저장 후 이름 입력 화면으로
+        await saveSocialUser({
+          provider: profile.provider,
+          socialId,
+          username: profile.username,
+          nickname: profile.nickname,
+          accessToken,
+        });
+
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'SetUserNameScreen' }],
+        });
+      }
+    } catch (err) {
+      console.error('사용자 조회 실패:', err);
+      navigation.replace('Login');
     }
   };
 
@@ -132,17 +140,9 @@ export default function LoginScreen({ navigation }) {
     setNaverFailure(failureResponse);
 
     if (successResponse) {
-      //console.log('[NAVER] Login Success:', successResponse);
       const profileResult = await NaverLogin.getProfile(successResponse.accessToken);
       setNaverProfile(profileResult);
       const res = profileResult.response;
-
-      await saveSocialUser({
-        provider: 'naver',
-        socialId: res.id,
-        username: res.name,
-        nickname: res.name,
-      });
 
       showModal({
         title: '네이버 로그인 성공',
@@ -150,9 +150,17 @@ export default function LoginScreen({ navigation }) {
         buttons: [
           {
             text: '확인',
-            onPress: () => {
+            onPress: async () => {
               setModalVisible(false);
-              countNew();
+              await countNew(
+                res.id,
+                {
+                  provider: 'naver',
+                  username: res.name,
+                  nickname: res.name,
+                },
+                successResponse.accessToken
+              );
             },
             color: '#4B7BE5',
           },
@@ -161,7 +169,6 @@ export default function LoginScreen({ navigation }) {
     }
 
     if (failureResponse) {
-      //console.log('[NAVER] Login Failure:', failureResponse);
       showModal({
         title: '네이버 로그인 실패',
         message: '네이버 로그인에 실패했습니다.\n다시 시도해주세요.',
@@ -208,7 +215,7 @@ export default function LoginScreen({ navigation }) {
     try {
       const profileResult = await NaverLogin.getProfile(naverSuccess.accessToken);
       setNaverProfile(profileResult);
-      //console.log('[NAVER] Profile:', profileResult);
+      console.log('[NAVER] Profile:', profileResult);
     } catch (e) {
       setNaverProfile(null);
       ('[NAVER] Profile Fetch Error:', e);
@@ -232,18 +239,9 @@ export default function LoginScreen({ navigation }) {
     try {
       const token = await KakaoLogin.login();
       setKakaoToken(token);
-      //console.log('[KAKAO] 로그인 성공:', token);
 
       const profile = await KakaoLogin.getProfile();
       setKakaoProfile(profile);
-      //console.log('[KAKAO] 프로필 정보:', profile);
-
-      await saveSocialUser({
-        provider: 'kakao',
-        socialId: String(profile.id),
-        username: profile.nickname,
-        nickname: profile.nickname,
-      });
 
       showModal({
         title: '카카오 로그인 성공',
@@ -251,9 +249,17 @@ export default function LoginScreen({ navigation }) {
         buttons: [
           {
             text: '확인',
-            onPress: () => {
+            onPress: async () => {
               setModalVisible(false);
-              countNew();
+              await countNew(
+                String(profile.id),
+                {
+                  provider: 'kakao',
+                  username: profile.nickname,
+                  nickname: profile.nickname,
+                },
+                token.accessToken
+              );
             },
             color: '#4B7BE5',
           },
@@ -274,6 +280,7 @@ export default function LoginScreen({ navigation }) {
       });
     }
   };
+
 
   // 카카오 로그아웃
   const onKakaoLogout = async () => {

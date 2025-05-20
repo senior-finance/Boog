@@ -201,10 +201,10 @@ export async function upsertSocialLoginUser({ provider, socialId, username, nick
   });
 }
 
-// 닉네임만 업데이트
-export async function updateNickname(socialId, nickname) {
+// username 업데이트
+export async function updateUsername(socialId, username) {
   return await mongoDB('updateOne', 'user', 'info', {
     filter: { socialId },
-    update: { $set: { nickname } },
+    update: { $set: { username } },
   });
 }

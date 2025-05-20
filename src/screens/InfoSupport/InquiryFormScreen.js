@@ -7,6 +7,7 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
   TouchableOpacity,
+  ActivityIndicator,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import CustomText from '../../components/CustomText';
@@ -17,12 +18,15 @@ import { FIREBASE_FUNCTION_URL } from '@env';
 const InquiryFormScreen = () => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async () => {
     if (!title || !content) {
       Alert.alert('입력 오류', '제목과 내용을 모두 입력해주세요.');
       return;
     }
+
+    setLoading(true); // 로딩 시작
 
     try {
       await sendInquiry({ title, content });
@@ -49,6 +53,8 @@ const InquiryFormScreen = () => {
     } catch (err) {
       Alert.alert('전송 실패', '네트워크 또는 시스템 오류가 발생했습니다.');
       console.error('문의 처리 오류:', err.message || err);
+    } finally {
+      setLoading(false); // 로딩 종료
     }
   };
 
@@ -72,12 +78,22 @@ const InquiryFormScreen = () => {
             multiline
           />
 
-          <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+          <TouchableOpacity
+            style={[styles.button, loading && { opacity: 0.6 }]}
+            onPress={handleSubmit}
+            disabled={loading}
+          >
             <CustomText style={styles.buttonText}>📨 문의 보내기</CustomText>
           </TouchableOpacity>
         </ScrollView>
+        {loading && (
+          <View style={styles.loadingOverlay}>
+            <ActivityIndicator size="large" color="#4B7BE5" />
+          </View>
+        )}
       </KeyboardAvoidingView>
     </LinearGradient>
+
   );
 };
 
@@ -141,6 +157,17 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: 'bold',
     fontSize: 16,
+  },
+  loadingOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.25)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 999,
   },
 });
 

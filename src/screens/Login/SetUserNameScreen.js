@@ -3,7 +3,7 @@ import { View, Text, TextInput, StyleSheet, TouchableOpacity, Alert } from 'reac
 import { useUser } from '../Login/UserContext';
 import CustomText from '../../components/CustomText';
 import CustomModal from '../../components/CustomModal';
-import { updateNickname } from '../../database/mongoDB';
+import { updateUsername } from '../../database/mongoDB';
 
 const SetUsernameScreen = ({ navigation }) => {
 
@@ -75,9 +75,9 @@ const SetUsernameScreen = ({ navigation }) => {
     });
   };
 
-  const saveUsernameToDB = async (socialId, nickname) => {
+  const saveUsernameToDB = async (socialId, username) => {
     try {
-      await updateNickname(socialId, nickname);
+      await updateUsername(socialId, username);
     } catch (err) {
       console.error('닉네임 업데이트 실패:', err);
       throw err;
@@ -89,18 +89,18 @@ const SetUsernameScreen = ({ navigation }) => {
     try {
       // 메인 페이지로 이동하기. 원래는 이거 삭제하고 밑에 DB끝난 다음 메인페이지로 넘어가야함
       // DB가 아닌 로컬에서의 값 변경
-      setUserInfo(prev => ({ ...prev, nickname: usernameInput }));
+      setUserInfo(prev => ({ ...prev, username: usernameInput }));
       navigation.reset({
         index: 0,
         routes: [{ name: 'MainTabs' }],
       });
 
       // DB가 아닌 로컬에서의 값 변경
-      setUserInfo(prev => ({ ...prev, nickname: usernameInput }));
+      setUserInfo(prev => ({ ...prev, username: usernameInput }));
 
       // DB에 이미 고유ID, 실제이름, 사용자지정이름, 플랫폼, 로그인 횟수 총 5가지가 저장되어있을텐데
       // 사용자 지정 이름을 입력받은거로 변경
-      await saveUsernameToDB(userInfo.socialId, usernameInput); // 그냥 만든거임
+      await saveUsernameToDB(userInfo.socialId, usernameInput);
 
       // 메인 페이지로 이동
       navigation.reset({

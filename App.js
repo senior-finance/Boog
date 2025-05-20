@@ -27,6 +27,7 @@ import MapViewScreen from './src/screens/Map/MapViewScreen';
 import LoginScreen from './src/screens/Login/LoginScreen';
 import { UserProvider } from './src/screens/Login/UserContext';
 import SetUserNameScreen from './src/screens/Login/SetUserNameScreen';
+import TokenScreen from './src/screens/Login/TokenScreen';
 
 // 계좌
 import AccountScreen from './src/screens/Account/AccountScreen'; // 금결원 사용자 PASS 인증 ~ 계좌 생성하는 함수들
@@ -83,7 +84,7 @@ export default function App() {
           <VolumeProvider>
             <NavigationContainer>
               <>
-                <Stack.Navigator initialRouteName="Login">
+                <Stack.Navigator initialRouteName="Token">
                   {/* 탭 내비게이션이 포함된 메인 */}
                   <Stack.Screen
                     name="MainTabs"
@@ -92,6 +93,7 @@ export default function App() {
                   />
 
                   {/* 탭 외부로 이동할 화면들 */}
+                  <Stack.Screen name="Token" component={TokenScreen} options={{ headerShown: false }} />
                   <Stack.Screen name="Login" component={LoginScreen} options={{ title: '환영합니다 로그인' }} />
                   <Stack.Screen name="SetUserNameScreen" component={SetUserNameScreen} options={{ title: '환영합니다 로그인' }} />
 
