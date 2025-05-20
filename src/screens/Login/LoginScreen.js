@@ -14,6 +14,7 @@ import * as KakaoLogin from '@react-native-seoul/kakao-login';
 import { LOGIN_NAVER_KEY, LOGIN_NAVER_SECRET } from '@env';
 import CustomModal from '../../components/CustomModal';
 import { useUser } from './UserContext';
+import { upsertSocialLoginUser } from '../../database/mongoDB';
 
 // 높이 계산
 const screenHeight = Dimensions.get('window').height;
@@ -69,16 +70,25 @@ export default function LoginScreen({ navigation }) {
   // 공통 유저 저장 함수
   const saveSocialUser = async ({ provider, socialId, username, nickname }) => {
     const user = {
-      provider, // 로그인 플랫폼
-      socialId, // 사용자 고유 ID
-      username, // 사용자 실제 이름
-      nickname, // 사용자 지정 이름
-
-      createdAt: new Date()
+      provider,
+      socialId,
+      username,
+      nickname,
+      createdAt: new Date(),
     };
 
-    setUserInfo(user);
-    //console.log(`[SAVE USER]`, user);
+    try {
+      const result = await upsertSocialLoginUser(user); // ← 중복 방지 포함
+      if (result.upsertedId) {
+        console.log('신규 사용자 생성됨:', result.upsertedId);
+      } else {
+        console.log('기존 사용자 정보 업데이트됨');
+      }
+      setUserInfo(user); // 로컬 상태 저장
+    } catch (err) {
+      console.error('MongoDB 사용자 저장 실패:', err);
+      // 필요한 경우 모달 등으로 사용자에게 알림
+    }
   };
 
   // 유저가 처음인지 확인 및 DB 정보 삽입

@@ -187,3 +187,24 @@ export async function getEasyQuiz() {
 export async function getHardQuiz() {
   return await mongoDB('find', 'learn', 'hardQuiz', {});
 }
+
+// 소셜 로그인 사용자 Upsert 저장
+// socialId 기준으로 중복 방지하고, 없으면 새로 생성
+export async function upsertSocialLoginUser({ provider, socialId, username, nickname }) {
+  return await mongoDB('updateOne', 'user', 'info', {
+    filter: { socialId },
+    update: {
+      $set: { provider, username, nickname },
+      $setOnInsert: { createdAt: new Date() }
+    },
+    options: { upsert: true }
+  });
+}
+
+// 닉네임만 업데이트
+export async function updateNickname(socialId, nickname) {
+  return await mongoDB('updateOne', 'user', 'info', {
+    filter: { socialId },
+    update: { $set: { nickname } },
+  });
+}

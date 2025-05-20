@@ -3,6 +3,7 @@ import { View, Text, TextInput, StyleSheet, TouchableOpacity, Alert } from 'reac
 import { useUser } from '../Login/UserContext';
 import CustomText from '../../components/CustomText';
 import CustomModal from '../../components/CustomModal';
+import { updateNickname } from '../../database/mongoDB';
 
 const SetUsernameScreen = ({ navigation }) => {
 
@@ -72,6 +73,15 @@ const SetUsernameScreen = ({ navigation }) => {
         },
       ],
     });
+  };
+
+  const saveUsernameToDB = async (socialId, nickname) => {
+    try {
+      await updateNickname(socialId, nickname);
+    } catch (err) {
+      console.error('닉네임 업데이트 실패:', err);
+      throw err;
+    }
   };
 
   // 실제 저장 로직
