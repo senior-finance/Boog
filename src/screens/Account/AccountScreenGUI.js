@@ -668,10 +668,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   receiveButton: {
-    backgroundColor: '#28a745',
-    paddingVertical: 16,
+    backgroundColor: 'rgb(99, 162, 255)',  // 연한 블루
+    paddingVertical: 24,
     paddingHorizontal: 16,
-    borderRadius: 5,
+    borderRadius: 10,
     marginRight: 8,
   },
   receiveButtonText: {
@@ -679,10 +679,10 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   withdrawButton: {
-    backgroundColor: '#007bff',
-    paddingVertical: 16,
+    backgroundColor: 'rgb(0, 123, 255)',  // 진한 블루
+    paddingVertical: 24,
     paddingHorizontal: 30,
-    borderRadius: 5,
+    borderRadius: 10,
     marginRight: 8,
   },
   withdrawButtonText: {
