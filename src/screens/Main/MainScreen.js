@@ -6,6 +6,7 @@ import {
   ScrollView,
   Modal,
   Switch,
+  BackHandler,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -13,6 +14,9 @@ import CustomText from '../../components/CustomText';
 import CustomTextInput from '../../components/CustomTextInput';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useSeniorMode } from '../../components/SeniorModeContext';
+import CustomModal from '../../components/CustomModal';
+import { CommonActions } from '@react-navigation/native';
+import { useFocusEffect } from '@react-navigation/native';
 
 const FunctionButton = ({ title, onPress, icon }) => {
   const { seniorMode } = useSeniorMode();
@@ -42,8 +46,8 @@ const CircleButton = ({ title, icon, onPress }) => {
 
   return (
     <View style={{ alignItems: 'center', marginHorizontal: 12 }}>
-      <TouchableOpacity 
-        style={[styles.circleButton, { width: size, height: size, borderRadius: size / 2 }]} 
+      <TouchableOpacity
+        style={[styles.circleButton, { width: size, height: size, borderRadius: size / 2 }]}
         onPress={onPress}
       >
         <Ionicons name={icon} size={iconSize} color='rgb(232, 245, 255)' />
@@ -70,6 +74,21 @@ const MainScreen = ({ navigation }) => {
   const [editing, setEditing] = useState(false);
   const { seniorMode, setSeniorMode } = useSeniorMode();
 
+
+  const [exitModalVisible, setExitModalVisible] = useState(false);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const onBackPress = () => {
+        setExitModalVisible(true); // 종료 모달 오직 홈화면에서만
+        return true;
+      };
+
+      BackHandler.addEventListener('hardwareBackPress', onBackPress);
+      return () => BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+    }, [])
+  );
+
   const actionButtons = [
     { title: '송금', icon: 'swap-horizontal', onPress: () => navigation.navigate() },
     { title: '퀴즈', icon: 'help-circle', onPress: () => navigation.navigate('Learning') },
@@ -78,10 +97,10 @@ const MainScreen = ({ navigation }) => {
   ];
 
   const featureButtons = [
-  { title: 'AI 챗봇', icon: 'chatbubble-ellipses-outline', onPress: () => navigation.navigate('VoiceInput') },
-  { title: '통화.문자', icon: 'analytics-outline', onPress: () => navigation.navigate('AutoPhoneAnalysis') },
-  { title: '보이스 피싱', icon: 'alert-circle-outline', onPress: () => navigation.navigate('VoicePhishingScreen') },
-];
+    { title: 'AI 챗봇', icon: 'chatbubble-ellipses-outline', onPress: () => navigation.navigate('VoiceInput') },
+    { title: '통화.문자', icon: 'analytics-outline', onPress: () => navigation.navigate('AutoPhoneAnalysis') },
+    { title: '보이스 피싱', icon: 'alert-circle-outline', onPress: () => navigation.navigate('VoicePhishingScreen') },
+  ];
 
 
   const outgo = [
@@ -168,12 +187,40 @@ const MainScreen = ({ navigation }) => {
                   <CustomText style={styles.txName}>{tx.name}</CustomText>
                   <CustomText style={styles.txDate}>{tx.date}</CustomText>
                 </View>
-                <CustomText style={[styles.txAmt, { color: tx.isDeposit ?'rgb(32, 111, 214)' : '#FF6B81' }]}>{tx.amount}</CustomText>
+                <CustomText style={[styles.txAmt, { color: tx.isDeposit ? 'rgb(32, 111, 214)' : '#FF6B81' }]}>{tx.amount}</CustomText>
               </TouchableOpacity>
             ))}
           </View>
         )}
       </ScrollView>
+      <CustomModal
+        visible={exitModalVisible}
+        title="종료 확인"
+        message="앱을 종료하시겠습니까?"
+        buttons={[
+          {
+            text: '취소',
+            onPress: () => setExitModalVisible(false),
+            color: '#999',
+            textColor: 'white',
+          },
+          {
+            text: '확인',
+            onPress: () => {
+              navigation.dispatch(
+                CommonActions.reset({
+                  index: 0,
+                  routes: [{ name: 'MainTabs' }],
+                })
+              );
+              setTimeout(() => BackHandler.exitApp(), 100);
+            },
+            color: '#4B7BE5',
+            textColor: 'white',
+          }
+        ]}
+      />
+
     </LinearGradient>
   );
 };
@@ -205,7 +252,7 @@ const styles = StyleSheet.create({
     elevation: 8,
     overflow: 'hidden',
     borderWidth: 2,
-    borderColor:'rgba(30, 105, 202, 0.98)' // 또는 원하는 색상
+    borderColor: 'rgba(30, 105, 202, 0.98)' // 또는 원하는 색상
 
   },
   circleDecor: {

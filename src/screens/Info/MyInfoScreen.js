@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useCallback } from 'react';
 import {
   View,
   Image,
@@ -6,6 +6,7 @@ import {
   StyleSheet,
   ScrollView,
   Modal,
+  BackHandler,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { launchImageLibrary } from 'react-native-image-picker';
@@ -15,6 +16,7 @@ import CustomText from '../../components/CustomText';
 import { useUser } from '../Login/UserContext';
 import CustomModal from '../../components/CustomModal';
 import { logoutSession } from '../Login/AutoLogin';
+import { useFocusEffect } from '@react-navigation/native';
 
 const MyInfoScreen = ({ navigation }) => {
   const { userInfo, setUserInfo } = useUser();
@@ -23,6 +25,18 @@ const MyInfoScreen = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalConfig, setModalConfig] = useState({ title: '', message: '', buttons: [] });
   const [selectModalVisible, setSelectModalVisible] = useState(false);
+
+  useFocusEffect(
+    useCallback(() => {
+      const onBackPress = () => {
+        navigation.navigate('Home');
+        return true;
+      };
+
+      BackHandler.addEventListener('hardwareBackPress', onBackPress);
+      return () => BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+    }, [navigation])
+  );
 
   const showModal = ({ title, message, buttons }) => {
     setModalConfig({ title, message, buttons });
