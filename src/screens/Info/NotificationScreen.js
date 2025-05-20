@@ -60,7 +60,7 @@ export default function NotificationScreen() {
     >
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         {notifications.map((item, index) => (
-        <View key={index} style={styles.card}>
+          <View key={index} style={styles.card}>
 
             <View style={styles.cardHeader}>
               <Ionicons name={item.icon} size={22} color={item.iconColor} style={styles.icon} />
@@ -86,8 +86,8 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     paddingHorizontal: 18,
     marginBottom: 20,
-    borderColor: 'rgba(33, 113, 245, 0.5)', 
-   
+    borderColor: 'rgba(33, 113, 245, 0.5)',
+
     shadowColor: '#4B7BE5',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.08,

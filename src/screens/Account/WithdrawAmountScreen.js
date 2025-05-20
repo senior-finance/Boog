@@ -288,7 +288,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 12,
-    marginVertical: 8,
+    marginVertical: 2,
     backgroundColor: '#fff',
     // Android 그림자
     elevation: 2,
