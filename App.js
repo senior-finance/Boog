@@ -120,7 +120,7 @@ export default function App() {
                   <Stack.Screen name="FontSize" component={FontSizeSettingScreen} />
                   <Stack.Screen name="SoundVolume" component={SoundVolumeScreen} />
                   <Stack.Screen name="SoundVolumeSetting" component={SoundVolumeSettingScreen} options={{ title: '음성 및 효과음 설정' }} />
-                  <Stack.Screen name="VoicePhishingScreen" component={VoicePhishingScreen} options={{ presentation: 'modal' }} />
+                  <Stack.Screen name="VoicePhishingScreen" component={VoicePhishingScreen} options={{ title: '보이스피싱 사례 안내', presentation: 'modal' }} />
 
                   <Stack.Screen name="VoicePhishingDetail" component={VoicePhishingDetailScreen} />
 
