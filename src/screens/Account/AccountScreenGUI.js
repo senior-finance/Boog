@@ -470,7 +470,7 @@ const AccountScreenGUI = ({
                         })}
                       >
                         <CustomText style={styles.withdrawButtonText}>
-                          출금
+                          송금
                         </CustomText>
                       </TouchableOpacity>
                       {/* <TouchableOpacity
@@ -667,28 +667,42 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: 'row',
   },
-  receiveButton: {
-    backgroundColor: 'rgb(99, 162, 255)',  // 연한 블루
-    paddingVertical: 24,
-    paddingHorizontal: 16,
-    borderRadius: 10,
-    marginRight: 8,
-  },
-  receiveButtonText: {
-    color: '#fff',
-    fontWeight: 'bold',
-  },
-  withdrawButton: {
-    backgroundColor: 'rgb(0, 123, 255)',  // 진한 블루
-    paddingVertical: 24,
-    paddingHorizontal: 30,
-    borderRadius: 10,
-    marginRight: 8,
-  },
-  withdrawButtonText: {
-    color: '#fff',
-    fontWeight: 'bold',
-  },
+receiveButton: {
+  backgroundColor: '#66BB6A',
+  paddingVertical: 15,
+  paddingHorizontal: 20,
+  borderRadius: 16,
+  marginRight: 12,
+  shadowColor: '#000',
+  shadowOffset: { width: 0, height: 4 },   // ✅ 입체감 강조
+  shadowOpacity: 0.25,
+  shadowRadius: 6,
+  elevation: 6,
+},
+
+withdrawButton: {
+  backgroundColor: '#5C88E0',
+  paddingVertical: 15,
+  paddingHorizontal: 20,
+  borderRadius: 16,
+  shadowColor: '#000',
+  shadowOffset: { width: 0, height: 4 },   // ✅ 동일한 그림자 효과
+  shadowOpacity: 0.25,
+  shadowRadius: 6,
+  elevation: 6,
+},
+
+receiveButtonText: {
+  color: '#fff',
+  fontWeight: 'bold',
+  fontSize: 15,
+},
+
+withdrawButtonText: {
+  color: '#fff',
+  fontWeight: 'bold',
+  fontSize: 15,
+},
   image: {
     width: '100%',
     height: '100%',
