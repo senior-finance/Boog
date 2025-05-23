@@ -239,7 +239,7 @@ const MapViewScreen = ({ route, navigation }) => {
   return (
     <View style={{ flex: 1 }}>
       {/* 드롭다운 & 검색 버튼 */}
-      <View style={{ flex: 1, backgroundColor: '#f0f0f0', justifyContent: 'center', paddingHorizontal: 10, zIndex: 1000 }}>
+      <View style={{ flex: 1, backgroundColor: '#D8ECFF', justifyContent: 'center', paddingHorizontal: 10, zIndex: 1000 }}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <View style={{ flex: 8 }}>
             <DropDownPicker
@@ -372,7 +372,7 @@ const MapViewScreen = ({ route, navigation }) => {
       <Divider />
 
       {/* 검색 결과 리스트 */}
-      <View style={{ flex: 3, backgroundColor: '#fff', padding: 10 }}>
+      <View style={{ flex: 3, backgroundColor: '#D8ECFF', padding: 10 }}>
         <FlatList
           data={searchResults}
           keyExtractor={(item, index) => index.toString()}

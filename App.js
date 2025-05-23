@@ -122,14 +122,14 @@ export default function App() {
                   <Stack.Screen name="SoundVolumeSetting" component={SoundVolumeSettingScreen} options={{ title: '음성 및 효과음 설정' }} />
                   <Stack.Screen name="VoicePhishingScreen" component={VoicePhishingScreen} options={{ title: '보이스피싱 사례 안내', presentation: 'modal' }} />
 
-                  <Stack.Screen name="VoicePhishingDetail" component={VoicePhishingDetailScreen} />
+                  <Stack.Screen name="VoicePhishingDetail" component={VoicePhishingDetailScreen} options={{ title: '보이스피싱 사례' }} />
 
                   <Stack.Screen name="Guide" component={GuideScreen} options={{ title: '앱 사용법' }} />
                   <Stack.Screen name="GuideDetail" component={GuideDetailScreen} options={{ title: '상세 설명' }} />
 
                   <Stack.Screen name="FAQ" component={FAQScreen} />
                   <Stack.Screen name="ProfileIconSelect" component={ProfileIconSelect} />
-                  <Stack.Screen name="Welfare" component={WelfareScreen} />
+                  <Stack.Screen name="Welfare" component={WelfareScreen} options={{ title: '복지 혜택' }} />
                   <Stack.Screen name="Web" component={WebScreen} />
 
                   <Stack.Screen name="InquiryForm" component={InquiryFormScreen} />
