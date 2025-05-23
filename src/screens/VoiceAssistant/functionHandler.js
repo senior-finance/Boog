@@ -1,5 +1,7 @@
 import Tts from 'react-native-tts';
 import SystemSetting from 'react-native-system-setting';
+import { getWeather } from './getWeather';
+import { getWeatherByCurrentLocation } from './getWeather';
 
 export const handleFunctionCalling = async ({
   reply,
@@ -13,9 +15,10 @@ export const handleFunctionCalling = async ({
 
   if (reply.type === 'navigate-confirm') {
     const screenNameMap = {
-      QuizLevel: '퀴즈',
-      MapView: '지도',
-      Welfare: '복지',
+      QuizLevel: '금융 용어 학습',
+      MapView: 'ATM/은행 찾기',
+      Welfare: '복지 혜택',
+      DepositStep1: '입금 연습'
     };
 
     const readableName = screenNameMap[reply.target] || reply.target;
@@ -91,6 +94,43 @@ export const handleFunctionCalling = async ({
     else {
       console.log('⚠️ 알 수 없는 액션:', reply.target);
     }
+  }
+
+    // ✅ 현재 위치 기반 날씨 처리
+  else if (reply.type === 'weather' && reply.city === 'current') {
+    const data = await getWeatherByCurrentLocation();
+
+    if (data.error) {
+      setChatHistory(prev => [...prev, { role: 'bot', text: data.error }]);
+      Tts.speak(data.error);
+      return;
+    }
+
+    const message = `현재 위치의 날씨는 ${data.condition}, 기온은 ${data.temp}도이고, 습도는 ${data.humidity}%입니다.`;
+    setChatHistory(prev => [...prev, { role: 'bot', text: message }]);
+    Tts.speak(message);
+
+    console.log('📍 현재 위치 날씨 안내:', message);
+    return;
+  }
+
+  // ✅ 기존 도시 이름 기반 날씨 처리
+  else if (reply.type === 'weather' && reply.city) {
+    const cityName = reply.city;
+
+    const data = await getWeather(cityName); // 문자열 그대로 넘기면 getWeather 안에서 격자 처리됨
+
+    if (data.error) {
+      setChatHistory(prev => [...prev, { role: 'bot', text: data.error }]);
+      Tts.speak(data.error);
+      return;
+    }
+
+    const message = `${cityName}의 현재 날씨는 ${data.condition}, 기온은 ${data.temp}도이고, 습도는 ${data.humidity}%입니다.`;
+    setChatHistory(prev => [...prev, { role: 'bot', text: message }]);
+    Tts.speak(message);
+
+    console.log('🌤️ 기상청 날씨 안내:', message);
   }
 
   else if (reply.text) {

@@ -40,9 +40,10 @@ export default function VoiceInputScreen() {
   const scrollViewRef = useRef(null);
 
   const screenNameMap = {
-    QuizLevel: '퀴즈',
-    MapView: '지도',
-    Welfare: '복지',
+    QuizLevel: '금융 용어 학습',
+    MapView: 'ATM/은행 찾기',
+    Welfare: '복지 혜택',
+    DepositStep1: '입금 연습'
   };
 
   const filePath = `${RNFS.CachesDirectoryPath}/sound.wav`;

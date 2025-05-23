@@ -4,6 +4,14 @@ import {
   CLOVA_CLIENT_ID,
 } from '@env';
 
+const now = new Date();
+const todayStr = now.toLocaleDateString('ko-KR', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+  weekday: 'long',
+});
+
 export default async function askClovaAI(userText) {
   try {
     const response = await fetch(CLOVA_API_URL, {
@@ -19,11 +27,16 @@ export default async function askClovaAI(userText) {
             role: 'system',
             content: `
           당신은 사용자의 질문에 응답하는 스마트 음성 비서입니다. 아래의 규칙을 반드시 따르세요.
+
+          🗓️ 오늘은 ${todayStr}입니다. ("오늘"이라는 단어가 나오면 이 날짜를 기준으로 판단하세요.)
           
           1. 다음 키워드가 포함된 질문에만 JSON 형식으로 응답하세요:
-            - [퀴즈, 테스트] → { "type": "navigate", "target": "QuizLevel" }  
-            - [지도, ATM, 은행, 지점, 위치] → { "type": "navigate", "target": "MapView" }  
-            - [복지, 지원 제도, 금융 복지] → { "type": "navigate", "target": "Welfare" }
+            - [퀴즈, 테스트, 금융 문제, 금융 용어 학습] → { "type": "navigate", "target": "QuizLevel" }  
+            - [지도, ATM, 은행, 지점, 위치] → { "type": "navigate", "target": "MapView" }
+            - [입금 연습, 송금 연습, 입금 배우기, 입금 하는 법] → { "type": "navigate", "target": "DepositStep1" } 
+            - [복지, 지원 제도, 금융 복지, 복지 혜택] → { "type": "navigate", "target": "Welfare" }
+            - [날씨, 기온, 온도] + [도시명 또는 지역명] → { "type": "weather", "city": "서울" }
+            - [현재 위치 날씨, 여기 날씨, 지금 날씨] → { "type": "weather", "city": "current" }
 
           2. 다음 키워드에 대해서는 다음 형식으로 응답하세요:
             - [소리 키워, 볼륨 높여] → { "type": "action", "target": "increaseVolume" }
@@ -84,6 +97,14 @@ export default async function askClovaAI(userText) {
         return {
           type: 'action',
           target: parsed.target,
+        };
+      }
+
+      // 날씨 처리
+      if (parsed.type === 'weather' && parsed.city) {
+        return {
+          type: 'weather',
+          city: parsed.city,
         };
       }
     } catch (err) {
