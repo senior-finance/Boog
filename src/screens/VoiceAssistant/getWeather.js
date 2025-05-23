@@ -43,7 +43,11 @@ export async function getWeather(city) {
     "경북": { "nx": 89, "ny": 91 },
     "충남": { "nx": 68, "ny": 100 },
     "충북": { "nx": 69, "ny": 106 },
-    "강원": { "nx": 73, "ny": 134 }
+    "강원": { "nx": 73, "ny": 134 },
+    "경기": { nx: 60, ny: 120 },
+    "고양": { nx: 56, ny: 129 },
+    "용인": { nx: 63, ny: 118 },
+    "성남": { nx: 62, ny: 126 },
     };
 
     const grid = gridMap[city];

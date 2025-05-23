@@ -96,7 +96,7 @@ export const handleFunctionCalling = async ({
     }
   }
 
-    // ✅ 현재 위치 기반 날씨 처리
+  // ✅ 현재 위치 기반 날씨 처리
   else if (reply.type === 'weather' && reply.city === 'current') {
     const data = await getWeatherByCurrentLocation();
 
@@ -106,7 +106,18 @@ export const handleFunctionCalling = async ({
       return;
     }
 
-    const message = `현재 위치의 날씨는 ${data.condition}, 기온은 ${data.temp}도이고, 습도는 ${data.humidity}%입니다.`;
+    const iconMap = {
+      '맑음': '☀️',
+      '구름조금': '🌤️',
+      '흐림': '☁️',
+      '비': '🌧️',
+      '눈': '🌨️',
+      '비/눈': '🌦️',
+      '소나기': '🌦️',
+    };
+
+    const emoji = iconMap[data.condition] || '';
+    const message = `현재 위치의 날씨는 ${data.condition} ${emoji}, 기온은 ${data.temp}도이고, 습도는 ${data.humidity}%입니다.`;
     setChatHistory(prev => [...prev, { role: 'bot', text: message }]);
     Tts.speak(message);
 
@@ -116,7 +127,8 @@ export const handleFunctionCalling = async ({
 
   // ✅ 기존 도시 이름 기반 날씨 처리
   else if (reply.type === 'weather' && reply.city) {
-    const cityName = reply.city;
+    const normalizeCityName = (name) => name.replace(/(도|시|군)$/, '');
+    const cityName = normalizeCityName(reply.city);
 
     const data = await getWeather(cityName); // 문자열 그대로 넘기면 getWeather 안에서 격자 처리됨
 
@@ -126,7 +138,18 @@ export const handleFunctionCalling = async ({
       return;
     }
 
-    const message = `${cityName}의 현재 날씨는 ${data.condition}, 기온은 ${data.temp}도이고, 습도는 ${data.humidity}%입니다.`;
+    const iconMap = {
+      '맑음': '☀️',
+      '구름조금': '🌤️',
+      '흐림': '☁️',
+      '비': '🌧️',
+      '눈': '🌨️',
+      '비/눈': '🌦️',
+      '소나기': '🌦️',
+    };
+
+    const emoji = iconMap[data.condition] || '';
+    const message = `${cityName}의 현재 날씨는 ${data.condition} ${emoji}, 기온은 ${data.temp}도이고, 습도는 ${data.humidity}%입니다.`;
     setChatHistory(prev => [...prev, { role: 'bot', text: message }]);
     Tts.speak(message);
 
