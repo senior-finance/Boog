@@ -19,7 +19,7 @@ import map6 from '../../assets/guide/map6.png';
 import voicephishing1 from '../../assets/guide/voicephishing1.png';
 import voicephishing2 from '../../assets/guide/voicephishing2.png';
 import voicephishing3 from '../../assets/guide/voicephishing3.png';
-import voicephishing4 from '../../assets/guide/voicephishing3.png';
+import voicephishing4 from '../../assets/guide/voicephishing4.png';
 import welfare1 from '../../assets/guide/welfare1.png';
 import welfare2 from '../../assets/guide/welfare2.png';
 import welfare3 from '../../assets/guide/welfare3.png';

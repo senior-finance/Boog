@@ -30,8 +30,8 @@ export default function GuideScreen() {
 
   const sectionDetails = {
     deposit: { icon: '💸', title: '입출금 방법' },
-    ai: { icon: '🧠', title: 'AI 대화 사용법' },
-    voicePhishing: { icon: '🚨', title: '보이스피싱 탐지법' },
+    ai: { icon: '💬', title: 'AI 대화 사용법' },
+    voicePhishing: { icon: '🚨', title: '보이스피싱 사례 확인' },
     location: { icon: '🗺️', title: '근처 은행/ATM 찾기' },
     accessibility: { icon: '⚙️', title: '내 정보 사용법/ 문의 내역 작성' },
     quiz: { icon: '❓', title: '금융 퀴즈 이용법' },
