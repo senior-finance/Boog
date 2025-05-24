@@ -44,38 +44,39 @@ export default function CustomNumPad({
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'column',
-    justifyContent: 'space-between',
+    padding: 10,
+    backgroundColor: '#E0F7FF',
+    borderRadius: 12,
   },
   row: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginVertical: 4,
+    justifyContent: 'space-between',
+    marginVertical: 6,
   },
   button: {
     flex: 1,
-    marginHorizontal: 5,
-    height: 80,            // 원하는 높이로 조정
+    marginHorizontal:10,
+    height: 80,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 8,
-    backgroundColor: '#f0f0f0',
-    borderWidth: 5,
-    borderRadius: 50,
-    borderColor: '#ccc',
-    shadowColor: '#000',
-    shadowOpacity: 0.5,
+    borderRadius: 35,
+    backgroundColor: '#rgb(158, 232, 255)',
+    borderWidth: 2,
+    borderColor: '#rgb(130, 142, 255)',
+    shadowColor: '#00BFFF',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
     shadowRadius: 4,
-    elevation: 2,
+    elevation: 3,
   },
   buttonText: {
-    fontSize: 20,
-    fontWeight: '800',
+    fontSize: 22,
+    fontWeight: '700',
+    color: '#FFFFFF',
   },
   placeholder: {
     flex: 1,
-    marginHorizontal: 5,
-    // 보이지 않지만 자리 차지
+    marginHorizontal: 4,
     backgroundColor: 'transparent',
   },
 });
