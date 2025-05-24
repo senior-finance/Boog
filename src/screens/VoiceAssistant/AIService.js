@@ -35,6 +35,7 @@ export default async function askClovaAI(userText) {
             - [지도, ATM, 은행, 지점, 위치] → { "type": "navigate", "target": "MapView" }
             - [입금 연습, 송금 연습, 입금 배우기, 입금 하는 법] → { "type": "navigate", "target": "DepositStep1" } 
             - [복지, 지원 제도, 금융 복지, 복지 혜택] → { "type": "navigate", "target": "Welfare" }
+            - [앱 사용 방법, 사용 방법, 앱 사용법, 어떻게 써?, 할 줄 모르겠어] → { "type": "navigate", "target": "Guide" }
             - [날씨, 기온, 온도] + [도시명 또는 지역명] → { "type": "weather", "city": "서울" }
             - [현재 위치 날씨, 여기 날씨, 지금 날씨] → { "type": "weather", "city": "current" }
 

@@ -18,7 +18,8 @@ export const handleFunctionCalling = async ({
       QuizLevel: '금융 용어 학습',
       MapView: 'ATM/은행 찾기',
       Welfare: '복지 혜택',
-      DepositStep1: '입금 연습'
+      DepositStep1: '입금 연습',
+      Guide: '앱 사용법'
     };
 
     const readableName = screenNameMap[reply.target] || reply.target;
