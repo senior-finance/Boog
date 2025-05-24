@@ -27,7 +27,7 @@ const dummyWelfareList = [
 
 const WelfareScreen = ({ navigation }) => {
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView contentContainerStyle={[styles.container, { flexGrow: 1 }]}>
       <CustomText
         fontWeight="900"
         style={{
@@ -90,7 +90,6 @@ const WelfareScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     padding: 24,
-    paddingBottom: 60,
     backgroundColor: '#E3F2FD',
     alignItems: 'center',
   },
@@ -107,8 +106,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 6,
     elevation: 5,
-
-    // 텍스트 길이에 따라 높이 자동 증가
     alignItems: 'flex-start',
   },
 });
