@@ -113,7 +113,7 @@ export default function LoginScreen({ navigation }) {
         });
       } else {
         // 신규 사용자 → DB에 저장 후 이름 입력 화면으로
-        await saveSocialUser({
+        setUserInfo({
           provider: profile.provider,
           socialId,
           username: profile.username,

@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
-import { useUser } from '../Login/UserContext';
+import { useUser } from './UserContext';
 import CustomText from '../../components/CustomText';
 import CustomModal from '../../components/CustomModal';
-import { updateUsername } from '../../database/mongoDB';
+import { updateUsername, upsertSocialLoginUser, mongoDB } from '../../database/mongoDB';
+import { storeAuthSession } from './AutoLogin';
 
 const SetUsernameScreen = ({ navigation }) => {
 
@@ -24,16 +25,56 @@ const SetUsernameScreen = ({ navigation }) => {
   };
 
   // 인증 상태 관리
-  const [isVerified, setIsVerified] = useState(false);
+  const [isVerified, setIsVerified] = useState(false);       // 인증 여부
+  const [passToken, setPassToken] = useState(null);          // 인증 토큰 관리
   const handleVerify = async () => {
-    // PASS 인증 처리 로직
-    // 인증 성공 후:
-    setIsVerified(true);
+    // PASS 인증 성공 후 얻은 고유 토큰 예시 (실제로는 통신사/SDK 통해 받아옴)
+    const mockToken = 'EXAMPLE_TOKEN';  // 테스트용 토큰입니다.
+    setPassToken(mockToken);
+
+    try {
+      const existing = await mongoDB('find', 'user', 'info', {
+        query: { passToken: mockToken },
+        options: { limit: 1 }
+      });
+
+      if (Array.isArray(existing) && existing.length > 0) {
+        showModal({
+          title: '이미 가입된 사용자',
+          message: '이미 본인 인증된 사용자가 존재합니다.\n다른 로그인 방법으로 시도해주세요.',
+          buttons: [
+            {
+              text: '확인',
+              onPress: () => {
+                setModalVisible(false);
+                navigation.replace('Login');
+              },
+              color: '#4B7BE5',
+            },
+          ],
+        });
+        return;
+      }
+
+      setIsVerified(true); // 통과한 경우만 입력 가능
+    } catch (err) {
+      console.log('PASS 중복검사 실패:', err);
+      showModal({
+        title: '오류',
+        message: 'PASS 인증 중 문제가 발생했습니다.',
+        buttons: [{ text: '확인', onPress: () => setModalVisible(false), color: '#4B7BE5', }]
+      });
+    }
   };
 
 
   const { userInfo, setUserInfo } = useUser();
-  const [usernameInput, setUsername] = useState('');
+  const [usernameInput, setUsername] = useState('');         // 입력값
+  const [isNameValid, setIsNameValid] = useState(false);     // 이름 입력 여부
+  const handleNameChange = (text) => {
+    setUsername(text);
+    setIsNameValid(text.trim().length > 0);
+  };
 
   // 확인 버튼 눌렀을 때 호출되는 함수
   const handleConfirm = () => {
@@ -87,22 +128,27 @@ const SetUsernameScreen = ({ navigation }) => {
   // 실제 저장 로직
   const confirmAndSave = async () => {
     try {
-      // 메인 페이지로 이동하기. 원래는 이거 삭제하고 밑에 DB끝난 다음 메인페이지로 넘어가야함
-      // DB가 아닌 로컬에서의 값 변경
-      setUserInfo(prev => ({ ...prev, username: usernameInput }));
-      navigation.reset({
-        index: 0,
-        routes: [{ name: 'MainTabs' }],
+      // DB 저장
+      const finalUser = {
+        provider: userInfo.provider,
+        socialId: userInfo.socialId,
+        username: usernameInput,
+        nickname: userInfo.nickname,
+        createdAt: new Date(),
+        passToken,
+      };
+
+      await upsertSocialLoginUser(finalUser);
+      setUserInfo(finalUser); // ← context 최신화
+
+      // 세션 저장
+      await storeAuthSession({
+        provider: userInfo.provider,
+        accessToken: userInfo.accessToken,
+        userInfo: finalUser,
       });
 
-      // DB가 아닌 로컬에서의 값 변경
-      setUserInfo(prev => ({ ...prev, username: usernameInput }));
-
-      // DB에 이미 고유ID, 실제이름, 사용자지정이름, 플랫폼, 로그인 횟수 총 5가지가 저장되어있을텐데
-      // 사용자 지정 이름을 입력받은거로 변경
-      await saveUsernameToDB(userInfo.socialId, usernameInput);
-
-      // 메인 페이지로 이동
+      // 메인 페이지 이동
       navigation.reset({
         index: 0,
         routes: [{ name: 'MainTabs' }],
@@ -125,15 +171,6 @@ const SetUsernameScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <CustomText style={styles.title}>사용자의 이름을 입력해주세요</CustomText>
-      <CustomText style={styles.title}>이름은 한번 설정 후 수정이 불가하오니 신중하게 입력 바랍니다.</CustomText>
-      <TextInput
-        style={styles.input}
-        placeholder="이름을 입력해주세요"
-        value={usernameInput}
-        onChangeText={setUsername}
-      />
-      <Gap></Gap>
 
       <CustomText style={styles.title}>여기서 PASS인증으로 토큰값을 받아야 할 것 같음</CustomText>
       <TouchableOpacity style={styles.button} onPress={handleVerify}>
@@ -141,13 +178,33 @@ const SetUsernameScreen = ({ navigation }) => {
       </TouchableOpacity>
 
       <Gap></Gap>
+
+      {!isVerified && (
+        <CustomText style={styles.title}>
+          이름은 인증 완료 후 입력할 수 있습니다.
+        </CustomText>
+      )}
+      <CustomText style={styles.title}>사용자의 이름을 입력해주세요</CustomText>
+      <CustomText style={styles.title}>이름은 한번 설정 후 수정이 불가하오니 신중하게 입력 바랍니다.</CustomText>
+      <TextInput
+        style={[
+          styles.input,
+          !isVerified && styles.inputDisabled,
+        ]}
+        placeholder={isVerified ? '이름을 입력해주세요' : '인증 후 입력 가능'}
+        value={usernameInput}
+        onChangeText={handleNameChange}
+        editable={isVerified}
+      />
+
+      <Gap></Gap>
       <TouchableOpacity
         style={[
           styles.button,
-          { backgroundColor: isVerified ? '#4B7BE5' : '#ccc' },
+          { backgroundColor: isVerified && isNameValid ? '#4B7BE5' : '#ccc' },
         ]}
         onPress={handleConfirm}
-        disabled={!isVerified}
+        disabled={!(isVerified && isNameValid)}
       >
         <CustomText style={styles.buttonText}>확인</CustomText>
       </TouchableOpacity>
@@ -166,6 +223,16 @@ const SetUsernameScreen = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
+  inputDisabled: {
+    backgroundColor: '#f0f0f0',
+    color: '#999',
+  },
+  disabledNotice: {
+    textAlign: 'center',
+    fontSize: 14,
+    color: '#888',
+    marginTop: 10,
+  },
   container: {
     flex: 1,
     padding: 24,

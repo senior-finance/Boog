@@ -48,12 +48,12 @@ export default function TokenScreen() {
         if (dbUser) {
           setUserInfo(dbUser);
           console.log('[자동 로그인] DB 사용자 정보 반영됨:', dbUser);
-        } else {
-          setUserInfo(userInfo);
-          console.log('[자동 로그인] DB 조회 실패, 기존 userInfo 사용');
-        }
 
-        navigation.reset({ index: 0, routes: [{ name: 'MainTabs' }] });
+          navigation.reset({ index: 0, routes: [{ name: 'MainTabs' }] });
+        } else {
+          console.log('[자동 로그인] DB 조회 실패, 로그인 필요');
+          navigation.replace('Login');  // ← 로그인 화면으로 돌려보냄
+        }
       } catch (err) {
         console.log('자동 로그인 실패:', err);
         navigation.replace('Login');

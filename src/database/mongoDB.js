@@ -20,7 +20,7 @@ const API_BASE = MONGODB_BACKEND_URL;
 // 공통 MongoDB API 호출 헬퍼 함수
 export async function mongoDB(action, dbName, collName, params) {
   try {
-    console.log('📡 요청 보냄:', action, dbName, collName, params);
+    console.log('요청 보냄:', action, dbName, collName, params);
     const res = await axios.post(
       `${API_BASE}api/${action}`,
       // 슬래시 중복 여부를 항상 조심하자...
@@ -31,7 +31,7 @@ export async function mongoDB(action, dbName, collName, params) {
     if (!success) throw new Error(error);
     return result;
   } catch (err) {
-    console.error(`[❌ mongoDB:${action}] 오류`, err?.response?.data || err.message);
+    console.error(`[mongoDB:${action}] 오류`, err?.response?.data || err.message);
     throw err;
   }
 }
@@ -180,7 +180,7 @@ export async function getNotifications(userId) {
 
 // 쉬운 퀴즈 불러오기
 export async function getEasyQuiz() {
-  return await mongoDB('find', 'learn', 'easyQuiz', {});  
+  return await mongoDB('find', 'learn', 'easyQuiz', {});
 }
 
 // 어려운 퀴즈 불러오기
@@ -190,14 +190,16 @@ export async function getHardQuiz() {
 
 // 소셜 로그인 사용자 Upsert 저장
 // socialId 기준으로 중복 방지하고, 없으면 새로 생성
-export async function upsertSocialLoginUser({ provider, socialId, username, nickname }) {
+export async function upsertSocialLoginUser({
+  provider, socialId, username, nickname, passToken
+}) {
   return await mongoDB('updateOne', 'user', 'info', {
     filter: { socialId },
     update: {
-      $set: { provider, username, nickname },
-      $setOnInsert: { createdAt: new Date() }
+      $set: { provider, username, nickname, passToken },
+      $setOnInsert: { createdAt: new Date() },
     },
-    options: { upsert: true }
+    options: { upsert: true },
   });
 }
 
@@ -208,3 +210,4 @@ export async function updateUsername(socialId, username) {
     update: { $set: { username } },
   });
 }
+

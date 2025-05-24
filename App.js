@@ -94,8 +94,8 @@ export default function App() {
 
                   {/* 탭 외부로 이동할 화면들 */}
                   <Stack.Screen name="Token" component={TokenScreen} options={{ headerShown: false }} />
-                  <Stack.Screen name="Login" component={LoginScreen} options={{ title: '환영합니다 로그인' }} />
-                  <Stack.Screen name="SetUserNameScreen" component={SetUserNameScreen} options={{ title: '환영합니다 로그인' }} />
+                  <Stack.Screen name="Login" component={LoginScreen} options={{ title: '로그인' }} />
+                  <Stack.Screen name="SetUserNameScreen" component={SetUserNameScreen} options={{ title: '사용자 정보 입력' }} />
 
                   <Stack.Screen name="Account" component={AccountScreen} options={{ title: '내 계좌 정보' }} />
                   <Stack.Screen name="AccountDetail" component={AccountDetailScreen} options={{ title: '상세 계좌 정보' }} />
@@ -118,7 +118,7 @@ export default function App() {
                   <Stack.Screen name="FunctionScreen" component={FunctionScreen} />
 
                   <Stack.Screen name="FontSize" component={FontSizeSettingScreen} options={{ title: '글자 크기' }} />
-                  <Stack.Screen name="SoundVolume" component={SoundVolumeScreen} /> 
+                  <Stack.Screen name="SoundVolume" component={SoundVolumeScreen} />
                   <Stack.Screen name="SoundVolumeSetting" component={SoundVolumeSettingScreen} options={{ title: '음성 및 효과음 설정' }} />
                   <Stack.Screen name="VoicePhishingScreen" component={VoicePhishingScreen} options={{ title: '보이스피싱 사례 안내', presentation: 'modal' }} />
 
@@ -133,8 +133,8 @@ export default function App() {
                   <Stack.Screen name="Web" component={WebScreen} />
 
                   <Stack.Screen name="InquiryForm" component={InquiryFormScreen} options={{ title: '1:1 문의하기' }} />
-                  <Stack.Screen name="InquiryList" component={InquiryListScreen} options={{ title: '문의 내역 확인' }}/>
-                  <Stack.Screen name="NotificationScreen" component={NotificationScreen} options={{ title: '알림' }}/>
+                  <Stack.Screen name="InquiryList" component={InquiryListScreen} options={{ title: '문의 내역 확인' }} />
+                  <Stack.Screen name="NotificationScreen" component={NotificationScreen} options={{ title: '알림' }} />
                   <Stack.Screen name="Biometric" component={BiometricScreen} />
                   <Stack.Screen name="VoiceInput" component={VoiceInputScreen} options={{ title: 'AI 챗봇' }} />
                   <Stack.Screen name="TTSSetting" component={TTSSettingScreen} options={{ title: '음성 설정' }} />

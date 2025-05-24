@@ -14,7 +14,7 @@ export async function checkSpamForNumber(number) {
       }
       return false;
     } catch (error) {
-      console.error("번호 스팸 체크 중 오류 발생:", error);
+      //console.warn("번호 스팸 체크 중 오류 발생:", error);
       return false;
     }
   }

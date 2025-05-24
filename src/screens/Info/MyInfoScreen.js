@@ -48,7 +48,7 @@ const MyInfoScreen = ({ navigation }) => {
       title: '로그아웃',
       message: '정말 로그아웃하시겠습니까?',
       buttons: [
-        { text: '취소', onPress: () => setModalVisible(false), color: 'transparent', textColor: '#999' },
+        { text: '취소', onPress: () => setModalVisible(false), color: '#999', textColor: 'white' },
         {
           text: '확인',
           onPress: async () => {
@@ -57,8 +57,8 @@ const MyInfoScreen = ({ navigation }) => {
             setUserInfo(null);
             navigation.reset({ index: 0, routes: [{ name: 'Login' }] });
           },
-          color: '#1446D8',
-          textColor: '#fff',
+          color: '#4B7BE5',
+          textColor: 'white',
         },
       ],
     });
