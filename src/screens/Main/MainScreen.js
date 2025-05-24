@@ -77,11 +77,6 @@ const MainScreen = ({ navigation }) => {
   const [exitModalVisible, setExitModalVisible] = useState(false);
 
   const scrollViewRef = useRef(null);
-  useEffect(() => {
-    if (showHistory) {
-      scrollViewRef.current?.scrollToEnd({ animated: true });
-    }
-  }, [showHistory]);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -200,7 +195,6 @@ const MainScreen = ({ navigation }) => {
           </View>
         )}
 
-
         <TouchableOpacity style={styles.toggleRow} onPress={() => setShowFeatures(v => !v)}>
           <CustomText style={styles.sectionSubTitle}>스마트 기능</CustomText>
           <Ionicons name={showFeatures ? 'chevron-up-outline' : 'chevron-down-outline'} size={20} color="#4A90E2" />
@@ -212,10 +206,27 @@ const MainScreen = ({ navigation }) => {
           </View>
         )}
 
-
-        <TouchableOpacity style={styles.toggleRow} onPress={() => setShowHistory(v => !v)}>
+        <TouchableOpacity
+          style={styles.toggleRow}
+          onPress={() => {
+            setShowHistory(prev => {
+              const next = !prev;
+              if (next) {
+                // 펼쳤을 때만 소량의 딜레이 후 스크롤
+                setTimeout(() => {
+                  scrollViewRef.current?.scrollToEnd({ animated: true });
+                }, 0);
+              }
+              return next;
+            });
+          }}
+        >
           <CustomText style={styles.sectionTitle}>거래 내역</CustomText>
-          <Ionicons name={showHistory ? 'chevron-up-outline' : 'chevron-down-outline'} size={20} color="#4A90E2" />
+          <Ionicons
+            name={showHistory ? 'chevron-up-outline' : 'chevron-down-outline'}
+            size={20}
+            color="#4A90E2"
+          />
         </TouchableOpacity>
 
         {showHistory && (
