@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useState, useMemo } from 'react';
+import React, { useLayoutEffect, useState, useMemo, useRef, useEffect } from 'react';
 import {
   View,
   StyleSheet,
@@ -74,8 +74,14 @@ const MainScreen = ({ navigation }) => {
   const [editing, setEditing] = useState(false);
   const { seniorMode, setSeniorMode } = useSeniorMode();
 
-
   const [exitModalVisible, setExitModalVisible] = useState(false);
+
+  const scrollViewRef = useRef(null);
+  useEffect(() => {
+    if (showHistory) {
+      scrollViewRef.current?.scrollToEnd({ animated: true });
+    }
+  }, [showHistory]);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -114,19 +120,17 @@ const MainScreen = ({ navigation }) => {
 
   const history = useMemo(() => [...outgo, ...income].sort((a, b) => new Date(b.date) - new Date(a.date)), []);
 
-const openModal = tx => {
-  setSelectedTx(tx);
-  setMemo(memoMap[tx.date + tx.name] || '');
-  setEditing(false);
-  setModalVisible(true);
-};
+  const openModal = tx => {
+    setSelectedTx(tx);
+    setMemo(memoMap[tx.date + tx.name] || '');
+    setEditing(false);
+    setModalVisible(true);
+  };
 
-  const [memoMap, setMemoMap] = useState({}); 
-const [saveMsg, setSaveMsg] = useState('');
-const [showActions, setShowActions] = useState(true);
-const [showFeatures, setShowFeatures] = useState(true);
-
-
+  const [memoMap, setMemoMap] = useState({});
+  const [saveMsg, setSaveMsg] = useState('');
+  const [showActions, setShowActions] = useState(true);
+  const [showFeatures, setShowFeatures] = useState(true);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -146,7 +150,18 @@ const [showFeatures, setShowFeatures] = useState(true);
 
   return (
     <LinearGradient colors={['rgba(159, 193, 219, 0.66)', '#e0f0ff']} style={styles.container}>
-      <ScrollView contentContainerStyle={styles.content}>
+      <ScrollView
+        ref={scrollViewRef}
+        contentContainerStyle={[
+          styles.content,
+          {
+            paddingBottom:
+              (seniorMode ? 48 : 32) +
+              (showHistory ? 0 : (seniorMode ? 48 : 16)) +
+              20    // 네비게이션 바·안전 영역 고려
+          }
+        ]}
+      >
         <View style={styles.seniorModeToggleContainer}>
           <CustomText style={styles.seniorModeText}>시니어 모드</CustomText>
           <Switch
@@ -172,30 +187,30 @@ const [showFeatures, setShowFeatures] = useState(true);
         </View>
 
         <TouchableOpacity style={styles.toggleRow} onPress={() => setShowActions(v => !v)}>
-  <CustomText style={styles.sectionSubTitle}>주요 기능</CustomText>
-  <Ionicons name={showActions ? 'chevron-up-outline' : 'chevron-down-outline'} size={20} color="#4A90E2" />
-</TouchableOpacity>
+          <CustomText style={styles.sectionSubTitle}>주요 기능</CustomText>
+          <Ionicons name={showActions ? 'chevron-up-outline' : 'chevron-down-outline'} size={20} color="#4A90E2" />
+        </TouchableOpacity>
 
-{showActions && (
-  <View style={[
-    styles.actionRow,
-    seniorMode && { flexWrap: 'wrap', justifyContent: 'space-around', rowGap: 20 },
-  ]}>
-    {actionButtons.map((btn, i) => <FunctionButton key={i} {...btn} />)}
-  </View>
-)}
+        {showActions && (
+          <View style={[
+            styles.actionRow,
+            seniorMode && { flexWrap: 'wrap', justifyContent: 'space-around', rowGap: 20 },
+          ]}>
+            {actionButtons.map((btn, i) => <FunctionButton key={i} {...btn} />)}
+          </View>
+        )}
 
 
-  <TouchableOpacity style={styles.toggleRow} onPress={() => setShowFeatures(v => !v)}>
-  <CustomText style={styles.sectionSubTitle}>스마트 기능</CustomText>
-  <Ionicons name={showFeatures ? 'chevron-up-outline' : 'chevron-down-outline'} size={20} color="#4A90E2" />
-</TouchableOpacity>
+        <TouchableOpacity style={styles.toggleRow} onPress={() => setShowFeatures(v => !v)}>
+          <CustomText style={styles.sectionSubTitle}>스마트 기능</CustomText>
+          <Ionicons name={showFeatures ? 'chevron-up-outline' : 'chevron-down-outline'} size={20} color="#4A90E2" />
+        </TouchableOpacity>
 
-{showFeatures && (
-  <View style={styles.featureRow}>
-    {featureButtons.map((btn, i) => <CircleButton key={i} {...btn} />)}
-  </View>
-)}
+        {showFeatures && (
+          <View style={styles.featureRow}>
+            {featureButtons.map((btn, i) => <CircleButton key={i} {...btn} />)}
+          </View>
+        )}
 
 
         <TouchableOpacity style={styles.toggleRow} onPress={() => setShowHistory(v => !v)}>
@@ -203,124 +218,122 @@ const [showFeatures, setShowFeatures] = useState(true);
           <Ionicons name={showHistory ? 'chevron-up-outline' : 'chevron-down-outline'} size={20} color="#4A90E2" />
         </TouchableOpacity>
 
-       <View
-  style={[
-    styles.historyList,
-    !showHistory && {
-      maxHeight: 50,
-      overflow: 'hidden',
-    },
-  ]}
->
-  {history.map((tx, idx) => (
-    <TouchableOpacity key={idx} style={styles.txCard} onPress={() => openModal(tx)}>
-      <View style={styles.txInfo}>
-        <CustomText style={styles.txName}>{tx.name}</CustomText>
-        <CustomText style={styles.txDate}>{tx.date}</CustomText>
-      </View>
-      <CustomText
-        style={[
-          styles.txAmt,
-          { color: tx.isDeposit ? 'rgb(32, 111, 214)' : '#FF6B81' },
-        ]}
-      >
-        {tx.amount}
-      </CustomText>
-    </TouchableOpacity>
-  ))}
-</View>
+        {showHistory && (
+          <View
+            style={[
+              styles.historyList,
+              { paddingBottom: seniorMode ? 48 : 16 }
+            ]}
+          >
+            {history.map((tx, idx) => (
+              <TouchableOpacity key={idx} style={styles.txCard} onPress={() => openModal(tx)}>
+                <View style={styles.txInfo}>
+                  <CustomText style={styles.txName}>{tx.name}</CustomText>
+                  <CustomText style={styles.txDate}>{tx.date}</CustomText>
+                </View>
+                <CustomText
+                  style={[
+                    styles.txAmt,
+                    { color: tx.isDeposit ? 'rgb(32, 111, 214)' : '#FF6B81' },
+                  ]}
+                >
+                  {tx.amount}
+                </CustomText>
+              </TouchableOpacity>
+            ))}
+          </View>)}
 
-    
+
       </ScrollView>
-    <Modal
-  visible={modalVisible}
-  animationType="fade"
-  transparent
-  onRequestClose={() => setModalVisible(false)}
->
-  <View style={styles.modalBg}>
-    <View style={styles.modalBox}>
-      <CustomText style={styles.modalTitle}>거래 상세 정보</CustomText>
+      <Modal
+        visible={modalVisible}
+        animationType="fade"
+        transparent
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.modalBg}>
+          <View style={styles.modalBox}>
+            <CustomText style={styles.modalTitle}>거래 상세 정보</CustomText>
 
-      {selectedTx && (
-        <>
-          <CustomText style={styles.memoLabel}>이름: {selectedTx.name}</CustomText>
-          <CustomText style={styles.memoLabel}>날짜: {selectedTx.date}</CustomText>
-          <CustomText style={styles.memoLabel}>
-            금액:{' '}
-            <CustomText
-              style={{
-                color: selectedTx.isDeposit ? 'rgb(32, 111, 214)' : '#FF6B81',
-              }}
-            >
-              {selectedTx.amount}
-            </CustomText>
-          </CustomText>
+            {selectedTx && (
+              <>
+                <CustomText style={styles.memoLabel}>이름: {selectedTx.name}</CustomText>
+                <CustomText style={styles.memoLabel}>날짜: {selectedTx.date}</CustomText>
+                <CustomText style={styles.memoLabel}>
+                  금액:{' '}
+                  <CustomText
+                    style={{
+                      color: selectedTx.isDeposit ? 'rgb(32, 111, 214)' : '#FF6B81',
+                    }}
+                  >
+                    {selectedTx.amount}
+                  </CustomText>
+                </CustomText>
 
-<View style={styles.memoRow}>
-  <CustomText style={styles.memoLabel}>메모</CustomText>
-  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-    <CustomTextInput
-      value={memo}
-      onChangeText={setMemo}
-      multiline
-      placeholder="메모를 입력하세요"
-      style={[styles.memoInput, { flex: 1, color: '#000' }]} // 글자 검정색으로
-      editable={editing}
-      autoFocus={editing}
-    />
-    <TouchableOpacity
-      onPress={() => setEditing(true)} // 메모 내용 유지하며 편집 모드 진입
-      style={{
-        padding: 6,
-        marginLeft: 8,
-        backgroundColor: '#E3EFFF',
-        borderRadius: 8,
-      }}
-    >
-      <Ionicons name="pencil" size={20} color="#0052CC" />
-    </TouchableOpacity>
-  </View>
-</View>
+                <View style={styles.memoRow}>
+                  <CustomText style={styles.memoLabel}>메모</CustomText>
+                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <CustomTextInput
+                      value={memo}
+                      onChangeText={setMemo}
+                      multiline
+                      placeholder="메모를 입력하세요"
+                      style={[styles.memoInput, { flex: 1, color: '#000' }]} // 글자 검정색으로
+                      editable={editing}
+                      autoFocus={editing}
+                    />
+                    <TouchableOpacity
+                      onPress={() => setEditing(true)} // 메모 내용 유지하며 편집 모드 진입
+                      style={{
+                        padding: 6,
+                        marginLeft: 8,
+                        backgroundColor: '#E3EFFF',
+                        borderRadius: 8,
+                      }}
+                    >
+                      <Ionicons name="pencil" size={20} color="#0052CC" />
+                    </TouchableOpacity>
+                  </View>
+                </View>
 
-{/* 저장 버튼 */}
-<TouchableOpacity
-  style={styles.saveBtn}
-  onPress={() => {
-    const key = selectedTx.date + selectedTx.name;
-    setMemoMap(prev => ({ ...prev, [key]: memo }));
-    setSaveMsg('저장되었습니다 ✅');
-    setEditing(false); // 편집 종료
-    setTimeout(() => setSaveMsg(''), 1000);
-  }}
->
-  <CustomText style={styles.saveText}>💾 저장</CustomText>
-</TouchableOpacity>
+                {/* 저장 버튼 */}
+                <TouchableOpacity
+                  style={styles.saveBtn}
+                  onPress={() => {
+                    const key = selectedTx.date + selectedTx.name;
+                    setMemoMap(prev => ({ ...prev, [key]: memo }));
+                    setSaveMsg('저장되었습니다 ✅');
+                    setEditing(false); // 편집 종료
+                    setTimeout(() => setSaveMsg(''), 1000);
+                  }}
+                >
+                  <CustomText style={styles.saveText}>💾 저장</CustomText>
+                </TouchableOpacity>
 
-{/* 저장되었습니다 메시지 */}
-{saveMsg !== '' && (
-  <CustomText style={{ color: '#4B7BE5', fontWeight: '600', textAlign: 'center', marginTop: 6 }}>
-    {saveMsg}
-  </CustomText>
-)}
+                {/* 저장되었습니다 메시지 */}
+                {saveMsg !== '' && (
+                  <CustomText style={{ color: '#4B7BE5', fontWeight: '600', textAlign: 'center', marginTop: 6 }}>
+                    {saveMsg}
+                  </CustomText>
+                )}
 
-{/* 닫기 버튼 */}
-<TouchableOpacity
-  style={styles.closeBtn}
-  onPress={() => {
-    setModalVisible(false);
-    setEditing(false); // 편집 모드만 종료
-    // setMemo('') 제거 ✅ 메모 내용 유지됨
-  }}
->
-  <CustomText style={styles.closeText}>닫기</CustomText>
-</TouchableOpacity>
+                {/* 닫기 버튼 */}
+                <TouchableOpacity
+                  style={styles.closeBtn}
+                  onPress={() => {
+                    setModalVisible(false);
+                    setEditing(false); // 편집 모드만 종료
+                    // setMemo('') 제거 ✅ 메모 내용 유지됨
+                  }}
+                >
+                  <CustomText style={styles.closeText}>닫기</CustomText>
+                </TouchableOpacity>
 
-        </>
-      )}
-    </View>
-  </View>
-</Modal>
+              </>
+            )}
+          </View>
+        </View>
+      </Modal>
 
 
 
