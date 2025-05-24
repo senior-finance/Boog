@@ -14,7 +14,7 @@ import CustomText from './CustomText';
 const TOOLTIP_WIDTH = 140;
 const TOOLTIP_HEIGHT = 90;
 const MARGIN = 12;
-const FAB_BOTTOM_MARGIN = 120;
+const FAB_BOTTOM_MARGIN = 50;
 const TOOLTIP_MARGIN_LEFT_OFFSET = 30;
 
 const HelpTooltipButton = () => {
