@@ -117,8 +117,8 @@ export default function App() {
                   <Stack.Screen name="MapView" component={MapViewScreen} options={{ title: '지도 화면' }} />
                   <Stack.Screen name="FunctionScreen" component={FunctionScreen} />
 
-                  <Stack.Screen name="FontSize" component={FontSizeSettingScreen} />
-                  <Stack.Screen name="SoundVolume" component={SoundVolumeScreen} />
+                  <Stack.Screen name="FontSize" component={FontSizeSettingScreen} options={{ title: '글자 크기' }} />
+                  <Stack.Screen name="SoundVolume" component={SoundVolumeScreen} /> 
                   <Stack.Screen name="SoundVolumeSetting" component={SoundVolumeSettingScreen} options={{ title: '음성 및 효과음 설정' }} />
                   <Stack.Screen name="VoicePhishingScreen" component={VoicePhishingScreen} options={{ title: '보이스피싱 사례 안내', presentation: 'modal' }} />
 
@@ -127,14 +127,14 @@ export default function App() {
                   <Stack.Screen name="Guide" component={GuideScreen} options={{ title: '앱 사용법' }} />
                   <Stack.Screen name="GuideDetail" component={GuideDetailScreen} options={{ title: '상세 설명' }} />
 
-                  <Stack.Screen name="FAQ" component={FAQScreen} />
+                  <Stack.Screen name="FAQ" component={FAQScreen} options={{ title: '자주 묻는 질문' }} />
                   <Stack.Screen name="ProfileIconSelect" component={ProfileIconSelect} />
                   <Stack.Screen name="Welfare" component={WelfareScreen} options={{ title: '복지 혜택' }} />
                   <Stack.Screen name="Web" component={WebScreen} />
 
-                  <Stack.Screen name="InquiryForm" component={InquiryFormScreen} />
-                  <Stack.Screen name="InquiryList" component={InquiryListScreen} />
-                  <Stack.Screen name="NotificationScreen" component={NotificationScreen} />
+                  <Stack.Screen name="InquiryForm" component={InquiryFormScreen} options={{ title: '1:1 문의하기' }} />
+                  <Stack.Screen name="InquiryList" component={InquiryListScreen} options={{ title: '문의 내역 확인' }}/>
+                  <Stack.Screen name="NotificationScreen" component={NotificationScreen} options={{ title: '알림' }}/>
                   <Stack.Screen name="Biometric" component={BiometricScreen} />
                   <Stack.Screen name="VoiceInput" component={VoiceInputScreen} options={{ title: 'AI 챗봇' }} />
                   <Stack.Screen name="TTSSetting" component={TTSSettingScreen} options={{ title: '음성 설정' }} />

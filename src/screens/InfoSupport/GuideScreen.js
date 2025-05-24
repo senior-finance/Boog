@@ -33,9 +33,10 @@ export default function GuideScreen() {
     ai: { icon: '🧠', title: 'AI 대화 사용법' },
     voicePhishing: { icon: '🚨', title: '보이스피싱 탐지법' },
     location: { icon: '🗺️', title: '근처 은행/ATM 찾기' },
-    accessibility: { icon: '🔊', title: '글자/음향 크기 조절' },
-    quiz: { icon: '❓', title: '금융 퀴즈 이용법' }, // 🆕 추가
-    welfare: { icon: '🎁', title: '복지혜택 확인 방법' }, // 🆕 추가
+    accessibility: { icon: '⚙️', title: '내 정보 사용법/ 문의 내역 작성' },
+    quiz: { icon: '❓', title: '금융 퀴즈 이용법' },
+    analysis: { icon: '📊', title: '문자/통화 분석 방법' }, 
+    welfare: { icon: '🎁', title: '복지혜택 확인 방법' }, 
   };
 
 
@@ -95,7 +96,7 @@ export default function GuideScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  content: { padding: 20, paddingBottom: 40 },
+  content: { padding: 20, paddingBottom: 80 },
 
   title: {
     fontWeight: '900',

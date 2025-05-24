@@ -64,12 +64,9 @@ const data = [
 ];
 
 const VoicePhishingScreen = ({ navigation }) => {
- const renderItem = ({ item }) => (
+  const renderItem = ({ item }) => (
     <LinearGradient colors={['#f8fbff', '#f0f6ff']} style={styles.card}>
-      {/* 왼쪽 이미지 */}
       <Image source={item.image} style={styles.image} />
-
-      {/* 오른쪽 텍스트 */}
       <View style={styles.content}>
         <CustomText style={styles.title} numberOfLines={1}>
           {item.title}
@@ -77,8 +74,6 @@ const VoicePhishingScreen = ({ navigation }) => {
         <CustomText style={styles.summary} numberOfLines={2}>
           {item.summary}
         </CustomText>
-
-        {/* 파란 버튼 */}
         <TouchableOpacity
           style={styles.button}
           onPress={() => navigation.navigate('VoicePhishingDetail', item)}
@@ -97,9 +92,17 @@ const VoicePhishingScreen = ({ navigation }) => {
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.list}
       />
+      <TouchableOpacity
+        style={styles.linkButton}
+        onPress={() =>
+          Linking.openURL('https://search.naver.com/search.naver?where=news&query=보이스피싱')
+        }
+      >
+        <CustomText style={styles.linkButtonText}>📢 보이스피싱 최근 사례 확인하러 가기</CustomText>
+      </TouchableOpacity>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -110,24 +113,21 @@ const styles = StyleSheet.create({
     padding: 16,
     paddingBottom: 40,
   },
-card: {
-  flexDirection: 'row',
-  backgroundColor: '#ffffff',
-  borderRadius: 20,
-  padding: 12,
-  marginBottom: 16,
-  alignItems: 'center',
-  borderWidth: 1.5,
-  borderColor: '#1A4DCC',
-
-  // ✅ 그림자는 선택 (지우고 싶으면 아래 4줄 삭제)
-  shadowColor: '#c0d9ff',
-  shadowOffset: { width: 0, height: 4 },
-  shadowOpacity: 0.2,
-  shadowRadius: 6,
-  elevation: 4,
-},
-
+  card: {
+    flexDirection: 'row',
+    backgroundColor: '#ffffff',
+    borderRadius: 20,
+    padding: 12,
+    marginBottom: 16,
+    alignItems: 'center',
+    borderWidth: 1.5,
+    borderColor: '#1A4DCC',
+    shadowColor: '#c0d9ff',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    elevation: 4,
+  },
   image: {
     width: 80,
     height: 80,
@@ -138,13 +138,11 @@ card: {
     flex: 1,
   },
   title: {
-   
     fontWeight: 'bold',
     color: '#1A4DCC',
     marginBottom: 4,
   },
   summary: {
-    
     color: '#555',
     marginBottom: 8,
   },
@@ -154,14 +152,26 @@ card: {
     paddingHorizontal: 18,
     borderRadius: 20,
     alignSelf: 'flex-start',
-
-},
-
- 
+  },
   buttonText: {
     color: '#fff',
     fontWeight: 'bold',
-   
+  },
+  linkButton: {
+    marginHorizontal: 20,
+    marginBottom: 24,
+    marginTop: -8,
+    backgroundColor: '#1A4DCC',
+    borderRadius: 24,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    alignItems: 'center',
+  },
+  linkButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
+
 export default VoicePhishingScreen;

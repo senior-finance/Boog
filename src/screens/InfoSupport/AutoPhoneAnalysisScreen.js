@@ -117,7 +117,7 @@ const AutoPhoneAnalysisScreen = () => {
 
       setTimeout(() => {
         Alert.alert(
-          '📊 분석 요소소',
+          '📊 분석 요소',
           `총 ${autoCheckedFound.length}개의 의심 기록이 발견되었습니다.\n\n` +
           `💬 문자: ${smsCount}개\n📞 통화: ${callCount}건`
         );

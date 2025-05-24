@@ -19,9 +19,17 @@ import map6 from '../../assets/guide/map6.png';
 import voicephishing1 from '../../assets/guide/voicephishing1.png';
 import voicephishing2 from '../../assets/guide/voicephishing2.png';
 import voicephishing3 from '../../assets/guide/voicephishing3.png';
+import voicephishing4 from '../../assets/guide/voicephishing3.png';
 import welfare1 from '../../assets/guide/welfare1.png';
 import welfare2 from '../../assets/guide/welfare2.png';
 import welfare3 from '../../assets/guide/welfare3.png';
+import analysis1 from '../../assets/guide/analysis1.png';
+import analysis2 from '../../assets/guide/analysis2.png';
+import analysis3 from '../../assets/guide/analysis3.png';
+import analysis4 from '../../assets/guide/analysis4.png';
+import myinfo1 from '../../assets/guide/myinfo1.png';
+import myinfo2 from '../../assets/guide/myinfo2.png';
+import myinfo3 from '../../assets/guide/myinfo3.png';
 
 export default function GuideDetailScreen({ route }) {
   const title = route?.params?.title || '기능 설명';
@@ -33,49 +41,99 @@ export default function GuideDetailScreen({ route }) {
       '2. 계좌번호를 정확히 입력해 주세요.',
       '3. 입금할 금액을 입력하고 확인 버튼을 누르면 입금 연습이 완료돼요.',
     ],
-    ai: [
-      { text: '1. 화면 하단의 마이크 버튼을 눌러 질문을 시작하세요.', image: ai1 },
-      { text: '2. 예: "잔액 확인 어떻게 해?"처럼 자연스럽게 말하면 돼요.', image: ai2 },
-      { text: '3. AI가 적절한 기능을 설명하거나 바로 실행해줘요.', image: ai3 },
-      { text: '4. 다양한 질문에 대해 대응이 가능해요.', image: ai4 },
-    ],
+ai: [
+  {
+    text: '1. 홈 화면의 스마트 기능 영역에서 AI 챗봇 버튼을 눌러 대화를 시작해요.',
+    image: ai1,
+  },
+  {
+    text: '2. AI 챗봇이 다양한 질문 키워드드를 보여줘요. 원하는 키워드를를 선택하세요.',
+    image: ai2,
+  },
+  {
+    text: '3. 버튼외에도 자유롭게 질문을 입력해도 챗봇이 답변해줘요.',
+    image: ai3,
+  },
+  {
+    text: '4. 화면 하단에 챗봇 말풍선 버튼이 항상 떠 있어서, 클릭하면 언제든지 궁금한 점을 물어볼 수 있어요. 버튼은 자유롭게 이동할 수 있어 원하는 위치에 배치할 수 있어요.',
+    image: ai4,
+  },
+],
+
     voicePhishing: [
-      { text: '1. 최근 문자와 통화 내용을 자동 분석해요.', image: voicephishing1 },
-      { text: '2. 피싱 의심 키워드가 감지되면 경고 메시지가 뜨고,', image: voicephishing2 },
-      { text: '3. 사용자에게 주의 사항을 안내하거나 신고 기능을 제공해요.', image: voicephishing3 },
+      { text:  '1. 메인 화면의 스마트 기능 영역에서서 "보이스 피싱" 버튼을 눌러 보이스피싱 사례 안내 화면으로 이동해요.', image: voicephishing1 },
+      { text: '2. 다양한 보이스피싱 사례들이 실제 문자 예시와 함께 설명이 제공돼요. 자세한 설명을 보고싶으면 자세히 버튼을 눌러주세요.', image: voicephishing2 },
+      { text: '3. 해당 사례의 본문과 주의사항을 자세히 볼 수 있어요.', image: voicephishing3 },
+       { text: '4. 하단의 버튼을 누르면 네이버에서 보이스피싱 관련 최신 뉴스를 확인할 수 있어요.', image: voicephishing4 },
     ],
     location: [
-      { text: '1. 위치 접근 권한을 허용해 주세요.', image: map1 },
-      { text: '2. 현재 위치를 기준으로 근처 은행과 ATM이 지도에 표시돼요.', image: map2 },
-      { text: '3. 원하는 지점을 클릭하면 길찾기 기능으로 연결돼요.', image: map3 },
-      { text: '4. 지점을 선택하면 상세 정보가 제공돼요.', image: map4 },
-      { text: '5. 리스트에서 원하는 항목을 선택할 수 있어요.', image: map5 },
-      { text: '6. 네이버 지도와 연동해 길찾기가 가능해요.', image: map6 },
-    ],
+  {
+    text: '1. 홈 화면에서 "지도" 버튼을 눌러 근처 은행/ATM 검색 화면으로 이동해요.',
+    image: map1,
+  },
+  {
+    text: '2. "가장 가까운 은행" 버튼을 누르면 지도 위에 해당 지점들이 표시돼요.',
+    image: map2,
+  },
+  {
+    text: '3. 원하는 은행을 선택해 필터링할 수도 있어요.',
+    image: map3,
+  },
+  {
+    text: '4. 지도 하단 리스트에서 지점을 선택하면 상세 주소와 거리 정보가 표시돼요.',
+    image: map4,
+  },
+  {
+    text: '5. 길 안내를 원하면 "길찾기" 버튼을 눌러주세요.',
+    image: map5,
+  },
+  {
+    text: '6. "확인"을 누르면 길찾기가 시작돼요.',
+    image: map6,
+  },
+],
+
     accessibility: [
-      '1. 내 정보 > 글자 크기 설정에서 글자를 크게 볼 수 있어요.',
-      '2. 음향 크기 설정에서는 음성 안내 볼륨도 조절할 수 있어요.',
-      '3. 모든 기능에 자동 적용되어 사용이 훨씬 편리해져요.',
+      { text: '1. 내 정보 화면에서는 프로필 사진을 변경하거나, 글자와 음향 크기를 설정할 수 있고 자주 묻는 질문도 확인 할 수 있어요.', image: myinfo1 },
+      { text: '2. "1:1 문의하기" 버튼을 눌러 궁금한 점이나 불편사항을 직접 보낼 수 있어요.', image: myinfo2 },
+      { text: '3. 문의 제목과 내용을 입력한 후 "문의 보내기" 버튼을 누르면 문의가 접수돼요.', image: myinfo3 },
     ],
     quiz: [
       {
-        text: '1. 주요 금융 용어와 입금 방법을 퀴즈 형식으로 익힐 수 있어요.',
+        text: '1. 메인 화면에서 퀴즈 버튼을 누르면 금융 학습 화면으로 이동할 수 있어요.',
         image: quiz1,
       },
       {
-        text: '2. 문제를 풀면 정답 여부와 해설이 바로 제공돼요.',
+        text: '2. "금융 용어 학습하기"나 "입금 연습하기" 중 원하는 기능을 눌러 자유롭게 이용해 보세요.',
         image: quiz2,
       },
-      {
-        text: '3. 퀴즈는 반복 학습을 통해 자연스럽게 금융 지식을 쌓을 수 있게 도와줘요.',
-        image: null,
-      },
+   
+
     ],
     welfare: [
-      { text: '1. 사용자의 지역 기반으로 이용 가능한 복지 혜택을 확인할 수 있어요.', image: welfare1 },
-      { text: '2. 간단한 질문에 답하면 해당되는 복지 항목을 자동으로 추천해줘요.', image: welfare2 },
-      { text: '3. 관련 기관 웹사이트나 전화번호로 바로 연결해주는 기능도 있어요.', image: welfare3 },
+      { text: '1. 메인 화면에서 "복지혜택" 버튼을 누르면 노인을 위한 다양한 혜택을 한눈에 확인할 수 있어요.', image: welfare1 },
+      { text:  '2. 연금, 건강검진, 장기요양보험 등 원하는 항목을 선택하면 상세 안내를 볼 수 있어요.', image: welfare2 },
+      { text: '3. "자세히 보기" 버튼을 누르면 관련 기관의 공식 웹사이트로 연결돼요.', image: welfare3 },
     ],
+    analysis: [
+  {
+    text: '1. 메인인 화면의 스마트 기능 영역에서 "통화·문자" 버튼을 눌러 자동 분석 화면으로 이동해요.',
+    image: analysis1,
+  },
+  {
+    text: '2. "오늘 기록 스캔하기" 버튼을 누르면 오늘 받은 문자와 통화 기록을 분석해요.',
+    image: analysis2,
+  },
+  {
+    text: '3. 분석이 완료되면 안전한 경우에는 "의심스러운 기록이 없습니다"라는 메시지가 뜹니다.',
+    image: analysis3, 
+  },
+  {
+    text: '4. 의심 기록이 있을 경우, 어떤 문자에서 어떤 키워드가 감지됐는지, 통화는 몇 건이 어떤 이유로 의심되는지 결과 메시지가 뜹니다다.',
+    image: analysis4, 
+  },
+],
+
   };
 
   const steps = guideSteps[sectionKey] || ['해당 기능에 대한 설명이 없습니다.'];
