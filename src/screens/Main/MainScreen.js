@@ -279,7 +279,7 @@ const MainScreen = ({ navigation }) => {
                       multiline
                       placeholder="메모를 입력하세요"
                       style={[styles.memoInput, { flex: 1, color: '#000' }]} // 글자 검정색으로
-                      editable={editing}
+                      editable={true}
                       autoFocus={editing}
                     />
                     <TouchableOpacity
