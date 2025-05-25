@@ -1,6 +1,7 @@
 import React, { useLayoutEffect, useState, useMemo, useRef, useEffect } from 'react';
 import {
   View,
+  Button,
   StyleSheet,
   TouchableOpacity,
   ScrollView,
@@ -17,6 +18,8 @@ import { useSeniorMode } from '../../components/SeniorModeContext';
 import CustomModal from '../../components/CustomModal';
 import { CommonActions } from '@react-navigation/native';
 import { useFocusEffect } from '@react-navigation/native';
+import PushNotification from 'react-native-push-notification';
+import Toast from 'react-native-toast-message';
 
 const FunctionButton = ({ title, onPress, icon }) => {
   const { seniorMode } = useSeniorMode();
@@ -78,6 +81,47 @@ const MainScreen = ({ navigation }) => {
 
   const scrollViewRef = useRef(null);
 
+  useEffect(() => {
+    // 1. 푸시 알림 설정 (한 번만)
+    PushNotification.configure({
+      // (필요 시) 토큰 받기
+      onRegister: function (token) {
+        console.log('TOKEN:', token);
+      },
+      // 알림 탭/닫기 시
+      onNotification: function (notification) {
+        console.log('NOTIFICATION:', notification);
+        notification.finish(PushNotification.FetchResult.NoData);
+      },
+      // Android 권한 요청
+      requestPermissions: true,
+    });
+
+    // 2. Android용 채널 생성 (Android 8.0+)
+    PushNotification.createChannel(
+      {
+        channelId: 'default-channel-id', // 채널 ID
+        channelName: '부금이 알람 채널',  // 채널 이름
+        // importance: 3,                   // (optional) 중요도
+      },
+      // (created) => console.log(`createChannel returned '${created}'`)
+    );
+  }, []);
+
+  // 버튼 눌렀을 때 호출
+  const sendHiNotification = () => {
+    PushNotification.localNotification({
+      /* Android & iOS 공통 */
+      channelId: 'default-channel-id', // Android는 필수
+      title: '제목이야',                   // 제목
+      message: '내용이야',                 // 본문
+
+      /* iOS 전용 옵션 (필요 시) */
+      // soundName: 'default',
+      // playSound: true,
+    });
+  };
+
   useFocusEffect(
     React.useCallback(() => {
       const onBackPress = () => {
@@ -102,7 +146,6 @@ const MainScreen = ({ navigation }) => {
     { title: '통화.문자', icon: 'analytics-outline', onPress: () => navigation.navigate('AutoPhoneAnalysis') },
     { title: '보이스 피싱', icon: 'alert-circle-outline', onPress: () => navigation.navigate('VoicePhishingScreen') },
   ];
-
 
   const outgo = [
     { name: '김민수', date: '2024-05-13', amount: '-₩50,000', isDeposit: false },
@@ -183,6 +226,18 @@ const MainScreen = ({ navigation }) => {
 
         <TouchableOpacity style={styles.toggleRow} onPress={() => setShowActions(v => !v)}>
           <CustomText style={styles.sectionSubTitle}>주요 기능</CustomText>
+          <Button title="안녕 푸시 알림" onPress={sendHiNotification} />
+          <Button
+            title="안녕 토스트 알림"
+            onPress={() => {
+              Toast.show({
+                type: 'success',
+                text1: '안녕!',
+                position: 'top',    // bottom, top 중 선택 가능
+                visibilityTime: 2000,  // 표시 시간 (ms)
+              });
+            }}
+          />
           <Ionicons name={showActions ? 'chevron-up-outline' : 'chevron-down-outline'} size={20} color="#4A90E2" />
         </TouchableOpacity>
 
@@ -346,8 +401,6 @@ const MainScreen = ({ navigation }) => {
         </View>
       </Modal>
 
-
-
       <CustomModal
         visible={exitModalVisible}
         title="종료 확인"
@@ -375,7 +428,7 @@ const MainScreen = ({ navigation }) => {
           }
         ]}
       />
-
+      <Toast ref={(ref) => Toast.setRef(ref)} />
     </LinearGradient>
   );
 };
