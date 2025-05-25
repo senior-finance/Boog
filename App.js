@@ -2,6 +2,7 @@ import React from 'react';
 import { LogBox, View, Text, TextInput } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import Toast, { BaseToast } from 'react-native-toast-message';
 
 import { Buffer } from 'buffer';
 global.Buffer = Buffer;
@@ -75,6 +76,28 @@ import PortraitWrapper from './src/utils/portraitWrapper';  // 파일 경로에 
 
 const Stack = createStackNavigator();
 
+// 전역 toastConfig 정의
+const toastConfig = {
+  success: ({ text1, text2, ...rest }) => (
+    <BaseToast
+      {...rest}
+      style={{
+        borderLeftWidth: 0,
+        height: 200,
+        borderRadius: 10,
+        marginHorizontal: 16,
+      }}
+      contentContainerStyle={{
+        paddingHorizontal: 24,
+        paddingVertical: 20,
+      }}
+      text1Style={{ fontSize: 36, fontWeight: 'bold', color: 'black' }}
+      text2Style={{ fontSize: 36 }}
+    />
+  ),
+  // error, info 타입도 여기에 추가 커스터마이징 가능
+};
+
 export default function App() {
   return (
     // <PortraitWrapper>
@@ -146,6 +169,7 @@ export default function App() {
                 <HelpTooltipButton />
               </>
             </NavigationContainer>
+            <Toast config={toastConfig} />
           </VolumeProvider>
         </SeniorModeProvider>
       </UserProvider>

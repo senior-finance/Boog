@@ -183,7 +183,6 @@ export default function LoginScreen({ navigation }) {
     }
   };
 
-
   // 네이버 로그아웃
   const onNaverLogout = async () => {
     try {

@@ -26,6 +26,8 @@ import { NumPad } from '@umit-turk/react-native-num-pad';
 import { TextInputMask } from 'react-native-masked-text';
 import CustomNumPad from '../../components/CustomNumPad';
 import LinearGradient from 'react-native-linear-gradient';
+import { accountGetAll, withdrawVerify } from '../../database/mongoDB';
+import LottieView from 'lottie-react-native';
 
 export default function WithdrawBankScreen() {
   const { accountNumTo } = useRoute().params;
@@ -35,6 +37,7 @@ export default function WithdrawBankScreen() {
   const [bankTo, setBankTo] = useState('');
   const [selected, setSelected] = useState('');
   const [visible, setVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const BANKS = [
     { label: 'KDB산업은행', value: 'KDB산업은행', icon: require('../../assets/banks/KDB.png') },
@@ -57,6 +60,33 @@ export default function WithdrawBankScreen() {
     { label: 'IBK기업은행', value: 'IBK기업은행', icon: require('../../assets/banks/IBK.png') },
     { label: '새마을금고', value: '새마을금고', icon: require('../../assets/banks/MG새마을금고.png') },
   ];
+
+  const handleNext = async () => {
+    if (!selected) return;
+    setLoading(true);
+
+    // 로딩 딜레이
+    await new Promise(res => setTimeout(res, 500));
+
+    try {
+      const accounts = await withdrawVerify({ accountBank: selected });
+      if (accounts.length > 0) {
+        nav.navigate('WithdrawAmount', {
+          accountNumTo,
+          bankTo: selected,
+          accountNum,
+          bankName,
+          amount,
+        });
+      } else {
+        Alert.alert('오류', '은행명이 일치하지 않아요');
+      }
+    } catch (e) {
+      Alert.alert('서버 에러', '다시 시도해주세요.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <LinearGradient
@@ -156,10 +186,7 @@ export default function WithdrawBankScreen() {
         >
           <TouchableOpacity
             disabled={!selected}         // accountNumTo 없으면 비활성화
-            onPress={() => nav.navigate('WithdrawAmount', {
-              accountNumTo, bankTo: selected, // ← selected를 넘기기
-              accountNum, bankName, amount,
-            })}
+            onPress={handleNext}
             style={{
               width: 160,
               paddingVertical: 20,
@@ -173,6 +200,15 @@ export default function WithdrawBankScreen() {
           </TouchableOpacity>
         </LinearGradient>
       </View>
+      {loading && (
+        <View style={styles.overlay}>
+          <LottieView
+            source={require('../../assets/animeLoading2.json')}
+            autoPlay
+            loop={false}
+            style={styles.lottie}
+          />
+        </View>)}
     </LinearGradient >
   );
 }
@@ -263,5 +299,16 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#3498DB',
     fontSize: 16,
+  },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(255,255,255,0.8)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 10,
+  },
+  lottie: {
+    width: 320,
+    height: 320,
   },
 });

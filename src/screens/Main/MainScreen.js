@@ -9,6 +9,7 @@ import {
   Switch,
   BackHandler,
 } from 'react-native';
+
 import LinearGradient from 'react-native-linear-gradient';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import CustomText from '../../components/CustomText';
@@ -86,7 +87,7 @@ const MainScreen = ({ navigation }) => {
     PushNotification.configure({
       // (필요 시) 토큰 받기
       onRegister: function (token) {
-        console.log('TOKEN:', token);
+        // console.log('TOKEN:', token);
       },
       // 알림 탭/닫기 시
       onNotification: function (notification) {
@@ -231,14 +232,17 @@ const MainScreen = ({ navigation }) => {
             title="안녕 토스트 알림"
             onPress={() => {
               Toast.show({
-                type: 'success',
-                text1: '안녕!',
-                position: 'top',    // bottom, top 중 선택 가능
-                visibilityTime: 2000,  // 표시 시간 (ms)
+                type: 'success',      // App.js 에서 정의한 toastConfig.success 레이아웃 사용
+                text1: '작업 완료',
+                text2: '두 번째 줄 메시지도 가능합니다.',
+                position: 'top',
+                topOffset: 50,        // 상태바 아래로 띄우기
+                visibilityTime: 1000, // 표시 시간 조절
               });
             }}
           />
           <Ionicons name={showActions ? 'chevron-up-outline' : 'chevron-down-outline'} size={20} color="#4A90E2" />
+
         </TouchableOpacity>
 
         {showActions && (
@@ -428,11 +432,10 @@ const MainScreen = ({ navigation }) => {
           }
         ]}
       />
-      <Toast ref={(ref) => Toast.setRef(ref)} />
+      {/* <Toast ref={(ref) => Toast.setRef(ref)} /> */}
     </LinearGradient>
   );
 };
-
 
 const styles = StyleSheet.create({
   container: { flex: 1 },

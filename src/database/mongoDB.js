@@ -20,7 +20,7 @@ const API_BASE = MONGODB_BACKEND_URL;
 // 공통 MongoDB API 호출 헬퍼 함수
 export async function mongoDB(action, dbName, collName, params) {
   try {
-    console.log('요청 보냄:', action, dbName, collName, params);
+    // console.log('요청 보냄:', action, dbName, collName, params);
     const res = await axios.post(
       `${API_BASE}api/${action}`,
       // 슬래시 중복 여부를 항상 조심하자...
@@ -145,6 +145,29 @@ export async function accountGetAll(userName) {
   return await mongoDB('find', 'bank', 'withdraw', { query: {} });
 }
 
+// hwc, accountNum과 accountBank 모두 선택적(optional) 파라미터로 처리
+export async function withdrawVerify({ accountNum, accountBank }) {
+  const query = {};
+
+  if (accountNum) {
+    // accountNum이 넘어왔을 때만 정확 매칭
+    query.accountNum = accountNum;
+  }
+
+  if (accountBank) {
+    // accountBank이 넘어왔을 때만 prefix 매칭
+    const prefix = accountBank.slice(0, -2);
+    query.accountBank = { $regex: `^${prefix}` };
+  }
+
+  return await mongoDB(
+    'find',
+    'hwc',
+    'account',
+    { query }
+  );
+}
+
 // === 알림 저장 ===
 export async function addNotification(userId, icon, iconColor, borderColor, content) {
   return await mongoDB('insertOne', 'info', 'notify', {
@@ -170,6 +193,18 @@ export async function getNotifications(userId) {
   if (Array.isArray(res.documents)) return res.documents;
   return [];
 }
+
+// === 1대1 문의 보내기 저장 ===
+// export async function sendInquiry({ userName, title, content }) {
+//   return await mongoDB('insertOne', 'info', 'inquiry', {
+//     document: {
+//       userName,
+//       title,
+//       content,
+//       createdAt: new Date(),
+//     },
+//   });
+// }
 
 // === 퀴즈 관련 함수 ===
 /**

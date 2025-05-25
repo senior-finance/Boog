@@ -7,6 +7,7 @@ import {
   KeyboardAvoidingView,
   TouchableOpacity,
   ActivityIndicator,
+  AsyncStorage,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import CustomText from '../../components/CustomText';
@@ -14,6 +15,7 @@ import CustomTextInput from '../../components/CustomTextInput';
 import { sendInquiry } from './Inquiry';
 import { FIREBASE_FUNCTION_URL } from '@env';
 import CustomModal from '../../components/CustomModal';
+import { useUser } from '../Login/UserContext';
 
 const InquiryFormScreen = () => {
   const [title, setTitle] = useState('');
@@ -29,6 +31,8 @@ const InquiryFormScreen = () => {
     setModalConfig({ title, message, buttons });
     setModalVisible(true);
   };
+
+  const { userInfo } = useUser();           // 로그인 시 setUserInfo로 저장된 값
 
   const handleSubmit = async () => {
     if (!title || !content) {
@@ -49,7 +53,9 @@ const InquiryFormScreen = () => {
     setLoading(true); // 로딩 시작
 
     try {
-      await sendInquiry({ title, content });
+      const userName = userInfo?.username || 'Guest';
+      console.log(userName)
+      await sendInquiry({ userName, title, content });
 
       const response = await fetch(FIREBASE_FUNCTION_URL, {
         method: "POST",
@@ -57,7 +63,7 @@ const InquiryFormScreen = () => {
         body: JSON.stringify({
           title,
           content,
-          userName: "홍길동",
+          userName,
           userEmail: "hwoochhh@gmail.com",
         }),
       });
@@ -69,7 +75,7 @@ const InquiryFormScreen = () => {
 
       showModal({
         title: '접수 완료',
-        message: '문의가 저장되고 이메일이 전송되었습니다.',
+        message: '문의해주신 내용이 이메일로 전송되었어요!',
         buttons: [
           {
             text: '확인',

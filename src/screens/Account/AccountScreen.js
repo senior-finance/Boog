@@ -31,7 +31,7 @@ import {
   KFTC_SCOPE,
   KFTC_STATE,
 } from '@env';
-const CONFIG = {
+export const CONFIG = {
   kmj: {
     dbName: 'kmj',
     CLIENT_ID: KFTC_CLIENT_ID_KMJ,
@@ -349,67 +349,64 @@ const AccountScreen = () => {
 
   // accountList와 tokenData가 준비되면 모든 계좌의 잔고를 한 번에 가져오는 useEffect
   useEffect(() => {
-    if (accountList.length > 0 && tokenData && cfg.TRAN_ID) {
-      const fetchAllBalances = async () => {
-        const balances = await Promise.all(
-          accountList.map(async account => {
-            // bankTranId는 한 줄로 생성 (총 20자리)
-            // vault 사용 시 secrets.KFTC_TRAN_ID
-            const random9 = Math.floor(Math.random() * 1e9)
-              .toString()
-              .padStart(9, '0');
-            const bankTranId = `${cfg.TRAN_ID}U${random9}`;
+    if (!accountList.length || !tokenData || !cfg.TRAN_ID) return;
 
-            const tranDTime = new Date()
-              .toISOString()
-              .replace(/[-:TZ.]/g, '')
-              .slice(0, 14);
+    // 단일 계좌 잔액 조회 함수
+    const fetchBalance = async account => {
+      const random9 = Math.floor(Math.random() * 1e9)
+        .toString()
+        .padStart(9, '0');
+      const bankTranId = `${cfg.TRAN_ID}U${random9}`;
+      const tranDTime = new Date()
+        .toISOString()
+        .replace(/[-:TZ.]/g, '')
+        .slice(0, 14);
 
-            try {
-              const res = await fetch(
-                `${ACCOUNT_BALANCE_URL}` +
-                `?bank_tran_id=${bankTranId}` +
-                `&fintech_use_num=${account.fintech_use_num}` +
-                `&tran_dtime=${tranDTime}`,
-                {
-                  method: 'GET',
-                  headers: {
-                    Authorization: `Bearer ${tokenData.access_token}`,
-                  },
-                }
-              );
-              const data = await res.json();
-              if (data.balance_amt !== undefined) {
-                return {
-                  fintech_use_num: account.fintech_use_num,
-                  balance_amt: data.balance_amt,
-                  bank_name: data.bank_name,
-                };
-              } else {
-                return {
-                  fintech_use_num: account.fintech_use_num,
-                  balance_amt: '잔고 조회 실패',
-                  bank_name: '은행 조회 실패',
-                };
-              }
-            } catch (error) {
-              console.error(
-                `잔고 조회 실패: ${account.fintech_use_num}`,
-                error
-              );
-              return {
-                fintech_use_num: account.fintech_use_num,
-                balance_amt: '오류',
-                bank_name: account.bank_name || '은행 조회 실패',
-              };
-            }
-          })
+      try {
+        const res = await fetch(
+          `${ACCOUNT_BALANCE_URL}` +
+          `?bank_tran_id=${bankTranId}` +
+          `&fintech_use_num=${account.fintech_use_num}` +
+          `&tran_dtime=${tranDTime}`,
+          {
+            method: 'GET',
+            headers: { Authorization: `Bearer ${tokenData.access_token}` },
+          }
         );
-        setAccountBalances(balances);
-      };
-      fetchAllBalances();
-    }
+        const data = await res.json();
+        return {
+          fintech_use_num: account.fintech_use_num,
+          balance_amt: data.balance_amt ?? '잔고 조회 실패',
+          bank_name: data.bank_name ?? '은행 조회 실패',
+        };
+      } catch (error) {
+        console.error(`잔고 조회 실패: ${account.fintech_use_num}`, error);
+        return {
+          fintech_use_num: account.fintech_use_num,
+          balance_amt: '오류',
+          bank_name: account.bank_name || '은행 조회 실패',
+        };
+      }
+    };
+
+    // 병렬 동시 요청 수 제한(예: 3개씩)
+    const fetchAllBalances = async () => {
+      const concurrency = 3;
+      const results = [];
+      for (let i = 0; i < accountList.length; i += concurrency) {
+        const batch = accountList.slice(i, i + concurrency);
+        // 한 번에 최대 concurrency 개의 요청만 실행
+        const partial = await Promise.all(batch.map(fetchBalance));
+        results.push(...partial);
+        // (선택) 서버 과부하 방지를 위해 약간 대기
+        await new Promise(resolve => setTimeout(resolve, 200));
+      }
+      setAccountBalances(results);
+    };
+
+    fetchAllBalances();
   }, [accountList, tokenData, cfg.TRAN_ID, ACCOUNT_BALANCE_URL]);
+
 
   // 토큰 캐시 삭제 함수
   const handleClearToken = async () => {

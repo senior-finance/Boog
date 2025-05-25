@@ -26,15 +26,44 @@ import { TextInputMask } from 'react-native-masked-text';
 import CustomNumPad from '../../components/CustomNumPad';
 import LinearGradient from 'react-native-linear-gradient';
 import ReactNativeBiometrics from 'react-native-biometrics';
+import { deposit, withdraw, accountUpsert, accountGet } from '../../database/mongoDB';
+import { CONFIG } from './AccountScreen';
+
 // 실제 지문/Pin 인증 모듈을 연동하세요
 
 export default function WithdrawAuthScreen() {
   const nav = useNavigation();
   const { accountNumTo, bankTo, formattedAmount } = useRoute().params;
-  const { ammount, bankName, accountNum } = useRoute().params;
+  const { ammount, bankName, accountNum, testBedAccount } = useRoute().params;
 
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [biometryType, setBiometryType] = useState(null);
+
+  const handleWithdraw = async () => {
+    // 금액 문자열(예: "1,000,000") → 숫자
+    const num = parseFloat(formattedAmount.replace(/,/g, ''));
+    const setTo = parseFloat(accountNumTo.replace(/-/g, ''));
+    try {
+      console.log("과연?", testBedAccount),
+        // CONFIG와 testBedAccount는 상위 컨텍스트에서 받아왔다고 가정
+        await withdraw(
+          CONFIG[testBedAccount],
+          accountNumTo,    // fintech_use_num
+          bankTo,          // bank_name
+          num
+        );
+
+      console.log('출금 요청 완료 이후 --:', accountNum, num);
+      console.log('출금 요청 완료 ++:', setTo, num);
+      Alert.alert(
+        `${bankTo}에서 ${num.toLocaleString()}원 출금 요청 완료`
+      );
+      // nav.goBack();
+    } catch (err) {
+      console.error('출금 중 오류:', err);
+      Alert.alert('출금 중 오류가 발생했습니다.');
+    }
+  };
 
   // ✅ 생체 인증 실행 함수
   const handleAuthentication = async () => {
@@ -43,15 +72,15 @@ export default function WithdrawAuthScreen() {
     // ✅ 생체 인증 가능 여부 확인
     const { available, biometryType } = await rnBiometrics.isSensorAvailable();
 
-    if (!available) {
-      Alert.alert('에러', '이 기기는 생체 인증을 지원하지 않습니다.');
-      return;
-    }
+    // if (!available) {
+    //   Alert.alert('에러', '이 기기는 생체 인증을 지원하지 않습니다.');
+    //   return;
+    // }
 
-    if (!biometryType) {
-      Alert.alert('알림', '사용 가능한 생체 인증이 없습니다.');
-      return;
-    }
+    // if (!biometryType) {
+    //   Alert.alert('알림', '사용 가능한 생체 인증이 없습니다.');
+    //   return;
+    // }
 
     setBiometryType(biometryType);
 
@@ -85,11 +114,11 @@ export default function WithdrawAuthScreen() {
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
     >
-      <Text style={styles.accountText}>출금할 계좌 번호</Text>
+      <Text style={styles.accountText}>송금할 상대방의 계좌 번호</Text>
       <Text style={styles.textValue}>{accountNumTo}</Text>
-      <Text style={styles.bankText}>출금할 은행</Text>
+      <Text style={styles.bankText}>송금할 은행</Text>
       <Text style={styles.textValue}>{bankTo}</Text>
-      <Text style={styles.amountText}>입력된 금액</Text>
+      <Text style={styles.amountText}>입력된 송금액</Text>
       <Text style={styles.textValue}>{formattedAmount}</Text>
       <Text style={styles.title}>계좌 번호, 금액이 정말 맞으신가요?{'\n'}한번 더 확인해보세요!{'\n'}인증을 진행하면 출금이 완료돼요</Text>
       <LinearGradient
@@ -102,7 +131,7 @@ export default function WithdrawAuthScreen() {
         }}
       >
         <TouchableOpacity
-          onPress={handleAuthentication}
+          onPress={handleWithdraw}
           style={{
             width: 400,
             paddingVertical: 20,
@@ -110,7 +139,7 @@ export default function WithdrawAuthScreen() {
           }}
         >
           <Text style={{ color: '#FFF', fontSize: 16, fontWeight: '600' }}>
-            인증하고 출금할게요
+            인증하고 송금할게요
           </Text>
         </TouchableOpacity>
       </LinearGradient>
@@ -223,7 +252,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FAFAFA',
     fontWeight: 'bold',   // 진하게
     borderWidth: 2,
-    margin : 10,
+    margin: 10,
     padding: 10,
     paddingHorizontal: 20,
     borderRadius: 20,

@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, useMemo } from 'react';
 import {
   View,
   Text,
@@ -33,7 +33,7 @@ import LinearGradient from 'react-native-linear-gradient';
 const DEFAULT_TITLE = '금융결제원 테스트베드';
 const LOADING_MESSAGE = '로딩 중...';
 
-const BANK_OPTIONS = ['전체', '신한', '국민', '하나', /* 필요한 만큼 추가 */];
+// const BANK_OPTIONS = ['전체', '신한', '국민', '하나', /* 필요한 만큼 추가 */];
 const GRADIENT_COLOR_SETS = [
   ['rgba(190, 183, 255, 0.8)', 'transparent', 'rgba(255, 255, 255, 1)'], // set 0
   ['rgba(196, 215, 255, 0.8)', 'transparent', 'rgba(255, 255, 255, 1)'], // set 1
@@ -64,10 +64,20 @@ const AccountScreenGUI = ({
   const [raw, setRaw] = useState(''); // 숫자만 담깁니다
 
   const [dbAccounts, setDbAccounts] = useState([]);  // { accountId, accountNum, amount } 형태
-
   const [isModalVisible, setModalVisible] = useState(false);
   const [selectedBank, setSelectedBank] = useState('전체');
 
+  // accountBalances: [{ fintech_use_num, bank_name, balance_amt, … }, …]
+  const BANK_OPTIONS = useMemo(() => {
+    if (!accountBalances || accountBalances.length === 0) {
+      // 아직 불러오는 중일 때
+      return ['은행 불러오는 중...'];
+    }
+    const uniqueBanks = Array.from(
+      new Set(accountBalances.map(b => b.bank_name))
+    );
+    return ['전체', ...uniqueBanks];
+  }, [accountBalances]);
   const navigation = useNavigation();
 
   // DB에서 계좌 정보 가져오기
@@ -367,34 +377,43 @@ const AccountScreenGUI = ({
         {/* // 여기에 은행별로 고를수 잇게 옵션 버튼 넣어줘, 전체, 신한, 국민, 하나 등등등 */}
 
         {/* 은행 옵션 버튼 */}
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.filterContainer}
-        >
-          {BANK_OPTIONS.map(bank => (
-            <TouchableOpacity
-              key={bank}
-              style={[
-                styles.filterButton,
-                selectedBank === bank && styles.filterButtonActive
-              ]}
-              onPress={() => setSelectedBank(bank)}
-            >
-              <Text
+        <View style={styles.filterContainer}>
+          {BANK_OPTIONS.map(bank => {
+            // “은행” 접미사만 제거
+            const label = bank.replace(/은행$/, '');
+            return (
+              <TouchableOpacity
+                key={bank}
                 style={[
-                  styles.filterText,
-                  selectedBank === bank && styles.filterTextActive
+                  styles.filterButton,
+                  selectedBank === bank && styles.filterButtonActive
                 ]}
+                onPress={() => setSelectedBank(bank)}
               >
-                {bank}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
+                <Text
+                  style={[
+                    styles.filterText,
+                    selectedBank === bank && styles.filterTextActive
+                  ]}
+                >
+                  {label}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
 
         <FlatList
-          data={accountList}
+          data={
+            // '전체' 혹은 로딩 상태(옵션 문구)에 선택되어 있으면 전체 목록을,
+            // 그 외에는 필터링된 목록을 보여주기
+            (selectedBank === '전체' || selectedBank === '은행 불러오는 중...')
+              ? accountList
+              : accountList.filter(item => {
+                const b = accountBalances.find(b => b.fintech_use_num === item.fintech_use_num);
+                return b?.bank_name === selectedBank;
+              })
+          }
           keyExtractor={item => item.fintech_use_num}
           renderItem={({ item, index }) => {
             // 배열에서 해당 계좌의 잔고 정보를 찾아 반환
@@ -467,6 +486,7 @@ const AccountScreenGUI = ({
                           amount: dbObj?.amount || 0,
                           bankName: item.bank_name,
                           accountNum: dbObj?.accountNum || '정보없음',
+                          testBedAccount: testBedAccount,
                         })}
                       >
                         <CustomText style={styles.withdrawButtonText}>
@@ -541,7 +561,6 @@ const AccountScreenGUI = ({
                 <TouchableWithoutFeedback>
                   <View style={styles.modalContent}>
                     <Text style={styles.withdrawTitle}>임시 modal ... 출금 금액 입력</Text>
-
                     <View style={styles.buttonRow}>
                       <TouchableOpacity style={styles.button2} onPress={closeOverlay}>
                         <Text style={styles.buttonText2}>취소</Text>
@@ -667,42 +686,42 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: 'row',
   },
-receiveButton: {
-  backgroundColor: '#66BB6A',
-  paddingVertical: 15,
-  paddingHorizontal: 20,
-  borderRadius: 16,
-  marginRight: 12,
-  shadowColor: '#000',
-  shadowOffset: { width: 0, height: 4 },   // ✅ 입체감 강조
-  shadowOpacity: 0.25,
-  shadowRadius: 6,
-  elevation: 6,
-},
+  receiveButton: {
+    backgroundColor: '#66BB6A',
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+    borderRadius: 16,
+    marginRight: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },   // ✅ 입체감 강조
+    shadowOpacity: 0.25,
+    shadowRadius: 6,
+    elevation: 6,
+  },
 
-withdrawButton: {
-  backgroundColor: '#5C88E0',
-  paddingVertical: 15,
-  paddingHorizontal: 20,
-  borderRadius: 16,
-  shadowColor: '#000',
-  shadowOffset: { width: 0, height: 4 },   // ✅ 동일한 그림자 효과
-  shadowOpacity: 0.25,
-  shadowRadius: 6,
-  elevation: 6,
-},
+  withdrawButton: {
+    backgroundColor: '#5C88E0',
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+    borderRadius: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },   // ✅ 동일한 그림자 효과
+    shadowOpacity: 0.25,
+    shadowRadius: 6,
+    elevation: 6,
+  },
 
-receiveButtonText: {
-  color: '#fff',
-  fontWeight: 'bold',
-  fontSize: 15,
-},
+  receiveButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 15,
+  },
 
-withdrawButtonText: {
-  color: '#fff',
-  fontWeight: 'bold',
-  fontSize: 15,
-},
+  withdrawButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 15,
+  },
   image: {
     width: '100%',
     height: '100%',
@@ -821,22 +840,31 @@ withdrawButtonText: {
     // fontWeight: '100'
   },
   filterContainer: {
-    paddingVertical: 10,
-    justifyContent: 'center',   // ← 수직 중앙 정렬
-    alignItems: 'center',       // ← 수평 중앙 정렬
+    width: '100%',
+    flexDirection: 'row',   // 가로 정렬
+    flexWrap: 'wrap',       // 줄 바꿈 허용
+    paddingVertical: 8,
+    justifyContent: 'flex-start',  // 왼쪽 정렬
+    alignItems: 'flex-start',      // 위쪽 정렬
   },
   filterButton: {
-    minHeight: 45,
+    // stretch 방지
+    alignSelf: 'flex-start',  // 부모의 alignItems와 상관없이 이 아이템만 제 크기로
+    flexGrow: 0,              // 늘어나지 않음
+    flexShrink: 0,            // 줄어들지 않음
+    width: 'auto',            // 가로 크기는 자동
+
+    minHeight: 20,
     paddingVertical: 5,
     paddingHorizontal: 20,
     borderRadius: 20,
-    borderWidth: 2,
+    borderWidth: 3,
     borderColor: 'rgba(74, 144, 226, 0.5)',
     backgroundColor: 'rgba(255, 255, 255, 0.8)',
     marginRight: 8,
     marginBottom: 10,
-    justifyContent: 'center',   // ← 수직 중앙 정렬
-    alignItems: 'center',       // ← 수평 중앙 정렬
+    // justifyContent: 'center',   // ← 수직 중앙 정렬
+    // alignItems: 'center',       // ← 수평 중앙 정렬
   },
   filterButtonActive: {
     backgroundColor: '#007AFF',

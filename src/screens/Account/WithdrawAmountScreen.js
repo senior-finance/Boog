@@ -28,7 +28,7 @@ import LinearGradient from 'react-native-linear-gradient';
 
 export default function WithdrawAmountScreen() {
   const { accountNumTo, bankTo } = useRoute().params;
-  const { amount, bankName, accountNum } = useRoute().params;
+  const { amount, bankName, accountNum, testBedAccount } = useRoute().params;
 
   const nav = useNavigation();
   const [amountTo, setAmountTo] = useState('');
@@ -222,7 +222,7 @@ export default function WithdrawAmountScreen() {
             disabled={!amountTo}         // accountNumber 없으면 비활성화
             onPress={() => {
               if (amount < raw) {
-                Alert.alert('잔액이 부족합니다', '출금 가능한 금액을 초과했습니다.');
+                Alert.alert('잔액 부족', '출금 가능한 금액을 초과했어요');
                 return;
               }
               // 금액 검사 통과 시에만 화면 이동
@@ -233,6 +233,7 @@ export default function WithdrawAmountScreen() {
                 accountNum,
                 bankName,
                 amount,
+                testBedAccount
               });
             }}
             style={{

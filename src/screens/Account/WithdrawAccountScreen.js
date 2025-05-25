@@ -25,11 +25,14 @@ import { NumPad } from '@umit-turk/react-native-num-pad';
 import { TextInputMask } from 'react-native-masked-text';
 import CustomNumPad from '../../components/CustomNumPad';
 import LinearGradient from 'react-native-linear-gradient';
+import LottieView from 'lottie-react-native';
+import { accountGetAll, withdrawVerify } from '../../database/mongoDB';
 
 export default function WithdrawAccountScreen() {
   const nav = useNavigation();
+  const [loading, setLoading] = useState(false);
 
-  const { amount, bankName, accountNum } = useRoute().params;
+  const { amount, bankName, accountNum, testBedAccount } = useRoute().params;
 
   const [account, setAccount] = useState('');
   const [accountNumTo, setaccountNumTo] = useState(''); // 계좌번호 입력
@@ -70,7 +73,8 @@ export default function WithdrawAccountScreen() {
       });
     }
   };
-  const handleNext = () => {
+
+  const handleNext = async () => {
     const digitsOnly = accountNumTo.replace(/-/g, '');
     if (digitsOnly.length < 10 || digitsOnly.length > 10) {
       // 계좌번호가 10자리가 아닐 때
@@ -80,7 +84,41 @@ export default function WithdrawAccountScreen() {
       );
       return;
     }
-    nav.navigate('WithdrawBank', { accountNumTo, bankName, amount, accountNum });
+    try {
+      setLoading(true);
+      const accounts = await withdrawVerify({accountNum : digitsOnly});
+      // 동기화 시간 랜덤 지연
+      const delayMs = Math.floor(Math.random() * 500) + 500;
+      await new Promise(res => setTimeout(res, delayMs));
+
+      if (!accounts || accounts.length === 0) {
+        setTimeout(() => {
+          setLoading(false);
+        }, 500);
+        Alert.alert('알림', '등록된 계좌가 아니에요');
+        return;
+      }
+
+      // 성공 시 로딩 끄고 네비게이트
+      setTimeout(() => {
+        setLoading(false);
+        nav.navigate('WithdrawBank', {
+          accountNumTo,
+          bankName,
+          amount,
+          accountNum,
+          testBedAccount,
+        });
+      }, 700);
+
+    } catch (err) {
+      console.error(err);
+      // 에러 났을 때도 로딩 끄기
+      setTimeout(() => {
+        setLoading(false);
+      }, 700);
+      Alert.alert('오류', '계좌 확인 중 에러가 발생했어요');
+    }
   };
 
   return (
@@ -174,6 +212,16 @@ export default function WithdrawAccountScreen() {
           </TouchableOpacity>
         </LinearGradient>
       </View>
+      {loading && (
+        <View style={styles.loadingOverlay}>
+          <LottieView
+            source={require('../../assets/animeLoading2.json')}
+            autoPlay
+            loop={false}
+            style={styles.lottie}
+          />
+        </View>
+      )}
     </LinearGradient >
   );
 }
@@ -223,5 +271,16 @@ const styles = StyleSheet.create({
   amountText: {
     color: '#3498DB',   // 초록색
     fontSize: 16,
+  },
+  loadingOverlay: {
+    ...StyleSheet.absoluteFillObject,    // 부모 전체 덮기
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',   // 반투명 배경
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1,                            // 최상위
+  },
+  lottie: {
+    width: 320,
+    height: 320,
   },
 });
