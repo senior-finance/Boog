@@ -8,7 +8,7 @@ import {
   Alert,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import Slider from '@react-native-community/slider';
+import Slider from 'react-native-slider'; // ✅ react-native-slider 사용
 import { useFontSize } from './FontSizeContext';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import CustomText from '../../components/CustomText';
@@ -30,7 +30,7 @@ const FontSizeSettingScreen = ({ navigation }) => {
 
     setTimeout(() => {
       setApplied(false);
-      navigation.navigate('MainTabs', { screen: 'MyInfo' });
+      navigation.navigate('MainTabs', { screen: '내 정보' });
     }, 500);
   };
 
@@ -44,17 +44,21 @@ const FontSizeSettingScreen = ({ navigation }) => {
           변경하실 글자 예시입니다
         </CustomText>
 
-        <Slider
-          style={styles.slider}
-          minimumValue={12}
-          maximumValue={23}
-          step={1}
-          value={tempFontSize}
-          onValueChange={value => setTempFontSize(value)}
-          minimumTrackTintColor="#1A4DCC"
-          maximumTrackTintColor="#ccc"
-          thumbTintColor="#1A4DCC"
-        />
+        {/* ✅ 슬라이더 Wrapper로 감싸서 너비와 정렬 해결 */}
+        <View style={styles.sliderWrapper}>
+          <Slider
+            value={tempFontSize}
+            onValueChange={value => setTempFontSize(value)}
+            minimumValue={12}
+            maximumValue={23}
+            step={1}
+            minimumTrackTintColor="#1A4DCC"
+            maximumTrackTintColor="#E0E0E0"
+            thumbTintColor="#1A4DCC"
+            thumbStyle={styles.thumb}
+            trackStyle={styles.track}
+          />
+        </View>
 
         <TouchableOpacity
           style={[styles.confirmButton, applied && styles.confirmButtonApplied]}
@@ -91,7 +95,6 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     elevation: 5,
   },
-
   title: {
     fontWeight: 'bold',
     fontSize: 18,
@@ -104,10 +107,30 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     lineHeight: 28,
   },
-  slider: {
-    width: '90%',
-    height: 40,
-    transform: [{ scaleY: 1.4 }],
+  sliderWrapper: {
+    width: '100%',
+    paddingHorizontal: 4,
+    alignItems: 'stretch',
+    marginTop: 12,
+    marginBottom: 28,
+  },
+  track: {
+    height: 7,
+    borderRadius: 5,
+    backgroundColor: '#E0E0E0',
+  },
+  thumb: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#1A4DCC',
+    borderColor: '#fff',
+    borderWidth: 2,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 2,
   },
   confirmButton: {
     backgroundColor: '#4B7BE5',
