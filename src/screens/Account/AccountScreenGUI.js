@@ -483,15 +483,19 @@ const AccountScreenGUI = ({
                         {/* const { dbName } = CONFIG[testBedAccount] || {}; 컬렉션에서 item.fintech_use_num == accountId 고유값 따라서 accountNum 가져오기 */}
                       </CustomText>
                       <CustomText style={styles.balance}>
-                        {/* 잔액 :{' '}
-                    {balanceObj
-                      ? Number(balanceObj.balance_amt).toLocaleString()
-                      : '잔액 조회 중...'} */}
-                        잔액 : {''}
-                        {dbObj?.amount != null
-                          ? Number(dbObj.amount).toLocaleString()
-                          : '정보없음'}
-                        {/* const { dbName } = CONFIG[testBedAccount] || {}; 컬렉션에서 item.fintech_use_num == accountId 고유값 따라서 amount 가져오기 */}
+                        잔액: {' '}
+                        {(() => {
+                          const raw = dbObj?.amount;
+                          // 1) MongoDB Decimal128 JSON 직렬화 형태 처리
+                          const maybeStr =
+                            raw && typeof raw === 'object' && '$numberDecimal' in raw
+                              ? raw.$numberDecimal
+                              : raw;
+                          // 2) 숫자 변환
+                          const num = Number(maybeStr);
+                          // 3) NaN 체크 후 출력
+                          return !isNaN(num) ? num.toLocaleString() : '정보없음';
+                        })()}
                       </CustomText>
                     </View>
                     <View style={styles.buttonContainer}>
@@ -504,7 +508,7 @@ const AccountScreenGUI = ({
                         activeOpacity={isAnimating ? 1 : 0.7}
                       >
                         <CustomText style={styles.receiveButtonText}>
-                          지원금 받기
+                          테스트 지원금
                         </CustomText>
                       </TouchableOpacity>
                       <TouchableOpacity
@@ -607,7 +611,7 @@ const AccountScreenGUI = ({
         <CustomModal
           visible={isModalVisible}
           title={"지원금"}
-          message={"정부에서 지원금 100만원을 입금했습니다"}
+          message={"테스트 지원금 100만원을 입금 드렸어요"}
           buttons={[
             {
               text: '닫기',

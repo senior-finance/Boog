@@ -56,7 +56,7 @@ const getTokenDocId = account => account === 'hwc' ? 'Token2' : 'Token';
 
 // const TOKEN_URL = `${baseUrl}/oauth/2.0/token`;
 // const USER_ME_URL = `${baseUrl}/v2.0/user/me`;
-// const ACCOUNT_BALANCE_URL = `${baseUrl}/v2.0/account/balance/fin_num`;
+// const ACCOUNT_BALANCE_URL = `${baseUrl}/v2.0/account/balance/fin_num`;*
 
 const AccountScreen = () => {
   // 상태 관리: 각 단계별 진행상태

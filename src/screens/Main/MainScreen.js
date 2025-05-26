@@ -1,5 +1,6 @@
 import React, { useLayoutEffect, useState, useMemo, useRef, useEffect } from 'react';
 import {
+  Text,
   View,
   Button,
   StyleSheet,
@@ -8,8 +9,8 @@ import {
   Modal,
   Switch,
   BackHandler,
+  ActivityIndicator,
 } from 'react-native';
-
 import LinearGradient from 'react-native-linear-gradient';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import CustomText from '../../components/CustomText';
@@ -21,6 +22,8 @@ import { CommonActions } from '@react-navigation/native';
 import { useFocusEffect } from '@react-navigation/native';
 import PushNotification from 'react-native-push-notification';
 import Toast from 'react-native-toast-message';
+import { useUser } from '../Login/UserContext';
+import { useAccountData } from '../../components/useAccountData';
 
 const FunctionButton = ({ title, onPress, icon }) => {
   const { seniorMode } = useSeniorMode();
@@ -77,8 +80,14 @@ const MainScreen = ({ navigation }) => {
   const [memo, setMemo] = useState('');
   const [editing, setEditing] = useState(false);
   const { seniorMode, setSeniorMode } = useSeniorMode();
-
   const [exitModalVisible, setExitModalVisible] = useState(false);
+
+  const { userInfo } = useUser();
+  const testBedAccount = userInfo?.dbName || 'Guest';
+  const { data, loading, error } = useAccountData(testBedAccount);
+
+  // 가장 첫 계좌를 대표로
+  const primary = data[0] || {};
 
   const scrollViewRef = useRef(null);
 
@@ -129,14 +138,13 @@ const MainScreen = ({ navigation }) => {
         setExitModalVisible(true); // 종료 모달 오직 홈화면에서만
         return true;
       };
-
       BackHandler.addEventListener('hardwareBackPress', onBackPress);
       return () => BackHandler.removeEventListener('hardwareBackPress', onBackPress);
     }, [])
   );
 
   const actionButtons = [
-    { title: '송금', icon: 'swap-horizontal', onPress: () => navigation.navigate() },
+    { title: '송금', icon: 'swap-horizontal', onPress: () => navigation.navigate('Account') },
     { title: '퀴즈', icon: 'help-circle', onPress: () => navigation.navigate('Learning') },
     { title: '지도', icon: 'map', onPress: () => navigation.navigate('MapView') },
     { title: '복지혜택', icon: 'gift', onPress: () => navigation.navigate('Welfare') },
@@ -148,6 +156,7 @@ const MainScreen = ({ navigation }) => {
     { title: '보이스 피싱', icon: 'alert-circle-outline', onPress: () => navigation.navigate('VoicePhishingScreen') },
   ];
 
+  // 계좌 문제 영역
   const outgo = [
     { name: '김민수', date: '2024-05-13', amount: '-₩50,000', isDeposit: false },
     { name: '영희', date: '2024-05-12', amount: '-₩30,000', isDeposit: false },
@@ -187,8 +196,17 @@ const MainScreen = ({ navigation }) => {
     });
   }, [navigation]);
 
+  // if (loading) return <ActivityIndicator size="large" />;
+  // if (error) return <Text>에러: {error.message}</Text>;
+
   return (
     <LinearGradient colors={['rgba(159, 193, 219, 0.66)', '#e0f0ff']} style={styles.container}>
+      <View>
+        {/* <Text>대표 계좌: {primary.bank_name} ({primary.bank_num})</Text>
+        <Text>API 잔고: ₩ {primary.balance_amt?.toLocaleString()}</Text>
+        <Text>로컬 계좌번호: {primary.accountNum}</Text>
+        <Text>로컬 잔액: ₩ {primary.localAmount?.toLocaleString()}</Text> */}
+      </View>
       <ScrollView
         ref={scrollViewRef}
         contentContainerStyle={[
@@ -221,8 +239,9 @@ const MainScreen = ({ navigation }) => {
             <Icon name="gear" size={24} color="#fff" />
           </TouchableOpacity>
 
-          <CustomText style={styles.accountNum}>대표 계좌: 114-6566-180</CustomText>
-          <CustomText style={styles.balanceAmt}>₩ 104,000,000</CustomText>
+          {/*계좌 문제 영역*/}
+          <CustomText style={styles.accountNum}>대표 계좌: {primary.bank_name ?? '–'} 계좌 번호({primary.bank_num})</CustomText>
+          <CustomText style={styles.balanceAmt}>{primary.balance_amt}</CustomText>
         </View>
 
         <TouchableOpacity style={styles.toggleRow} onPress={() => setShowActions(v => !v)}>
@@ -280,6 +299,7 @@ const MainScreen = ({ navigation }) => {
             });
           }}
         >
+          {/* 실제 거래 내역으로 바꿔야 돼 */}
           <CustomText style={styles.sectionTitle}>거래 내역</CustomText>
           <Ionicons
             name={showHistory ? 'chevron-up-outline' : 'chevron-down-outline'}
@@ -312,7 +332,6 @@ const MainScreen = ({ navigation }) => {
               </TouchableOpacity>
             ))}
           </View>)}
-
 
       </ScrollView>
       <Modal
@@ -398,7 +417,6 @@ const MainScreen = ({ navigation }) => {
                 >
                   <CustomText style={styles.closeText}>닫기</CustomText>
                 </TouchableOpacity>
-
               </>
             )}
           </View>
@@ -433,7 +451,7 @@ const MainScreen = ({ navigation }) => {
         ]}
       />
       {/* <Toast ref={(ref) => Toast.setRef(ref)} /> */}
-    </LinearGradient>
+    </LinearGradient >
   );
 };
 

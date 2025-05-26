@@ -40,11 +40,12 @@ export async function mongoDB(action, dbName, collName, params) {
 // 
 // === 입금 전용 deposit 함수 (로그남기 + 잔액 차감) ===
 export async function deposit(dbName, accountId, accountBank, amount) {
+  const numeric = Number(amount);    // ← 여기서도 문자열이면 숫자로
   const logId = await mongoDB(
     'insertOne',
     'bank',
     'deposit',
-    { document: { dbName, accountId, accountBank, amount, createdAt: new Date() } }
+    { document: { dbName, accountId, accountBank, amount: numeric, createdAt: new Date() } }
   );
   try {
     await mongoDB(
@@ -53,7 +54,7 @@ export async function deposit(dbName, accountId, accountBank, amount) {
       'account',
       {
         filter: { accountId },
-        update: { $inc: { amount: +amount } }
+        update: { $inc: { amount: numeric } }   // ← numeric 변수를 사용
       }
     );
   } catch (err) {
@@ -64,11 +65,12 @@ export async function deposit(dbName, accountId, accountBank, amount) {
 
 // === 출금 전용 withdraw 함수 (로그남기 + 잔액 차감) ===
 export async function withdraw(dbName, accountId, accountBank, amount) {
+  const numeric = Number(amount);
   const logId = await mongoDB(
     'insertOne',
     'bank',
     'withdraw',
-    { document: { dbName, accountId, accountBank, amount, createdAt: new Date() } }
+    { document: { dbName, accountId, accountBank, amount: numeric, createdAt: new Date() } }
   );
   try {
     await mongoDB(
@@ -77,7 +79,7 @@ export async function withdraw(dbName, accountId, accountBank, amount) {
       'account',
       {
         filter: { accountId },
-        update: { $inc: { amount: -amount } }
+        update: { $inc: { amount: -numeric } }
       }
     );
   } catch (err) {
@@ -96,7 +98,7 @@ export async function accountUpsert(userName, accountId, accountBank, amount) {
     {
       filter: { accountId },
       update: {
-        $set: { accountNum, userName, accountBank, amount },
+        $set: { accountNum, userName, accountBank, amount: Number(amount) },
         $setOnInsert: { createdAt: new Date() }
       },
       options: { upsert: true }
@@ -115,25 +117,35 @@ export async function accountUpsert(userName, accountId, accountBank, amount) {
  */
 export async function accountGet(userName, accountId) {
   try {
-    const res = await mongoDB(
-      'find',
-      userName,
-      'account',
-      { query: { accountId } }
-    );
+    const res = await mongoDB('find', userName, 'account', { query: { accountId } });
 
-    let docs = [];
-    if (Array.isArray(res)) {
-      docs = res;
-    } else if (Array.isArray(res.documents)) {
-      docs = res.documents;
+    // res 혹은 res.documents 에서 docs 배열 뽑기
+    const docs = Array.isArray(res)
+      ? res
+      : Array.isArray(res.documents)
+        ? res.documents
+        : [];
+
+    const record = docs[0];
+    if (!record) return null;
+
+    // ① 원본 amount 값
+    let rawAmt = record.amount;
+
+    // ② MongoDB Decimal128 JSON 직렬화 형태 처리
+    if (rawAmt && typeof rawAmt === 'object' && '$numberDecimal' in rawAmt) {
+      rawAmt = rawAmt.$numberDecimal;
     }
 
-    const doc = docs[0];
-    if (!doc) return null;
+    // ③ 숫자로 변환
+    const amountNum = Number(rawAmt);
+    const amount = isNaN(amountNum) ? 0 : amountNum;
 
-    const { accountNum, amount, accountBank } = doc;
-    return { accountNum, amount, accountBank };
+    return {
+      accountNum:   record.accountNum,
+      accountBank:  record.accountBank,
+      amount,               // JS 숫자
+    };
   } catch (err) {
     console.error('accountGet 실패:', err);
     return null;
