@@ -31,7 +31,7 @@ export default function NotificationScreen() {
           }
         }
       } catch (err) {
-        console.error('❌ 알림 처리 중 오류:', err);
+        console.error('알림 처리 중 오류:', err);
         setNotifications(defaultNotifications);
       }
     };

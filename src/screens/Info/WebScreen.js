@@ -5,7 +5,7 @@ import CustomText from '../../components/CustomText';
 
 const WebScreen = ({ route }) => {
   const { url } = route.params;
-  const [loading, setLoading] = useState(true); // ✅ 로딩 상태
+  const [loading, setLoading] = useState(true); // 로딩 상태
 
   return (
     <View style={{ flex: 1 }}>

@@ -722,7 +722,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     marginRight: 12,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },   // ✅ 입체감 강조
+    shadowOffset: { width: 0, height: 4 },   // 입체감 강조
     shadowOpacity: 0.25,
     shadowRadius: 6,
     elevation: 6,
@@ -734,7 +734,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: 16,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },   // ✅ 동일한 그림자 효과
+    shadowOffset: { width: 0, height: 4 },   // 동일한 그림자 효과
     shadowOpacity: 0.25,
     shadowRadius: 6,
     elevation: 6,

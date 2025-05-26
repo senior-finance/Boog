@@ -93,11 +93,11 @@ export const handleFunctionCalling = async ({
   }
 
     else {
-      console.log('⚠️ 알 수 없는 액션:', reply.target);
+      console.log('알 수 없는 액션:', reply.target);
     }
   }
 
-  // ✅ 도시 이름 기반 날씨 처리
+  // 도시 이름 기반 날씨 처리
   else if (reply.type === 'weather' && reply.city) {
     const normalizeCityName = (name) => name.replace(/(도|시|군)$/, '');
     const cityName = normalizeCityName(reply.city);

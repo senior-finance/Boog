@@ -14,7 +14,7 @@ import com.facebook.soloader.SoLoader
 
 import com.seniorfinance.BuildConfig
 
-// ✅ 자바 네이티브 패키지 import 추가
+// 자바 네이티브 패키지 import 추가
 import com.seniorfinance.PhoneAnalysisPackage
 
 class MainApplication : Application(), ReactApplication {
@@ -22,7 +22,7 @@ class MainApplication : Application(), ReactApplication {
   override val reactNativeHost: ReactNativeHost =
     object : DefaultReactNativeHost(this) {
       override fun getPackages(): List<ReactPackage> {
-        // ✅ 기본 자동 패키지 + 커스텀 패키지 수동 등록
+        // 기본 자동 패키지 + 커스텀 패키지 수동 등록
         val packages = PackageList(this).packages.toMutableList()
         packages.add(PhoneAnalysisPackage()) // ← 직접 추가한 부분
         return packages

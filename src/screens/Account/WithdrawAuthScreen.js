@@ -104,11 +104,11 @@ export default function WithdrawAuthScreen() {
     }
   };
 
-  // ✅ 생체 인증 실행 함수
+  // 생체 인증 실행 함수
   const handleAuthentication = async () => {
     const rnBiometrics = new ReactNativeBiometrics();
 
-    // ✅ 생체 인증 가능 여부 확인
+    // 생체 인증 가능 여부 확인
     const { available, biometryType } = await rnBiometrics.isSensorAvailable();
 
     // if (!available) {

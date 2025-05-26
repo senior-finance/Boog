@@ -80,7 +80,7 @@ export default function LoginScreen({ navigation }) {
 
     try {
       const result = await upsertSocialLoginUser(user); // ← 중복 방지 포함
-      await storeAuthSession({ provider, accessToken, userInfo: user }); // ✅ 이 줄 추가
+      await storeAuthSession({ provider, accessToken, userInfo: user }); // 이 줄 추가
       if (result.upsertedId) {
         console.log('신규 사용자 생성됨:', result.upsertedId);
       } else {

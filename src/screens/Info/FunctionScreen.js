@@ -58,8 +58,8 @@ const styles = StyleSheet.create({
   shadowOpacity: 0.1,
   shadowRadius: 3,
   elevation: 5,
-  borderWidth: 0.9, // ✅ 테두리 두께
-  borderColor: '#4B7BE5', // ✅ 테두리 색 (아이콘 컬러와 맞춤)
+  borderWidth: 0.9, // 테두리 두께
+  borderColor: '#4B7BE5', // 테두리 색 (아이콘 컬러와 맞춤)
 },
 
   functionText: {

@@ -6,7 +6,7 @@ Sound.setCategory('Playback', true);
 let soundInstance = null;
 let currentVolume = 1.0;
 
-// ✅ 사운드 파일 import (정적 경로)
+// 사운드 파일 import (정적 경로)
 const soundFile = require('../assets/sounds/correct.mp3');
 
 // 🔊 사운드 로드
@@ -28,14 +28,14 @@ export const loadSound = (onLoaded = () => {}) => {
 // ▶️ 사운드 재생
 export const playSound = () => {
   if (!soundInstance) {
-    console.warn('⚠️ 사운드가 로드되지 않았습니다.');
+    console.warn('사운드가 로드되지 않았습니다.');
     return;
   }
 
   soundInstance.setVolume(currentVolume);
   soundInstance.play((success) => {
     if (!success) {
-      console.error('❌ 사운드 재생 실패');
+      console.error('사운드 재생 실패');
     }
   });
 };
