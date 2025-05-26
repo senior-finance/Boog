@@ -3,8 +3,6 @@ import { React, useState, useEffect } from 'react';
 import {
   View,
   Text,
-  Alert,
-  Modal,
   Button,
   FlatList,
   TextInput,
@@ -28,10 +26,34 @@ import LinearGradient from 'react-native-linear-gradient';
 import ReactNativeBiometrics from 'react-native-biometrics';
 import { deposit, withdraw, accountUpsert, accountGet, withdrawVerify, mongoDB } from '../../database/mongoDB';
 import { CONFIG } from './AccountScreen';
+import CustomModal from '../../components/CustomModal';
 
 // 실제 지문/Pin 인증 모듈을 연동하세요
 
 export default function WithdrawAuthScreen() {
+  // 커스텀 모달
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalTitle, setModalTitle] = useState('');
+  const [modalMessage, setModalMessage] = useState('');
+  const [modalButtons, setModalButtons] = useState([]);
+
+  const showModal = (
+    title,
+    message,
+    buttons = [
+      {
+        text: '확인',
+        onPress: () => setModalVisible(false),
+        color: '#4B7BE5',
+      },
+    ]
+  ) => {
+    setModalTitle(title);
+    setModalMessage(message);
+    setModalButtons(buttons);
+    setModalVisible(true);
+  };
+
   const nav = useNavigation();
   const { accountNumTo, bankTo, formattedAmount, rawAmount } = useRoute().params;
   const { amount, bankName, accountNum, testBedAccount } = useRoute().params;
@@ -94,13 +116,14 @@ export default function WithdrawAuthScreen() {
       );
       console.log('나의 계좌 --', accountNum, rawAmount);
       console.log('송금 보낼 계좌 ++', setTo, rawAmount);
-      Alert.alert(
+      showModal(
+        '출금 완료',
         `${bankTo}에서 ${formattedAmount} 출금 요청이 완료 됐어요`
       );
       // nav.goBack();
     } catch (err) {
       console.error('출금 중 오류:', err);
-      Alert.alert('출금 중 오류가 발생했습니다.');
+      showModal('출금 실패', '출금 중 오류가 발생했습니다.');
     }
   };
 
@@ -112,12 +135,12 @@ export default function WithdrawAuthScreen() {
     const { available, biometryType } = await rnBiometrics.isSensorAvailable();
 
     // if (!available) {
-    //   Alert.alert('에러', '이 기기는 생체 인증을 지원하지 않습니다.');
+    //   showModal('에러', '이 기기는 생체 인증을 지원하지 않습니다.');
     //   return;
     // }
 
     // if (!biometryType) {
-    //   Alert.alert('알림', '사용 가능한 생체 인증이 없습니다.');
+    //   showModal('알림', '사용 가능한 생체 인증이 없습니다.');
     //   return;
     // }
 
@@ -133,14 +156,14 @@ export default function WithdrawAuthScreen() {
 
     if (success) {
       setIsAuthenticated(true);
-      Alert.alert('인증 성공', `${biometryType} 인증이 완료되었습니다.`);
+      showModal('인증 성공', `${biometryType} 인증이 완료되었습니다.`);
     } else {
-      Alert.alert(
+      showModal(
         '인증 실패',
         '생체 인증이 실패했습니다. 비밀번호 인증을 사용하시겠습니까?',
         [
-          { text: '아니요', style: 'cancel' },
-          { text: '비밀번호 입력', onPress: () => console.log('비밀번호 입력 실행') },
+          { text: '아니요', onPress: () => setModalVisible(false), color: '#ccc', textColor: 'black' },
+          { text: '비밀번호 입력', onPress: () => console.log('비밀번호 입력 실행'), color: '#4B7BE5' },
         ]
       );
     }
@@ -231,6 +254,12 @@ export default function WithdrawAuthScreen() {
           </TouchableOpacity>
         </LinearGradient>
       </View>
+      <CustomModal
+        visible={modalVisible}
+        title={modalTitle}
+        message={modalMessage}
+        buttons={modalButtons}
+      />
     </LinearGradient>
   );
 }
