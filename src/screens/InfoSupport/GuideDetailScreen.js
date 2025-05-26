@@ -61,18 +61,18 @@ export default function GuideDetailScreen({ route }) {
     ],
 
     voicePhishing: [
-      { text: '1. 메인 화면의 스마트 기능 영역에서서 "보이스 피싱" 버튼을 눌러 보이스피싱 사례 안내 화면으로 이동해요.', image: voicephishing1 },
+      { text: '1. 메인 화면의 스마트 기능 영역에서 "보이스 피싱" 버튼을 눌러 보이스피싱 사례 안내 화면으로 이동해요.', image: voicephishing1 },
       { text: '2. 다양한 보이스피싱 사례들이 실제 문자 예시와 함께 설명이 제공돼요. 자세한 설명을 보고싶으면 자세히 버튼을 눌러주세요.', image: voicephishing2 },
       { text: '3. 해당 사례의 본문과 주의사항을 자세히 볼 수 있어요.', image: voicephishing3 },
       { text: '4. 하단의 버튼을 누르면 네이버에서 보이스피싱 관련 최신 뉴스를 확인할 수 있어요.', image: voicephishing4 },
     ],
     location: [
       {
-        text: '1. 홈 화면에서 "지도" 버튼을 눌러 근처 은행/ATM 검색 화면으로 이동해요.',
+        text: '1. 홈 화면에서 "지도" 버튼을 눌러 지도 화면으로 이동해요.',
         image: map1,
       },
       {
-        text: '2. 첫 화면에서는 가장 가까운 은행들이 화면에 나타나요.',
+        text: '2. 첫 화면에서는 가장 가까운 은행/ATM이 화면하단에 리스트로 나타나요.',
         image: map2,
       },
       {
