@@ -88,7 +88,6 @@ const MainScreen = ({ navigation }) => {
 
   // 가장 첫 계좌를 대표로
   const primary = data[0] || {};
-
   const scrollViewRef = useRef(null);
 
   useEffect(() => {
@@ -241,7 +240,7 @@ const MainScreen = ({ navigation }) => {
 
           {/*계좌 문제 영역*/}
           <CustomText style={styles.accountNum}>대표 계좌: {primary.bank_name ?? '–'} 계좌 번호({primary.bank_num})</CustomText>
-          <CustomText style={styles.balanceAmt}>{primary.balance_amt}</CustomText>
+          <CustomText style={styles.balanceAmt}>{primary.localAmount}</CustomText>
         </View>
 
         <TouchableOpacity style={styles.toggleRow} onPress={() => setShowActions(v => !v)}>

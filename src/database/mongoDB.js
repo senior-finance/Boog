@@ -98,8 +98,13 @@ export async function accountUpsert(userName, accountId, accountBank, amount) {
     {
       filter: { accountId },
       update: {
-        $set: { accountNum, userName, accountBank, amount: Number(amount) },
-        $setOnInsert: { createdAt: new Date() }
+        // 메타 정보만 갱신
+        $set: { accountNum, userName, accountBank },
+        // 최초 문서가 없을 때만 amount 필드와 생성일을 설정
+        $setOnInsert: {
+          amount: Number(amount),
+          createdAt: new Date(),
+        }
       },
       options: { upsert: true }
     }
@@ -142,8 +147,8 @@ export async function accountGet(userName, accountId) {
     const amount = isNaN(amountNum) ? 0 : amountNum;
 
     return {
-      accountNum:   record.accountNum,
-      accountBank:  record.accountBank,
+      accountNum: record.accountNum,
+      accountBank: record.accountBank,
       amount,               // JS 숫자
     };
   } catch (err) {
