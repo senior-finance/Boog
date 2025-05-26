@@ -227,8 +227,8 @@ const MainScreen = ({ navigation }) => {
 
         <TouchableOpacity style={styles.toggleRow} onPress={() => setShowActions(v => !v)}>
           <CustomText style={styles.sectionSubTitle}>주요 기능</CustomText>
-          <Button title="안녕 푸시 알림" onPress={sendHiNotification} />
-          <Button
+          {/* <Button title="안녕 푸시 알림" onPress={sendHiNotification} /> */}
+          {/* <Button
             title="안녕 토스트 알림"
             onPress={() => {
               Toast.show({
@@ -240,7 +240,7 @@ const MainScreen = ({ navigation }) => {
                 visibilityTime: 1000, // 표시 시간 조절
               });
             }}
-          />
+          /> */}
           <Ionicons name={showActions ? 'chevron-up-outline' : 'chevron-down-outline'} size={20} color="#4A90E2" />
 
         </TouchableOpacity>

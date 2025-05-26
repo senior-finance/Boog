@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Platform,
@@ -16,6 +16,8 @@ import { sendInquiry } from './Inquiry';
 import { FIREBASE_FUNCTION_URL } from '@env';
 import CustomModal from '../../components/CustomModal';
 import { useUser } from '../Login/UserContext';
+import PushNotification from 'react-native-push-notification';
+import { addNotification } from '../../database/mongoDB';
 
 const InquiryFormScreen = () => {
   const [title, setTitle] = useState('');
@@ -32,7 +34,47 @@ const InquiryFormScreen = () => {
     setModalVisible(true);
   };
 
-  const { userInfo } = useUser();           // 로그인 시 setUserInfo로 저장된 값
+  const { userInfo } = useUser(); // 로그인 시 setUserInfo로 저장된 값
+
+  useEffect(() => {
+    // 1. 푸시 알림 설정 (한 번만)
+    PushNotification.configure({
+      // (필요 시) 토큰 받기
+      onRegister: function (token) {
+        // console.log('TOKEN:', token);
+      },
+      // 알림 탭/닫기 시
+      onNotification: function (notification) {
+        console.log('NOTIFICATION:', notification);
+        notification.finish(PushNotification.FetchResult.NoData);
+      },
+      // Android 권한 요청
+      requestPermissions: true,
+    });
+
+    // 2. Android용 채널 생성 (Android 8.0+)
+    PushNotification.createChannel(
+      {
+        channelId: 'default-channel-id', // 채널 ID
+        channelName: '부금이 알람 채널',  // 채널 이름
+        // importance: 3,                   // (optional) 중요도
+      },
+      // (created) => console.log(`createChannel returned '${created}'`)
+    );
+  }, []);
+
+  const sendHiNotification = () => {
+    PushNotification.localNotification({
+      /* Android & iOS 공통 */
+      channelId: 'default-channel-id', // Android는 필수
+      title: '1:1 문의',                   // 제목
+      message: '이메일이 성공적으로 전송되었어요!',                 // 본문
+
+      /* iOS 전용 옵션 (필요 시) */
+      // soundName: 'default',
+      // playSound: true,
+    });
+  };
 
   const handleSubmit = async () => {
     if (!title || !content) {
@@ -90,6 +132,13 @@ const InquiryFormScreen = () => {
       });
       setTitle('');
       setContent('');
+      sendHiNotification()
+      await addNotification(userName, {
+        icon: 'alert-circle',
+        iconColor: '#F44336',
+        borderColor: '#FFCDD2',
+        content: '문의 이메일을 보냈어요',
+      });
     } catch (err) {
       showModal({
         title: '전송 실패',
@@ -112,7 +161,7 @@ const InquiryFormScreen = () => {
     <LinearGradient colors={['rgb(208, 224, 241)', 'rgb(213, 225, 236)']} style={styles.gradient}>
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
         <ScrollView contentContainerStyle={styles.container}>
-          <CustomText style={styles.title}>1:1 문의하기</CustomText>
+          <CustomText style={styles.title}>문의할 내용을 적어주세요</CustomText>
 
           <CustomTextInput
             placeholder="제목"

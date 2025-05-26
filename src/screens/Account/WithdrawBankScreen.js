@@ -31,7 +31,7 @@ import LottieView from 'lottie-react-native';
 
 export default function WithdrawBankScreen() {
   const { accountNumTo } = useRoute().params;
-  const { amount, bankName, accountNum } = useRoute().params;
+  const { amount, bankName, accountNum, testBedAccount} = useRoute().params;
 
   const nav = useNavigation();
   const [bankTo, setBankTo] = useState('');
@@ -77,6 +77,7 @@ export default function WithdrawBankScreen() {
           accountNum,
           bankName,
           amount,
+          testBedAccount,
         });
       } else {
         Alert.alert('오류', '은행명이 일치하지 않아요');

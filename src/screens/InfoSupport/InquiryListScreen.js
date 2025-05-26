@@ -1,102 +1,120 @@
-import React from 'react';
-import { View, StyleSheet, FlatList } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, StyleSheet, FlatList, ActivityIndicator } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import CustomText from '../../components/CustomText';
+import { useUser } from '../Login/UserContext';
+import { getInquiries } from './Inquiry';
 
 const InquiryListScreen = () => {
-  const dummyData = [
-    { id: '1', title: '송금이 안 돼요', status: '✅ 답변 완료' },
-    { id: '2', title: '비밀번호 변경 방법', status: '⏳ 처리 중' },
-    { id: '3', title: '앱이 자꾸 꺼져요', status: '⏳ 처리 중' },
-    { id: '4', title: '계좌 등록은 어디서 하나요?', status: '✅ 답변 완료' },
-    { id: '5', title: '글씨 너무 작아요', status: '✅ 답변 완료' },
-    { id: '6', title: '로그인이 안 돼요', status: '⏳ 처리 중' },
-    { id: '7', title: '앱 속도가 느려요', status: '⏳ 처리 중' },
-    { id: '8', title: '오타가 있어요', status: '✅ 답변 완료' },
-    { id: '9', title: '아이콘이 헷갈려요', status: '⏳ 처리 중' },
-    { id: '10', title: '문의는 어디서 하나요?', status: '✅ 답변 완료' },
-  ];
+  const { userInfo } = useUser();
+  const [inquiries, setInquiries] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  function formatDate(date) {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    const hh = String(date.getHours()).padStart(2, '0');
+    const mm = String(date.getMinutes()).padStart(2, '0');
+    return `${y}-${m}-${d} ${hh}:${mm}`;
+  }
+
+  useEffect(() => {
+    const loadInquiries = async () => {
+      try {
+        // userName이 없거나 빈 문자열(공백)인 경우 'Guest'로 처리
+        const rawUser = userInfo?.username;
+        const queryUser = rawUser && rawUser.trim() !== '' ? rawUser.trim() : 'Guest';
+
+        console.log('[InquiryList] Loading inquiries for:', queryUser);
+        const data = await getInquiries(queryUser);
+        setInquiries(data);
+      } catch (error) {
+        console.error('문의 내역 불러오기 오류:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadInquiries();
+  }, [userInfo]);
+
+  if (loading) {
+    return (
+      <View style={styles.loaderContainer}>
+        <ActivityIndicator size="large" color="#1A4DCC" />
+      </View>
+    );
+  }
 
   return (
-    <LinearGradient colors={['rgb(208, 224, 241)', 'rgb(213, 225, 236)']} style={styles.container}>
-      <CustomText style={styles.title}>📋 내 문의 내역</CustomText>
-
+    <LinearGradient
+      colors={['rgb(208, 224, 241)', 'rgb(213, 225, 236)']}
+      style={styles.container}
+    >
+      {/* <CustomText style={styles.title}>📋 {item.userName} 님의 문의 내역</CustomText> */}
       <FlatList
-        data={dummyData}
-        keyExtractor={(item) => item.id}
+        data={inquiries}
+        keyExtractor={item => item.id.toString()}
         contentContainerStyle={styles.listContainer}
+
+        // 헤더로 userName 표시
+        ListHeaderComponent={() => (
+          <CustomText style={styles.title}>
+            📋 {inquiries[0]?.userName || ''} 님의 문의 내역
+          </CustomText>
+        )}
         renderItem={({ item }) => (
           <View style={styles.itemBox}>
-            <View style={styles.row}>
-              <Ionicons name="chatbubble-ellipses-outline" size={24} color="#1A4DCC" style={styles.icon} />
-              <CustomText style={styles.itemTitle}>{item.title}</CustomText>
-            </View>
-            <CustomText style={[styles.status, item.status.includes('✅') ? styles.complete : styles.pending]}>
-              {item.status}
+            <CustomText style={styles.date}>
+              {item.createdAt
+                ? formatDate(item.createdAt)
+                : ''}
             </CustomText>
+            <View style={styles.row}>
+              <Ionicons
+                name="chatbubble-ellipses-outline"
+                size={24}
+                color="#1A4DCC"
+                style={styles.icon}
+              />
+              <CustomText style={styles.itemTitle}>제목 : {item.title}</CustomText>
+            </View>
+            <CustomText style={styles.content}>내용 : {item.content}</CustomText>
           </View>
         )}
+        ListEmptyComponent={
+          <CustomText style={styles.emptyText}>문의 내역이 없습니다.</CustomText>
+        }
       />
     </LinearGradient>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-  },
-  listContainer: {
-    paddingTop: 10,
-    paddingBottom: 30,
-  },
-  title: {
-    fontWeight: 'bold',
-    fontSize: 20,
-    marginBottom: 20,
-    textAlign: 'center',
-    color: '#1A4DCC',
-  },
+  container: { flex: 1, padding: 16 },
+  loaderContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  title: { fontSize: 24, fontWeight: 'bold', marginBottom: 16, color: '#1A4DCC' },
+  listContainer: { paddingBottom: 16 },
   itemBox: {
     backgroundColor: '#fff',
-    padding: 20,
-    borderRadius: 18,
-    marginBottom: 16,
-    borderWidth: 2,
-    borderColor: 'rgba(33, 113, 245, 0.5)',
-    shadowColor: '#4B7BE5',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.08,
-    shadowRadius: 6,
-    elevation: 5,
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
   },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  icon: {
-    marginRight: 8,
-  },
-  itemTitle: {
-    fontWeight: '600',
-    color: '#1A4DCC',
-    flexShrink: 1,
-    fontSize: 16,
-    lineHeight: 22,
-  },
-  status: {
-    fontWeight: '500',
-    fontSize: 14,
-    marginLeft: 32,
-  },
-  complete: {
-    color: '#2E8B57', // 진한 초록
-  },
-  pending: {
-    color: '#E67300', // 진한 주황
-  },
+  row: { flexDirection: 'row', alignItems: 'center', marginBottom: 8 },
+  icon: { marginRight: 8 },
+  itemTitle: { fontSize: +24, fontWeight: '600' },
+  userName: { fontSize: 14, color: '#555', marginBottom: 4 },
+  content: { fontSize: +20, color: '#333' },
+  emptyText: { textAlign: 'center', fontSize: 16, color: '#888', marginTop: 32 },
+  date: { fontSize: +20, color: '#888', textAlign: 'right', },
 });
 
 export default InquiryListScreen;

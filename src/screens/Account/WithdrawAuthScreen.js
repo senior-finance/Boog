@@ -1,5 +1,5 @@
 // screens/WithdrawAuthScreen.tsx
-import { React, useState } from 'react';
+import { React, useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -26,37 +26,76 @@ import { TextInputMask } from 'react-native-masked-text';
 import CustomNumPad from '../../components/CustomNumPad';
 import LinearGradient from 'react-native-linear-gradient';
 import ReactNativeBiometrics from 'react-native-biometrics';
-import { deposit, withdraw, accountUpsert, accountGet } from '../../database/mongoDB';
+import { deposit, withdraw, accountUpsert, accountGet, withdrawVerify, mongoDB } from '../../database/mongoDB';
 import { CONFIG } from './AccountScreen';
 
 // 실제 지문/Pin 인증 모듈을 연동하세요
 
 export default function WithdrawAuthScreen() {
   const nav = useNavigation();
-  const { accountNumTo, bankTo, formattedAmount } = useRoute().params;
-  const { ammount, bankName, accountNum, testBedAccount } = useRoute().params;
+  const { accountNumTo, bankTo, formattedAmount, rawAmount } = useRoute().params;
+  const { amount, bankName, accountNum, testBedAccount } = useRoute().params;
+
+  console.log(rawAmount)
 
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [biometryType, setBiometryType] = useState(null);
+  const [transactionType, setTransactionType] = useState(''); // '나에게' 또는 '상대방에게'
+  const [counterpartyName, setCounterpartyName] = useState(''); // 상대방 한글 이름
+
+  // 하이픈 제거한 계좌번호
+  const normalizedAcctNum = accountNumTo.replace(/-/g, '');
+
+  useEffect(() => {
+    (async () => {
+      // 1) 내 DB의 account 컬렉션에서 계좌 조회
+      const accounts = await mongoDB(
+        'find',
+        testBedAccount,    // 'kmj' or 'hwc'
+        'account',
+        { query: {} }
+      );
+
+      const normalized = accountNumTo.replace(/-/g, '');
+      const isOwn = accounts.some(acc =>
+        acc.accountNum.replace(/-/g, '') === normalized
+      );
+
+      if (isOwn) {
+        // 2-A) 내 계좌면 “나” 처리
+        setTransactionType('나');
+        setCounterpartyName('나');
+      } else {
+        // 2-B) 상대방 계좌면 “상대방” 처리 + 이름 조회
+        setTransactionType('상대방');
+        // dbName이 내 것이 아닌(≠ testBedAccount) common.name 문서를 가져옴
+        const other = await mongoDB(
+          'findOne',
+          'common',
+          'name',
+          { query: { dbName: { $ne: testBedAccount } } }
+        );
+        setCounterpartyName(other?.koreaName || '');
+      }
+    })();
+  }, [accountNumTo, testBedAccount]);
 
   const handleWithdraw = async () => {
     // 금액 문자열(예: "1,000,000") → 숫자
-    const num = parseFloat(formattedAmount.replace(/,/g, ''));
     const setTo = parseFloat(accountNumTo.replace(/-/g, ''));
     try {
-      console.log("과연?", testBedAccount),
-        // CONFIG와 testBedAccount는 상위 컨텍스트에서 받아왔다고 가정
-        await withdraw(
-          CONFIG[testBedAccount],
-          accountNumTo,    // fintech_use_num
-          bankTo,          // bank_name
-          num
-        );
-
-      console.log('출금 요청 완료 이후 --:', accountNum, num);
-      console.log('출금 요청 완료 ++:', setTo, num);
+      // console.log("과연?", testBedAccount),
+      // CONFIG와 testBedAccount는 상위 컨텍스트에서 받아왔다고 가정
+      await withdraw(
+        testBedAccount,
+        accountNumTo,    // fintech_use_num
+        bankTo,          // bank_name
+        rawAmount
+      );
+      console.log('나의 계좌 --', accountNum, rawAmount);
+      console.log('송금 보낼 계좌 ++', setTo, rawAmount);
       Alert.alert(
-        `${bankTo}에서 ${num.toLocaleString()}원 출금 요청 완료`
+        `${bankTo}에서 ${formattedAmount} 출금 요청이 완료 됐어요`
       );
       // nav.goBack();
     } catch (err) {
@@ -114,6 +153,9 @@ export default function WithdrawAuthScreen() {
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
     >
+      <Text style={styles.accountName}>
+        {counterpartyName} 에게
+      </Text>
       <Text style={styles.accountText}>송금할 상대방의 계좌 번호</Text>
       <Text style={styles.textValue}>{accountNumTo}</Text>
       <Text style={styles.bankText}>송금할 은행</Text>
@@ -244,6 +286,12 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#3498DB',
     fontSize: 28,
+  },
+  accountName: {
+    textAlign: 'center',
+    color: '#3498DB',
+    fontSize: 28,
+    fontWeight: "500",
   },
   textValue: {
     textAlign: 'center', // 텍스트 가운데 정렬

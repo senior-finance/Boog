@@ -145,31 +145,42 @@ export async function accountGetAll(userName) {
   return await mongoDB('find', 'bank', 'withdraw', { query: {} });
 }
 
-// hwc, accountNum과 accountBank 모두 선택적(optional) 파라미터로 처리
+// accountNum과 accountBank 모두 선택적(optional) 파라미터로 처리
 export async function withdrawVerify({ accountNum, accountBank }) {
+  // 공통 쿼리 조건 구성
   const query = {};
-
   if (accountNum) {
-    // accountNum이 넘어왔을 때만 정확 매칭
     query.accountNum = accountNum;
   }
-
   if (accountBank) {
-    // accountBank이 넘어왔을 때만 prefix 매칭
     const prefix = accountBank.slice(0, -2);
     query.accountBank = { $regex: `^${prefix}` };
   }
 
-  return await mongoDB(
-    'find',
-    'hwc',
-    'account',
-    { query }
-  );
+  // kmj, hwc 컬렉션을 병렬 조회
+  const [kmjResults, hwcResults] = await Promise.all([
+    mongoDB('find', 'kmj', 'account', { query }),
+    mongoDB('find', 'hwc', 'account', { query }),
+  ]);
+
+  // 각 결과에 source 필드 추가
+  const annotatedKmj = kmjResults.map(doc => ({ ...doc, source: 'kmj' }));
+  const annotatedHwc = hwcResults.map(doc => ({ ...doc, source: 'hwc' }));
+
+  // 둘을 합쳐 반환
+  return [...annotatedKmj, ...annotatedHwc];
 }
 
-// === 알림 저장 ===
-export async function addNotification(userId, icon, iconColor, borderColor, content) {
+// === 알림 저장 (옵션 객체 전용) ===
+export async function addNotification(
+  userId,
+  {
+    icon = 'information-circle',
+    iconColor = '#2196F3',
+    borderColor = '#BBDEFB',
+    content,
+  }
+) {
   return await mongoDB('insertOne', 'info', 'notify', {
     document: {
       userId,
@@ -184,27 +195,25 @@ export async function addNotification(userId, icon, iconColor, borderColor, cont
 
 // === 알림 조회 ===
 export async function getNotifications(userId) {
+  // 1) 몽고DB에서 raw 결과 가져오기
   const res = await mongoDB('find', 'info', 'notify', {
     query: { userId },
     options: { sort: { createdAt: -1 } },
   });
 
-  if (Array.isArray(res)) return res;
-  if (Array.isArray(res.documents)) return res.documents;
-  return [];
-}
+  // 2) 결과 배열로 통일
+  const docs = Array.isArray(res)
+    ? res
+    : Array.isArray(res.documents)
+      ? res.documents
+      : [];
 
-// === 1대1 문의 보내기 저장 ===
-// export async function sendInquiry({ userName, title, content }) {
-//   return await mongoDB('insertOne', 'info', 'inquiry', {
-//     document: {
-//       userName,
-//       title,
-//       content,
-//       createdAt: new Date(),
-//     },
-//   });
-// }
+  // 3) _id를 id로 바꾸고, 나머지 필드는 그대로 퍼뜨려 반환
+  return docs.map(({ _id, ...fields }) => ({
+    id: _id,
+    ...fields,
+  }));
+}
 
 // === 퀴즈 관련 함수 ===
 /**

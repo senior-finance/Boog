@@ -33,6 +33,7 @@ export default function WithdrawAccountScreen() {
   const [loading, setLoading] = useState(false);
 
   const { amount, bankName, accountNum, testBedAccount } = useRoute().params;
+  // console.log(testBedAccount)
 
   const [account, setAccount] = useState('');
   const [accountNumTo, setaccountNumTo] = useState(''); // 계좌번호 입력

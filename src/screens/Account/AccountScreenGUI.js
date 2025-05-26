@@ -24,7 +24,7 @@ import { NumPad } from '@umit-turk/react-native-num-pad';
 import { TextInputMask } from 'react-native-masked-text';
 import CustomNumPad from '../../components/CustomNumPad';
 import LottieView from 'lottie-react-native';
-import { deposit, withdraw, accountUpsert, accountGet } from '../../database/mongoDB'
+import { deposit, withdraw, accountUpsert, accountGet, mongoDB } from '../../database/mongoDB'
 import CustomModal from '../../components/CustomModal.js'
 import { useNavigation } from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
@@ -66,6 +66,21 @@ const AccountScreenGUI = ({
   const [dbAccounts, setDbAccounts] = useState([]);  // { accountId, accountNum, amount } 형태
   const [isModalVisible, setModalVisible] = useState(false);
   const [selectedBank, setSelectedBank] = useState('전체');
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [ownName, setOwnName] = useState('');
+
+  // 내 한글 이름 조회
+  useEffect(() => {
+    (async () => {
+      const doc = await mongoDB(
+        'findOne',
+        'common',
+        'name',
+        { query: { dbName: testBedAccount } }
+      );
+      setOwnName(doc?.koreaName || testBedAccount);
+    })();
+  }, [testBedAccount]);
 
   // accountBalances: [{ fintech_use_num, bank_name, balance_amt, … }, …]
   const BANK_OPTIONS = useMemo(() => {
@@ -240,6 +255,8 @@ const AccountScreenGUI = ({
 
   // 애니메이션 실행 함수
   const handleAnimateReceive = () => {
+    // 터치 막기 시작
+    setIsAnimating(true);
     // 애니메이션 값을 0으로 리셋
     animationValue.setValue(0);
 
@@ -260,6 +277,7 @@ const AccountScreenGUI = ({
     ]).start(() => {
       // 애니메이션 종료 후 필요한 추가 동작
       setModalVisible(true);
+      setIsAnimating(false);
     });
   };
 
@@ -352,6 +370,13 @@ const AccountScreenGUI = ({
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
       >
+        {/* ★ 애니 중일 때만 뜨는 풀스크린 투명 오버레이 */}
+        {isAnimating && (
+          <View
+            style={[StyleSheet.absoluteFill, { zIndex: 1 }]}
+            pointerEvents="auto"
+          />
+        )}
         <CustomText style={styles.mainTitle}>
           ℹ️ 금융결제원 테스트베드 환경에 등록된 모의 계좌입니다
         </CustomText>
@@ -373,7 +398,7 @@ const AccountScreenGUI = ({
           // resizeMode="cover" // 화면에 꽉 차게, 비율 유지
           /> */}
         </View>
-        <CustomText style={styles.subTitle}>김민준 님의 계좌 목록이에요</CustomText>
+        <CustomText style={styles.subTitle}> {ownName} 님의 계좌 목록이에요</CustomText>
         {/* // 여기에 은행별로 고를수 잇게 옵션 버튼 넣어줘, 전체, 신한, 국민, 하나 등등등 */}
 
         {/* 은행 옵션 버튼 */}
@@ -472,10 +497,14 @@ const AccountScreenGUI = ({
                     <View style={styles.buttonContainer}>
                       <TouchableOpacity
                         style={styles.receiveButton}
-                        // onPress={() => handleReceiveMoney(item)}
-                        onPress={() => onPressDeposit(item)}>
+                        onPress={() => {
+                          onPressDeposit(item);
+                        }}
+                        disabled={isAnimating}
+                        activeOpacity={isAnimating ? 1 : 0.7}
+                      >
                         <CustomText style={styles.receiveButtonText}>
-                          가져오기
+                          지원금 받기
                         </CustomText>
                       </TouchableOpacity>
                       <TouchableOpacity

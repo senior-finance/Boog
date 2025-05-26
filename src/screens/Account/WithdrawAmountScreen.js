@@ -229,6 +229,7 @@ export default function WithdrawAmountScreen() {
               nav.navigate('WithdrawAuth', {
                 accountNumTo,
                 bankTo,
+                rawAmount: raw,
                 formattedAmount: amountTo,
                 accountNum,
                 bankName,
