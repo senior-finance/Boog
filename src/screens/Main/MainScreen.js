@@ -218,14 +218,34 @@ const MainScreen = ({ navigation }) => {
           }
         ]}
       >
-        <View style={styles.seniorModeToggleContainer}>
-          <CustomText style={styles.seniorModeText}>시니어 모드</CustomText>
-          <Switch
-            value={seniorMode}
-            onValueChange={setSeniorMode}
-            thumbColor={seniorMode ? '#4B7BE5' : '#ccc'}
-            trackColor={{ false: '#aaa', true: '#A9C7EE' }}
-          />
+        <View style={styles.toggleButtonGroup}>
+          <TouchableOpacity
+            style={[
+              styles.toggleButton,
+              !seniorMode && styles.selectedButton,
+              styles.leftToggle
+            ]}
+            onPress={() => setSeniorMode(false)}
+          >
+            <CustomText style={[
+              styles.toggleButtonText,
+              !seniorMode && styles.selectedButtonText
+            ]}>일반 모드</CustomText>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[
+              styles.toggleButton,
+              seniorMode && styles.selectedButton,
+              styles.rightToggle
+            ]}
+            onPress={() => setSeniorMode(true)}
+          >
+            <CustomText style={[
+              styles.toggleButtonText,
+              seniorMode && styles.selectedButtonText
+            ]}>큰 버튼 모드</CustomText>
+          </TouchableOpacity>
         </View>
 
         <View style={styles.balanceCard}>
@@ -457,18 +477,45 @@ const MainScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   content: { padding: 20 },
-  seniorModeToggleContainer: {
+  toggleButtonGroup: {
     flexDirection: 'row',
-    justifyContent: 'center',
+    backgroundColor: '#E6EEF8',
+    borderRadius: 999,
+    padding: 4,
+    marginHorizontal: 20,
+    marginBottom: 24,
+    justifyContent: 'space-between',
+  },
+  toggleButton: {
+    flex: 1,
     alignItems: 'center',
-    marginBottom: 16,
+    justifyContent: 'center',
+    paddingVertical: 14,
+    paddingHorizontal: 10,
   },
-  seniorModeText: {
-    color: '#0052CC',
+  toggleButtonText: {
+    color: '#555',
     fontWeight: 'bold',
-    marginRight: 10,
+    fontSize: 16,
+    textAlign: 'center',
   },
-  balanceCard: {
+  selectedButton: {
+    backgroundColor: '#5C88E0',
+  },
+  selectedButtonText: {
+    color: '#fff',
+  },
+  leftToggle: {
+    borderTopLeftRadius: 999,
+    borderBottomLeftRadius: 999,
+    marginRight: 4,
+  },
+  rightToggle: {
+    borderTopRightRadius: 999,
+    borderBottomRightRadius: 999,
+    marginLeft: 4,
+  },
+    balanceCard: {
     backgroundColor: 'rgba(49, 116, 199, 0.97)',
     borderRadius: 20,
     padding: 60,
