@@ -12,6 +12,8 @@ import {
   ActivityIndicator,
   TextInput,
   KeyboardAvoidingView,
+  Animated,
+  Easing
 } from 'react-native';
 import AudioRecord from 'react-native-audio-record';
 import sendAudioToCSR from './CSRService';
@@ -45,6 +47,23 @@ export default function VoiceInputScreen() {
     Welfare: '복지 혜택',
     DepositStep1: '입금 연습',
     Guide: '앱 사용법'
+  };
+
+  const BlinkingDots = () => {
+    const [dots, setDots] = useState('');
+
+    useEffect(() => {
+      const interval = setInterval(() => {
+        setDots((prev) => (prev.length < 3 ? prev + '∙' : ''));
+      }, 300);
+      return () => clearInterval(interval);
+    }, []);
+
+    return (
+      <CustomText style={{ fontSize: 16, color: '#000'}}>
+        부금이가 답변을 입력 중입니다 {dots}
+      </CustomText>
+    );
   };
 
   const filePath = `${RNFS.CachesDirectoryPath}/sound.wav`;
@@ -89,9 +108,12 @@ export default function VoiceInputScreen() {
 
   const handleResetChat = () => {
     setChatHistory([]);
-    setTextInput('');         
-    Tts.stop();               
-  };  
+    setTextInput('');
+    setIsLoading(false); 
+    setShowConfirmModal(false); 
+    setConfirmTarget(null);     
+    Tts.stop();
+  };
 
   const onSendText = async (customText) => {
     let input = customText ?? textInput;
@@ -267,10 +289,6 @@ return (
           ))}
         </View>
 
-        {isLoading && (
-          <ActivityIndicator size="large" style={{ marginTop: 20 }} />
-        )}
-
         {chatHistory.map((msg, idx) => (
           <View
             key={idx}
@@ -282,7 +300,6 @@ return (
             {msg.role === 'bot' && (
               <Image source={require('../../assets/bot.png')} style={styles.avatar} />
             )}
-
             <View
               style={
                 msg.role === 'user' ? styles.chatBubbleUser : styles.chatBubbleBot
@@ -292,6 +309,16 @@ return (
             </View>
           </View>
         ))}
+
+        {/* ✅ 챗봇이 응답 중일 때 보여줄 깜빡이는 메시지 */}
+        {isLoading && (
+          <View style={[styles.chatRow, styles.chatRowBot]}>
+            <Image source={require('../../assets/bot.png')} style={styles.avatar} />
+            <View style={styles.chatBubbleBot}>
+              <BlinkingDots />
+            </View>
+          </View>
+        )}
       </ScrollView>
 
       {/* 입력창 하단 바 */}

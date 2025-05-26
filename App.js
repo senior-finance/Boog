@@ -62,7 +62,6 @@ import GuideDetailScreen from './src/screens/InfoSupport/GuideDetailScreen';
 // 기타
 import BiometricScreen from './src/screens/Biometric/BiometricScreen';
 import VoiceInputScreen from './src/screens/VoiceAssistant/VoiceInputScreen';
-import TTSSettingScreen from './src/screens/VoiceAssistant/TTSSettingScreen';
 import QuizResult from './src/screens/Learning/QuizResult';
 import FunctionScreen from './src/screens/Info/FunctionScreen';
 
@@ -160,7 +159,6 @@ export default function App() {
                   <Stack.Screen name="NotificationScreen" component={NotificationScreen} options={{ title: '알림' }} />
                   <Stack.Screen name="Biometric" component={BiometricScreen} />
                   <Stack.Screen name="VoiceInput" component={VoiceInputScreen} options={{ title: 'AI 챗봇' }} />
-                  <Stack.Screen name="TTSSetting" component={TTSSettingScreen} options={{ title: '음성 설정' }} />
                   <Stack.Screen name="AutoPhoneAnalysis" component={AutoPhoneAnalysisScreen} options={{ title: '자동 통화/문자 분석' }} />
 
                   <Stack.Screen name="MyInfo" component={MyInfoScreen} options={{ title: '내 정보 테스트' }} />
