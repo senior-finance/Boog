@@ -293,7 +293,7 @@ const MapViewScreen = ({ route, navigation }) => {
         <NaverMapView
           ref={mapView}
           style={{ width: '100%', height: '100%' }}
-          showsMyLocationButton={true}
+          showsMyLocationButton={false}
           center={mapCenter}
           useTextureView
         >
