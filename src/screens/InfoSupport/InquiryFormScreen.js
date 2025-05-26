@@ -18,6 +18,8 @@ import CustomModal from '../../components/CustomModal';
 import { useUser } from '../Login/UserContext';
 import PushNotification from 'react-native-push-notification';
 import { addNotification } from '../../database/mongoDB';
+import LottieView from 'lottie-react-native';
+
 
 const InquiryFormScreen = () => {
   const [title, setTitle] = useState('');
@@ -185,11 +187,17 @@ const InquiryFormScreen = () => {
             <CustomText style={styles.buttonText}>📨 문의 보내기</CustomText>
           </TouchableOpacity>
         </ScrollView>
-        {loading && (
-          <View style={styles.loadingOverlay}>
-            <ActivityIndicator size="large" color="#4B7BE5" />
-          </View>
-        )}
+       {loading && (
+  <View style={styles.loadingOverlay}>
+    <LottieView
+      source={require('../../assets/loadingg.json')} // 로티 파일 경로
+      autoPlay
+      loop
+      style={styles.loadingAnimation}
+    />
+  </View>
+)}
+
         <CustomModal
           visible={modalVisible}
           title={modalConfig.title}
@@ -274,6 +282,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     zIndex: 999,
   },
+
+  loadingAnimation: {
+  width: 200,
+  height: 200,
+  marginBottom: 100
+},
+
 });
 
 export default InquiryFormScreen;

@@ -144,7 +144,7 @@ const AutoPhoneAnalysisScreen = () => {
 
           {loading ? (
             <LottieView
-              source={require('../../assets/loading.json')}
+              source={require('../../assets/loadingg.json')}
               autoPlay
               loop
               style={styles.loadingAnimation}
