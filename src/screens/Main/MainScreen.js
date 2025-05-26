@@ -144,7 +144,7 @@ const MainScreen = ({ navigation }) => {
 
   const featureButtons = [
     { title: 'AI 챗봇', icon: 'chatbubble-ellipses-outline', onPress: () => navigation.navigate('VoiceInput') },
-    { title: '통화.문자', icon: 'analytics-outline', onPress: () => navigation.navigate('AutoPhoneAnalysis') },
+    { title: '통화.문자 분석', icon: 'analytics-outline', onPress: () => navigation.navigate('AutoPhoneAnalysis') },
     { title: '보이스 피싱', icon: 'alert-circle-outline', onPress: () => navigation.navigate('VoicePhishingScreen') },
   ];
 

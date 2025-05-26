@@ -117,7 +117,7 @@ export default function GuideDetailScreen({ route }) {
     ],
     analysis: [
       {
-        text: '1. 메인인 화면의 스마트 기능 영역에서 "통화·문자" 버튼을 눌러 자동 분석 화면으로 이동해요.',
+        text: '1. 메인 화면의 스마트 기능 영역에서 "통화·문자" 버튼을 눌러 자동 분석 화면으로 이동해요.',
         image: analysis1,
       },
       {
