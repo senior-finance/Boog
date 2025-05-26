@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, BackHandler } from 'react-native';
 import { useUser } from './UserContext';
 import CustomText from '../../components/CustomText';
 import CustomModal from '../../components/CustomModal';
 import { updateUsername, upsertSocialLoginUser, mongoDB } from '../../database/mongoDB';
 import { storeAuthSession } from './AutoLogin';
+import { WebView } from 'react-native-webview';
+import { LOGIN_URL, KFTC_TRAN_ID_KMJ } from '@env'
 
 const SetUsernameScreen = ({ navigation }) => {
 
@@ -27,9 +29,24 @@ const SetUsernameScreen = ({ navigation }) => {
   // 인증 상태 관리
   const [isVerified, setIsVerified] = useState(false);       // 인증 여부
   const [passToken, setPassToken] = useState(null);          // 인증 토큰 관리
+  const [showWebView, setShowWebView] = useState(false);     // 웹뷰 띄우기
+  useEffect(() => { // 웹뷰 뒤로가기버튼으로 닫기
+    if (showWebView) {
+      const backHandler = BackHandler.addEventListener(
+        'hardwareBackPress',
+        () => {
+          setShowWebView(false);  // WebView 닫기
+          return true;            // 기본 뒤로가기(앱 종료 등) 막기
+        }
+      );
+
+      return () => backHandler.remove();
+    }
+  }, [showWebView]);
   const handleVerify = async () => {
-    // PASS 인증 성공 후 얻은 고유 토큰 예시 (실제로는 통신사/SDK 통해 받아옴)
-    const mockToken = 'EXAMPLE_TOKEN';  // 테스트용 토큰입니다.
+    setShowWebView(true); // WebView 표시
+
+    const mockToken = KFTC_TRAN_ID_KMJ;
     setPassToken(mockToken);
 
     try {
@@ -170,55 +187,65 @@ const SetUsernameScreen = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
+    showWebView ? (
+      <View style={{ flex: 1 }}>
+        <View style={{ flex: 1 }}>
+          <WebView
+            source={{ uri: LOGIN_URL }}
+          />
+        </View>
+      </View>
+    ) : (
+      <View style={styles.container}>
 
-      <CustomText style={styles.title}>여기서 PASS인증으로 토큰값을 받아야 할 것 같음</CustomText>
-      <TouchableOpacity style={styles.button} onPress={handleVerify}>
-        <CustomText style={styles.buttonText}>사용자 인증하기</CustomText>
-      </TouchableOpacity>
+        <CustomText style={styles.title}>여기서 PASS인증으로 토큰값을 받아야 할 것 같음</CustomText>
+        <TouchableOpacity style={styles.button} onPress={handleVerify}>
+          <CustomText style={styles.buttonText}>사용자 인증하기</CustomText>
+        </TouchableOpacity>
 
-      <Gap></Gap>
+        <Gap></Gap>
 
-      {!isVerified && (
-        <CustomText style={styles.title}>
-          이름은 인증 완료 후 입력할 수 있습니다.
-        </CustomText>
-      )}
-      <CustomText style={styles.title}>사용자의 이름을 입력해주세요</CustomText>
-      <CustomText style={styles.title}>이름은 한번 설정 후 수정이 불가하오니 신중하게 입력 바랍니다.</CustomText>
-      <TextInput
-        style={[
-          styles.input,
-          !isVerified && styles.inputDisabled,
-        ]}
-        placeholder={isVerified ? '이름을 입력해주세요' : '인증 후 입력 가능'}
-        value={usernameInput}
-        onChangeText={handleNameChange}
-        editable={isVerified}
-      />
+        {!isVerified && (
+          <CustomText style={styles.title}>
+            이름은 인증 완료 후 입력할 수 있습니다.
+          </CustomText>
+        )}
+        <CustomText style={styles.title}>사용자의 이름을 입력해주세요</CustomText>
+        <CustomText style={styles.title}>이름은 한번 설정 후 수정이 불가하오니 신중하게 입력 바랍니다.</CustomText>
+        <TextInput
+          style={[
+            styles.input,
+            !isVerified && styles.inputDisabled,
+          ]}
+          placeholder={isVerified ? '이름을 입력해주세요' : '인증 후 입력 가능'}
+          value={usernameInput}
+          onChangeText={handleNameChange}
+          editable={isVerified}
+        />
 
-      <Gap></Gap>
-      <TouchableOpacity
-        style={[
-          styles.button,
-          { backgroundColor: isVerified && isNameValid ? '#4B7BE5' : '#ccc' },
-        ]}
-        onPress={handleConfirm}
-        disabled={!(isVerified && isNameValid)}
-      >
-        <CustomText style={styles.buttonText}>확인</CustomText>
-      </TouchableOpacity>
+        <Gap></Gap>
+        <TouchableOpacity
+          style={[
+            styles.button,
+            { backgroundColor: isVerified && isNameValid ? '#4B7BE5' : '#ccc' },
+          ]}
+          onPress={handleConfirm}
+          disabled={!(isVerified && isNameValid)}
+        >
+          <CustomText style={styles.buttonText}>확인</CustomText>
+        </TouchableOpacity>
 
 
-      <Gap></Gap>
+        <Gap></Gap>
 
-      <CustomModal
-        visible={modalVisible}
-        title={modalConfig.title}
-        message={modalConfig.message}
-        buttons={modalConfig.buttons}
-      />
-    </View>
+        <CustomModal
+          visible={modalVisible}
+          title={modalConfig.title}
+          message={modalConfig.message}
+          buttons={modalConfig.buttons}
+        />
+      </View>
+    )
   );
 };
 
