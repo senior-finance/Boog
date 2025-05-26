@@ -94,7 +94,7 @@ export default function GuideDetailScreen({ route }) {
     ],
 
     accessibility: [
-      { text: '1. 내 정보 화면에서는 프로필 사진을 변경하거나, 글자와 음향 크기를 설정할 수 있고 자주 묻는 질문도 확인 할 수 있어요.', image: myinfo1 },
+      { text: '1. 내 정보 화면에서는 프로필을 눌러 사진을 변경하거나, 글자와 음향 크기를 설정할 수 있고 자주 묻는 질문도 확인 할 수 있어요.', image: myinfo1 },
       { text: '2. "1:1 문의하기" 버튼을 눌러 궁금한 점이나 불편사항을 직접 보낼 수 있어요.', image: myinfo2 },
       { text: '3. 문의 제목과 내용을 입력한 후 "문의 보내기" 버튼을 누르면 문의가 접수돼요.', image: myinfo3 },
     ],

@@ -124,30 +124,33 @@ const MyInfoScreen = ({ navigation }) => {
       <Modal visible={selectModalVisible} transparent animationType="fade">
         <View style={styles.modalOverlay}>
           <View style={styles.selectBox}>
-            <TouchableOpacity
-              onPress={() => {
-                setSelectModalVisible(false);
-                navigation.navigate('ProfileIconSelect');
-              }}
-              style={styles.selectButton}
-            >
-              <CustomText style={styles.selectText}>기본 아이콘 선택</CustomText>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => {
-                setSelectModalVisible(false);
-                handleSelectImage();
-              }}
-              style={styles.selectButton}
-            >
-              <CustomText style={styles.selectText}>갤러리에서 선택</CustomText>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => setSelectModalVisible(false)}
-              style={[styles.selectButton, { borderTopWidth: 1 }]}
-            >
-              <CustomText style={[styles.selectText, { color: '#999' }]}>취소</CustomText>
-            </TouchableOpacity>
+<TouchableOpacity
+  onPress={() => {
+    setSelectModalVisible(false);
+    navigation.navigate('ProfileIconSelect');
+  }}
+  style={styles.selectButton}
+>
+  <CustomText style={[styles.selectText, { color: '#1446D8' }]}>기본 아이콘 선택</CustomText>
+</TouchableOpacity>
+
+<TouchableOpacity
+  onPress={() => {
+    setSelectModalVisible(false);
+    handleSelectImage();
+  }}
+  style={styles.selectButton}
+>
+  <CustomText style={[styles.selectText, { color: '#1abc9c' }]}>갤러리에서 선택</CustomText>
+</TouchableOpacity>
+
+<TouchableOpacity
+  onPress={() => setSelectModalVisible(false)}
+  style={[styles.selectButton, { borderTopWidth: 1 }]}
+>
+  <CustomText style={[styles.selectText, { color: '#999' }]}>취소</CustomText>
+</TouchableOpacity>
+
           </View>
         </View>
       </Modal>
