@@ -3,8 +3,6 @@ import React, { useState } from 'react';
 import {
   View,
   Text,
-  Alert,
-  Modal,
   Button,
   FlatList,
   TextInput,
@@ -25,8 +23,30 @@ import { NumPad } from '@umit-turk/react-native-num-pad';
 import { TextInputMask } from 'react-native-masked-text';
 import CustomNumPad from '../../components/CustomNumPad';
 import LinearGradient from 'react-native-linear-gradient';
+import CustomModal from '../../components/CustomModal';
+
 
 export default function WithdrawAmountScreen() {
+  // 커스텀 모달
+  const [modalButtons, setModalButtons] = useState([]);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalTitle, setModalTitle] = useState('');
+  const [modalMessage, setModalMessage] = useState('');
+
+
+  const showModal = (title, message, buttons = [
+    {
+      text: '확인',
+      onPress: () => setModalVisible(false),
+      color: '#4B7BE5',
+    }
+  ]) => {
+    setModalTitle(title);
+    setModalMessage(message);
+    setModalButtons(buttons);
+    setModalVisible(true);
+  };
+
   const { accountNumTo, bankTo } = useRoute().params;
   const { amount, bankName, accountNum, testBedAccount } = useRoute().params;
 
@@ -222,7 +242,7 @@ export default function WithdrawAmountScreen() {
             disabled={!amountTo}         // accountNumber 없으면 비활성화
             onPress={() => {
               if (amount < raw) {
-                Alert.alert('잔액 부족', '출금 가능한 금액을 초과했어요');
+                showModal('잔액 부족', '출금 가능한 금액을 초과했어요');
                 return;
               }
               // 금액 검사 통과 시에만 화면 이동
@@ -248,8 +268,15 @@ export default function WithdrawAmountScreen() {
               다음
             </Text>
           </TouchableOpacity>
+
         </LinearGradient>
       </View>
+      <CustomModal
+        visible={modalVisible}
+        title={modalTitle}
+        message={modalMessage}
+        buttons={modalButtons}
+      />
     </LinearGradient>
   );
 }

@@ -2,7 +2,6 @@ import React, { useRef, useState, useEffect, useMemo } from 'react';
 import {
   View,
   Text,
-  Alert,
   Modal,
   Button,
   FlatList,
@@ -69,6 +68,25 @@ const AccountScreenGUI = ({
   const [isAnimating, setIsAnimating] = useState(false);
   const [ownName, setOwnName] = useState('');
 
+  // 커스텀 모달
+  const [modalTitle, setModalTitle] = useState('');
+  const [modalMessage, setModalMessage] = useState('');
+  const [buttons, setButtons] = useState([]);
+
+  const showSimpleModal = (message) => {
+    setModalTitle('알림');
+    setModalMessage(message);
+    setButtons([
+      {
+        text: '확인',
+        onPress: () => setModalVisible(false),
+        color: '#ccc',
+        textColor: 'black',
+      },
+    ]);
+    setModalVisible(true);
+  };
+
   // 내 한글 이름 조회
   useEffect(() => {
     (async () => {
@@ -134,7 +152,7 @@ const AccountScreenGUI = ({
   const handleDeposit = async (selectedItem, num) => {
     // const num = parseFloat(amount);
     if (!selectedItem || isNaN(num) || num <= 0) {
-      alert('유효한 금액을 입력하세요.');
+      showSimpleModal('유효한 금액을 입력하세요.');
       return;
     }
     try {
@@ -147,9 +165,8 @@ const AccountScreenGUI = ({
       );
       // console.log(CONFIG[testBedAccount].dbName);
       console.log('입금 요청 완료:', selectedItem.fintech_use_num, num);
-      // alert(
-      //   `${selectedItem.bank_name || '계좌'
-      //   }에서 ${num.toLocaleString()}원 입금 요청 완료`,
+      // showSimpleModal(
+      //   `${selectedItem.bank_name || '계좌'}에서 ${num.toLocaleString()}원 입금 요청 완료`,
       // );
       // setShowWithdrawOverlay(false);
       setSelectedItem(null);
@@ -158,7 +175,7 @@ const AccountScreenGUI = ({
     } catch (err) {
       console.error(err);
       console.log(amount)
-      alert('입금 중 오류가 발생했습니다.');
+      showSimpleModal('입금 중 오류가 발생했습니다.');
     }
   };
 
@@ -171,7 +188,7 @@ const AccountScreenGUI = ({
   const handleWithdraw = async () => {
     const num = parseFloat(amount);
     if (!selectedItem || isNaN(num) || num <= 0) {
-      alert('유효한 금액을 입력하세요.');
+      showSimpleModal('유효한 금액을 입력하세요.');
       return;
     }
     try {
@@ -184,10 +201,10 @@ const AccountScreenGUI = ({
       );
       // console.log(CONFIG[testBedAccount].dbName);
       console.log('출금 요청 완료:', selectedItem.fintech_use_num, num);
-      alert(
-        `${selectedItem.bank_name || '계좌'
-        }에서 ${num.toLocaleString()}원 출금 요청 완료`,
+      showSimpleModal(
+        `${selectedItem.bank_name || '계좌'}에서 ${num.toLocaleString()}원 출금 요청 완료`,
       );
+
       setShowWithdrawOverlay(false);
       setSelectedItem(null);
       await fetchDbAccounts();
@@ -195,7 +212,7 @@ const AccountScreenGUI = ({
     } catch (err) {
       console.error(err);
       console.log(amount)
-      alert('출금 중 오류가 발생했습니다.');
+      showSimpleModal('출금 중 오류가 발생했습니다.');
     }
   };
 
@@ -215,14 +232,14 @@ const AccountScreenGUI = ({
     // 2) CONFIG에서 dbName만 꺼내기
     const { dbName } = CONFIG[testBedAccount] || {};
     if (!dbName) {
-      Alert.alert('테스트 계정을 먼저 선택하세요');
+      showSimpleModal('테스트 계정을 먼저 선택하세요');
       return;
     }
 
     // 3) item 검증 → 디스트럭처링
     if (!item) {
       console.log('item is null!');
-      Alert.alert('계좌를 먼저 선택하세요');
+      showSimpleModal('계좌를 먼저 선택하세요');
       return;
     }
     const { fintech_use_num: accountId, bank_name: accountBank } = item;
@@ -242,11 +259,11 @@ const AccountScreenGUI = ({
       await fetchDbAccounts();
       // DB에서 계좌 정보 다시 가져오기
       console.log('Upserted ID:', upsertedId || '기존 문서 갱신됨');
-      Alert.alert('저장 완료');
+      showSimpleModal('저장 완료');
 
     } catch (err) {
       console.error(err);
-      Alert.alert('저장에 실패했습니다');
+      showSimpleModal('저장에 실패했습니다');
     }
   };
 
@@ -276,6 +293,15 @@ const AccountScreenGUI = ({
       }),
     ]).start(() => {
       // 애니메이션 종료 후 필요한 추가 동작
+      setModalTitle('지원금');
+      setModalMessage('테스트 지원금 100만원을 입금 드렸어요');
+      setButtons([
+        {
+          text: '닫기',
+          onPress: () => setModalVisible(false),
+          color: '#4B7BE5',
+        },
+      ]);
       setModalVisible(true);
       setIsAnimating(false);
     });
@@ -610,17 +636,9 @@ const AccountScreenGUI = ({
         </Modal>
         <CustomModal
           visible={isModalVisible}
-          title={"지원금"}
-          message={"테스트 지원금 100만원을 입금 드렸어요"}
-          buttons={[
-            {
-              text: '닫기',
-              onPress: () => setModalVisible(false),
-              color: '#ccc',
-              textColor: 'black',
-            }]}
-          onCancel={() => setModalVisible(false)}
-          onConfirm={() => setModalVisible(false)}
+          title={modalTitle}
+          message={modalMessage}
+          buttons={buttons}
         />
       </LinearGradient>
     );

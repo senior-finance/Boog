@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   ToastAndroid,
   Platform,
-  Alert,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Slider from '@react-native-community/slider';

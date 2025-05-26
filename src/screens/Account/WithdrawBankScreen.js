@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import {
   View,
   Text,
-  Alert,
   Modal,
   Button,
   FlatList,
@@ -28,10 +27,30 @@ import CustomNumPad from '../../components/CustomNumPad';
 import LinearGradient from 'react-native-linear-gradient';
 import { accountGetAll, withdrawVerify } from '../../database/mongoDB';
 import LottieView from 'lottie-react-native';
+import CustomModal from '../../components/CustomModal';
 
 export default function WithdrawBankScreen() {
+  // 커스텀 모달
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalTitle, setModalTitle] = useState('');
+  const [modalMessage, setModalMessage] = useState('');
+  const [modalButtons, setModalButtons] = useState([]);
+  const showModal = (title, message, buttons = [
+    {
+      text: '확인',
+      onPress: () => setModalVisible(false),
+      color: '#4B7BE5',
+    },
+  ]) => {
+    setModalTitle(title);
+    setModalMessage(message);
+    setModalButtons(buttons);
+    setModalVisible(true);
+  };
+
+
   const { accountNumTo } = useRoute().params;
-  const { amount, bankName, accountNum, testBedAccount} = useRoute().params;
+  const { amount, bankName, accountNum, testBedAccount } = useRoute().params;
 
   const nav = useNavigation();
   const [bankTo, setBankTo] = useState('');
@@ -80,10 +99,10 @@ export default function WithdrawBankScreen() {
           testBedAccount,
         });
       } else {
-        Alert.alert('오류', '은행명이 일치하지 않아요');
+        showModal('오류', '은행명이 일치하지 않아요');
       }
     } catch (e) {
-      Alert.alert('서버 에러', '다시 시도해주세요.');
+      showModal('서버 에러', '다시 시도해주세요.');
     } finally {
       setLoading(false);
     }
@@ -210,6 +229,12 @@ export default function WithdrawBankScreen() {
             style={styles.lottie}
           />
         </View>)}
+      <CustomModal
+        visible={modalVisible}
+        title={modalTitle}
+        message={modalMessage}
+        buttons={modalButtons}
+      />
     </LinearGradient >
   );
 }

@@ -7,13 +7,13 @@ import {
   FlatList,
   TouchableOpacity,
   StyleSheet,
-  Alert,
 } from 'react-native';
 import { db } from '../../database/firebase'; // Firebase 설정을 불러옴
 import { collection, doc, getDoc, setDoc } from 'firebase/firestore';
 import { WebView } from 'react-native-webview';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import AccountScreenGUI from './AccountScreenGUI'; // UI 관련 컴포넌트를 불러옴
+import CustomModal from '../../components/CustomModal';
 import {
   // kmj
   KFTC_CLIENT_ID_KMJ,
@@ -59,6 +59,18 @@ const getTokenDocId = account => account === 'hwc' ? 'Token2' : 'Token';
 // const ACCOUNT_BALANCE_URL = `${baseUrl}/v2.0/account/balance/fin_num`;*
 
 const AccountScreen = () => {
+  // 커스텀 모달
+  const [customModalVisible, setCustomModalVisible] = useState(false);
+  const [customModalProps, setCustomModalProps] = useState({
+    title: '',
+    message: '',
+    buttons: [],
+  });
+  const handleShowModal = ({ title, message, buttons }) => {
+    setCustomModalProps({ title, message, buttons });
+    setCustomModalVisible(true);
+  };
+
   // 상태 관리: 각 단계별 진행상태
   const [step, setStep] = useState('home');
   // home, auth, fetchToken, fetchAccounts, accountList, fetchBalance, balance
@@ -431,15 +443,26 @@ const AccountScreen = () => {
 
   // 토큰 정말로 지울건지 물어보기
   const confirmClearToken = () => {
-    Alert.alert(
-      '토큰 삭제 확인',
-      '정말로 파이어베이스 토큰 캐시를 삭제하시겠습니까?',
-      [
-        { text: '아니오', style: 'cancel' },
-        { text: '예', onPress: handleClearToken },
+    handleShowModal({
+      title: '토큰 삭제 확인',
+      message: '정말로 파이어베이스 토큰 캐시를 삭제하시겠습니까?',
+      buttons: [
+        {
+          text: '아니오',
+          onPress: () => setCustomModalVisible(false),
+          color: '#ccc',
+          textColor: 'black',
+        },
+        {
+          text: '예',
+          onPress: () => {
+            setCustomModalVisible(false);
+            handleClearToken();
+          },
+          color: '#4B7BE5',
+        },
       ],
-      { cancelable: false },
-    );
+    });
   };
 
   // 로컬 Express 서버 호출 함수
@@ -465,34 +488,73 @@ const AccountScreen = () => {
     setAmount('123456789');
 
     if (!accountId.trim() || Number(amount) <= 0) {
-      Alert.alert('입력 오류', '유효한 계좌 ID와 금액을 입력해주세요.');
+      handleShowModal({
+        title: '입력 오류',
+        message: '유효한 계좌 ID와 금액을 입력해주세요.',
+        buttons: [
+          {
+            text: '확인',
+            onPress: () => setCustomModalVisible(false),
+            color: '#4B7BE5',
+          },
+        ],
+      });
       return;
     }
     try {
       const newId = await writeWithdraw(accountId.trim(), parseFloat(amount));
-      Alert.alert('출금 기록 생성됨', `ID: ${newId}`);
+      handleShowModal({
+        title: '출금 기록 생성됨',
+        message: `ID: ${newId}`,
+        buttons: [
+          {
+            text: '확인',
+            onPress: () => setCustomModalVisible(false),
+            color: '#4B7BE5',
+          },
+        ],
+      });
     } catch (err) {
-      console.error('✖️ writeWithdraw 실패:', err);
-      Alert.alert('오류 발생', err.message);
+      console.error('writeWithdraw 실패:', err);
+      handleShowModal({
+        title: '오류 발생',
+        message: err.message,
+        buttons: [
+          {
+            text: '확인',
+            onPress: () => setCustomModalVisible(false),
+            color: '#FF6B6B',
+          },
+        ],
+      });
     }
   };
 
   return (
-    <AccountScreenGUI
-      CONFIG={CONFIG}
-      step={step}
-      setStep={setStep}
-      AUTH_URL={AUTH_URL}
-      handleNavigationStateChange={handleNavigationStateChange}
-      loading={loading}
-      accountList={accountList}
-      accountBalances={accountBalances}
-      handleReceiveMoney={handleReceiveMoney}
-      handleWithdraw={handleWithdraw}
-      confirmClearToken={confirmClearToken}
-      testBedAccount={testBedAccount}
-      setTestBedAccount={setTestBedAccount}
-    />
+    <>
+      <AccountScreenGUI
+        CONFIG={CONFIG}
+        step={step}
+        setStep={setStep}
+        AUTH_URL={AUTH_URL}
+        handleNavigationStateChange={handleNavigationStateChange}
+        loading={loading}
+        accountList={accountList}
+        accountBalances={accountBalances}
+        handleReceiveMoney={handleReceiveMoney}
+        handleWithdraw={handleWithdraw}
+        confirmClearToken={confirmClearToken}
+        testBedAccount={testBedAccount}
+        setTestBedAccount={setTestBedAccount}
+      />
+
+      <CustomModal
+        visible={customModalVisible}
+        title={customModalProps.title}
+        message={customModalProps.message}
+        buttons={customModalProps.buttons}
+      />
+    </>
   );
 };
 

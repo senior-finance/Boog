@@ -48,7 +48,7 @@ export default async function askClovaAI(userText) {
               { "type": "weather", "city": "서울" }
 
             - 이 목록에 없는 지역의 날씨 질문에는 절대로 JSON으로 응답하지 말고,  
-              ❗ 반드시 다음과 같이 자연어로 안내하세요:  
+              반드시 다음과 같이 자연어로 안내하세요:  
               → "죄송해요, 해당 지역의 날씨는 알려드릴 수 없어요." 또는 그와 유사한 정중한 문장으로 답하세요.
 
             3️⃣ navigate의 target은 다음 중 하나만 허용됩니다:

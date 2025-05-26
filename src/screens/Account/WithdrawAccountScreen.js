@@ -3,8 +3,6 @@ import React, { useState } from 'react';
 import {
   View,
   Text,
-  Alert,
-  Modal,
   Button,
   FlatList,
   TextInput,
@@ -27,8 +25,31 @@ import CustomNumPad from '../../components/CustomNumPad';
 import LinearGradient from 'react-native-linear-gradient';
 import LottieView from 'lottie-react-native';
 import { accountGetAll, withdrawVerify } from '../../database/mongoDB';
+import CustomModal from '../../components/CustomModal';
 
 export default function WithdrawAccountScreen() {
+  // 커스텀 모달
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalTitle, setModalTitle] = useState('');
+  const [modalMessage, setModalMessage] = useState('');
+  const [modalButtons, setModalButtons] = useState([]);
+
+  const showModal = (
+    title,
+    message,
+    buttons = [
+      {
+        text: '확인',
+        onPress: () => setModalVisible(false),
+        color: '#4B7BE5',
+      },
+    ]
+  ) => {
+    setModalTitle(title);
+    setModalMessage(message);
+    setModalButtons(buttons);
+    setModalVisible(true);
+  };
   const nav = useNavigation();
   const [loading, setLoading] = useState(false);
 
@@ -79,15 +100,12 @@ export default function WithdrawAccountScreen() {
     const digitsOnly = accountNumTo.replace(/-/g, '');
     if (digitsOnly.length < 10 || digitsOnly.length > 10) {
       // 계좌번호가 10자리가 아닐 때
-      Alert.alert(
-        '알림',
-        '계좌번호는 10자리여야 해요',
-      );
+      showModal('알림', '계좌번호는 10자리여야 해요');
       return;
     }
     try {
       setLoading(true);
-      const accounts = await withdrawVerify({accountNum : digitsOnly});
+      const accounts = await withdrawVerify({ accountNum: digitsOnly });
       // 동기화 시간 랜덤 지연
       const delayMs = Math.floor(Math.random() * 500) + 500;
       await new Promise(res => setTimeout(res, delayMs));
@@ -96,7 +114,7 @@ export default function WithdrawAccountScreen() {
         setTimeout(() => {
           setLoading(false);
         }, 500);
-        Alert.alert('알림', '등록된 계좌가 아니에요');
+        showModal('알림', '등록된 계좌가 아니에요');
         return;
       }
 
@@ -118,7 +136,7 @@ export default function WithdrawAccountScreen() {
       setTimeout(() => {
         setLoading(false);
       }, 700);
-      Alert.alert('오류', '계좌 확인 중 에러가 발생했어요');
+      showModal('오류', '계좌 확인 중 에러가 발생했어요');
     }
   };
 
@@ -223,6 +241,12 @@ export default function WithdrawAccountScreen() {
           />
         </View>
       )}
+      <CustomModal
+        visible={modalVisible}
+        title={modalTitle}
+        message={modalMessage}
+        buttons={modalButtons}
+      />
     </LinearGradient >
   );
 }

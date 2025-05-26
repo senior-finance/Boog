@@ -5,7 +5,6 @@ import {
   TouchableOpacity,
   ToastAndroid,
   Platform,
-  Alert,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Slider from 'react-native-slider'; // react-native-slider 사용
@@ -25,7 +24,7 @@ const FontSizeSettingScreen = ({ navigation }) => {
     if (Platform.OS === 'android') {
       ToastAndroid.show('적용되었습니다!', ToastAndroid.SHORT);
     } else {
-      Alert.alert('알림', '적용되었습니다!');
+      console.log("ios입니다")
     }
 
     setTimeout(() => {

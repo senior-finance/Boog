@@ -5,7 +5,6 @@ import {
   TouchableOpacity,
   StyleSheet,
   Linking,
-  Alert,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { NativeModules, PermissionsAndroid } from 'react-native';
@@ -13,6 +12,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import LottieView from 'lottie-react-native';
 import { checkSpamForNumber } from './PhoneUtils';
 import CustomText from '../../components/CustomText';
+import CustomModal from '../../components/CustomModal';
 
 const { PhoneAnalysisModule } = NativeModules;
 
@@ -29,6 +29,19 @@ const isToday = (timestamp) => {
 };
 
 const AutoPhoneAnalysisScreen = () => {
+  // 커스텀 모달
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalTitle, setModalTitle] = useState('');
+  const [modalMessage, setModalMessage] = useState('');
+  const [modalButtons, setModalButtons] = useState([]);
+
+  const showModal = (title, message, buttons = [{ text: '확인', onPress: () => setModalVisible(false), color: '#4B7BE5' }]) => {
+    setModalTitle(title);
+    setModalMessage(message);
+    setModalButtons(buttons);
+    setModalVisible(true);
+  };
+
   const [resultText, setResultText] = useState('');
   const [suspiciousList, setSuspiciousList] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -50,7 +63,7 @@ const AutoPhoneAnalysisScreen = () => {
   const analyze = async () => {
     const hasPermission = await requestPermissions();
     if (!hasPermission) {
-      setResultText('❗ 권한이 거부되었습니다. 설정에서 권한을 허용해주세요.');
+      setResultText('권한이 거부되었습니다. 설정에서 권한을 허용해주세요.');
       return;
     }
 
@@ -113,13 +126,12 @@ const AutoPhoneAnalysisScreen = () => {
     } else {
       const smsCount = autoCheckedFound.filter(item => item.type === 'sms').length;
       const callCount = autoCheckedFound.filter(item => item.type === 'call').length;
-      setResultText(`❗ 의심 기록 ${autoCheckedFound.length}건 발견됨!`);
+      setResultText(`의심 기록 ${autoCheckedFound.length}건 발견됨!`);
 
       setTimeout(() => {
-        Alert.alert(
-          '📊 분석 요소',
-          `총 ${autoCheckedFound.length}개의 의심 기록이 발견되었습니다.\n\n` +
-          `💬 문자: ${smsCount}개\n📞 통화: ${callCount}건`
+        showModal(
+          '분석 요소',
+          `총 ${autoCheckedFound.length}개의 의심 기록이 발견되었습니다.\n\n문자: ${smsCount}개\n통화: ${callCount}건`
         );
       }, 500);
     }
@@ -127,11 +139,11 @@ const AutoPhoneAnalysisScreen = () => {
 
   const handleItemPress = (item) => {
     let detail = item.type === 'sms'
-      ? '🚨이 문자는 피싱 가능성이 있는 키워드를 포함하고 있어 주의가 필요합니다.'
-      : '🚨짧은 통화나 070 번호는 스팸일 가능성이 높습니다. 꼭 확인하세요!';
+      ? '이 문자는 피싱 가능성이 있는 키워드를 포함하고 있어 주의가 필요합니다.'
+      : '짧은 통화나 070 번호는 스팸일 가능성이 높습니다. 꼭 확인하세요!';
 
-    Alert.alert(
-      `${item.type === 'sms' ? '💬 문자 상세 분석' : '📞 통화 상세 분석'}`,
+    showModal(
+      item.type === 'sms' ? '문자 상세 분석' : '통화 상세 분석',
       `${item.sender}\n\n내용: ${item.text}\n\n의심 키워드: ${item.keywords.join(', ')}\n\n${detail}`
     );
   };
@@ -158,19 +170,19 @@ const AutoPhoneAnalysisScreen = () => {
               {suspiciousList.map((item, index) => (
                 <TouchableOpacity key={index} style={styles.itemBox} onPress={() => handleItemPress(item)}>
                   <View style={styles.itemHeader}>
-                    { item.type === 'sms' ? (
+                    {item.type === 'sms' ? (
                       <Ionicons name="chatbubble-outline" size={20} color="#4B7BE5" style={styles.icon} />
                     ) : (
                       <Ionicons name="call-outline" size={20} color="#4B7BE5" style={styles.icon} />
                     )}
                     <CustomText style={styles.itemSender}>
-                      {item.sender} { item.type === 'sms' ? '(문자)' : '(통화)' }
+                      {item.sender} {item.type === 'sms' ? '(문자)' : '(통화)'}
                     </CustomText>
                   </View>
 
                   <CustomText style={styles.itemText}>{item.text}</CustomText>
                   <CustomText style={styles.itemText}>의심: {item.keywords.join(', ')}</CustomText>
-                  { item.type === 'call' && item.whowhoResult !== null && (
+                  {item.type === 'call' && item.whowhoResult !== null && (
                     <CustomText style={styles.itemText}>
                       통화 분석 결과: {item.whowhoResult ? '스팸(의심)' : '정상'}
                     </CustomText>
@@ -181,6 +193,12 @@ const AutoPhoneAnalysisScreen = () => {
           )}
         </View>
       </View>
+      <CustomModal
+        visible={modalVisible}
+        title={modalTitle}
+        message={modalMessage}
+        buttons={modalButtons}
+      />
     </LinearGradient>
   );
 };
