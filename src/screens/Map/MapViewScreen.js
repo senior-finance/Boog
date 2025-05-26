@@ -132,7 +132,7 @@ const MapViewScreen = ({ route, navigation }) => {
         setLocationDeniedModalVisible(true);
       }
     } catch (err) {
-      console.warn('위치 권한 요청 실패:', err);
+      console.log('위치 권한 요청 실패:', err);
     }
   };
 

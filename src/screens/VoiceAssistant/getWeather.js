@@ -59,11 +59,11 @@ export async function getWeather(city) {
         humidity,
       };
     } catch (e) {
-      console.error('JSON 파싱 실패 - 원문은 XML일 수 있음:', rawText);
+      console.log('JSON 파싱 실패 - 원문은 XML일 수 있음:', rawText);
       return { error: '기상청에서 유효하지 않은 응답을 받았습니다.' };
     }
   } catch (err) {
-    console.error('기상청 API 호출 오류:', err);
+    console.log('기상청 API 호출 오류:', err);
     return { error: '날씨 정보를 불러오지 못했습니다.' };
   }
 }

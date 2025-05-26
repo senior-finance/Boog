@@ -56,6 +56,7 @@ const getTokenDocId = account => account === 'hwc' ? 'Token2' : 'Token';
 
 // const TOKEN_URL = `${baseUrl}/oauth/2.0/token`;
 // const USER_ME_URL = `${baseUrl}/v2.0/user/me`;
+
 // const ACCOUNT_BALANCE_URL = `${baseUrl}/v2.0/account/balance/fin_num`;*
 
 const AccountScreen = () => {
@@ -129,7 +130,7 @@ const AccountScreen = () => {
         setSecrets(data); // 성공적으로 받은 Vault 비밀 정보 저장
       })
       .catch(err => {
-        // console.error('Vault secrets를 불러오는 중 에러 발생:', err);
+        // console.log('Vault secrets를 불러오는 중 에러 발생:', err);
         setVaultError(err); // 에러 상태 저장
       });
   }, []);
@@ -140,7 +141,7 @@ const AccountScreen = () => {
   //         await AsyncStorage.setItem('tokenData', JSON.stringify(data));
   //         console.log("토큰 데이터 저장 완료");
   //     } catch (err) {
-  //         console.error("토큰 데이터 저장 에러:", err);
+  //         console.log("토큰 데이터 저장 에러:", err);
   //     }
   // };
 
@@ -149,7 +150,7 @@ const AccountScreen = () => {
   //         const storedData = await AsyncStorage.getItem('tokenData');
   //         return storedData ? JSON.parse(storedData) : null;
   //     } catch (err) {
-  //         console.error("토큰 데이터 로드 에러:", err);
+  //         console.log("토큰 데이터 로드 에러:", err);
   //         return null;
   //     }
   // };
@@ -175,7 +176,7 @@ const AccountScreen = () => {
         console.log(`${account}: Firebase에 토큰 데이터 저장 완료`);
       }
     } catch (error) {
-      console.error(`${account}: Firebase 토큰 데이터 저장 에러:`, error);
+      console.log(`${account}: Firebase 토큰 데이터 저장 에러:`, error);
     }
   };
 
@@ -193,7 +194,7 @@ const AccountScreen = () => {
         return null;
       }
     } catch (error) {
-      console.error(`${account}: Firebase 토큰 데이터 로드 에러:`, error);
+      console.log(`${account}: Firebase 토큰 데이터 로드 에러:`, error);
       return null;
     }
   }
@@ -235,7 +236,7 @@ const AccountScreen = () => {
       }
       // 1) testBedAccount가 'kmj'나 'hwc'가 아니면 바로 리턴
       if (!['kmj', 'hwc'].includes(testBedAccount)) {
-        console.warn('토큰이 저장된 문서를 찾을 수 없습니다');
+        console.log('토큰이 저장된 문서를 찾을 수 없습니다');
         return;
       }
       // 2) Firebase에서 토큰 불러오기
@@ -306,12 +307,12 @@ const AccountScreen = () => {
             await storeTokenDataFirebase(testBedAccount, data);
             setStep('fetchAccounts');
           } else {
-            console.error('토큰 요청 실패:', JSON.stringify(data));
+            console.log('토큰 요청 실패:', JSON.stringify(data));
             setError('토큰 요청 실패');
           }
         })
         .catch(err => {
-          console.error('토큰 요청 에러:', err);
+          console.log('토큰 요청 에러:', err);
           setError(err.message);
         })
         .finally(() => {
@@ -344,12 +345,12 @@ const AccountScreen = () => {
             setAccountList(data.res_list);
             setStep('accountList');
           } else {
-            console.error('계좌 목록 요청 실패:', data);
+            console.log('계좌 목록 요청 실패:', data);
             setError('계좌 목록 요청 실패');
           }
         })
         .catch(err => {
-          console.error('계좌 목록 요청 에러:', err);
+          console.log('계좌 목록 요청 에러:', err);
           setError(err.message);
         })
         .finally(() => {
@@ -392,7 +393,7 @@ const AccountScreen = () => {
           bank_name: data.bank_name ?? '은행 조회 실패',
         };
       } catch (error) {
-        console.error(`잔고 조회 실패: ${account.fintech_use_num}`, error);
+        console.log(`잔고 조회 실패: ${account.fintech_use_num}`, error);
         return {
           fintech_use_num: account.fintech_use_num,
           balance_amt: '오류',
@@ -437,7 +438,7 @@ const AccountScreen = () => {
       setAccountList([]);
       setStep('home');
     } catch (error) {
-      console.error(`${testBedAccount}: Firebase 토큰 삭제 에러:`, error);
+      console.log(`${testBedAccount}: Firebase 토큰 삭제 에러:`, error);
     }
   };
 
@@ -515,7 +516,7 @@ const AccountScreen = () => {
         ],
       });
     } catch (err) {
-      console.error('writeWithdraw 실패:', err);
+      console.log('writeWithdraw 실패:', err);
       handleShowModal({
         title: '오류 발생',
         message: err.message,

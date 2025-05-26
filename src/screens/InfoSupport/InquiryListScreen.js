@@ -34,7 +34,7 @@ const InquiryListScreen = () => {
         const data = await getInquiries(queryUser);
         setInquiries(data);
       } catch (error) {
-        console.error('문의 내역 불러오기 오류:', error);
+        console.log('문의 내역 불러오기 오류:', error);
       } finally {
         setLoading(false);
       }

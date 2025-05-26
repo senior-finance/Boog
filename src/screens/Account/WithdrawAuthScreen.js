@@ -122,7 +122,7 @@ export default function WithdrawAuthScreen() {
       );
       // nav.goBack();
     } catch (err) {
-      console.error('출금 중 오류:', err);
+      console.log('출금 중 오류:', err);
       showModal('출금 실패', '출금 중 오류가 발생했습니다.');
     }
   };

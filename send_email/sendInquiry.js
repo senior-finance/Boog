@@ -46,7 +46,7 @@ exports.sendInquiry = functions
       console.log('메일 전송 성공');
       res.status(200).send('이메일 전송 성공');
     } catch (error) {
-      console.error('메일 전송 실패:', error);
+      console.log('메일 전송 실패:', error);
       res.status(500).send('이메일 전송 실패');
     }
   });

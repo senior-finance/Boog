@@ -131,7 +131,7 @@ export default function WithdrawAccountScreen() {
       }, 700);
 
     } catch (err) {
-      console.error(err);
+      console.log(err);
       // 에러 났을 때도 로딩 끄기
       setTimeout(() => {
         setLoading(false);

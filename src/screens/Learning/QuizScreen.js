@@ -41,7 +41,7 @@ const QuizScreen = ({ navigation, route }) => {
           : await getHardQuiz();
         setShuffledQuiz(shuffleArray(quizData));
       } catch (err) {
-        console.error('퀴즈 불러오기 실패:', err);
+        console.log('퀴즈 불러오기 실패:', err);
       }
     };
 

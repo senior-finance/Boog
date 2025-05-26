@@ -114,7 +114,7 @@ const AutoPhoneAnalysisScreen = () => {
         const isSpam = await checkSpamForNumber(item.sender);
         return { ...item, whowhoResult: isSpam };
       } catch (err) {
-        console.error(item.sender, '번호 조회 에러:', err);
+        console.log(item.sender, '번호 조회 에러:', err);
         return { ...item, whowhoResult: null };
       }
     }));

@@ -153,7 +153,7 @@ const InquiryFormScreen = () => {
           },
         ],
       });
-      console.error('문의 처리 오류:', err.message || err);
+      console.log('문의 처리 오류:', err.message || err);
     } finally {
       setLoading(false); // 로딩 종료
     }

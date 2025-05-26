@@ -50,7 +50,7 @@ export async function getInquiries(userName) {
     console.log('Firestore 문의 내역 불러오기 완료:', inquiries.length, '건');
     return inquiries;
   } catch (error) {
-    console.error('🛑 문의 내역 불러오기 오류:', error);
+    console.log('🛑 문의 내역 불러오기 오류:', error);
     throw error;
   }
 }

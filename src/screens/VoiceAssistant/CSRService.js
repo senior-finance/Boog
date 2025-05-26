@@ -36,11 +36,11 @@ export default async function sendAudioToCSR(filePath) {
     if (result.text) {
       return result.text;
     } else {
-      console.warn('CSR 응답이 예상과 다릅니다:', result);
+      console.log('CSR 응답이 예상과 다릅니다:', result);
       return '(텍스트 인식 실패)';
     }
   } catch (err) {
-    console.error('CSR API 오류:', err);
+    console.log('CSR API 오류:', err);
     return '(CSR 오류 발생)';
   }
 }

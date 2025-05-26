@@ -126,7 +126,7 @@ const AccountScreenGUI = ({
       );
       setDbAccounts(results.filter(r => r));
     } catch (err) {
-      console.error('DB 조회 실패', err);
+      console.log('DB 조회 실패', err);
     }
   };
 
@@ -173,7 +173,7 @@ const AccountScreenGUI = ({
       await fetchDbAccounts();
       // DB에서 계좌 정보 다시 가져오기
     } catch (err) {
-      console.error(err);
+      console.log(err);
       console.log(amount)
       showSimpleModal('입금 중 오류가 발생했습니다.');
     }
@@ -210,7 +210,7 @@ const AccountScreenGUI = ({
       await fetchDbAccounts();
       // DB에서 계좌 정보 다시 가져오기
     } catch (err) {
-      console.error(err);
+      console.log(err);
       console.log(amount)
       showSimpleModal('출금 중 오류가 발생했습니다.');
     }
@@ -262,7 +262,7 @@ const AccountScreenGUI = ({
       showSimpleModal('저장 완료');
 
     } catch (err) {
-      console.error(err);
+      console.log(err);
       showSimpleModal('저장에 실패했습니다');
     }
   };

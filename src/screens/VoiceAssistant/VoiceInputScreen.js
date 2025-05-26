@@ -146,7 +146,7 @@ export default function VoiceInputScreen() {
         setSystemVolume,
       });
     } catch (err) {
-      console.error('텍스트 질문 처리 오류:', err);
+      console.log('텍스트 질문 처리 오류:', err);
     } finally {
       setIsLoading(false);
       setTextInput('');
@@ -205,7 +205,7 @@ export default function VoiceInputScreen() {
         Tts.speak(reply.text);
       }
     } catch (err) {
-      console.error('녹음/CSR/AI 처리 오류:', err);
+      console.log('녹음/CSR/AI 처리 오류:', err);
     } finally {
       setIsLoading(false);
     }

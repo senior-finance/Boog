@@ -43,7 +43,7 @@ export default async function askGPT(userText) {
   
       return { type: 'text', text: content };
     } catch (err) {
-      console.error('GPT 호출 오류:', err);
+      console.log('GPT 호출 오류:', err);
       return { type: 'text', text: '(오류 발생)' };
     }
   }

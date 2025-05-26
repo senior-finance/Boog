@@ -10,7 +10,7 @@ export async function storeAuthSession({ provider, accessToken, userInfo }) {
       ['userInfo', JSON.stringify(userInfo)],
     ]);
   } catch (e) {
-    console.error('토큰 저장 실패:', e);
+    console.log('토큰 저장 실패:', e);
   }
 }
 
@@ -30,7 +30,7 @@ export async function getStoredAuthSession() {
     }
     return null;
   } catch (e) {
-    console.error('토큰 불러오기 실패:', e);
+    console.log('토큰 불러오기 실패:', e);
     return null;
   }
 }
@@ -40,6 +40,6 @@ export async function logoutSession() {
   try {
     await AsyncStorage.multiRemove(['provider', 'accessToken', 'userInfo']);
   } catch (e) {
-    console.error('로그아웃 실패:', e);
+    console.log('로그아웃 실패:', e);
   }
 }

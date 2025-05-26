@@ -44,7 +44,7 @@ export default function LoginScreen({ navigation }) {
         disableNaverAppAuthIOS: true,
       });
     } else {
-      console.warn('NaverLogin 모듈을 찾을 수 없습니다. 네이티브 모듈 설치 및 빌드를 확인하세요.');
+      console.log('NaverLogin 모듈을 찾을 수 없습니다. 네이티브 모듈 설치 및 빌드를 확인하세요.');
     }
   }, []);
 
@@ -88,7 +88,7 @@ export default function LoginScreen({ navigation }) {
       }
       setUserInfo(user); // 로컬 상태 저장
     } catch (err) {
-      console.error('MongoDB 사용자 저장 실패:', err);
+      console.log('MongoDB 사용자 저장 실패:', err);
       // 필요한 경우 모달 등으로 사용자에게 알림
     }
   };
@@ -127,7 +127,7 @@ export default function LoginScreen({ navigation }) {
         });
       }
     } catch (err) {
-      console.error('사용자 조회 실패:', err);
+      console.log('사용자 조회 실패:', err);
       navigation.replace('Login');
     }
   };

@@ -17,7 +17,7 @@ export const loadSound = (onLoaded = () => {}) => {
 
   soundInstance = new Sound(soundFile, (error) => {
     if (error) {
-      console.error('🔈 사운드 로드 실패:', error);
+      console.log('🔈 사운드 로드 실패:', error);
       return;
     }
     soundInstance.setVolume(currentVolume);
@@ -28,14 +28,14 @@ export const loadSound = (onLoaded = () => {}) => {
 // ▶️ 사운드 재생
 export const playSound = () => {
   if (!soundInstance) {
-    console.warn('사운드가 로드되지 않았습니다.');
+    console.log('사운드가 로드되지 않았습니다.');
     return;
   }
 
   soundInstance.setVolume(currentVolume);
   soundInstance.play((success) => {
     if (!success) {
-      console.error('사운드 재생 실패');
+      console.log('사운드 재생 실패');
     }
   });
 };

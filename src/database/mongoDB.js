@@ -31,7 +31,7 @@ export async function mongoDB(action, dbName, collName, params) {
     if (!success) throw new Error(error);
     return result;
   } catch (err) {
-    console.error(`[mongoDB:${action}] 오류`, err?.response?.data || err.message);
+    console.log(`[mongoDB:${action}] 오류`, err?.response?.data || err.message);
     throw err;
   }
 }
@@ -58,7 +58,7 @@ export async function deposit(dbName, accountId, accountBank, amount) {
       }
     );
   } catch (err) {
-    console.error('▶ updateOne failed:', err?.response?.status, err?.response?.data);
+    console.log('▶ updateOne failed:', err?.response?.status, err?.response?.data);
   }
   return logId;
 }
@@ -83,7 +83,7 @@ export async function withdraw(dbName, accountId, accountBank, amount) {
       }
     );
   } catch (err) {
-    console.error('▶ updateOne failed:', err?.response?.status, err?.response?.data);
+    console.log('▶ updateOne failed:', err?.response?.status, err?.response?.data);
   }
   return logId;
 }
@@ -152,7 +152,7 @@ export async function accountGet(userName, accountId) {
       amount,               // JS 숫자
     };
   } catch (err) {
-    console.error('accountGet 실패:', err);
+    console.log('accountGet 실패:', err);
     return null;
   }
 }

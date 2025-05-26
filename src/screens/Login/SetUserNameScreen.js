@@ -137,7 +137,7 @@ const SetUsernameScreen = ({ navigation }) => {
     try {
       await updateUsername(socialId, username);
     } catch (err) {
-      console.error('닉네임 업데이트 실패:', err);
+      console.log('닉네임 업데이트 실패:', err);
       throw err;
     }
   };
