@@ -97,36 +97,7 @@ export const handleFunctionCalling = async ({
     }
   }
 
-  // ✅ 현재 위치 기반 날씨 처리
-  else if (reply.type === 'weather' && reply.city === 'current') {
-    const data = await getWeatherByCurrentLocation();
-
-    if (data.error) {
-      setChatHistory(prev => [...prev, { role: 'bot', text: data.error }]);
-      Tts.speak(data.error);
-      return;
-    }
-
-    const iconMap = {
-      '맑음': '☀️',
-      '구름조금': '🌤️',
-      '흐림': '☁️',
-      '비': '🌧️',
-      '눈': '🌨️',
-      '비/눈': '🌦️',
-      '소나기': '🌦️',
-    };
-
-    const emoji = iconMap[data.condition] || '';
-    const message = `현재 위치의 날씨는 ${data.condition} ${emoji}, 기온은 ${data.temp}도이고, 습도는 ${data.humidity}%입니다.`;
-    setChatHistory(prev => [...prev, { role: 'bot', text: message }]);
-    Tts.speak(message);
-
-    console.log('📍 현재 위치 날씨 안내:', message);
-    return;
-  }
-
-  // ✅ 기존 도시 이름 기반 날씨 처리
+  // ✅ 도시 이름 기반 날씨 처리
   else if (reply.type === 'weather' && reply.city) {
     const normalizeCityName = (name) => name.replace(/(도|시|군)$/, '');
     const cityName = normalizeCityName(reply.city);

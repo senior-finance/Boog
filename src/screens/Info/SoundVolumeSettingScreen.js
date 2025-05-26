@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
-import Slider from '@react-native-community/slider';
+import Slider from 'react-native-slider';
 import Tts from 'react-native-tts';
 import SystemSetting from 'react-native-system-setting';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -9,7 +8,6 @@ import CustomText from '../../components/CustomText';
 import {
   setTtsPitch,
   setTtsRate,
-  setTtsVoice,
 } from '../../utils/ttsUtils';
 import {
   playSound,
@@ -25,7 +23,6 @@ import { useVolume } from '../../contexts/VolumeContext';
 const SoundVolumeSettingScreen = () => {
   const [ttsRate, setRate] = useState(0.5);
   const [ttsPitch, setPitch] = useState(1);
-  const [selectedVoice, setSelectedVoice] = useState('ko-KR-language');
 
   const { systemVolume, setSystemVolume } = useVolume();
 
@@ -33,27 +30,17 @@ const SoundVolumeSettingScreen = () => {
     ttsRate: 0.5,
     ttsPitch: 1.0,
     systemVolume: 0.5,
-    selectedVoice: 'ko-KR-language',
   };
 
-  const voiceOptions = [
-    { id: 'ko-KR-language', name: '기본 한국어 음성' },
-    { id: 'ko-kr-x-ism-local', name: '여성1 (조용함)' },
-    { id: 'ko-kr-x-kob-local', name: '여성2 (차분함)' },
-    { id: 'ko-kr-x-kod-local', name: '남성1 (표준)' },
-    { id: 'ko-kr-x-koc-local', name: '남성2 (차분함)' },
-  ];
-
-  // 1. 시스템 볼륨 슬라이더 초기화
+  // 시스템 볼륨 초기화
   useEffect(() => {
     const syncSystemVolume = async () => {
       const current = await SystemSetting.getVolume();
-      setSystemVolume(current); // ✅ 현재 볼륨 기반으로 슬라이더 설정
+      setSystemVolume(current);
     };
     syncSystemVolume();
   }, []);
 
-  // 2. TTS 관련 설정만 로딩
   useEffect(() => {
     loadSound();
     (async () => {
@@ -61,15 +48,12 @@ const SoundVolumeSettingScreen = () => {
       if (saved) {
         setRate(saved.ttsRate);
         setPitch(saved.ttsPitch);
-        setSelectedVoice(saved.selectedVoice);
 
         Tts.setDefaultRate(saved.ttsRate);
         Tts.setDefaultPitch(saved.ttsPitch);
-        Tts.setDefaultVoice(saved.selectedVoice);
       } else {
         Tts.setDefaultRate(INITIAL_SETTINGS.ttsRate);
         Tts.setDefaultPitch(INITIAL_SETTINGS.ttsPitch);
-        Tts.setDefaultVoice(INITIAL_SETTINGS.selectedVoice);
       }
     })();
   }, []);
@@ -85,18 +69,16 @@ const SoundVolumeSettingScreen = () => {
   const handleSystemVolumeChange = (value) => {
     setSystemVolume(value);
     SystemSetting.setVolume(value);
-    saveSetting({ ttsRate, ttsPitch, selectedVoice, systemVolume: value });
+    saveSetting({ ttsRate, ttsPitch, systemVolume: value });
   };
 
   const handleResetSettings = () => {
     setRate(INITIAL_SETTINGS.ttsRate);
     setPitch(INITIAL_SETTINGS.ttsPitch);
     setSystemVolume(INITIAL_SETTINGS.systemVolume);
-    setSelectedVoice(INITIAL_SETTINGS.selectedVoice);
 
     Tts.setDefaultRate(INITIAL_SETTINGS.ttsRate);
     Tts.setDefaultPitch(INITIAL_SETTINGS.ttsPitch);
-    Tts.setDefaultVoice(INITIAL_SETTINGS.selectedVoice);
     SystemSetting.setVolume(INITIAL_SETTINGS.systemVolume);
 
     saveSetting(INITIAL_SETTINGS);
@@ -115,6 +97,23 @@ const SoundVolumeSettingScreen = () => {
           step={0.01}
           value={systemVolume}
           onValueChange={handleSystemVolumeChange}
+          minimumTrackTintColor="#1A4DCC"
+          maximumTrackTintColor="#E0E0E0"
+          thumbTintColor="#1A4DCC"
+          trackStyle={{ height: 5, borderRadius: 3 }}
+          thumbStyle={{
+            width: 25,
+            height: 25,
+            borderRadius: 13,
+            backgroundColor: '#1A4DCC',
+            borderColor: '#fff',
+            borderWidth: 2,
+            elevation: 3,
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.3,
+            shadowRadius: 2,
+          }}
         />
       </View>
 
@@ -122,23 +121,6 @@ const SoundVolumeSettingScreen = () => {
         <View style={styles.sectionRow}>
           <Ionicons name="mic-outline" size={20} color="#4B7BE5" />
           <CustomText style={styles.sectionTitle}>음성 안내 설정</CustomText>
-        </View>
-
-        <CustomText style={styles.label}>음성 선택</CustomText>
-        <View style={styles.pickerWrapper}>
-          <Picker
-            selectedValue={selectedVoice}
-            onValueChange={(itemValue) => {
-              setSelectedVoice(itemValue);
-              setTtsVoice(itemValue);
-              saveSetting({ ttsRate, ttsPitch, selectedVoice: itemValue, systemVolume });
-            }}
-            style={styles.picker}
-          >
-            {voiceOptions.map((voice) => (
-              <Picker.Item key={voice.id} label={voice.name} value={voice.id} />
-            ))}
-          </Picker>
         </View>
 
         <CustomText style={styles.label}>속도</CustomText>
@@ -150,7 +132,24 @@ const SoundVolumeSettingScreen = () => {
           onValueChange={(v) => {
             setRate(v);
             setTtsRate(v);
-            saveSetting({ ttsRate: v, ttsPitch, selectedVoice, systemVolume });
+            saveSetting({ ttsRate: v, ttsPitch, systemVolume });
+          }}
+          minimumTrackTintColor="#1A4DCC"
+          maximumTrackTintColor="#E0E0E0"
+          thumbTintColor="#1A4DCC"
+          trackStyle={{ height: 5, borderRadius: 3 }}
+          thumbStyle={{
+            width: 25,
+            height: 25,
+            borderRadius: 13,
+            backgroundColor: '#1A4DCC',
+            borderColor: '#fff',
+            borderWidth: 2,
+            elevation: 3,
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.3,
+            shadowRadius: 2,
           }}
         />
 
@@ -163,7 +162,24 @@ const SoundVolumeSettingScreen = () => {
           onValueChange={(v) => {
             setPitch(v);
             setTtsPitch(v);
-            saveSetting({ ttsRate, ttsPitch: v, selectedVoice, systemVolume });
+            saveSetting({ ttsRate, ttsPitch: v, systemVolume });
+          }}
+          minimumTrackTintColor="#1A4DCC"
+          maximumTrackTintColor="#E0E0E0"
+          thumbTintColor="#1A4DCC"
+          trackStyle={{ height: 5, borderRadius: 3 }}
+          thumbStyle={{
+            width: 25,
+            height: 25,
+            borderRadius: 13,
+            backgroundColor: '#1A4DCC',
+            borderColor: '#fff',
+            borderWidth: 2,
+            elevation: 3,
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.3,
+            shadowRadius: 2,
           }}
         />
 
@@ -221,7 +237,6 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontWeight: 'bold',
-    fontSize: 16,
     color: '#1A4DCC',
     marginLeft: 8,
   },
@@ -230,18 +245,6 @@ const styles = StyleSheet.create({
     marginTop: 16,
     marginBottom: 8,
     color: '#333',
-  },
-  pickerWrapper: {
-    borderWidth: 1.5,
-    borderColor: '#A9C7F6',
-    borderRadius: 12,
-    overflow: 'hidden',
-    marginBottom: 12,
-    backgroundColor: '#fff',
-  },
-  picker: {
-    height: 50,
-    width: '100%',
   },
   testButton: {
     flexDirection: 'row',
@@ -279,7 +282,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 4,
-    marginTop: 20,
+    marginTop: 5,
     marginBottom: 40,
   },
   resetButtonText: {
