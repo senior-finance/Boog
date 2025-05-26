@@ -28,21 +28,28 @@ export default function GuideScreen() {
     }, [navigation])
   );
 
-  const sectionDetails = {
-    deposit: { icon: '💸', title: '입출금 방법' },
-    ai: { icon: '💬', title: 'AI 대화 사용법' },
-    voicePhishing: { icon: '🚨', title: '보이스피싱 사례 확인' },
-    location: { icon: '🗺️', title: '근처 은행/ATM 찾기' },
-    accessibility: { icon: '⚙️', title: '내 정보 사용법/ 문의 내역 작성' },
-    quiz: { icon: '❓', title: '금융 퀴즈 이용법' },
-    analysis: { icon: '📊', title: '문자/통화 분석 방법' }, 
-    welfare: { icon: '🎁', title: '복지혜택 확인 방법' }, 
-  };
+const sectionDetails = {
+  deposit: { icon: '💸', title: '입출금 방법', keywords: ['입금', '출금', '송금'] },
+  ai: { icon: '💬', title: 'AI 대화 사용법', keywords: ['ai', '질문', '대화'] },
+  voicePhishing: { icon: '🚨', title: '보이스피싱 사례 확인', keywords: ['사기', '문자', '통화', '피싱'] },
+  location: { icon: '🗺️', title: '근처 은행/ATM 찾기', keywords: ['지도', 'atm', '위치'] },
+  accessibility: { icon: '⚙️', title: '내 정보 사용법/ 문의 내역 작성', keywords: ['설정', '문의', '내정보','프로필','글자','음향','크기'] },
+  quiz: { icon: '❓', title: '금융 퀴즈 이용법', keywords: ['문제', '퀴즈', '학습','공부'] },
+  analysis: { icon: '📊', title: '문자/통화 분석 방법', keywords: ['분석', '통화', '메시지'] },
+  welfare: { icon: '🎁', title: '복지혜택 확인 방법', keywords: ['복지', '혜택', '노인'] },
+};
 
 
-  const filteredSections = Object.keys(sectionDetails).filter((key) =>
-    sectionDetails[key].title.toLowerCase().includes(searchText.toLowerCase())
+
+const filteredSections = Object.keys(sectionDetails).filter((key) => {
+  const { title, keywords } = sectionDetails[key];
+  const searchLower = searchText.toLowerCase();
+  return (
+    title.toLowerCase().includes(searchLower) ||
+    (keywords && keywords.some((kw) => kw.toLowerCase().includes(searchLower)))
   );
+});
+
 
   const goToDetail = (sectionKey) => {
     const { title } = sectionDetails[sectionKey];
@@ -58,7 +65,7 @@ export default function GuideScreen() {
           <Ionicons name="search" size={20} color='rgb(39, 39, 39)' style={styles.searchIcon} />
           <TextInput
             style={styles.searchInput}
-            placeholder="검색어를 입력하세요..."
+            placeholder="키워드나 검색어를 입력하세요..."
             value={searchText}
             onChangeText={setSearchText}
             placeholderTextColor='rgb(39, 39, 39)'
