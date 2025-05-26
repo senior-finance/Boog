@@ -23,6 +23,22 @@ const dummyWelfareList = [
     desc: '연금 수령 조건, 예상 수령액, 노후 준비 방법 안내',
     link: 'https://www.nps.or.kr',
   },
+  {
+  title: '노인 무임 교통 혜택',
+  desc: '만 65세 이상 어르신은 지하철, 버스 무임 승차 가능',
+  link: 'https://www.bokjiro.go.kr/ssis-teu/index.do',
+},
+{
+  title: '치매안심센터',
+  desc: '치매 조기검진, 맞춤형 상담 및 돌봄 서비스 제공',
+  link: 'https://www.nid.or.kr',
+},
+{
+  title: '노인일자리 및 사회활동 지원',
+  desc: '어르신에게 사회활동 기회를 제공하고 소득 지원',
+  link: 'https://www.kohi.or.kr',
+},
+
 ];
 
 const WelfareScreen = ({ navigation }) => {
@@ -37,9 +53,10 @@ const WelfareScreen = ({ navigation }) => {
           flexWrap: 'wrap',
           includeFontPadding: false,
           lineHeight: 30,
+          color: '#1446D8'
         }}
       >
-        노인 혜택 한눈에 보기 👵
+        어르신을 위한 혜택 정보 모음 👵
       </CustomText>
 
       {dummyWelfareList.map((item, index) => (
