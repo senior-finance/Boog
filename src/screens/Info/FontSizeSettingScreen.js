@@ -8,7 +8,7 @@ import {
   Alert,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import Slider from 'react-native-slider'; // ✅ react-native-slider 사용
+import Slider from 'react-native-slider'; // react-native-slider 사용
 import { useFontSize } from './FontSizeContext';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import CustomText from '../../components/CustomText';
@@ -44,7 +44,7 @@ const FontSizeSettingScreen = ({ navigation }) => {
           변경하실 글자 예시입니다
         </CustomText>
 
-        {/* ✅ 슬라이더 Wrapper로 감싸서 너비와 정렬 해결 */}
+        {/* 슬라이더 Wrapper로 감싸서 너비와 정렬 해결 */}
         <View style={styles.sliderWrapper}>
           <Slider
             value={tempFontSize}

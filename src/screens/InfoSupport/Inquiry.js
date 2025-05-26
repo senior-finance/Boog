@@ -13,7 +13,7 @@ export async function sendInquiry({ userName, title, content }) {
     content,
     createdAt: new Date(),
   });
-  console.log('✅ Firestore 저장 완료');
+  console.log('Firestore 저장 완료');
 }
 
 /**
@@ -47,7 +47,7 @@ export async function getInquiries(userName) {
     // 클라이언트에서 최신순 정렬
     inquiries.sort((a, b) => b.createdAt - a.createdAt);
 
-    console.log('✅ Firestore 문의 내역 불러오기 완료:', inquiries.length, '건');
+    console.log('Firestore 문의 내역 불러오기 완료:', inquiries.length, '건');
     return inquiries;
   } catch (error) {
     console.error('🛑 문의 내역 불러오기 오류:', error);

@@ -372,7 +372,7 @@ const MainScreen = ({ navigation }) => {
                   onPress={() => {
                     const key = selectedTx.date + selectedTx.name;
                     setMemoMap(prev => ({ ...prev, [key]: memo }));
-                    setSaveMsg('저장되었습니다 ✅');
+                    setSaveMsg('저장되었습니다');
                     setEditing(false); // 편집 종료
                     setTimeout(() => setSaveMsg(''), 1000);
                   }}
@@ -393,7 +393,7 @@ const MainScreen = ({ navigation }) => {
                   onPress={() => {
                     setModalVisible(false);
                     setEditing(false); // 편집 모드만 종료
-                    // setMemo('') 제거 ✅ 메모 내용 유지됨
+                    // setMemo('') 제거 메모 내용 유지됨
                   }}
                 >
                   <CustomText style={styles.closeText}>닫기</CustomText>

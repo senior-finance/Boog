@@ -310,7 +310,7 @@ return (
           </View>
         ))}
 
-        {/* ✅ 챗봇이 응답 중일 때 보여줄 깜빡이는 메시지 */}
+        {/* 챗봇이 응답 중일 때 보여줄 깜빡이는 메시지 */}
         {isLoading && (
           <View style={[styles.chatRow, styles.chatRowBot]}>
             <Image source={require('../../assets/bot.png')} style={styles.avatar} />
@@ -339,7 +339,7 @@ return (
           }}
         />
 
-        {/* ✅ 입력이 있을 때만 send 버튼 보이게 */}
+        {/* 입력이 있을 때만 send 버튼 보이게 */}
         {textInput.trim().length > 0 ? (
           <TouchableOpacity
             style={styles.sendButton}

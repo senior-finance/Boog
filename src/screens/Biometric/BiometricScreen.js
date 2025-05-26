@@ -7,11 +7,11 @@ export default function BiometricScreen() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [biometryType, setBiometryType] = useState(null);
 
-  // ✅ 생체 인증 실행 함수
+  // 생체 인증 실행 함수
   const handleAuthentication = async () => {
     const rnBiometrics = new ReactNativeBiometrics();
 
-    // ✅ 생체 인증 가능 여부 확인
+    // 생체 인증 가능 여부 확인
     const { available, biometryType } = await rnBiometrics.isSensorAvailable();
 
     if (!available) {
@@ -51,14 +51,14 @@ export default function BiometricScreen() {
 
   return (
     <View style={styles.container}>
-      <CustomText style={styles.title}>🔒 생체 인증 테스트</CustomText>
+      <CustomText style={styles.title}>생체 인증 테스트</CustomText>
 
       <TouchableOpacity style={styles.authButton} onPress={handleAuthentication}>
         <CustomText style={styles.buttonText}>지문 인증 시도하기</CustomText>
       </TouchableOpacity>
 
       {isAuthenticated && (
-        <CustomText style={styles.successText}>✅ 인증 완료 ({biometryType})</CustomText>
+        <CustomText style={styles.successText}>인증 완료 ({biometryType})</CustomText>
       )}
     </View>
   );

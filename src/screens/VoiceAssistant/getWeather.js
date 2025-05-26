@@ -1,6 +1,6 @@
 import { WEATHER_API_KEY } from '@env';
 
-// ✅ 도시명 기반 기상청 날씨 조회 함수
+// 도시명 기반 기상청 날씨 조회 함수
 export async function getWeather(city) {
   try {
     const gridMap = {
@@ -36,11 +36,11 @@ export async function getWeather(city) {
 
     const res = await fetch(url);
     const rawText = await res.text();
-    console.log('📦 기상청 원문 응답:', rawText);
+    console.log('기상청 원문 응답:', rawText);
 
     try {
       const json = JSON.parse(rawText);
-      console.log('📦 기상청 JSON 파싱 성공:', json);
+      console.log('기상청 JSON 파싱 성공:', json);
 
       const items = json.response?.body?.items?.item;
       if (!items) return { error: '날씨 데이터를 찾을 수 없습니다.' };

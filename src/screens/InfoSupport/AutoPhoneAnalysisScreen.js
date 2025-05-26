@@ -109,7 +109,7 @@ const AutoPhoneAnalysisScreen = () => {
     setSuspiciousList(autoCheckedFound);
 
     if (autoCheckedFound.length === 0) {
-      setResultText('✅ 오늘은 의심스러운 문자나 통화 기록이 없습니다.');
+      setResultText('오늘은 의심스러운 문자나 통화 기록이 없습니다.');
     } else {
       const smsCount = autoCheckedFound.filter(item => item.type === 'sms').length;
       const callCount = autoCheckedFound.filter(item => item.type === 'call').length;
@@ -169,7 +169,7 @@ const AutoPhoneAnalysisScreen = () => {
                   </View>
 
                   <CustomText style={styles.itemText}>{item.text}</CustomText>
-                  <CustomText style={styles.itemText}>⚠️ 의심: {item.keywords.join(', ')}</CustomText>
+                  <CustomText style={styles.itemText}>의심: {item.keywords.join(', ')}</CustomText>
                   { item.type === 'call' && item.whowhoResult !== null && (
                     <CustomText style={styles.itemText}>
                       통화 분석 결과: {item.whowhoResult ? '스팸(의심)' : '정상'}

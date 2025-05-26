@@ -3,7 +3,7 @@ import { ScrollView, StyleSheet, View, Image } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import CustomText from '../../components/CustomText';
 
-// ✅ 이미지 import
+// 이미지 import
 import quiz1 from '../../assets/guide/quiz1.png';
 import quiz2 from '../../assets/guide/quiz2.png';
 import ai1 from '../../assets/guide/ai1.png';

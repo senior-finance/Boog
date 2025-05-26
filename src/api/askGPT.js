@@ -6,10 +6,10 @@ export default async function askGPT(userText) {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer YOUR_OPENAI_API_KEY`, // ✅ 여기에 발급받은 API 키 입력
+          'Authorization': `Bearer YOUR_OPENAI_API_KEY`, // 여기에 발급받은 API 키 입력
         },
         body: JSON.stringify({
-          model: 'gpt-3.5-turbo', // ✅ 기본 모델 사용
+          model: 'gpt-3.5-turbo', // 기본 모델 사용
           messages: [
             { role: 'user', content: userText }
           ],

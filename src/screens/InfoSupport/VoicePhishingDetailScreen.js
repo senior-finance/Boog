@@ -32,7 +32,7 @@ const VoicePhishingDetailScreen = ({ route }) => {
           </CustomText>
 
           <CustomText style={styles.important}>
-            ✅ 출처 불명 문자에 포함된 링크는 절대 클릭하지 마세요.
+            출처 불명 문자에 포함된 링크는 절대 클릭하지 마세요.
           </CustomText>
         </View>
       </ScrollView>

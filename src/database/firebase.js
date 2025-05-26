@@ -35,7 +35,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
 
-// 💡 필요한 경우 확장을 위해 다음도 추가 가능:
+// 필요한 경우 확장을 위해 다음도 추가 가능:
 // export const auth = getAuth(app); (추후 로그인 쓸 때)
 // export const storage = getStorage(app); (추후 파일 업로드 시)
 
