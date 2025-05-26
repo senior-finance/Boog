@@ -65,7 +65,7 @@ const filteredSections = Object.keys(sectionDetails).filter((key) => {
           <Ionicons name="search" size={20} color='rgb(39, 39, 39)' style={styles.searchIcon} />
           <TextInput
             style={styles.searchInput}
-            placeholder="키워드나 검색어를 입력하세요..."
+            placeholder="연관 키워드나 검색어를 입력하세요..."
             value={searchText}
             onChangeText={setSearchText}
             placeholderTextColor='rgb(39, 39, 39)'
