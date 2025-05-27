@@ -109,8 +109,7 @@ export default function App() {
   return (
     <SeniorModeProvider>
     <FontSizeProvider>
-      <UserProvider>
-        
+      <UserProvider>        
           <VolumeProvider>
             <NavigationContainer>
               <>
@@ -177,8 +176,7 @@ export default function App() {
                 config={toastConfig}
               /> */}
             </NavigationContainer>
-          </VolumeProvider>
-        
+          </VolumeProvider>      
       </UserProvider>
     </FontSizeProvider>
     </SeniorModeProvider>
