@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     marginBottom: 24,
     marginTop: -8,
-    backgroundColor: 'rgb(64, 143, 212)',
+    backgroundColor: 'rgb(16, 87, 179)',
     borderRadius: 24,
     paddingVertical: 12,
     paddingHorizontal: 20,
