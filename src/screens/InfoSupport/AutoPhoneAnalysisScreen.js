@@ -136,7 +136,7 @@ const analyze = async () => {
   setSuspiciousList(autoCheckedFound);
 
   if (autoCheckedFound.length === 0) {
-    setResultText('오늘은 의심스러운 문자나 통화 기록이 없습니다.');
+    setResultText('✅오늘은 의심스러운 문자나 통화 기록이 없습니다.');
   } else {
     const smsCount = autoCheckedFound.filter(item => item.type === 'sms').length;
     const callCount = autoCheckedFound.filter(item => item.type === 'call').length;
