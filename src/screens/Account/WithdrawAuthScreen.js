@@ -179,11 +179,11 @@ export default function WithdrawAuthScreen() {
         {counterpartyName} 에게 송금할게요
       </Text>
       <Text style={styles.accountText}>송금할 상대방의 계좌 번호</Text>
-      <Text style={styles.textValue}>{accountNumTo}</Text>
+      <Text style={[styles.textValue, { color: '#1B1B1B' }]}>{accountNumTo}</Text>
       <Text style={styles.bankText}>송금할 은행</Text>
-      <Text style={styles.textValue}>{bankTo}</Text>
+      <Text style={[styles.textValue, { color: '#1E70C1' }]}>{bankTo}</Text>
       <Text style={styles.amountText}>입력된 송금액</Text>
-      <Text style={styles.textValue}>{formattedAmount}</Text>
+      <Text style={[styles.textValue, { color: '#2D63E7' }]}>{formattedAmount}</Text>
       <Text style={styles.title}>계좌 번호, 금액이 정말 맞으신가요?{'\n'}한번 더 확인해보세요!{'\n'}인증을 진행하면 송금금이 완료돼요</Text>
       <LinearGradient
         colors={['#4C6EF5', '#3B5BDB']}      // 원하는 그라데이션 컬러
@@ -194,7 +194,7 @@ export default function WithdrawAuthScreen() {
           marginVertical: 20,
         }}
       >
-        <TouchableOpacity
+        {/* <TouchableOpacity
           onPress={onAuthAndWithdraw}
           style={{
             width: 400,
@@ -205,6 +205,9 @@ export default function WithdrawAuthScreen() {
           <Text style={{ color: '#FFF', fontSize: 16, fontWeight: '600' }}>
             인증하고 송금할게요
           </Text>
+        </TouchableOpacity> */}
+        <TouchableOpacity onPress={onAuthAndWithdraw} style={styles.sendButton}>
+          <Text style={styles.sendButtonText}>인증하고 송금할게요</Text>
         </TouchableOpacity>
       </LinearGradient>
       <View style={styles.buttonRow}>
@@ -217,17 +220,8 @@ export default function WithdrawAuthScreen() {
             marginVertical: 20,
           }}
         >
-          <TouchableOpacity
-            onPress={() => nav.goBack()}
-            style={{
-              width: 160,
-              paddingVertical: 20,
-              alignItems: 'center',
-            }}
-          >
-            <Text style={{ color: '#FFF', fontSize: 16, fontWeight: '600' }}>
-              이전으로 돌아갈게요
-            </Text>
+          <TouchableOpacity onPress={() => nav.goBack()} style={styles.navButton}>
+            <Text style={styles.navButtonText}>이전으로 돌아갈게요</Text>
           </TouchableOpacity>
         </LinearGradient>
         <LinearGradient
@@ -241,15 +235,9 @@ export default function WithdrawAuthScreen() {
         >
           <TouchableOpacity
             onPress={() => nav.navigate('MainTabs')}
-            style={{
-              width: 160,
-              paddingVertical: 20,
-              alignItems: 'center',
-            }}
+            style={styles.navButton}
           >
-            <Text style={{ color: '#FFF', fontSize: 16, fontWeight: '600' }}>
-              처음 화면으로 갈게요
-            </Text>
+            <Text style={styles.navButtonText}>처음 화면으로 갈게요</Text>
           </TouchableOpacity>
         </LinearGradient>
       </View>
@@ -380,5 +368,110 @@ const styles = StyleSheet.create({
     padding: 10,
     paddingHorizontal: 20,
     borderRadius: 20,
+  },
+  container: {
+    flex: 1,
+    padding: 24,
+    backgroundColor: '#DAEFFF',
+  },
+  accountName: {
+    fontSize: 25,
+    color: '#1B1B1B',
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  title: {
+    textAlign: 'center',
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: '#1B1B1B',
+    marginTop: 15,
+  },
+  accountText: {
+    fontSize: 25,
+    color: '#1B1B1B',
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginTop: 10,
+  },
+  bankText: {
+    fontSize: 25,
+    color: '#1B1B1B',
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginTop: 10,
+  },
+  amountText: {
+    fontSize: 25,
+    color: '#1B1B1B',
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginTop: 10,
+  },
+  textValue: {
+    fontSize: 25,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    backgroundColor: '#F6FAFF',
+    borderWidth: 1.5,
+    borderColor: '#A9C7F6',
+    borderRadius: 16,
+    paddingVertical: 20,
+    paddingHorizontal: 20,
+    marginTop: 10,
+    marginVertical: 10,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOpacity: 0.12,
+    shadowOffset: { width: 0, height: 3 },
+    shadowRadius: 6,
+  },
+  sendButton: {
+    backgroundColor: '#FFFFFF',
+    borderWidth: 2.5,
+    borderColor: '#2D63E7',
+    borderRadius: 30,
+    paddingVertical: 20,
+    paddingHorizontal: 35,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 24,
+    shadowColor: '#000',
+    shadowOpacity: 0.12,
+    shadowOffset: { width: 0, height: 3 },
+    shadowRadius: 6,
+    elevation: 5,
+  },
+  sendButtonText: {
+    color: '#1A4CC0', // 기존보다 조금 더 진하고 차분한 블루톤
+    fontSize: 22,
+    fontWeight: '900',
+    textShadowColor: 'rgba(45, 99, 231, 0.25)', // 💡 더 자연스러운 그림자
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 1.5,
+  },
+  buttonRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: 30, // 💡 버튼 간격
+    marginTop: 30,
+  },
+  navButton: {
+    flex: 1,
+    backgroundColor: '#4C6EF5',
+    paddingVertical: 20,
+    borderRadius: 30,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOpacity: 0.15,
+    shadowOffset: { width: 0, height: 3 },
+    shadowRadius: 6,
+    elevation: 4,
+  },
+  navButtonText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
   },
 });
