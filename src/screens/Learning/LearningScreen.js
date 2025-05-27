@@ -22,8 +22,8 @@ const LearningScreen = ({ navigation }) => {
       nav: 'QuizLevel',
     },
     {
-      title: '입금 연습하기',
-      desc: '입금하는 방법을\n배워보세요',
+      title: '송금 연습하기',
+      desc: '송금하는 방법을\n배워보세요',
       icon: 'bank-transfer',
       nav: 'DepositStep1',
     },

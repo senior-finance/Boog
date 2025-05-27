@@ -17,11 +17,11 @@ export default function DepositStep3({ navigation, route }) {
         <View style={styles.contentWrapper}>
           <View style={styles.card}>
             <CustomText style={styles.title}>
-              입금 연습을 해볼게요{'\n'}실제로 입금이 되지는 않아요!
+              송금 연습을 해볼게요{'\n'}실제로 송금이 되지는 않아요!
             </CustomText>
 
             <CustomText style={styles.subtitle}>
-              입금할 금액을 입력하세요
+              송금할 금액을 입력하세요
             </CustomText>
 
             <CustomTextInput

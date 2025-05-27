@@ -10,6 +10,9 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import CustomText from '../../components/CustomText';
 import { useUser } from '../Login/UserContext';
 import { getInquiries } from './Inquiry';
+import { getUserInfoBySocialId } from '../../database/mongoDB';
+import LottieView from 'lottie-react-native';
+import loadingJson from '../../assets/loadingg.json';
 
 const InquiryListScreen = () => {
   const { userInfo } = useUser();
@@ -26,17 +29,30 @@ const InquiryListScreen = () => {
     return `${y}-${m}-${day} ${hh}:${mm}`;
   }
 
+  const [userName, setUserName] = useState('');
+
   useEffect(() => {
     const loadInquiries = async () => {
       try {
-        const rawUser = userInfo?.username;
-        const queryUser = rawUser && rawUser.trim() !== '' ? rawUser.trim() : 'Guest';
+        let finalName = userInfo?.username || '';
+
+        // username이 없으면 mongo에서 조회
+        if (!finalName && userInfo?.socialId) {
+          const userDoc = await getUserInfoBySocialId(userInfo.socialId);
+          if (userDoc?.username) finalName = userDoc.username;
+        }
+
+        setUserName(finalName);
+
+        const queryUser = finalName && finalName.trim() !== '' ? finalName.trim() : 'Guest';
         const data = await getInquiries(queryUser);
         setInquiries(data);
       } catch (error) {
         console.log('문의 내역 불러오기 오류:', error);
       } finally {
-        setLoading(false);
+        setTimeout(() => {
+          setLoading(false);
+        }, 1000); // 최소 1초 유지
       }
     };
 
@@ -45,9 +61,17 @@ const InquiryListScreen = () => {
 
   if (loading) {
     return (
-      <View style={styles.loaderContainer}>
-        <ActivityIndicator size="large" color="#1A4DCC" />
-      </View>
+      <LinearGradient
+        colors={['rgba(140, 182, 222, 0.69)', '#e0f0ff']}
+        style={styles.loaderContainer}
+      >
+        <LottieView
+          source={loadingJson}
+          autoPlay
+          loop
+          style={{ width: 140, height: 140 }}
+        />
+      </LinearGradient>
     );
   }
 
@@ -58,7 +82,7 @@ const InquiryListScreen = () => {
     >
       <ScrollView contentContainerStyle={styles.content}>
         <CustomText style={styles.title}>
-          📋 {inquiries[0]?.userName || ''} 님의 문의 내역
+          📋 {userName || 'Guest'} 님의 문의 내역
         </CustomText>
 
         {inquiries.length === 0 ? (

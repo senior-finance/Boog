@@ -14,6 +14,9 @@ import { WebView } from 'react-native-webview';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import AccountScreenGUI from './AccountScreenGUI'; // UI 관련 컴포넌트를 불러옴
 import CustomModal from '../../components/CustomModal';
+import LinearGradient from 'react-native-linear-gradient';
+import LottieView from 'lottie-react-native';
+import loadingJson from '../../assets/loadingg.json';
 import {
   // kmj
   KFTC_CLIENT_ID_KMJ,
@@ -530,6 +533,22 @@ const AccountScreen = () => {
       });
     }
   };
+
+  if (loading) {
+    return (
+      <LinearGradient
+        colors={['rgba(140, 182, 222, 0.69)', '#e0f0ff']}
+        style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
+      >
+        <LottieView
+          source={loadingJson}
+          autoPlay
+          loop
+          style={{ width: 160, height: 160 }}
+        />
+      </LinearGradient>
+    );
+  }
 
   return (
     <>

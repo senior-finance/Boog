@@ -137,10 +137,10 @@ export default function App() {
                   <Stack.Screen name="Quiz" component={QuizScreen} options={{ title: '금융 용어 학습' }} />
                   <Stack.Screen name="Answer" component={AnswerScreen} options={{ title: '정답 확인' }} />
                   <Stack.Screen name="QuizResult" component={QuizResult} options={{ title: ' 금융 용어 학습 결과' }} />
-                  <Stack.Screen name="DepositStep1" component={DepositStep1} options={{ title: '입금 연습 - 계좌 번호 입력' }} />
-                  <Stack.Screen name="DepositStep2" component={DepositStep2} options={{ title: '입금 연습 - 은행 선택' }} />
-                  <Stack.Screen name="DepositStep3" component={DepositStep3} options={{ title: '입금 연습 - 금액 입력' }} />
-                  <Stack.Screen name="DepositStep4" component={DepositStep4} options={{ title: '입금 연습 - 확인하기' }} />
+                  <Stack.Screen name="DepositStep1" component={DepositStep1} options={{ title: '송금 연습 - 계좌 번호 입력' }} />
+                  <Stack.Screen name="DepositStep2" component={DepositStep2} options={{ title: '송금 연습 - 은행 선택' }} />
+                  <Stack.Screen name="DepositStep3" component={DepositStep3} options={{ title: '송금 연습 - 금액 입력' }} />
+                  <Stack.Screen name="DepositStep4" component={DepositStep4} options={{ title: '송금 연습 - 확인하기' }} />
 
                   <Stack.Screen name="MapView" component={MapViewScreen} options={{ title: '지도 화면' }} />
                   <Stack.Screen name="FunctionScreen" component={FunctionScreen} />

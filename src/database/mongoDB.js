@@ -338,3 +338,24 @@ export async function updateUsername(socialId, username) {
   });
 }
 
+// 문의내역에서 아이디만 불러오기
+export async function getUserInfoBySocialId(socialId) {
+  if (!socialId) return null;
+  try {
+    const result = await mongoDB('find', 'user', 'info', {
+      query: { socialId },
+      options: { limit: 1 }
+    });
+
+    const docs = Array.isArray(result)
+      ? result
+      : Array.isArray(result.documents)
+        ? result.documents
+        : [];
+
+    return docs[0] || null;
+  } catch (err) {
+    console.log('getUserInfoBySocialId 실패:', err);
+    return null;
+  }
+}

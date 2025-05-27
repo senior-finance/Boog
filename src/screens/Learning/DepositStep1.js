@@ -1,12 +1,47 @@
 import React, { useState } from 'react';
-import { View, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
+import {
+  View,
+  TouchableOpacity,
+  StyleSheet,
+  KeyboardAvoidingView,
+  Platform,
+  Modal,
+  Text,
+} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import CustomText from '../../components/CustomText';
 import CustomTextInput from '../../components/CustomTextInput';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import CustomModal from '../../components/CustomModal';
 
 export default function DepositStep1({ navigation }) {
   const [accountNumber, setAccountNumber] = useState('');
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalTitle, setModalTitle] = useState('');
+  const [modalMessage, setModalMessage] = useState('');
+
+  const showModal = (title, message) => {
+    setModalTitle(title);
+    setModalMessage(message);
+    setModalVisible(true);
+  };
+
+  const handleNext = () => {
+    const rawNumber = accountNumber.replace(/-/g, '');
+    if (rawNumber.length !== 10) {
+      showModal('입력 오류', '계좌 번호는 정확히 10자리여야 해요.');
+      return;
+    }
+    navigation.navigate('DepositStep2', { accountNumber });
+  };
+
+  const formatAccountNumber = (text) => {
+    const digitsOnly = text.replace(/\D/g, '').slice(0, 10);
+    const formatted = digitsOnly.replace(/(\d{1,3})(\d{0,3})?(\d{0,4})?/, (_, a, b, c) => {
+      return [a, b, c].filter(Boolean).join('-');
+    });
+    setAccountNumber(formatted);
+  };
 
   return (
     <LinearGradient colors={['#D8ECFF', '#E9F4FF']} style={styles.container}>
@@ -17,11 +52,11 @@ export default function DepositStep1({ navigation }) {
         <View style={styles.contentWrapper}>
           <View style={styles.card}>
             <CustomText style={styles.title}>
-              입금 연습을 해볼게요{'\n'}실제로 입금이 되지는 않아요!
+              송금 연습을 해볼게요{'\n'}실제로 송금이 되지는 않아요!
             </CustomText>
 
             <CustomText style={styles.subtitle}>
-              아래 빈칸에 입금할 계좌 번호를 입력하면{'\n'}올바른 계좌인지 확인해드릴게요
+              아래 빈칸에 송금할 계좌 번호를 입력하면{'\n'}올바른 계좌인지 확인해드릴게요
             </CustomText>
 
             <CustomTextInput
@@ -29,18 +64,15 @@ export default function DepositStep1({ navigation }) {
               placeholder="계좌 번호 입력"
               keyboardType="numeric"
               value={accountNumber}
-              onChangeText={setAccountNumber}
+              onChangeText={formatAccountNumber}
             />
 
             <TouchableOpacity
-              style={[
-                styles.nextButton,
-                {
-                  backgroundColor: accountNumber ? '#4B7BE5' : '#B0C7E7',
-                },
-              ]}
-              onPress={() => navigation.navigate('DepositStep2', { accountNumber })}
-              disabled={!accountNumber}
+              style={[styles.nextButton, {
+                backgroundColor: accountNumber.replace(/-/g, '').length === 10 ? '#4B7BE5' : '#B0C7E7',
+              }]}
+              onPress={handleNext}
+              disabled={accountNumber.replace(/-/g, '').length !== 10}
             >
               <CustomText style={styles.nextButtonText}>다음 화면</CustomText>
             </TouchableOpacity>
@@ -55,6 +87,17 @@ export default function DepositStep1({ navigation }) {
             </View>
           </TouchableOpacity>
         </View>
+
+        <CustomModal
+          visible={modalVisible}
+          title={modalTitle}
+          message={modalMessage}
+          buttons={[{
+            text: '확인',
+            onPress: () => setModalVisible(false),
+            color: '#4B7BE5',
+          }]}
+        />
       </KeyboardAvoidingView>
     </LinearGradient>
   );
