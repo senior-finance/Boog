@@ -126,11 +126,11 @@ export default function App() {
                   <Stack.Screen name="SetUserNameScreen" component={SetUserNameScreen} options={{ title: '사용자 정보 입력' }} />
 
                   <Stack.Screen name="Account" component={AccountScreen} options={{ title: '내 계좌 정보' }} />
-                  <Stack.Screen name="AccountDetail" component={AccountDetailScreen} options={{ title: '상세 계좌 정보' }} />
-                  <Stack.Screen name="WithdrawAccount" component={WithdrawAccountScreen} />
-                  <Stack.Screen name="WithdrawBank" component={WithdrawBankScreen} />
-                  <Stack.Screen name="WithdrawAmount" component={WithdrawAmountScreen} />
-                  <Stack.Screen name="WithdrawAuth" component={WithdrawAuthScreen} />
+                  <Stack.Screen name="AccountDetail" component={AccountDetailScreen} options={{ title: '상세 거래 내역' }} />
+                  <Stack.Screen name="WithdrawAccount" component={WithdrawAccountScreen} options={{ title: '송금 화면 - 계좌 입력' }} />
+                  <Stack.Screen name="WithdrawBank" component={WithdrawBankScreen} options={{ title: '송금 화면 - 은행 선택' }} />
+                  <Stack.Screen name="WithdrawAmount" component={WithdrawAmountScreen} options={{ title: '송금 화면 - 금액 입력' }} />
+                  <Stack.Screen name="WithdrawAuth" component={WithdrawAuthScreen} options={{ title: '송금 화면 - 인증하기' }} />
 
                   <Stack.Screen name="Learning" component={LearningScreen} options={{ title: '학습 콘텐츠' }} />
                   <Stack.Screen name="QuizLevel" component={SelectLevelScreen} options={{ title: '금융 용어 학습 난이도 선택' }} />
