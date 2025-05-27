@@ -3,7 +3,7 @@ import { View, Text, TextInput, StyleSheet, TouchableOpacity, BackHandler } from
 import { useUser } from './UserContext';
 import CustomText from '../../components/CustomText';
 import CustomModal from '../../components/CustomModal';
-import { updateUsername, upsertSocialLoginUser, mongoDB } from '../../database/mongoDB';
+import { updateUsername, upsertSocialLoginUser, mongoDB, addNotification } from '../../database/mongoDB';
 import { storeAuthSession } from './AutoLogin';
 import { WebView } from 'react-native-webview';
 import { LOGIN_URL, KFTC_TRAN_ID_KMJ, KFTC_TRAN_ID_HWC } from '@env'
@@ -165,6 +165,34 @@ const SetUsernameScreen = ({ navigation }) => {
         accessToken: userInfo.accessToken,
         userInfo: finalUser,
       });
+
+      const notifications = [
+        {
+          icon: 'heart',
+          iconColor: '#4CAF50',
+          borderColor: '#C8E6C9',
+          content: `${usernameInput} 님, 가입을 환영합니다!`,
+        },
+        {
+          icon: 'gift',
+          iconColor: '#FFC107',
+          borderColor: '#FFE082',
+          content: `복지 혜택에서 다양한 혜택을 확인해보세요.`,
+        },
+        {
+          icon: 'school-outline',
+          iconColor: '#03A9F4',
+          borderColor: '#B3E5FC',
+          content: `금융 관련 퀴즈를 통해 금융 지식을 테스트 해보세요.`,
+        },
+      ];
+
+      // 기본 환영 알림 저장
+      await Promise.all(
+        notifications.map(noti =>
+          addNotification(finalUser.username, noti)
+        )
+      );
 
       // 메인 페이지 이동
       navigation.reset({

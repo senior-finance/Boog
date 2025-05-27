@@ -16,29 +16,16 @@ export default function NotificationScreen() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const defaultNotifications = [
-        { id: 'info-1', icon: 'information-circle', iconColor: '#2196F3', borderColor: '#BBDEFB', content: '새로운 보이스피싱 사례 소식을 확인해보세요.' },
-        { id: 'chat-2', icon: 'chatbubble-ellipses-outline', iconColor: '#AB47BC', borderColor: '#E1BEE7', content: 'AI 챗봇과 대화해보세요! 궁금한 금융 정보를 알려드려요.' },
-        { id: 'calendar-3', icon: 'calendar-outline', iconColor: '#607D8B', borderColor: '#CFD8DC', content: '오늘 통화/문자 분석도 꼭 확인해보세요.' },
-      ];
-
       try {
         const result = await getNotifications(userId);
-        if (result.length > 0) {
-          const formattedResult = result.map(item => ({
-            id: item._id.toString(),
-            ...item,
-          }));
-          setNotifications(formattedResult);
-        } else {
-          setNotifications(defaultNotifications);
-          for (const noti of defaultNotifications) {
-            await addNotification(userId, { ...noti });
-          }
-        }
+        const formattedResult = result.map(item => ({
+          id: item._id.toString(),
+          ...item,
+        }));
+        setNotifications(formattedResult);
       } catch (err) {
         console.log('알림 처리 중 오류:', err);
-        setNotifications(defaultNotifications);
+        setNotifications([]); // 오류 발생 시 빈 상태 처리
       }
     };
     fetchData();
@@ -79,7 +66,7 @@ export default function NotificationScreen() {
         contentContainerStyle={styles.scrollContainer}
         ListEmptyComponent={() => (
           <View style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>알림을 모두 지웠어요!</Text>
+            <CustomText style={styles.title}>알림이 존재하지 않습니다.</CustomText>
           </View>
         )}
         renderSectionHeader={({ section }) => (
