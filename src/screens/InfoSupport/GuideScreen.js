@@ -12,6 +12,8 @@ import CustomText from '../../components/CustomText';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 
+
+
 export default function GuideScreen() {
   const navigation = useNavigation();
   const [searchText, setSearchText] = useState('');
@@ -80,6 +82,7 @@ const filteredSections = Object.keys(sectionDetails).filter((key) => {
               onPress={() => goToDetail(key)}
               activeOpacity={0.85}
               style={styles.cardWrapper}
+
             >
               <LinearGradient
                 colors={['#ffffff', '#d6eaff']}
@@ -139,7 +142,14 @@ const styles = StyleSheet.create({
   cardWrapper: {
     marginBottom: 20,
     borderRadius: 20,
+    
+    //shadowColor: '#000',
+   // shadowOffset: { width: 4, height: 2 },
+    //shadowOpacity: 0.08,
+    //shadowRadius: 3,
+    //elevation: 2,
   },
+  
 
   listCard: {
     borderRadius: 20,
@@ -150,10 +160,10 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
 
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 3,
+  shadowOffset: { width: 0, height: 6 },
+   shadowOpacity: 0.1,
+  shadowRadius: 8,
+   elevation: 3,
 
     borderWidth: 1.5,
     borderColor: 'rgba(21, 70, 216, 0.24)',

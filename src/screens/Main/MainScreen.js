@@ -688,7 +688,18 @@ const styles = StyleSheet.create({
   actionRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 32 },
   featureRow: { flexDirection: 'row', justifyContent: 'center', marginBottom: 32 },
 
-  functionButton: { borderRadius: 20, overflow: 'hidden', width: '22%' },
+ functionButton: {
+  borderRadius: 20,
+  width: '22%',
+  
+  shadowColor: '#000',
+  shadowOffset: { width: 0, height: 4 },
+  shadowOpacity: 0.1,
+  shadowRadius: 8,
+  elevation: 6,
+},
+
+  
   functionButtonInner: {
     flex: 1,
     paddingVertical: 12,
@@ -698,11 +709,6 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     backgroundColor: '#FFFFFF',
 
-    shadowColor: '#000',
-    shadowOffset: { width: 3, height: 3 },
-    shadowOpacity: 0.2,
-    shadowRadius: 6,
-    elevation: 6,
 
     borderWidth: 2,
     borderColor: 'rgba(14, 94, 233, 0.24)',
