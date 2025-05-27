@@ -202,20 +202,32 @@ const analyze = async () => {
     </CustomText>
   </View>
 
-  {/* 문자 내용 or 통화 시간 */}
-  {item.type === 'sms' ? (
-    <CustomText style={styles.itemText}>
-      📩 {item.text}
-    </CustomText>
-  ) : (
-    <CustomText style={styles.itemText}>{item.text}</CustomText>
-  )}
+ {/* 문자 내용 원인 표시 */}
+{item.type === 'sms' && (
+  <CustomText style={[styles.itemText, { color: '#1A237E' }]}>
+    📩 의심 사유:{' '}
+    {item.keywords.includes('링크 포함')
+      ? '링크가 포함된 문자입니다.'
+      : '피싱 키워드가 포함된 문자입니다.'}
+  </CustomText>
+)}
+
 
   {/* 의심 키워드 강조 */}
   <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginBottom: 5 }}>
-    <CustomText style={[styles.itemText, { color: 'red', fontWeight: 'bold' }]}>
-      ❗ 의심 키워드: 
-    </CustomText>
+  <CustomText
+  style={[
+    styles.itemText,
+    {
+      color: 'red',
+      fontWeight: 'bold',
+      fontFamily: 'Pretendard-Regular', // 또는 프로젝트 기본 글꼴
+    },
+  ]}
+>
+  ❗ 의심 키워드:
+</CustomText>
+
     <CustomText style={[styles.itemText, { color: 'red' }]}>
       {' '}{item.keywords.join(', ')}
     </CustomText>
@@ -287,6 +299,20 @@ const styles = StyleSheet.create({
   icon: { marginRight: 8 },
   itemSender: { color: '#0052CC', fontWeight: 'bold' },
   itemText: { color: '#0052CC', marginBottom: 5 },
+
+  itemBox: {
+  backgroundColor: '#FFFFFF',
+  borderRadius: 12,
+  paddingVertical: 12,
+  paddingHorizontal: 15,
+  marginBottom: 12, // 약간 줄임
+  elevation: 2,
+  borderWidth: 1,
+  borderColor: '#B3D1FF',
+  width: '95%',
+  alignSelf: 'center', // 카드 정렬 통일
+},
+
 });
 
 export default AutoPhoneAnalysisScreen;
