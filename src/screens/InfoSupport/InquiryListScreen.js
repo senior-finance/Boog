@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
     elevation: 3,
 
     borderWidth: 1.5,
-    borderColor: 'rgba(21, 70, 216, 0.24)',
+    borderColor: '#1A4DCC',
   },
   rowWrap: {
     flexDirection: 'row',
