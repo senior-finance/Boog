@@ -82,24 +82,31 @@ const toastConfig = {
       {...rest}
       style={{
         borderLeftWidth: 0,
-        height: 200,
-        borderRadius: 10,
+        backgroundColor: '#333',   // dark background
+        borderRadius: 8,
         marginHorizontal: 16,
       }}
       contentContainerStyle={{
         paddingHorizontal: 24,
         paddingVertical: 20,
       }}
-      text1Style={{ fontSize: 36, fontWeight: 'bold', color: 'black' }}
-      text2Style={{ fontSize: 36 }}
+      text1Style={{
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: 'rgb(173, 24, 24)',
+      }}
+      text2Style={{
+        fontSize: 14,
+        color: 'rgb(41, 93, 161)',
+      }}
     />
   ),
-  // error, info 타입도 여기에 추가 커스터마이징 가능
+  // …error, info 등
+  // App <PortraitWrapper> 으로 감싸는 것 생략략
 };
 
 export default function App() {
   return (
-    // <PortraitWrapper>
     <FontSizeProvider>
       <UserProvider>
         <SeniorModeProvider>
@@ -113,7 +120,6 @@ export default function App() {
                     component={TabNavigator}
                     options={{ headerShown: false }}
                   />
-
                   {/* 탭 외부로 이동할 화면들 */}
                   <Stack.Screen name="Token" component={TokenScreen} options={{ headerShown: false }} />
                   <Stack.Screen name="Login" component={LoginScreen} options={{ title: '로그인' }} />
@@ -162,16 +168,17 @@ export default function App() {
                   <Stack.Screen name="AutoPhoneAnalysis" component={AutoPhoneAnalysisScreen} options={{ title: '자동 통화/문자 분석' }} />
 
                   <Stack.Screen name="MyInfo" component={MyInfoScreen} options={{ title: '내 정보 테스트' }} />
-
                 </Stack.Navigator>
                 <HelpTooltipButton />
               </>
+              {/* <Toast
+                ref={ref => Toast.setRef(ref)}
+                config={toastConfig}
+              /> */}
             </NavigationContainer>
-            <Toast config={toastConfig} />
           </VolumeProvider>
         </SeniorModeProvider>
       </UserProvider>
     </FontSizeProvider>
-    // </PortraitWrapper>
   );
 }

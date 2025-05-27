@@ -38,55 +38,115 @@ export async function mongoDB(action, dbName, collName, params) {
 // 
 // 이하 함수는 자주 쓰는 헬퍼 함수입니다
 // 
-// === 입금 전용 deposit 함수 (로그남기 + 잔액 차감) ===
-export async function deposit(dbName, accountId, accountBank, amount) {
-  const numeric = Number(amount);    // ← 여기서도 문자열이면 숫자로
+// === 입금 전용 deposit 함수 (로그남기 + 잔액 증가 + trans에도 기록) ===
+export async function deposit(dbName, accountNum, accountBank, amount) {
+  const numeric = Number(amount);
+
+  // 1) bank.deposit 컬렉션에 로그 남기기
   const logId = await mongoDB(
     'insertOne',
     'bank',
     'deposit',
-    { document: { dbName, accountId, accountBank, amount: numeric, createdAt: new Date() } }
+    {
+      document: {
+        dbName,
+        accountNum,
+        accountBank,
+        amount: numeric,
+        createdAt: new Date()
+      }
+    }
   );
+
   try {
+    // 2) account 컬렉션에서 잔액 증가
     await mongoDB(
       'updateOne',
       dbName,
       'account',
       {
-        filter: { accountId },
-        update: { $inc: { amount: numeric } }   // ← numeric 변수를 사용
+        filter: { accountNum },
+        update: { $inc: { amount: numeric } }
       }
     );
+
+    // 3) trans 컬렉션에도 거래내역 기록 (입금)
+    await mongoDB(
+      'insertOne',
+      dbName,
+      'trans',
+      {
+        document: {
+          accountNum,
+          accountBank,
+          type: 'deposit',   // 거래 구분
+          amount: numeric,   // 입금 금액
+          createdAt: new Date()
+        }
+      }
+    );
+
   } catch (err) {
-    console.log('▶ updateOne failed:', err?.response?.status, err?.response?.data);
+    console.log('▶ updateOne or trans insert failed:', err?.response?.status, err?.response?.data);
+    // 필요 시 롤백 로직 추가 가능
   }
+
   return logId;
 }
 
-// === 출금 전용 withdraw 함수 (로그남기 + 잔액 차감) ===
-export async function withdraw(dbName, accountId, accountBank, amount) {
+// === 출금 전용 withdraw 함수 (로그남기 + 잔액 차감 + trans에도 기록) ===
+export async function withdraw(dbName, accountNum, accountBank, amount) {
   const numeric = Number(amount);
+  // 1) bank.withdraw 컬렉션에 로그 남기기
   const logId = await mongoDB(
     'insertOne',
     'bank',
     'withdraw',
-    { document: { dbName, accountId, accountBank, amount: numeric, createdAt: new Date() } }
+    {
+      document: {
+        dbName,
+        accountNum,
+        accountBank,
+        amount: numeric,
+        createdAt: new Date()
+      }
+    }
   );
   try {
+    // 2) account 컬렉션에서 잔액 차감
     await mongoDB(
       'updateOne',
       dbName,
       'account',
       {
-        filter: { accountId },
+        filter: { accountNum },
         update: { $inc: { amount: -numeric } }
       }
     );
+
+    // 3) trans 컬렉션에도 거래내역 기록 (출금)
+    await mongoDB(
+      'insertOne',
+      dbName,
+      'trans',
+      {
+        document: {
+          accountNum,
+          accountBank,
+          type: 'withdraw',    // 거래 구분
+          amount: numeric,     // 출금 금액
+          createdAt: new Date()
+        }
+      }
+    );
+
   } catch (err) {
-    console.log('▶ updateOne failed:', err?.response?.status, err?.response?.data);
+    // console.log('▶ updateOne or trans insert failed:', err?.response?.status, err?.response?.data);
+    // 필요하다면 여기서 롤백 로직 추가 가능
   }
   return logId;
 }
+
 
 // === 계좌 정보 Upsert ===
 export async function accountUpsert(userName, accountId, accountBank, amount) {
@@ -113,13 +173,6 @@ export async function accountUpsert(userName, accountId, accountBank, amount) {
 }
 
 // === 계좌 정보 조회 ===
-/**
- * userName DB 안의 account 컬렉션에서
- * accountId 에 해당하는 문서를 찾아 반환
- * @param {string} userName - dbName 으로도 사용
- * @param {string} accountId - fintech_use_num
- * @returns {{ accountNum: string, amount: number } | null}
- */
 export async function accountGet(userName, accountId) {
   try {
     const res = await mongoDB('find', userName, 'account', { query: { accountId } });
@@ -157,9 +210,13 @@ export async function accountGet(userName, accountId) {
   }
 }
 
-// === 전체 출금 기록 조회 ===
-export async function accountGetAll(userName) {
-  return await mongoDB('find', 'bank', 'withdraw', { query: {} });
+// === 전체 거래 기록 조회 ===
+export async function accountGetAll(dbName) {
+  if (!dbName) {
+    return { success: false, error: 'dbName이 제공되지 않았습니다.' };
+  }
+  // 'transactions' 컬렉션 이름은 실제 스키마에 맞게 조정하세요
+  return await mongoDB('find', dbName, 'trans', { query: {} });
 }
 
 // accountNum과 accountBank 모두 선택적(optional) 파라미터로 처리
@@ -174,7 +231,7 @@ export async function withdrawVerify({ accountNum, accountBank }) {
     query.accountBank = { $regex: `^${prefix}` };
   }
 
-  // kmj, hwc 컬렉션을 병렬 조회
+  // kmj, hwc count 컬렉션을 병렬 조회
   const [kmjResults, hwcResults] = await Promise.all([
     mongoDB('find', 'kmj', 'account', { query }),
     mongoDB('find', 'hwc', 'account', { query }),

@@ -28,6 +28,7 @@ import { useUser } from '../Login/UserContext';
 import { useAccountData } from '../../components/useAccountData';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import LottieView from 'lottie-react-native';
+import { accountGetAll } from '../../database/mongoDB';  // 방금 구현한 함수
 
 const FunctionButton = ({ title, onPress, icon }) => {
   const { seniorMode } = useSeniorMode();
@@ -114,6 +115,34 @@ const MainScreen = ({ navigation }) => {
     data[0] ||
     {};
 
+  // 거래 내역
+  const [txList, setTxList] = useState([]);
+  const dbName = testBedAccount
+  useEffect(() => {
+    if (!dbName) return;
+    accountGetAll(dbName)
+      .then(docs => {
+        // console.log('raw res:', docs);
+        // 반환이 배열인 경우
+        if (Array.isArray(docs)) setTxList(docs);
+        else console.error('거래내역 format 오류', docs);
+      })
+      .catch(console.error);
+  }, [dbName]);
+
+  // 2) 화면에서 쓸 형태로 매핑
+  const history = useMemo(() =>
+    txList
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+      .slice(0, 5) // ← 최근 5개만
+      .map(tx => ({
+        name: tx.accountBank,
+        date: tx.createdAt.slice(0, 10),
+        amount: `${tx.type === 'deposit' ? '+' : '-'}₩${Math.abs(tx.amount).toLocaleString('ko-KR')}`,
+        isDeposit: tx.type === 'deposit',
+      })),
+    [txList]);
+
   useEffect(() => {
     // 1. 푸시 알림 설정 (한 번만)
     PushNotification.configure({
@@ -189,7 +218,7 @@ const MainScreen = ({ navigation }) => {
     { name: '엄마', date: '2024-05-11', amount: '+₩100,000', isDeposit: true },
   ];
 
-  const history = useMemo(() => [...outgo, ...income].sort((a, b) => new Date(b.date) - new Date(a.date)), []);
+  // const history = useMemo(() => [...outgo, ...income].sort((a, b) => new Date(b.date) - new Date(a.date)), []);
 
   const openModal = tx => {
     setSelectedTx(tx);
@@ -360,7 +389,7 @@ const MainScreen = ({ navigation }) => {
           }}
         >
           {/* 실제 거래 내역으로 바꿔야 돼 */}
-          <CustomText style={styles.sectionTitle}>거래 내역</CustomText>
+          <CustomText style={styles.sectionTitle}>거래 내역 (최근 5건)</CustomText>
           <Ionicons
             name={showHistory ? 'chevron-up-outline' : 'chevron-down-outline'}
             size={20}
@@ -375,6 +404,7 @@ const MainScreen = ({ navigation }) => {
               { paddingBottom: seniorMode ? 48 : 16 }
             ]}
           >
+            {/* <CustomText style={styles.noticeText}>최근 5건만 표시할게요</CustomText> */}
             {history.map((tx, idx) => (
               <TouchableOpacity key={idx} style={styles.txCard} onPress={() => openModal(tx)}>
                 <View style={styles.txInfo}>
@@ -594,7 +624,7 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 999,
     marginLeft: 4,
   },
-    balanceCard: {
+  balanceCard: {
     backgroundColor: 'rgba(49, 116, 199, 0.97)',
     borderRadius: 20,
     padding: 60,
@@ -806,6 +836,12 @@ const styles = StyleSheet.create({
   loadingLottie: {
     width: 200,     // 원하는 Lottie 크기
     height: 200,
+  },
+  noticeText: {
+    fontSize: +24,
+    color: '#666',
+    textAlign: 'center',
+    marginVertical: 4,
   },
 });
 

@@ -3,6 +3,7 @@ import { React, useState, useEffect } from 'react';
 import {
   View,
   Text,
+  Modal,
   Button,
   FlatList,
   TextInput,
@@ -28,14 +29,17 @@ import { deposit, withdraw, accountUpsert, accountGet, withdrawVerify, mongoDB }
 import { CONFIG } from './AccountScreen';
 import CustomModal from '../../components/CustomModal';
 
-// 실제 지문/Pin 인증 모듈을 연동하세요
-
 export default function WithdrawAuthScreen() {
   // 커스텀 모달
   const [modalVisible, setModalVisible] = useState(false);
   const [modalTitle, setModalTitle] = useState('');
   const [modalMessage, setModalMessage] = useState('');
   const [modalButtons, setModalButtons] = useState([]);
+
+  // 컴포넌트 최상단
+  const [authTries, setAuthTries] = useState(0);
+  const [showNumPad, setShowNumPad] = useState(false);
+  const [pinInput, setPinInput] = useState('');
 
   const showModal = (
     title,
@@ -57,8 +61,6 @@ export default function WithdrawAuthScreen() {
   const nav = useNavigation();
   const { accountNumTo, bankTo, formattedAmount, rawAmount } = useRoute().params;
   const { amount, bankName, accountNum, testBedAccount } = useRoute().params;
-
-  console.log(rawAmount)
 
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [biometryType, setBiometryType] = useState(null);
@@ -103,69 +105,66 @@ export default function WithdrawAuthScreen() {
   }, [accountNumTo, testBedAccount]);
 
   const handleWithdraw = async () => {
-    // 금액 문자열(예: "1,000,000") → 숫자
-    const setTo = parseFloat(accountNumTo.replace(/-/g, ''));
+    const numericAmount = Number(rawAmount);
+    if (isNaN(numericAmount) || numericAmount <= 0) {
+      showModal('오류', '유효한 금액을 입력하세요');
+      return;
+    }
+
+    // 내 계좌번호 (하이픈 제거)
+    const fromDb = testBedAccount;      // 'kmj' or 'hwc'
+    const rawFromAccountNum = accountNum;          // ex) "1-124-573-368"
+    const fromAccountNum = rawFromAccountNum.replace(/-/g, ''); // "1124573368"
+    const fromBank = bankName;
+
+    // 상대 계좌번호 (하이픈 제거)
+    const toDb = fromDb === 'kmj' ? 'hwc' : 'kmj';
+    const rawToAccountNum = accountNumTo;        // ex) "2-345-678-901"
+    const toAccountNum = rawToAccountNum.replace(/-/g, '');   // "2345678901"
+    const toBank = bankTo;
+
     try {
-      // console.log("과연?", testBedAccount),
-      // CONFIG와 testBedAccount는 상위 컨텍스트에서 받아왔다고 가정
-      await withdraw(
-        testBedAccount,
-        accountNumTo,    // fintech_use_num
-        bankTo,          // bank_name
-        rawAmount
-      );
-      console.log('나의 계좌 --', accountNum, rawAmount);
-      console.log('송금 보낼 계좌 ++', setTo, rawAmount);
+      // 1) 내 계좌에서 출금 (withdraw 함수의 accountId 매개변수에 accountNum을 넘김)
+      await withdraw(fromDb, fromAccountNum, fromBank, numericAmount);
+      console.log('내 계좌 출금:', fromDb, fromAccountNum, fromBank, numericAmount);
+
+      // 2) 상대 계좌에 입금
+      await deposit(toDb, toAccountNum, toBank, numericAmount);
+      console.log('상대 계좌 입금:', toDb, toAccountNum, toBank, numericAmount);
+
       showModal(
-        '출금 완료',
-        `${bankTo}에서 ${formattedAmount} 출금 요청이 완료 됐어요`
+        '송금 완료',
+        `${toBank} ${formattedAmount} 송금이 완료되었습니다.`
       );
       // nav.goBack();
     } catch (err) {
-      console.log('출금 중 오류:', err);
-      showModal('출금 실패', '출금 중 오류가 발생했습니다.');
+      console.log('송금 중 오류:', err);
+      showModal('송금 실패', '송금 처리 중 오류가 발생했습니다.');
     }
   };
 
   // 생체 인증 실행 함수
-  const handleAuthentication = async () => {
+  const onAuthAndWithdraw = async () => {
     const rnBiometrics = new ReactNativeBiometrics();
-
-    // 생체 인증 가능 여부 확인
     const { available, biometryType } = await rnBiometrics.isSensorAvailable();
+    let success = false;
 
-    // if (!available) {
-    //   showModal('에러', '이 기기는 생체 인증을 지원하지 않습니다.');
-    //   return;
-    // }
-
-    // if (!biometryType) {
-    //   showModal('알림', '사용 가능한 생체 인증이 없습니다.');
-    //   return;
-    // }
-
-    setBiometryType(biometryType);
-
-    const promptMessage =
-      biometryType === 'Face ID' ? 'Face ID 인증' : '지문 인증';
-
-    const { success } = await rnBiometrics.simplePrompt({
-      promptMessage,
-      cancelButtonText: '취소',
-    });
+    if (available && biometryType) {
+      const promptMessage = biometryType === 'Face ID' ? 'Face ID 인증' : '지문 인증';
+      ({ success } = await rnBiometrics.simplePrompt({ promptMessage, cancelButtonText: '취소' }));
+    }
 
     if (success) {
-      setIsAuthenticated(true);
-      showModal('인증 성공', `${biometryType} 인증이 완료되었습니다.`);
+      // 인증 성공 시 원래 출금 로직 호출
+      return handleWithdraw();
+    }
+
+    // 인증 실패
+    setAuthTries(t => t + 1);
+    if (authTries + 1 >= 3) {
+      setShowNumPad(true);
     } else {
-      showModal(
-        '인증 실패',
-        '생체 인증이 실패했습니다. 비밀번호 인증을 사용하시겠습니까?',
-        [
-          { text: '아니요', onPress: () => setModalVisible(false), color: '#ccc', textColor: 'black' },
-          { text: '비밀번호 입력', onPress: () => console.log('비밀번호 입력 실행'), color: '#4B7BE5' },
-        ]
-      );
+      showModal('인증 실패', '생체 인증이 실패했습니다. 다시 시도해주세요.');
     }
   };
 
@@ -177,7 +176,7 @@ export default function WithdrawAuthScreen() {
       end={{ x: 1, y: 1 }}
     >
       <Text style={styles.accountName}>
-        {counterpartyName} 에게
+        {counterpartyName} 에게 송금할게요
       </Text>
       <Text style={styles.accountText}>송금할 상대방의 계좌 번호</Text>
       <Text style={styles.textValue}>{accountNumTo}</Text>
@@ -185,7 +184,7 @@ export default function WithdrawAuthScreen() {
       <Text style={styles.textValue}>{bankTo}</Text>
       <Text style={styles.amountText}>입력된 송금액</Text>
       <Text style={styles.textValue}>{formattedAmount}</Text>
-      <Text style={styles.title}>계좌 번호, 금액이 정말 맞으신가요?{'\n'}한번 더 확인해보세요!{'\n'}인증을 진행하면 출금이 완료돼요</Text>
+      <Text style={styles.title}>계좌 번호, 금액이 정말 맞으신가요?{'\n'}한번 더 확인해보세요!{'\n'}인증을 진행하면 송금금이 완료돼요</Text>
       <LinearGradient
         colors={['#4C6EF5', '#3B5BDB']}      // 원하는 그라데이션 컬러
         start={{ x: 0, y: 0 }}
@@ -196,7 +195,7 @@ export default function WithdrawAuthScreen() {
         }}
       >
         <TouchableOpacity
-          onPress={handleWithdraw}
+          onPress={onAuthAndWithdraw}
           style={{
             width: 400,
             paddingVertical: 20,
@@ -254,6 +253,54 @@ export default function WithdrawAuthScreen() {
           </TouchableOpacity>
         </LinearGradient>
       </View>
+      {/* 화면 최하단에 */}
+      <Modal
+        visible={showNumPad}
+        transparent
+        animationType="slide"
+        onRequestClose={() => { }}
+      >
+        {/* 바깥영역 터치 차단 */}
+        <TouchableWithoutFeedback>
+          <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.5)' }}>
+            <TouchableWithoutFeedback>
+              <Animated.View
+                style={{
+                  backgroundColor: '#fff',
+                  borderTopLeftRadius: 16,
+                  borderTopRightRadius: 16,
+                  padding: 20,
+                  justifyContent: 'flex-end',
+                }}
+              >
+                <CustomNumPad
+                  onPress={(key) => {
+                    if (key === '모두 지우기') {
+                      setPinInput('');
+                      return;
+                    }
+                    if (key === '한칸 지우기') {
+                      setPinInput((p) => p.slice(0, -1));
+                      return;
+                    }
+                    const next = (pinInput + key).slice(0, 6);
+                    setPinInput(next);
+                    if (next.length === 6) {
+                      if (next === '111111') {
+                        setShowNumPad(false);
+                        handleWithdraw();
+                      } else {
+                        setPinInput('');
+                        showModal('PIN 오류', 'PIN이 일치하지 않습니다.');
+                      }
+                    }
+                  }}
+                />
+              </Animated.View>
+            </TouchableWithoutFeedback>
+          </View>
+        </TouchableWithoutFeedback>
+      </Modal>
       <CustomModal
         visible={modalVisible}
         title={modalTitle}
@@ -319,8 +366,8 @@ const styles = StyleSheet.create({
   accountName: {
     textAlign: 'center',
     color: '#3498DB',
-    fontSize: 28,
-    fontWeight: "500",
+    fontSize: +32,
+    fontWeight: "800",
   },
   textValue: {
     textAlign: 'center', // 텍스트 가운데 정렬

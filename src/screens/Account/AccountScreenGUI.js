@@ -27,6 +27,8 @@ import { deposit, withdraw, accountUpsert, accountGet, mongoDB } from '../../dat
 import CustomModal from '../../components/CustomModal.js'
 import { useNavigation } from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
+import Clipboard from '@react-native-clipboard/clipboard';
+import Toast from 'react-native-toast-message';
 
 // 내부에서 사용할 상수 변수 선언
 const DEFAULT_TITLE = '금융결제원 테스트베드';
@@ -156,15 +158,17 @@ const AccountScreenGUI = ({
       return;
     }
     try {
+      const rawAcctNum = selectedItem.fintech_use_num;
+      const last10AcctNum = rawAcctNum.slice(-10);
       // fintech_use_num 또는 accountId 필드 사용
       await deposit(
         CONFIG[testBedAccount].dbName,
-        selectedItem.fintech_use_num,
+        last10AcctNum,
         selectedItem.bank_name,
         num
       );
       // console.log(CONFIG[testBedAccount].dbName);
-      console.log('입금 요청 완료:', selectedItem.fintech_use_num, num);
+      // console.log('입금 요청 완료:', selectedItem.fintech_use_num, num);
       // showSimpleModal(
       //   `${selectedItem.bank_name || '계좌'}에서 ${num.toLocaleString()}원 입금 요청 완료`,
       // );
@@ -305,6 +309,17 @@ const AccountScreenGUI = ({
       setModalVisible(true);
       setIsAnimating(false);
     });
+  };
+
+  // 복사 함수 수정
+  const handleCopyAccountNum = (accountNum) => {
+    if (!accountNum) {
+      Alert.alert('복사 실패', '복사할 계좌 정보가 없습니다.');
+      return;
+    }
+    Clipboard.setString(accountNum);
+    // Alert.alert('복사 완료', '계좌 번호가 클립보드에 복사되었습니다.');
+    Toast.show({ type: 'success', text1: '계좌 번호가 복사되었습니다.' });
   };
 
   // 이미지의 translateY: 초기 위치에서 약간 위로 올렸다가, 2단계에서는 아래로 슬라이드
@@ -523,6 +538,12 @@ const AccountScreenGUI = ({
                           return !isNaN(num) ? num.toLocaleString() : '정보없음';
                         })()}
                       </CustomText>
+                      <Pressable
+                        style={styles.copyButton}
+                        onPress={() => handleCopyAccountNum(dbObj?.accountNum)}
+                      >
+                        <CustomText style={styles.copyButtonText}>계좌 번호 복사하기</CustomText>
+                      </Pressable>
                     </View>
                     <View style={styles.buttonContainer}>
                       <TouchableOpacity
@@ -927,6 +948,21 @@ const styles = StyleSheet.create({
   },
   filterTextActive: {
     color: '#fff',
+  },
+  accountNumber: {
+    fontSize: 16,
+    marginBottom: 4,
+  },
+  copyButton: {
+    alignSelf: 'flex-start',
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    backgroundColor: 'rgba(91, 148, 255,1)',
+    borderRadius: 4,
+  },
+  copyButtonText: {
+    color: '#fff',
+    fontSize: 14,
   },
 });
 

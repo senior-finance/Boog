@@ -150,6 +150,7 @@ export default function WithdrawAmountScreen() {
       <Text style={styles.accountText}>출금할 계좌 번호 : {accountNumTo}</Text>
       <Text style={styles.bankText}>출금할 은행 : {bankTo}</Text>
       <TextInput
+        editable={false}
         keyboardType="numeric"
         returnKeyType="done"
         value={amountTo}
@@ -170,8 +171,13 @@ export default function WithdrawAmountScreen() {
         }}
         placeholder="금액을 원화 단위로"
         showSoftInputOnFocus={false}
-        style={[styles.inputBox]}
-      />
+        style={[
+          styles.inputBox1,
+          {
+            color: '#000',              // 텍스트 색을 검정으로
+            backgroundColor: 'rgb(168, 190, 223)',
+          }
+        ]} />
       <TextInput
         keyboardType="numeric"
         returnKeyType="done"
@@ -192,7 +198,7 @@ export default function WithdrawAmountScreen() {
         }}
         placeholder="금액을 쉼표 단위로"
         showSoftInputOnFocus={false}
-        style={styles.inputBox}
+        style={styles.inputBox2}
       />
       <Text style={styles.remain}>출금 가능한 잔액 : {formatKorean(String(amount))}</Text>
       <View style={styles.keypadContainer}>
@@ -308,7 +314,26 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: '800',
   },
-  inputBox: {
+  inputBox1: {
+    fontSize: 24,
+    fontWeight: '500',
+    textAlign: 'center',
+    // borderWidth: 5,
+    borderColor: '#ccc',
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    marginVertical: 2,
+    backgroundColor: 'rgb(170, 34, 34)',
+    // Android 그림자
+    elevation: 2,
+    // iOS 그림자
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+  },
+  inputBox2: {
     fontSize: 24,
     fontWeight: '500',
     textAlign: 'center',

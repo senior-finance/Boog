@@ -48,7 +48,6 @@ export default function WithdrawBankScreen() {
     setModalVisible(true);
   };
 
-
   const { accountNumTo } = useRoute().params;
   const { amount, bankName, accountNum, testBedAccount } = useRoute().params;
 
@@ -78,6 +77,7 @@ export default function WithdrawBankScreen() {
     { label: 'KB국민은행', value: 'KB국민은행', icon: require('../../assets/banks/KB.png') },
     { label: 'IBK기업은행', value: 'IBK기업은행', icon: require('../../assets/banks/IBK.png') },
     { label: '새마을금고', value: '새마을금고', icon: require('../../assets/banks/MG새마을금고.png') },
+    { label: '부산은행', value: '부산은행', icon: require('../../assets/banks/부산은행.png') },
   ];
 
   const handleNext = async () => {
@@ -85,11 +85,24 @@ export default function WithdrawBankScreen() {
     setLoading(true);
 
     // 로딩 딜레이
-    await new Promise(res => setTimeout(res, 500));
+    await new Promise(res => setTimeout(res, 100));
 
     try {
-      const accounts = await withdrawVerify({ accountBank: selected });
-      if (accounts.length > 0) {
+      // 하이픈 제거한 계좌번호와 선택된 은행명으로 검증
+      const cleanNum = accountNumTo.replace(/\D/g, '');
+      const accounts = await withdrawVerify({
+        accountNum: cleanNum,
+        accountBank: selected
+      });
+      // console.log(cleanNum);
+
+      // 느슨하게 포함 여부로만 판별
+      const prefix = selected.slice(0, -2); // e.g. "KDB산업"
+      const matched = accounts.filter(acc =>
+        acc.accountBank.includes(prefix)
+      );
+
+      if (matched.length > 0) {
         nav.navigate('WithdrawAmount', {
           accountNumTo,
           bankTo: selected,
@@ -99,10 +112,11 @@ export default function WithdrawBankScreen() {
           testBedAccount,
         });
       } else {
-        showModal('오류', '은행명이 일치하지 않아요');
+        // console.log(accountNumTo, accounts.map(a => a.accountBank), selected);
+        showModal('오류', `은행명이 일치하지 않아요`);
       }
     } catch (e) {
-      showModal('서버 에러', '다시 시도해주세요.');
+      showModal('서버 에러', '다시 시도해주세요');
     } finally {
       setLoading(false);
     }
@@ -223,7 +237,7 @@ export default function WithdrawBankScreen() {
       {loading && (
         <View style={styles.overlay}>
           <LottieView
-            source={require('../../assets/animeLoading2.json')}
+            source={require('../../assets/loadingg.json')}
             autoPlay
             loop={false}
             style={styles.lottie}
