@@ -70,7 +70,7 @@ const LearningScreen = ({ navigation }) => {
             key={idx}
             style={{
               transform: [{ scale: scaleAnimRefs.current[idx] }],
-              marginBottom: 20,
+              marginBottom: 30,
             }}
           >
             <TouchableOpacity
@@ -102,12 +102,12 @@ const styles = StyleSheet.create({
   title: {
     fontWeight: 'bold',
     color: '#4B7BE5',
-    backgroundColor: 'rgba(75, 123, 229, 0.1)',
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    borderRadius: 15,
+  //  backgroundColor: 'rgba(75, 123, 229, 0.1)',
+//    paddingHorizontal: 20,
+  //  paddingVertical: 12,
+  //  borderRadius: 15,
     marginTop: 30,
-    marginBottom: 35,
+    marginBottom: 50,
     textAlign: 'center',
   },
   card: {
