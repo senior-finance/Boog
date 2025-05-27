@@ -191,47 +191,44 @@ const analyze = async () => {
   onPress={() => handleItemPress(item)}
 >
   <View style={styles.itemHeader}>
-    <Ionicons
-      name={item.type === 'sms' ? 'chatbubble-outline' : 'call-outline'}
-      size={20}
-      color="#4B7BE5"
-      style={styles.icon}
-    />
     <CustomText style={styles.itemSender}>
       {item.type === 'sms' ? '💬' : '📞'} {item.sender} ({item.type === 'sms' ? '문자' : '통화'})
     </CustomText>
   </View>
 
  {/* 문자 내용 원인 표시 */}
-{item.type === 'sms' && (
+{/* {item.type === 'sms' && (
   <CustomText style={[styles.itemText, { color: '#1A237E' }]}>
-    📩 의심 사유:{' '}
+    📩 의심 사유 :{' '}
     {item.keywords.includes('링크 포함')
       ? '링크가 포함된 문자입니다.'
-      : '피싱 키워드가 포함된 문자입니다.'}
+      : '피싱 키워드'}
   </CustomText>
-)}
+)} */}
 
+{/* 문자/통화 공통 의심 사유 + 키워드 표시 */}
+<View style={{ flexDirection: 'row', flexWrap: 'wrap', marginBottom: 5, alignItems: 'center' }}>
+  {item.type === 'sms' ? (
+    <>
+      <CustomText style={[styles.itemText, { color: '#1A237E' }]}>
+        📩 의심 사유 : {item.keywords.includes('링크 포함') ? '링크가 포함된 문자입니다.' : '피싱 키워드'}{'  '}
+      </CustomText>
+      <CustomText style={[styles.itemText, { color: 'red' }]}>
+        ❗ 의심 키워드 : {item.keywords.join(', ')}
+      </CustomText>
+    </>
+  ) : (
+    <>
+      <CustomText style={[styles.itemText, { color: '#1A237E' }]}>
+        ❗ 의심 사유 : 
+      </CustomText>
+      <CustomText style={[styles.itemText, { color: 'red', marginLeft: 4 }]}>
+        {item.keywords.join(', ')}
+      </CustomText>
+    </>
+  )}
+</View>
 
-  {/* 의심 키워드 강조 */}
-  <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginBottom: 5 }}>
-  <CustomText
-  style={[
-    styles.itemText,
-    {
-      color: 'red',
-      fontWeight: 'bold',
-      fontFamily: 'Pretendard-Regular', // 또는 프로젝트 기본 글꼴
-    },
-  ]}
->
-  ❗ 의심 키워드:
-</CustomText>
-
-    <CustomText style={[styles.itemText, { color: 'red' }]}>
-      {' '}{item.keywords.join(', ')}
-    </CustomText>
-  </View>
 
   {/* 후후 분석 결과 (통화 전용) */}
   {item.type === 'call' && item.whowhoResult !== null && (
