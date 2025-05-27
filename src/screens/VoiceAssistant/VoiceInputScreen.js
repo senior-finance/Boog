@@ -190,20 +190,19 @@ export default function VoiceInputScreen() {
       setRecordedPath(audioFile);
 
       const text = await sendAudioToCSR(audioFile);
-      const userMessage = {role: 'user', text};
+      const userMessage = { role: 'user', text };
       setChatHistory(prev => [...prev, userMessage]);
 
       const reply = await askClovaAI(text);
 
-      if (reply.type === 'navigate') {
-        navigation.navigate(reply.target);
-      } else {
-        const botMessage = {role: 'bot', text: reply.text};
-        setChatHistory(prev => [...prev, botMessage]);
-
-        Tts.stop(); // 이전 TTS 중지
-        Tts.speak(reply.text);
-      }
+      await handleFunctionCalling({
+        reply,
+        navigation,
+        setChatHistory,
+        setConfirmTarget,
+        setShowConfirmModal,
+        setSystemVolume,
+      });
     } catch (err) {
       console.log('녹음/CSR/AI 처리 오류:', err);
     } finally {
