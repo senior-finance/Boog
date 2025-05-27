@@ -13,6 +13,7 @@ import LottieView from 'lottie-react-native';
 import { checkSpamForNumber } from './PhoneUtils';
 import CustomText from '../../components/CustomText';
 import CustomModal from '../../components/CustomModal';
+import { ScrollView } from 'react-native';
 
 const { PhoneAnalysisModule } = NativeModules;
 
@@ -148,59 +149,65 @@ const AutoPhoneAnalysisScreen = () => {
     );
   };
 
-  return (
-    <LinearGradient colors={['#D4E6FF', '#EAF4FF']} style={styles.container}>
-      <View style={styles.content}>
-        <View style={styles.top}>
-          <CustomText style={styles.title}>📱 오늘의 통화/문자 분석</CustomText>
+ return (
+  <LinearGradient colors={['#D4E6FF', '#EAF4FF']} style={styles.container}>
+    <View style={styles.content}>
+      <View style={styles.top}>
+        <CustomText style={styles.title}>📱 오늘의 통화/문자 분석</CustomText>
 
-          {loading ? (
-            <LottieView
-              source={require('../../assets/loadingg.json')}
-              autoPlay
-              loop
-              style={styles.loadingAnimation}
-            />
+        {loading ? (
+          <LottieView
+            source={require('../../assets/loadingg.json')}
+            autoPlay
+            loop
+            style={styles.loadingAnimation}
+          />
+        ) : (
+       <ScrollView contentContainerStyle={{ paddingBottom: 40 }} style={{ width: '100%' }}>
+  <View style={{ alignItems: 'center' }}>
+    <TouchableOpacity style={styles.analyzeButton} onPress={analyze}>
+      <CustomText style={styles.analyzeButtonText}>🔍 오늘 기록 스캔하기</CustomText>
+    </TouchableOpacity>
+    <CustomText style={styles.resultText}>{resultText}</CustomText>
+    {suspiciousList.map((item, index) => (
+      <TouchableOpacity
+        key={index}
+        style={styles.itemBox}
+        onPress={() => handleItemPress(item)}
+      >
+        <View style={styles.itemHeader}>
+          {item.type === 'sms' ? (
+            <Ionicons name="chatbubble-outline" size={20} color="#4B7BE5" style={styles.icon} />
           ) : (
-            <>
-              <TouchableOpacity style={styles.analyzeButton} onPress={analyze}>
-                <CustomText style={styles.analyzeButtonText}>🔍 오늘 기록 스캔하기</CustomText>
-              </TouchableOpacity>
-              <CustomText style={styles.resultText}>{resultText}</CustomText>
-              {suspiciousList.map((item, index) => (
-                <TouchableOpacity key={index} style={styles.itemBox} onPress={() => handleItemPress(item)}>
-                  <View style={styles.itemHeader}>
-                    {item.type === 'sms' ? (
-                      <Ionicons name="chatbubble-outline" size={20} color="#4B7BE5" style={styles.icon} />
-                    ) : (
-                      <Ionicons name="call-outline" size={20} color="#4B7BE5" style={styles.icon} />
-                    )}
-                    <CustomText style={styles.itemSender}>
-                      {item.sender} {item.type === 'sms' ? '(문자)' : '(통화)'}
-                    </CustomText>
-                  </View>
-
-                  <CustomText style={styles.itemText}>{item.text}</CustomText>
-                  <CustomText style={styles.itemText}>의심: {item.keywords.join(', ')}</CustomText>
-                  {item.type === 'call' && item.whowhoResult !== null && (
-                    <CustomText style={styles.itemText}>
-                      통화 분석 결과: {item.whowhoResult ? '스팸(의심)' : '정상'}
-                    </CustomText>
-                  )}
-                </TouchableOpacity>
-              ))}
-            </>
+            <Ionicons name="call-outline" size={20} color="#4B7BE5" style={styles.icon} />
           )}
+          <CustomText style={styles.itemSender}>
+            {item.sender} {item.type === 'sms' ? '(문자)' : '(통화)'}
+          </CustomText>
         </View>
+        <CustomText style={styles.itemText}>{item.text}</CustomText>
+        <CustomText style={styles.itemText}>의심: {item.keywords.join(', ')}</CustomText>
+        {item.type === 'call' && item.whowhoResult !== null && (
+          <CustomText style={styles.itemText}>
+            통화 분석 결과: {item.whowhoResult ? '스팸(의심)' : '정상'}
+          </CustomText>
+        )}
+      </TouchableOpacity>
+    ))}
+  </View>
+</ScrollView>
+
+        )}
       </View>
-      <CustomModal
-        visible={modalVisible}
-        title={modalTitle}
-        message={modalMessage}
-        buttons={modalButtons}
-      />
-    </LinearGradient>
-  );
+    </View>
+    <CustomModal
+      visible={modalVisible}
+      title={modalTitle}
+      message={modalMessage}
+      buttons={modalButtons}
+    />
+  </LinearGradient>
+);
 };
 
 const styles = StyleSheet.create({

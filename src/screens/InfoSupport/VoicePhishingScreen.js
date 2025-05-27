@@ -153,7 +153,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 18,
     borderRadius: 20,
     alignSelf: 'flex-start',
-     marginTop: 8,
+    marginTop: 8,
   },
   buttonText: {
     color: '#fff',

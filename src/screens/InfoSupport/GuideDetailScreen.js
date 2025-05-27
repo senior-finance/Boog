@@ -27,6 +27,7 @@ import analysis1 from '../../assets/guide/analysis1.png';
 import analysis2 from '../../assets/guide/analysis2.png';
 import analysis3 from '../../assets/guide/analysis3.png';
 import analysis4 from '../../assets/guide/analysis4.png';
+import analysis5 from '../../assets/guide/analysis5.png';
 import myinfo1 from '../../assets/guide/myinfo1.png';
 import myinfo2 from '../../assets/guide/myinfo2.png';
 import myinfo3 from '../../assets/guide/myinfo3.png';
@@ -131,6 +132,10 @@ export default function GuideDetailScreen({ route }) {
       {
         text: '4. 의심 기록이 있을 경우, 어떤 문자에서 어떤 키워드가 감지됐는지, 통화는 몇 건이 어떤 이유로 의심되는지 결과 메시지가 뜹니다.',
         image: analysis4,
+      },
+          {
+        text: '5. 각 항목을 눌러서 문자 또는 통화에 대한 자세한 정보를 확인해보세요',
+        image: analysis5,
       },
     ],
 
