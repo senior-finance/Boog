@@ -123,44 +123,39 @@ export default function WithdrawBankScreen() {
   };
 
   return (
-    <LinearGradient
-      colors={['rgb(216,236,255)', 'rgb(233,244,255)']}
-      style={styles.container}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 1 }}
-    >
-      <Text style={styles.title}>은행명을 골라주세요</Text>
-      <Text style={styles.accountText}>출금할 계좌 번호 : {accountNumTo}</Text>
-      {/* <Text style={styles.bankText}>출금할 은행: {bank}</Text>
-      <Text style={styles.amountText}>입력된 금액: {amount}</Text> */}
-      {/* <Picker
-        selectedValue={bank}
-        onValueChange={(v) => setBank(v)}
-        style={{ marginVertical: 20 }}
-      >
-        <Picker.Item label="은행 선택" value="" />
-        <Picker.Item label="우리은행" value="Woori" />
-        <Picker.Item label="국민은행" value="KB" />
-      </Picker> */}
+    <LinearGradient colors={["#DAEFFF", "#F0F6FF"]} style={styles.container}>
 
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => setVisible(true)}
-      >
-        {selected ? (
-          <View style={styles.selectedButtonContent}>
-            <Image
-              source={BANKS.find(b => b.value === selected).icon}
-              style={styles.icon}
-            />
-            <Text style={styles.label}>
-              {'  '}선택한 은행 : {BANKS.find(b => b.value === selected).label}
-            </Text>
-          </View>
-        ) : (
-          <Text style={styles.label}>은행을 선택해 주세요</Text>
-        )}
+      <Text style={styles.title}>송금할 은행을 선택해주세요</Text>
+      <View style={styles.accountBox}>
+        <Text style={styles.accountLabel}>송금할 계좌 번호</Text>
+        <Text style={styles.accountNum}>{accountNumTo}</Text>
+      </View>
+      <TouchableOpacity style={styles.selectButton} onPress={() => setVisible(true)}>
+        <View style={styles.selectedButtonContent}>
+          {selected ? (
+            <>
+              <Image source={BANKS.find(b => b.value === selected).icon} style={styles.icon} />
+              <Text style={styles.label}>{BANKS.find(b => b.value === selected).label}</Text>
+            </>
+          ) : (
+            <Text style={styles.label}>송금할 은행을 선택해주세요</Text>
+          )}
+        </View>
       </TouchableOpacity>
+
+      <View style={styles.buttonRow}>
+        <TouchableOpacity style={styles.navButton} onPress={() => nav.goBack()}>
+          <Text style={styles.navButtonText}>이전</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.navButton, !selected && { opacity: 0.6 }]}
+          disabled={!selected}
+          onPress={handleNext}
+        >
+          <Text style={styles.navButtonText}>다음</Text>
+        </TouchableOpacity>
+      </View>
+
       <Modal transparent animationType="slide" visible={visible}>
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
@@ -196,18 +191,6 @@ export default function WithdrawBankScreen() {
             marginVertical: 20,
           }}
         >
-          <TouchableOpacity
-            onPress={() => nav.goBack()}
-            style={{
-              width: 160,
-              paddingVertical: 20,
-              alignItems: 'center',
-            }}
-          >
-            <Text style={{ color: '#FFF', fontSize: 16, fontWeight: '600' }}>
-              이전
-            </Text>
-          </TouchableOpacity>
         </LinearGradient>
         <LinearGradient
           colors={['#4C6EF5', '#3B5BDB']}      // 원하는 그라데이션 컬러
@@ -218,20 +201,6 @@ export default function WithdrawBankScreen() {
             marginVertical: 20,
           }}
         >
-          <TouchableOpacity
-            disabled={!selected}         // accountNumTo 없으면 비활성화
-            onPress={handleNext}
-            style={{
-              width: 160,
-              paddingVertical: 20,
-              alignItems: 'center',
-              opacity: selected ? 1 : 0.6,  // 비활성 시 반투명
-            }}
-          >
-            <Text style={{ color: '#FFF', fontSize: 16, fontWeight: '600' }}>
-              다음
-            </Text>
-          </TouchableOpacity>
         </LinearGradient>
       </View>
       {loading && (
@@ -255,8 +224,8 @@ export default function WithdrawBankScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // justifyContent: 'center',   // 세로 가운데
-    // alignItems: 'center',       // 가로 가운데
+    padding: 24,
+
   },
   title: {
     textAlign: 'center',        // 텍스트 가운데 정렬
@@ -339,6 +308,119 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#3498DB',
     fontSize: 16,
+  },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(255,255,255,0.8)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 10,
+  },
+  lottie: {
+    width: 320,
+    height: 320,
+  },
+  title: {
+    fontSize: 23,
+    textAlign: 'center',
+    fontWeight: 'bold',
+    color: '#1B1B1B',
+    marginBottom: 25,
+  },
+  accountBox: {
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    paddingVertical: 14,
+    paddingHorizontal: 20,
+    marginBottom: 24,
+    alignItems: 'center',
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 6,
+  },
+  accountLabel: {
+    fontSize: 20,
+    color: '#888',
+    marginBottom: 6,
+  },
+  accountNum: {
+    fontSize: 23,
+    fontWeight: 'bold',
+    color: '#3498DB',
+  },
+  selectButton: {
+    backgroundColor: '#fff',
+    borderWidth: 1.5,
+    borderColor: '#A9C7F6',
+    borderRadius: 14,
+    padding: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 28,
+    minHeight: 90,
+  },
+  selectedButtonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.3)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContent: {
+    width: '85%',
+    maxHeight: '70%',
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    padding: 20,
+  },
+  row: {
+    justifyContent: 'space-between',
+    marginBottom: 20,
+  },
+  gridItem: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  icon: {
+    width: 70,
+    height: 70,
+    marginBottom: 6,
+  },
+  label: {
+    fontSize: 20,
+    fontWeight: '600',
+    color: '#333',
+    textAlign: 'center',
+    marginLeft: 5,
+  },
+  buttonRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 16,
+    gap: 40,
+  },
+  navButton: {
+    flex: 1,
+    paddingVertical: 18,
+    backgroundColor: '#4C6EF5',
+    borderRadius: 30,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOpacity: 0.15,
+    shadowOffset: { width: 0, height: 4 },
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  navButtonText: {
+    color: '#fff',
+    fontSize: 20,
+    fontWeight: '600',
   },
   overlay: {
     ...StyleSheet.absoluteFillObject,

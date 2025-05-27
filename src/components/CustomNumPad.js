@@ -44,39 +44,38 @@ export default function CustomNumPad({
 
 const styles = StyleSheet.create({
   container: {
-    padding: 10,
-    backgroundColor: '#E0F7FF',
-    borderRadius: 12,
+    padding: 12,
+    backgroundColor: '#EAF6FF',
+    borderRadius: 16,
   },
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginVertical: 1,
+    marginVertical: 10,
   },
   button: {
     flex: 1,
     marginHorizontal:10,
-    height: 80,
+    height: 40,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 35,
-    backgroundColor: '#rgb(158, 232, 255)',
-    borderWidth: 2,
-    borderColor: '#rgb(130, 142, 255)',
-    shadowColor: '#00BFFF',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    elevation: 3,
+    borderRadius: 40,
+    backgroundColor: '#D6ECFF',
+    borderWidth: 1.5,
+    borderColor: '#B0D4F1',
+    shadowColor: '#2C7BD6',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+    elevation: 4, // Android 그림자도 줄임
+  },
+  buttonPressed: {
+    backgroundColor: '#B3DBFF',
+    transform: [{ scale: 0.97 }],
   },
   buttonText: {
-    fontSize: 22,
-    fontWeight: '700',
-    color: '#FFFFFF',
-  },
-  placeholder: {
-    flex: 1,
-    marginHorizontal: 4,
-    backgroundColor: 'transparent',
-  },
+    fontSize: 28,
+    fontWeight: '600',
+    color: '#1B1B1B',
+  }
 });

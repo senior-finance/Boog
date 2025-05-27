@@ -148,40 +148,50 @@ export default function WithdrawAccountScreen() {
       end={{ x: 1, y: 1 }}
     >
       <Text style={styles.title}>계좌 번호 10자리를 입력하세요</Text>
-      <TextInputMask
-        type={'money'}
-        options={{
-          precision: 0, // 소수점 없음
-          separator: '', // 소수점 구분자
-          delimiter: '-', // 천 단위 구분자
-          unit: '', // 앞에 붙는 단위
-          // suffixUnit: '원', // 뒤에 붙는 단위
-        }}
-        value={accountNumTo}
-        onChangeText={text => setaccountNumTo(text)}
-        // placeholder="모의 계좌 번호 10자리"
-        keyboardType="numeric"
-        maxLength={13} // '-' 포함 14자리       
-        style={{
-          fontSize: 24,
-          textAlign: 'center',
-          backgroundColor: '#fff',
-          borderWidth: 5,
-          borderColor: '#ccc',
-          padding: 10,
-          margin: 10,
-          borderRadius: 20
-        }}
-        showSoftInputOnFocus={false}
-      />
+      <View style={styles.inputWrapper}>
+        <TextInputMask
+          type={'money'}
+          options={{
+            precision: 0, // 소수점 없음
+            separator: '', // 소수점 구분자
+            delimiter: '-', // 천 단위 구분자
+            unit: '', // 앞에 붙는 단위
+            // suffixUnit: '원', // 뒤에 붙는 단위
+          }}
+          value={accountNumTo}
+          onChangeText={text => setaccountNumTo(text)}
+          // placeholder="모의 계좌 번호 10자리"
+          keyboardType="numeric"
+          maxLength={13} // '-' 포함 14자리       
+          style={styles.textInput}
+          showSoftInputOnFo
+          cus={false}
+        />
+      </View>
       <View style={styles.keypadContainer}>
-        <CustomNumPad
+        {/* <CustomNumPad
           onPress={handlePress}
           keyRows={myKeyRows}
           decimalSeparator=","
           textStyle={styles.keypadText}
           containerStyle={styles.numpadInner}
-        />
+        /> */}
+      </View>
+      <TouchableOpacity style={styles.clearButton} onPress={() => setAccountNumTo('')}>
+        <Text style={styles.clearButtonText}>모두 지우기</Text>
+      </TouchableOpacity>
+
+      <View style={styles.buttonRow}>
+        <TouchableOpacity onPress={() => nav.goBack()} style={styles.button}>
+          <Text style={styles.buttonText}>이전</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={handleNext}
+          disabled={!accountNumTo}
+          style={[styles.button, !accountNumTo && { opacity: 0.5 }]}
+        >
+          <Text style={styles.buttonText}>다음</Text>
+        </TouchableOpacity>
       </View>
       <View style={styles.buttonRow}>
         <LinearGradient
@@ -193,18 +203,6 @@ export default function WithdrawAccountScreen() {
             marginVertical: 20,
           }}
         >
-          <TouchableOpacity
-            onPress={() => nav.goBack()}
-            style={{
-              width: 160,
-              paddingVertical: 20,
-              alignItems: 'center',
-            }}
-          >
-            <Text style={{ color: '#FFF', fontSize: 16, fontWeight: '600' }}>
-              이전
-            </Text>
-          </TouchableOpacity>
         </LinearGradient>
         <LinearGradient
           colors={['#4C6EF5', '#3B5BDB']}      // 원하는 그라데이션 컬러
@@ -215,20 +213,6 @@ export default function WithdrawAccountScreen() {
             marginVertical: 20,
           }}
         >
-          <TouchableOpacity
-            disabled={!accountNumTo}         // accountNumTo 없으면 비활성화
-            onPress={handleNext}
-            style={{
-              width: 160,
-              paddingVertical: 20,
-              alignItems: 'center',
-              opacity: accountNumTo ? 1 : 0.6,  // 비활성 시 반투명
-            }}
-          >
-            <Text style={{ color: '#FFF', fontSize: 16, fontWeight: '600' }}>
-              다음
-            </Text>
-          </TouchableOpacity>
         </LinearGradient>
       </View>
       {loading && (
@@ -236,7 +220,7 @@ export default function WithdrawAccountScreen() {
           <LottieView
             source={require('../../assets/loadingg.json')}
             autoPlay
-            loop={false}
+            loop
             style={styles.lottie}
           />
         </View>
@@ -250,62 +234,169 @@ export default function WithdrawAccountScreen() {
     </LinearGradient >
   );
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // justifyContent: 'center',   // 세로 가운데
-    // alignItems: 'center',       // 가로 가운데
+    paddingHorizontal: 20,
+    paddingTop: 32,
   },
   title: {
-    textAlign: 'center',        // 텍스트 가운데 정렬
-    fontSize: 24,               // 글자 크게 (원하는 크기로 조정)
-    color: 'black',            // 노란색
-    fontWeight: 'bold',         // 조금 더 강조하고 싶으면
-    marginTop: 20,           // 아래 여백
-    marginBottom: 20,           // 아래 여백
+    fontSize: 23,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 25,
+    color: '#333',
   },
-  numpadInner: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '100%',
+  inputWrapper: {
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    paddingHorizontal: 20,
+    paddingVertical: 14,
+    marginBottom: 24,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 4,
   },
-  keypadContainer: {
-    // NumPad 전체 래퍼 스타일
-    marginVertical: 'auto',
+  textInput: {
+    fontSize: 24,
+    textAlign: 'center',
+    color: '#333',
   },
-  keypadText: {
-    // 버튼 텍스트 스타일
-    fontSize: 22,
-    fontWeight: '800',
+  clearButton: {
+    alignSelf: 'center',
+    backgroundColor: '#DDE6F8',
+    paddingHorizontal: 100,
+    paddingVertical: 20,
+    borderRadius: 30,
+    marginTop: 15,
+    marginBottom: 24,
+    shadowColor: '#000',
+    shadowOpacity: 0.15,
+    shadowOffset: { width: 0, height: 4 },
+    shadowRadius: 8,
+    elevation: 4, // Android용 그림자
+    borderWidth: 1.5,
+    borderColor: '#B0C8F5', // 연한 테두리 추가
+  },
+  clearButtonText: {
+    color: '#4C6EF5',
+    fontSize: 18,
+    fontWeight: 'bold',
   },
   buttonRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between', // 좌우 끝에 배치
+    justifyContent: 'space-between',
+    marginTop: 16,
+    gap: 40,
+  },
+  button: {
+    flex: 1,
+    paddingVertical: 18,
+    backgroundColor: '#4C6EF5',
+    borderRadius: 30,
     alignItems: 'center',
-    width: '100%',                    // 부모 너비 100%
-    paddingHorizontal: 16,            // 양쪽 여백(필요에 따라 조정)
+    shadowColor: '#000',
+    shadowOpacity: 0.15,
+    shadowOffset: { width: 0, height: 4 },
+    shadowRadius: 8,
+    elevation: 4,
   },
-  accountText: {
-    color: '#3498DB',   // 빨간색
-    fontSize: 16,
-  },
-  bankText: {
-    color: '#3498DB',   // 파란색
-    fontSize: 16,
-  },
-  amountText: {
-    color: '#3498DB',   // 초록색
-    fontSize: 16,
+  buttonText: {
+    color: '#fff',
+    fontSize: 20,
+    fontWeight: '600',
   },
   loadingOverlay: {
-    ...StyleSheet.absoluteFillObject,    // 부모 전체 덮기
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',   // 반투명 배경
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(255,255,255,0.3)',
     justifyContent: 'center',
     alignItems: 'center',
-    zIndex: 1,                            // 최상위
+    zIndex: 10,
   },
   lottie: {
-    width: 320,
-    height: 320,
+    width: 220,
+    height: 220,
+  },
+  title: {
+    fontSize: 23,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 25,
+    color: '#333',
+  },
+  inputWrapper: {
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    paddingHorizontal: 20,
+    paddingVertical: 14,
+    marginBottom: 24,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 4,
+  },
+  textInput: {
+    fontSize: 24,
+    textAlign: 'center',
+    color: '#333',
+  },
+  clearButton: {
+    alignSelf: 'center',
+    backgroundColor: '#DDE6F8',
+    paddingHorizontal: 100,
+    paddingVertical: 20,
+    borderRadius: 30,
+    marginTop: 15,
+    marginBottom: 24,
+    shadowColor: '#000',
+    shadowOpacity: 0.15,
+    shadowOffset: { width: 0, height: 4 },
+    shadowRadius: 8,
+    elevation: 4, // Android용 그림자
+    borderWidth: 1.5,
+    borderColor: '#B0C8F5', // 연한 테두리 추가
+  },
+  clearButtonText: {
+    color: '#4C6EF5',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  buttonRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 16,
+    gap: 40,
+  },
+  button: {
+    flex: 1,
+    paddingVertical: 18,
+    backgroundColor: '#4C6EF5',
+    borderRadius: 30,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOpacity: 0.15,
+    shadowOffset: { width: 0, height: 4 },
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 20,
+    fontWeight: '600',
+  },
+  loadingOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(255,255,255,0.3)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 10,
+  },
+  lottie: {
+    width: 220,
+    height: 220,
   },
 });
