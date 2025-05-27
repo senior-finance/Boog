@@ -6,7 +6,7 @@ import CustomModal from '../../components/CustomModal';
 import { updateUsername, upsertSocialLoginUser, mongoDB } from '../../database/mongoDB';
 import { storeAuthSession } from './AutoLogin';
 import { WebView } from 'react-native-webview';
-import { LOGIN_URL, KFTC_TRAN_ID_KMJ } from '@env'
+import { LOGIN_URL, KFTC_TRAN_ID_KMJ, KFTC_TRAN_ID_HWC } from '@env'
 
 const SetUsernameScreen = ({ navigation }) => {
 
@@ -46,7 +46,7 @@ const SetUsernameScreen = ({ navigation }) => {
   const handleVerify = async () => {
     setShowWebView(true); // WebView 표시
 
-    const mockToken = KFTC_TRAN_ID_KMJ;
+    const mockToken = KFTC_TRAN_ID_HWC;
     setPassToken(mockToken);
 
     try {
@@ -153,6 +153,7 @@ const SetUsernameScreen = ({ navigation }) => {
         nickname: userInfo.nickname,
         createdAt: new Date(),
         passToken,
+        dbName: 'hwc'
       };
 
       await upsertSocialLoginUser(finalUser);
@@ -198,7 +199,7 @@ const SetUsernameScreen = ({ navigation }) => {
     ) : (
       <View style={styles.container}>
 
-        <CustomText style={styles.title}>여기서 PASS인증으로 토큰값을 받아야 할 것 같음</CustomText>
+        <CustomText style={styles.title}>버튼을 눌러 사용자 인증을 완료해주십시오.</CustomText>
         <TouchableOpacity style={styles.button} onPress={handleVerify}>
           <CustomText style={styles.buttonText}>사용자 인증하기</CustomText>
         </TouchableOpacity>
@@ -210,7 +211,7 @@ const SetUsernameScreen = ({ navigation }) => {
             이름은 인증 완료 후 입력할 수 있습니다.
           </CustomText>
         )}
-        <CustomText style={styles.title}>사용자의 이름을 입력해주세요</CustomText>
+        {/* <CustomText style={styles.title}>사용자의 이름을 입력해주세요</CustomText> */}
         <CustomText style={styles.title}>이름은 한번 설정 후 수정이 불가하오니 신중하게 입력 바랍니다.</CustomText>
         <TextInput
           style={[

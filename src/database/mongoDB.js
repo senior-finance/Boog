@@ -318,12 +318,12 @@ export async function getHardQuiz() {
 // 소셜 로그인 사용자 Upsert 저장
 // socialId 기준으로 중복 방지하고, 없으면 새로 생성
 export async function upsertSocialLoginUser({
-  provider, socialId, username, nickname, passToken
+  provider, socialId, username, nickname, passToken, dbName
 }) {
   return await mongoDB('updateOne', 'user', 'info', {
     filter: { socialId },
     update: {
-      $set: { provider, username, nickname, passToken },
+      $set: { provider, username, nickname, passToken, dbName },
       $setOnInsert: { createdAt: new Date() },
     },
     options: { upsert: true },

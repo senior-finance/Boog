@@ -17,13 +17,13 @@ const LearningScreen = ({ navigation }) => {
   const cards = [
     {
       title: '금융 용어 학습하기',
-      desc: '용어를 쉽게 배워보세요 >',
+      desc: '용어를 쉽게 배워보세요',
       icon: 'school-outline',
       nav: 'QuizLevel',
     },
     {
       title: '입금 연습하기',
-      desc: '입금하는 방법을 배워보세요 >',
+      desc: '입금하는 방법을\n배워보세요',
       icon: 'bank-transfer',
       nav: 'DepositStep1',
     },

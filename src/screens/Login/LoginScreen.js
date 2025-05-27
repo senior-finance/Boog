@@ -406,10 +406,10 @@ export default function LoginScreen({ navigation }) {
             </View>
           </TouchableOpacity>
 
-          {/* 테스트 용으로 로그인 안하고 메인화면으로 넘어갈 때 사용하는거 */}
+          {/* 테스트 용으로 로그인 안하고 메인화면으로 넘어갈 때 사용하는거
           {<TouchableOpacity style={[styles.button, styles.skip]} onPress={() => navigation.navigate('MainTabs')}>
             <Text style={styles.buttonText}>로그인 없이 계속</Text>
-          </TouchableOpacity>}
+          </TouchableOpacity>} */}
 
         </View>
       </ScrollView>
