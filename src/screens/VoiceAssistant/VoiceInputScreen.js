@@ -60,7 +60,7 @@ export default function VoiceInputScreen() {
     }, []);
 
     return (
-      <CustomText style={{ fontSize: 16, color: '#000'}}>
+      <CustomText style={{color: '#000'}}>
         부금이가 답변을 입력 중입니다 {dots}
       </CustomText>
     );

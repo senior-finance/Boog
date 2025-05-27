@@ -17,11 +17,11 @@ export default function DepositStep4({ navigation, route }) {
         <View style={styles.contentWrapper}>
           <View style={styles.card}>
             <CustomText style={styles.title}>
-              입금 연습을 해볼게요{'\n'}실제로 입금이 되지는 않아요!
+              송금 연습을 해볼게요{'\n'}실제로 송금이 되지는 않아요!
             </CustomText>
 
             <CustomText style={styles.subtitle}>
-              입금할 계좌, 은행, 금액을{'\n'}확인해주세요
+              송금할 계좌, 은행, 금액을{'\n'}확인해주세요
             </CustomText>
 
             <View style={styles.infoBox}>
@@ -34,7 +34,7 @@ export default function DepositStep4({ navigation, route }) {
               style={styles.nextButton}
               onPress={() => setModalVisible(true)}
             >
-              <CustomText style={styles.nextButtonText}>모의 입금하기</CustomText>
+              <CustomText style={styles.nextButtonText}>모의 송금하기</CustomText>
             </TouchableOpacity>
           </View>
 
