@@ -197,7 +197,7 @@ const MainScreen = ({ navigation }) => {
 
   const actionButtons = [
     { title: '송금', icon: 'swap-horizontal', onPress: () => navigation.navigate('Account') },
-    { title: '퀴즈', icon: 'help-circle', onPress: () => navigation.navigate('Learning') },
+    { title: '학습', icon: 'help-circle', onPress: () => navigation.navigate('Learning') },
     { title: '지도', icon: 'map', onPress: () => navigation.navigate('MapView') },
     { title: '복지혜택', icon: 'gift', onPress: () => navigation.navigate('Welfare') },
   ];
