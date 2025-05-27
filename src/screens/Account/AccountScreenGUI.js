@@ -525,11 +525,11 @@ const AccountScreenGUI = ({
                       </CustomText>
                       <CustomText style={styles.accountNumber}>
                         {/* 계좌번호 : {item.account_num_masked || '정보없음'} */}
-                        계좌번호 : {dbObj?.accountNum || '정보없음'}
+                        계좌번호 : {'\n'}{dbObj?.accountNum || '정보없음'}
                         {/* const { dbName } = CONFIG[testBedAccount] || {}; 컬렉션에서 item.fintech_use_num == accountId 고유값 따라서 accountNum 가져오기 */}
                       </CustomText>
                       <CustomText style={styles.balance}>
-                        잔액: {' '}
+                        잔액: {'\n'}
                         {(() => {
                           const raw = dbObj?.amount;
                           // 1) MongoDB Decimal128 JSON 직렬화 형태 처리
@@ -543,41 +543,46 @@ const AccountScreenGUI = ({
                           return !isNaN(num) ? num.toLocaleString() : '정보없음';
                         })()}
                       </CustomText>
-                      <Pressable
-                        style={styles.copyButton}
-                        onPress={() => handleCopyAccountNum(dbObj?.accountNum)}
-                      >
-                        <CustomText style={styles.copyButtonText}>계좌 번호 복사하기</CustomText>
-                      </Pressable>
                     </View>
                     <View style={styles.buttonContainer}>
                       <TouchableOpacity
-                        style={styles.receiveButton}
-                        onPress={() => {
-                          onPressDeposit(item);
-                        }}
-                        disabled={isAnimating}
-                        activeOpacity={isAnimating ? 1 : 0.7}
+                        style={styles.copyButton}
+                        onPress={() => handleCopyAccountNum(dbObj?.accountNum)}
+                        activeOpacity={0.7}
                       >
-                        <CustomText style={styles.receiveButtonText}>
-                          테스트 지원금
+                        <CustomText style={styles.copyButtonText}>
+                          계좌 번호 복사하기
                         </CustomText>
                       </TouchableOpacity>
-                      <TouchableOpacity
-                        style={styles.withdrawButton}
-                        // onPress={() => handleWithdraw(item)}
-                        // onPress={() => onPressWithdraw(item)}
-                        onPress={() => navigation.navigate('WithdrawAccount', {
-                          amount: dbObj?.amount || 0,
-                          bankName: item.bank_name,
-                          accountNum: dbObj?.accountNum || '정보없음',
-                          testBedAccount: testBedAccount,
-                        })}
-                      >
-                        <CustomText style={styles.withdrawButtonText}>
-                          송금
-                        </CustomText>
-                      </TouchableOpacity>
+                      <View style={styles.rowButtons}>
+                        <TouchableOpacity
+                          style={styles.receiveButton}
+                          onPress={() => {
+                            onPressDeposit(item);
+                          }}
+                          disabled={isAnimating}
+                          activeOpacity={isAnimating ? 1 : 0.7}
+                        >
+                          <CustomText style={styles.receiveButtonText}>
+                            테스트{'\n'}지원금
+                          </CustomText>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                          style={styles.withdrawButton}
+                          // onPress={() => handleWithdraw(item)}
+                          // onPress={() => onPressWithdraw(item)}
+                          onPress={() => navigation.navigate('WithdrawAccount', {
+                            amount: dbObj?.amount || 0,
+                            bankName: item.bank_name,
+                            accountNum: dbObj?.accountNum || '정보없음',
+                            testBedAccount: testBedAccount,
+                          })}
+                        >
+                          <CustomText style={styles.withdrawButtonText}>
+                            송금
+                          </CustomText>
+                        </TouchableOpacity>
+                      </View>
                       {/* <TouchableOpacity
                       style={styles.withdrawButton}
                       onPress={() => onPressUpsert(item)}>
@@ -733,6 +738,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     backgroundColor: '#f8f8f8',
     padding: 20,
+    paddingVertical: 0,
     borderRadius: 20,
     marginBottom: 10,
     shadowColor: '#000',
@@ -744,29 +750,31 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(75, 124, 229, 0.5)',
   },
   accountInfo: {
-    flex: 1,
+    paddingRight: 10,
   },
   accountNumber: {
-    // fontSize: 14,
-    marginBottom: 2,
+    fontSize: +20,
+    // margin: 0,
   },
   balance: {
-    // fontSize: 12,
+    fontSize: +24,
     color: '#333',
     marginTop: 2,
   },
   bankName: {
-    // fontSize: 14,
+    fontSize: +24,
     color: '#555',
-    marginTop: 2,
   },
   buttonContainer: {
-    flexDirection: 'row',
+    flexDirection: 'column',
+    alignItems: 'flex-end',
+    paddingHorizontal: 10,
+    marginVertical: 20,
   },
   receiveButton: {
     backgroundColor: '#66BB6A',
-    paddingVertical: 15,
-    paddingHorizontal: 20,
+    paddingVertical: 16,
+    paddingHorizontal: 16,
     borderRadius: 16,
     marginRight: 12,
     shadowColor: '#000',
@@ -775,29 +783,28 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     elevation: 6,
   },
-
   withdrawButton: {
     backgroundColor: '#5C88E0',
-    paddingVertical: 15,
-    paddingHorizontal: 20,
+    paddingVertical: 16,
+    paddingHorizontal: 40,
     borderRadius: 16,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },   // 동일한 그림자 효과
     shadowOpacity: 0.25,
     shadowRadius: 6,
     elevation: 6,
+    justifyContent: 'center',   // 수직 중앙
+    alignItems: 'center',       // 수평 중앙
   },
-
   receiveButtonText: {
     color: '#fff',
     fontWeight: 'bold',
-    fontSize: 15,
+    fontSize: +20,
   },
-
   withdrawButtonText: {
     color: '#fff',
     fontWeight: 'bold',
-    fontSize: 15,
+    fontSize: +20,
   },
   image: {
     width: '100%',
@@ -954,20 +961,23 @@ const styles = StyleSheet.create({
   filterTextActive: {
     color: '#fff',
   },
-  accountNumber: {
-    fontSize: 16,
-    marginBottom: 4,
-  },
   copyButton: {
     alignSelf: 'flex-start',
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    backgroundColor: 'rgba(91, 148, 255,1)',
-    borderRadius: 4,
+    width: "100%",
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    backgroundColor: 'rgb(155, 178, 255)',
+    borderRadius: 10,
   },
   copyButtonText: {
     color: '#fff',
-    fontSize: 14,
+    fontSize: +24,
+    textAlign: 'center',
+  },
+  rowButtons: {
+    flexDirection: 'row',
+    marginTop: 12,
+    width: '100%',
   },
 });
 
