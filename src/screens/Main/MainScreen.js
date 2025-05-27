@@ -10,6 +10,8 @@ import {
   Switch,
   BackHandler,
   ActivityIndicator,
+  Pressable,
+  FlatList,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -24,6 +26,8 @@ import PushNotification from 'react-native-push-notification';
 import Toast from 'react-native-toast-message';
 import { useUser } from '../Login/UserContext';
 import { useAccountData } from '../../components/useAccountData';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import LottieView from 'lottie-react-native';
 
 const FunctionButton = ({ title, onPress, icon }) => {
   const { seniorMode } = useSeniorMode();
@@ -86,9 +90,29 @@ const MainScreen = ({ navigation }) => {
   const testBedAccount = userInfo?.dbName || 'Guest';
   const { data, loading, error } = useAccountData(testBedAccount);
 
-  // 가장 첫 계좌를 대표로
-  const primary = data[0] || {};
   const scrollViewRef = useRef(null);
+  const [accountPickerVisible, setAccountPickerVisible] = useState(false);
+  const [primaryId, setPrimaryId] = useState(null);
+
+  // 1) 앱 시작 시 저장된 대표 계좌 불러오기
+  useEffect(() => {
+    AsyncStorage.getItem('primaryAccount').then(id => {
+      if (id) setPrimaryId(id);
+    });
+  }, []);
+
+  // 2) 대표 계좌 설정 함수 (state + AsyncStorage) 에서 모달 닫기
+  const choosePrimary = async fintech_use_num => {
+    setPrimaryId(fintech_use_num);
+    await AsyncStorage.setItem('primaryAccount', fintech_use_num);
+    setAccountPickerVisible(false);  // ← 대표 지정 시 모달 닫기
+  };
+
+  // 3) primary 객체 재계산
+  const primary =
+    data.find(item => item.fintech_use_num === primaryId) ||
+    data[0] ||
+    {};
 
   useEffect(() => {
     // 1. 푸시 알림 설정 (한 번만)
@@ -254,13 +278,31 @@ const MainScreen = ({ navigation }) => {
           <View style={styles.arrowPattern} />
           <View style={styles.dottedLine} />
 
-          <TouchableOpacity style={styles.settingsButton}>
+          <Pressable
+            style={styles.settingsButton}
+            onPress={() => setAccountPickerVisible(true)}
+          >
             <Icon name="gear" size={24} color="#fff" />
-          </TouchableOpacity>
+          </Pressable>
 
-          {/*계좌 문제 영역*/}
-          <CustomText style={styles.accountNum}>대표 계좌: {primary.bank_name ?? '–'} 계좌 번호({primary.bank_num})</CustomText>
-          <CustomText style={styles.balanceAmt}>{primary.localAmount}</CustomText>
+          <CustomText style={styles.accountNum}>
+            대표 계좌 : {primary.bank_name ?? ''}{"\n"}
+            계좌 번호 : {primary.bank_num}
+          </CustomText>
+          <CustomText style={styles.balanceAmt}>
+            잔액 : {Number(primary.localAmount).toLocaleString('ko-KR')}원
+          </CustomText>
+          {/* 로딩 오버레이 */}
+          {loading && (
+            <View style={styles.loadingOverlay}>
+              <LottieView
+                source={require('../../assets/loadingg.json')}
+                autoPlay
+                loop
+                style={styles.loadingLottie}
+              />
+            </View>
+          )}
         </View>
 
         <TouchableOpacity style={styles.toggleRow} onPress={() => setShowActions(v => !v)}>
@@ -280,7 +322,6 @@ const MainScreen = ({ navigation }) => {
             }}
           /> */}
           <Ionicons name={showActions ? 'chevron-up-outline' : 'chevron-down-outline'} size={20} color="#4A90E2" />
-
         </TouchableOpacity>
 
         {showActions && (
@@ -351,8 +392,46 @@ const MainScreen = ({ navigation }) => {
               </TouchableOpacity>
             ))}
           </View>)}
-
       </ScrollView>
+      {/* 계좌 선택 모달 */}
+      <Modal
+        visible={accountPickerVisible}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setAccountPickerVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={[styles.modalContent, { maxHeight: '60%' }]}>
+            <FlatList
+              data={data}
+              keyExtractor={item => item.fintech_use_num}
+              style={{ flexGrow: 0 }}              // FlatList 스크롤 가능하도록
+              contentContainerStyle={{ paddingBottom: 16 }}
+              renderItem={({ item }) => (
+                <View style={styles.modalRow}>
+                  <View style={styles.modalInfo}>
+                    <CustomText>{item.bank_name}</CustomText>
+                    <CustomText>{item.bank_num}</CustomText>
+                    <CustomText>₩ {Number(item.localAmount).toLocaleString()}</CustomText>
+                  </View>
+                  <Pressable
+                    style={styles.pickerButton}
+                    onPress={() => choosePrimary(item.fintech_use_num)}
+                  >
+                    <Text style={styles.pickerButtonText}>대표 지정</Text>
+                  </Pressable>
+                </View>
+              )}
+            />
+            <Pressable
+              style={styles.closeButton}
+              onPress={() => setAccountPickerVisible(false)}
+            >
+              <Text style={styles.closeButtonText}>닫기</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
       <Modal
         visible={modalVisible}
         animationType="fade"
@@ -568,8 +647,8 @@ const styles = StyleSheet.create({
     borderColor: '#fff',
     opacity: 0.3,
   },
-  accountNum: { color: '#E3F2FD', fontWeight: '700', marginBottom: 20 },
-  balanceAmt: { color: '#fff', fontWeight: '900', letterSpacing: 2 },
+  accountNum: { color: '#E3F2FD', fontWeight: '700', marginBottom: 20, fontSize: +24 },
+  balanceAmt: { color: '#fff', fontWeight: '900', letterSpacing: 2, fontSize: +32 },
 
   sectionSubTitle: { fontWeight: '600', color: '#0052CC', marginBottom: 10 },
   sectionTitle: { fontWeight: 'bold', color: '#0052CC' },
@@ -669,6 +748,64 @@ const styles = StyleSheet.create({
     padding: 5,
     borderRadius: 10,
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(32, 58, 89, 0.6)',  // 짙은 블루 반투명
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContent: {
+    width: '85%',
+    backgroundColor: '#E4F1FF',
+    borderRadius: 16,
+    padding: 24,
+    // 화면 높이의 80%까지만 차지
+    maxHeight: '80%',
+  },
+  modalRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 16,
+    borderBottomWidth: 1,
+    borderColor: '#B8E0FF',
+    paddingBottom: 8,
+  },
+  modalInfo: {
+    flex: 1,
+  },
+  pickerButton: {
+    backgroundColor: '#4A90E2',
+    paddingVertical: 20,
+    paddingHorizontal: 24,
+    borderRadius: 8,
+  },
+  pickerButtonText: {
+    color: '#FFF',
+    fontWeight: '600',
+    textAlign: 'center',
+  },
+  closeButton: {
+    marginTop: 12,
+    backgroundColor: '#357ABD',
+    paddingVertical: 20,
+    borderRadius: 8,
+  },
+  closeButtonText: {
+    color: '#FFF',
+    textAlign: 'center',
+    fontWeight: '500',
+  },
+  loadingOverlay: {
+    ...StyleSheet.absoluteFillObject,  // 부모(View) 전체를 덮음
+    backgroundColor: 'rgba(255,255,255,0.2)', // 반투명 배경
+    justifyContent: 'center',          // 세로 중앙
+    alignItems: 'center',              // 가로 중앙
+  },
+  loadingLottie: {
+    width: 200,     // 원하는 Lottie 크기
+    height: 200,
   },
 });
 

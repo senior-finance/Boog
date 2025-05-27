@@ -234,7 +234,7 @@ export default function WithdrawAccountScreen() {
       {loading && (
         <View style={styles.loadingOverlay}>
           <LottieView
-            source={require('../../assets/animeLoading2.json')}
+            source={require('../../assets/loadingg.json')}
             autoPlay
             loop={false}
             style={styles.lottie}
