@@ -61,82 +61,97 @@ const AutoPhoneAnalysisScreen = () => {
     );
   };
 
-  const analyze = async () => {
-    const hasPermission = await requestPermissions();
-    if (!hasPermission) {
-      setResultText('권한이 거부되었습니다. 설정에서 권한을 허용해주세요.');
-      return;
-    }
+const analyze = async () => {
+  const hasPermission = await requestPermissions();
+  if (!hasPermission) {
+    setResultText('권한이 거부되었습니다. 설정에서 권한을 허용해주세요.');
+    return;
+  }
 
-    setLoading(true);
-    setTimeout(() => setLoading(false), 2000); // 최소 2초 로딩 보장
+  setLoading(true);
+  setTimeout(() => setLoading(false), 2000); // 최소 2초 로딩 보장
 
-    let found = [];
+  let found = [];
 
-    await new Promise((resolve) => {
-      PhoneAnalysisModule.getAllSMS((smsList) => {
-        smsList.forEach((sms) => {
-          if (isToday(sms.timestamp)) {
-            const matches = phishingKeywords.filter((kw) => sms.body.includes(kw));
-            if (matches.length > 0) {
-              found.push({
-                type: 'sms',
-                sender: sms.sender,
-                text: sms.body,
-                keywords: matches,
-              });
-            }
+  // 문자 분석
+  await new Promise((resolve) => {
+    PhoneAnalysisModule.getAllSMS((smsList) => {
+      smsList.forEach((sms) => {
+        if (isToday(sms.timestamp)) {
+          const matches = phishingKeywords.filter((kw) => sms.body.includes(kw));
+
+          // 링크 포함 여부 확인
+          const urlRegex = /(https?:\/\/[^\s]+)|(www\.[^\s]+)/gi;
+          const hasLink = urlRegex.test(sms.body);
+
+          if (hasLink && !matches.includes('링크 포함')) {
+            matches.push('링크 포함');
           }
-        });
-        resolve();
-      });
-    });
 
-    await new Promise((resolve) => {
-      PhoneAnalysisModule.getRecentCallLogs((logs) => {
-        logs.forEach((log) => {
-          if (isToday(log.timestamp)) {
-            if (log.number.startsWith('070') || log.duration < 5) {
-              found.push({
-                type: 'call',
-                sender: log.number,
-                text: `통화 (${log.duration}초)`,
-                keywords: ['070 또는 짧은 통화'],
-              });
-            }
+          // 🔥 수정 핵심: 링크만 있어도 감지되게 함
+          if (matches.length > 0 || hasLink) {
+            found.push({
+              type: 'sms',
+              sender: sms.sender,
+              text: sms.body,
+              keywords: matches,
+            });
           }
-        });
-        resolve();
+        }
       });
+      resolve();
     });
+  });
 
-    const autoCheckedFound = await Promise.all(found.map(async (item) => {
-      try {
-        const isSpam = await checkSpamForNumber(item.sender);
-        return { ...item, whowhoResult: isSpam };
-      } catch (err) {
-        console.log(item.sender, '번호 조회 에러:', err);
-        return { ...item, whowhoResult: null };
-      }
-    }));
+  // 통화 분석
+  await new Promise((resolve) => {
+    PhoneAnalysisModule.getRecentCallLogs((logs) => {
+      logs.forEach((log) => {
+        if (isToday(log.timestamp)) {
+          if (log.number.startsWith('070') || log.duration < 5) {
+            found.push({
+              type: 'call',
+              sender: log.number,
+              text: `통화 (${log.duration}초)`,
+              keywords: ['070 또는 짧은 통화'],
+            });
+          }
+        }
+      });
+      resolve();
+    });
+  });
 
-    setSuspiciousList(autoCheckedFound);
-
-    if (autoCheckedFound.length === 0) {
-      setResultText('오늘은 의심스러운 문자나 통화 기록이 없습니다.');
-    } else {
-      const smsCount = autoCheckedFound.filter(item => item.type === 'sms').length;
-      const callCount = autoCheckedFound.filter(item => item.type === 'call').length;
-      setResultText(`의심 기록 ${autoCheckedFound.length}건 발견됨!`);
-
-      setTimeout(() => {
-        showModal(
-          '분석 요소',
-          `총 ${autoCheckedFound.length}개의 의심 기록이 발견되었습니다.\n\n문자: ${smsCount}개\n통화: ${callCount}건`
-        );
-      }, 500);
+  // 후후 조회
+  const autoCheckedFound = await Promise.all(found.map(async (item) => {
+    try {
+      const isSpam = await checkSpamForNumber(item.sender);
+      return { ...item, whowhoResult: isSpam };
+    } catch (err) {
+      console.log(item.sender, '번호 조회 에러:', err);
+      return { ...item, whowhoResult: null };
     }
-  };
+  }));
+
+  setSuspiciousList(autoCheckedFound);
+
+  if (autoCheckedFound.length === 0) {
+    setResultText('오늘은 의심스러운 문자나 통화 기록이 없습니다.');
+  } else {
+    const smsCount = autoCheckedFound.filter(item => item.type === 'sms').length;
+    const callCount = autoCheckedFound.filter(item => item.type === 'call').length;
+    setResultText(`의심 기록 ${autoCheckedFound.length}건 발견됨!`);
+
+    setTimeout(() => {
+      showModal(
+        '분석 요소',
+        `총 ${autoCheckedFound.length}개의 의심 기록이 발견되었습니다.\n\n문자: ${smsCount}개\n통화: ${callCount}건`
+      );
+    }, 500);
+  }
+};
+
+
 
   const handleItemPress = (item) => {
     let detail = item.type === 'sms'
@@ -170,29 +185,50 @@ const AutoPhoneAnalysisScreen = () => {
     </TouchableOpacity>
     <CustomText style={styles.resultText}>{resultText}</CustomText>
     {suspiciousList.map((item, index) => (
-      <TouchableOpacity
-        key={index}
-        style={styles.itemBox}
-        onPress={() => handleItemPress(item)}
-      >
-        <View style={styles.itemHeader}>
-          {item.type === 'sms' ? (
-            <Ionicons name="chatbubble-outline" size={20} color="#4B7BE5" style={styles.icon} />
-          ) : (
-            <Ionicons name="call-outline" size={20} color="#4B7BE5" style={styles.icon} />
-          )}
-          <CustomText style={styles.itemSender}>
-            {item.sender} {item.type === 'sms' ? '(문자)' : '(통화)'}
-          </CustomText>
-        </View>
-        <CustomText style={styles.itemText}>{item.text}</CustomText>
-        <CustomText style={styles.itemText}>의심: {item.keywords.join(', ')}</CustomText>
-        {item.type === 'call' && item.whowhoResult !== null && (
-          <CustomText style={styles.itemText}>
-            통화 분석 결과: {item.whowhoResult ? '스팸(의심)' : '정상'}
-          </CustomText>
-        )}
-      </TouchableOpacity>
+<TouchableOpacity
+  key={index}
+  style={styles.itemBox}
+  onPress={() => handleItemPress(item)}
+>
+  <View style={styles.itemHeader}>
+    <Ionicons
+      name={item.type === 'sms' ? 'chatbubble-outline' : 'call-outline'}
+      size={20}
+      color="#4B7BE5"
+      style={styles.icon}
+    />
+    <CustomText style={styles.itemSender}>
+      {item.type === 'sms' ? '💬' : '📞'} {item.sender} ({item.type === 'sms' ? '문자' : '통화'})
+    </CustomText>
+  </View>
+
+  {/* 문자 내용 or 통화 시간 */}
+  {item.type === 'sms' ? (
+    <CustomText style={styles.itemText}>
+      📩 {item.text}
+    </CustomText>
+  ) : (
+    <CustomText style={styles.itemText}>{item.text}</CustomText>
+  )}
+
+  {/* 의심 키워드 강조 */}
+  <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginBottom: 5 }}>
+    <CustomText style={[styles.itemText, { color: 'red', fontWeight: 'bold' }]}>
+      ❗ 의심 키워드: 
+    </CustomText>
+    <CustomText style={[styles.itemText, { color: 'red' }]}>
+      {' '}{item.keywords.join(', ')}
+    </CustomText>
+  </View>
+
+  {/* 후후 분석 결과 (통화 전용) */}
+  {item.type === 'call' && item.whowhoResult !== null && (
+    <CustomText style={styles.itemText}>
+      분석 결과: {item.whowhoResult ? '❗ 스팸(의심)' : '✅ 정상'}
+    </CustomText>
+  )}
+</TouchableOpacity>
+
     ))}
   </View>
 </ScrollView>
