@@ -266,38 +266,51 @@ export async function addNotification(
     },
   });
 }
-
-// === 알림 조회 ===
-export async function getNotifications(userId) {
-  const res = await mongoDB('find', 'info', 'notify', {
-    query: { userId },
-    options: { sort: { createdAt: -1 } },
+// === 느슨한 알림 조회 ===
+export async function getNotifications(identifier) {
+  // 1) identifier가 username인지 dbName인지 구분하기 위해 users 컬렉션에서 조회
+  const user = await mongoDB('findOne', 'user', 'info', {
+    query: {
+      $or: [
+        { username: identifier },
+        { dbName: identifier }
+      ]
+    }
   });
 
+  // 2) 중복 방지를 위해 배열로 모아두기
+  const ids = [identifier];
+  if (user && user.username && !ids.includes(user.username)) {
+    ids.push(user.username);
+  }
+  if (user && user.dbName && !ids.includes(user.dbName)) {
+    ids.push(user.dbName);
+  }
+
+  // 3) notify 컬렉션에서 userId 필드가 ids 배열에 속하는 모든 알림 조회
+  const res = await mongoDB('find', 'info', 'notify', {
+    query: { userId: { $in: ids } },
+    options: { sort: { createdAt: -1 } }
+  });
+
+  // 4) 결과 문서 배열로 통일
   const docs = Array.isArray(res)
     ? res
     : Array.isArray(res.documents)
       ? res.documents
       : [];
 
+  // 5) _id 또는 id를 문자열로 변환해 고유 id 생성
   return docs.map((doc, idx) => {
-    // 1) MongoDB ObjectId(_id) 우선
-    // 2) 혹시 wrapper가 id로 이미 변환해 뒀다면 doc.id
-    // 3) 그마저 없으면 map index fallback
-    const rawId = doc._id ?? doc.id;
+    const rawId = doc._id || doc.id;
     const id = rawId
       ? typeof rawId === 'string'
         ? rawId
         : rawId.toString()
       : `notif-${idx}`;
-
-    return {
-      id,
-      ...doc,
-    };
+    return { id, ...doc };
   });
 }
-
 // === 퀴즈 관련 함수 ===
 /**
  * @param {object} filter   - MongoDB 쿼리 필터 (기본: {})

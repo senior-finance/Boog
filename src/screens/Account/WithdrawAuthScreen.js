@@ -14,9 +14,10 @@ import {
 import { useRoute, useNavigation } from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
 import ReactNativeBiometrics from 'react-native-biometrics';
-import { deposit, withdraw, mongoDB } from '../../database/mongoDB';
+import { deposit, withdraw, mongoDB, addNotification } from '../../database/mongoDB';
 import CustomModal from '../../components/CustomModal';
 import CustomNumPad from '../../components/CustomNumPad';
+import PushNotification from 'react-native-push-notification';
 
 export default function WithdrawAuthScreen() {
   const nav = useNavigation();
@@ -39,6 +40,47 @@ export default function WithdrawAuthScreen() {
   const [showNumPad, setShowNumPad] = useState(false);
   const [pinInput, setPinInput] = useState('');
   const [counterpartyName, setCounterpartyName] = useState('');
+  const [isOwnTransfer, setIsOwnTransfer] = useState(false);
+
+  useEffect(() => {
+    // 1. 푸시 알림 설정 (한 번만)
+    PushNotification.configure({
+      // (필요 시) 토큰 받기
+      onRegister: function (token) {
+        // console.log('TOKEN:', token);
+      },
+      // 알림 탭/닫기 시
+      onNotification: function (notification) {
+        console.log('NOTIFICATION:', notification);
+        notification.finish(PushNotification.FetchResult.NoData);
+      },
+      // Android 권한 요청
+      requestPermissions: true,
+    });
+
+    // 2. Android용 채널 생성 (Android 8.0+)
+    PushNotification.createChannel(
+      {
+        channelId: 'default-channel-id', // 채널 ID
+        channelName: '부금이 알람 채널',  // 채널 이름
+        // importance: 3,                   // (optional) 중요도
+      },
+      // (created) => console.log(`createChannel returned '${created}'`)
+    );
+  }, []);
+
+  const sendHiNotification = (bankName, amountNum) => {
+    PushNotification.localNotification({
+      /* Android & iOS 공통 */
+      channelId: 'default-channel-id', // Android는 필수
+      title: '송금 안내',                   // 제목
+      message: `${bankName}에서 ${amountNum}을 송금했어요`,                 // 본문
+
+      /* iOS 전용 옵션 (필요 시) */
+      // soundName: 'default',
+      // playSound: true,
+    });
+  };
 
   useEffect(() => {
     (async () => {
@@ -48,6 +90,7 @@ export default function WithdrawAuthScreen() {
 
       if (isOwn) {
         setCounterpartyName('나');
+        setIsOwnTransfer(true);
       } else {
         const other = await mongoDB(
           'findOne',
@@ -56,6 +99,7 @@ export default function WithdrawAuthScreen() {
           { query: { dbName: { $ne: testBedAccount } } }
         );
         setCounterpartyName(other?.koreaName || '상대방');
+        setIsOwnTransfer(false);
       }
     })();
   }, [accountNumTo, testBedAccount]);
@@ -74,11 +118,18 @@ export default function WithdrawAuthScreen() {
     }
     try {
       const fromDb = testBedAccount;
-      const toDb = fromDb === 'kmj' ? 'hwc' : 'kmj';
+      const toDb = isOwnTransfer ? fromDb : (fromDb === 'kmj' ? 'hwc' : 'kmj');
 
       await withdraw(fromDb, accountNum.replace(/-/g, ''), bankName, amountNum);
       await deposit(toDb, accountNumTo.replace(/-/g, ''), bankTo, amountNum);
 
+      await addNotification(fromDb, {
+        icon: 'navigate-outline',
+        iconColor: 'rgb(0, 100, 248)',
+        borderColor: '#FFCDD2',
+        content: `${bankName}에서 ${formattedAmount}을 송금했어요`,
+      });
+      sendHiNotification(bankName, formattedAmount);
       showModal('송금 완료', `${bankTo} ${formattedAmount} 송금이 완료되었습니다.`);
     } catch (err) {
       showModal('송금 실패', '송금 처리 중 오류가 발생했습니다.');

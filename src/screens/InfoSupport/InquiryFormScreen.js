@@ -136,8 +136,8 @@ const InquiryFormScreen = () => {
       setContent('');
       sendHiNotification()
       await addNotification(userName, {
-        icon: 'alert-circle',
-        iconColor: '#F44336',
+        icon: 'mail-outline',
+        iconColor: 'rgb(0, 100, 248)',
         borderColor: '#FFCDD2',
         content: '문의 이메일을 보냈어요',
       });
