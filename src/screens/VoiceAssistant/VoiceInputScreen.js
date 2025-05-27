@@ -461,6 +461,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 5,
+   borderWidth: 0.8,
+    borderColor: 'rgba(77, 73, 73, 0.4)',
   },
   topicText: {
     fontSize: 13,
