@@ -385,7 +385,8 @@ export default function LoginScreen({ navigation }) {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <View style={styles.contentWrapper}>
+       <View style={{ alignItems: 'center', marginTop: 60 }}>
+ 
           <Image
             source={require('../../assets/logo4.png')}
             style={styles.logo}
@@ -424,11 +425,14 @@ export default function LoginScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#fff' },
+  container: { flex: 1, backgroundColor: '#D6ECFF' },
   scrollContainer: {
     flexGrow: 1,
     paddingHorizontal: 20,
   },
+
+
+
   contentWrapper: {
     marginTop: screenHeight * 0.3, // ← 위에서부터 원하는 비율 (20~25%)에 따라 조정
     alignItems: 'center',
@@ -436,7 +440,7 @@ const styles = StyleSheet.create({
   logo: {
     width: "80%",
     height: 100,
-    marginBottom: 32,
+    marginBottom: 150,
     resizeMode: 'contain',
   },
   kakao: { backgroundColor: '#FEE500' },
@@ -453,7 +457,7 @@ const styles = StyleSheet.create({
     height: 70,
     alignItems: 'center',
     justifyContent: 'center', // ← 버튼 자체도 가운데 정렬 보장
-    marginBottom: 30,
+    marginBottom:60,
   },
   buttonContent: {
     flexDirection: 'row',
