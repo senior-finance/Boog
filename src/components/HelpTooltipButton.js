@@ -70,7 +70,7 @@ const HelpTooltipButton = () => {
           Math.min(SCREEN_WIDTH - TOOLTIP_WIDTH - MARGIN + TOOLTIP_MARGIN_LEFT_OFFSET, newX)
         );
         const clampedY = Math.max(
-          MARGIN, 
+          MARGIN,
           Math.min(SCREEN_HEIGHT - TOOLTIP_HEIGHT - FAB_BOTTOM_MARGIN, newY)
         );
 
@@ -85,7 +85,6 @@ const HelpTooltipButton = () => {
     })
   ).current;
 
-  // 현재 화면 이름 가져오기
   const getActiveRouteName = (navState) => {
     if (!navState || !navState.routes) return null;
     const route = navState.routes[navState.index];
@@ -93,15 +92,16 @@ const HelpTooltipButton = () => {
   };
 
   const currentRouteName = getActiveRouteName(state);
-  const hiddenRoutes = ['Login', 'SetUserNameScreen', 'VoiceInput', 'MapView', 'MainTabs', 'Home'];
-  if (!currentRouteName || hiddenRoutes.includes(currentRouteName)) return null;
+
+  // ✅ 수정된 부분: 특정 화면에서만 보여주기
+  const allowedRoutes = ['Learning', 'QuizLevel', '내 정보', 'AutoPhoneAnalysis'];
+  if (!currentRouteName || !allowedRoutes.includes(currentRouteName)) return null;
 
   return (
     <Animated.View
       style={[styles.floatingWrapper, { transform: pan.getTranslateTransform() }]}
       {...(dragEnabled ? panResponder.panHandlers : {})}
     >
-      {/* 텍스트 영역 - 항상 드래그 가능 */}
       <View {...panResponder.panHandlers}>
         <Animated.View
           style={[
@@ -116,7 +116,6 @@ const HelpTooltipButton = () => {
         </Animated.View>
       </View>
 
-      {/* 버튼 - 길게 눌렀을 때만 드래그 가능 */}
       <TouchableOpacity
         style={styles.fab}
         onPress={() => navigation.navigate('VoiceInput')}
@@ -148,9 +147,12 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   tooltipText: {
-    fontSize: 17,
-    fontWeight: 'bold',
+    fontSize: 15,
+    fontWeight: '900',
     color: '#4B7BE5',
+    textShadowColor: '#00000055',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 3,
   },
   fab: {
     width: 50,
