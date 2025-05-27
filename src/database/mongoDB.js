@@ -269,24 +269,33 @@ export async function addNotification(
 
 // === 알림 조회 ===
 export async function getNotifications(userId) {
-  // 1) 몽고DB에서 raw 결과 가져오기
   const res = await mongoDB('find', 'info', 'notify', {
     query: { userId },
     options: { sort: { createdAt: -1 } },
   });
 
-  // 2) 결과 배열로 통일
   const docs = Array.isArray(res)
     ? res
     : Array.isArray(res.documents)
       ? res.documents
       : [];
 
-  // 3) _id를 id로 바꾸고, 나머지 필드는 그대로 퍼뜨려 반환
-  return docs.map(({ _id, ...fields }) => ({
-    id: _id,
-    ...fields,
-  }));
+  return docs.map((doc, idx) => {
+    // 1) MongoDB ObjectId(_id) 우선
+    // 2) 혹시 wrapper가 id로 이미 변환해 뒀다면 doc.id
+    // 3) 그마저 없으면 map index fallback
+    const rawId = doc._id ?? doc.id;
+    const id = rawId
+      ? typeof rawId === 'string'
+        ? rawId
+        : rawId.toString()
+      : `notif-${idx}`;
+
+    return {
+      id,
+      ...doc,
+    };
+  });
 }
 
 // === 퀴즈 관련 함수 ===

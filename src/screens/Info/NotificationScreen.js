@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { View, StyleSheet, ScrollView, Text, TouchableOpacity } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import LinearGradient from 'react-native-linear-gradient';
 import { addNotification, getNotifications } from '../../database/mongoDB';
 import { useUser } from '../Login/UserContext';
 import CustomText from '../../components/CustomText';
+import { SectionList } from 'react-native';
+import dayjs from 'dayjs';
 
 export default function NotificationScreen() {
   const { userInfo } = useUser();
@@ -15,15 +17,19 @@ export default function NotificationScreen() {
   useEffect(() => {
     const fetchData = async () => {
       const defaultNotifications = [
-        { icon: 'information-circle', iconColor: '#2196F3', borderColor: '#BBDEFB', content: '새로운 보이스피싱 사례 소식을 확인해보세요.' },
-        { icon: 'chatbubble-ellipses-outline', iconColor: '#AB47BC', borderColor: '#E1BEE7', content: 'AI 챗봇과 대화해보세요! 궁금한 금융 정보를 알려드려요.' },
-        { icon: 'calendar-outline', iconColor: '#607D8B', borderColor: '#CFD8DC', content: '오늘 통화/문자 분석도 꼭 확인해보세요.' },
+        { id: 'info-1', icon: 'information-circle', iconColor: '#2196F3', borderColor: '#BBDEFB', content: '새로운 보이스피싱 사례 소식을 확인해보세요.' },
+        { id: 'chat-2', icon: 'chatbubble-ellipses-outline', iconColor: '#AB47BC', borderColor: '#E1BEE7', content: 'AI 챗봇과 대화해보세요! 궁금한 금융 정보를 알려드려요.' },
+        { id: 'calendar-3', icon: 'calendar-outline', iconColor: '#607D8B', borderColor: '#CFD8DC', content: '오늘 통화/문자 분석도 꼭 확인해보세요.' },
       ];
 
       try {
         const result = await getNotifications(userId);
         if (result.length > 0) {
-          setNotifications(result);
+          const formattedResult = result.map(item => ({
+            id: item._id.toString(),
+            ...item,
+          }));
+          setNotifications(formattedResult);
         } else {
           setNotifications(defaultNotifications);
           for (const noti of defaultNotifications) {
@@ -38,17 +44,50 @@ export default function NotificationScreen() {
     fetchData();
   }, [userId]);
 
+  // “오늘/어제/최근 일주일/오래 전” 구분 함수
+  const getCategory = dateStr => {
+    const today = dayjs().startOf('day');
+    const target = dayjs(dateStr).startOf('day');
+    const diff = today.diff(target, 'day');
+    if (diff === 0) return '오늘';
+    if (diff === 1) return '어제';
+    if (diff < 7) return '최근 일주일';
+    return '오래 전';
+  };
+
+  // notifications 상태 변경 후 useMemo로 섹션 데이터 생성
+  const sections = useMemo(() => {
+    const grouped = notifications.reduce((acc, n) => {
+      const cat = getCategory(n.createdAt);
+      (acc[cat] = acc[cat] || []).push(n);
+      return acc;
+    }, {});
+    const order = ['오늘', '어제', '최근 일주일', '오래 전'];
+    return order
+      .filter(title => grouped[title]?.length)
+      .map(title => ({ title, data: grouped[title] }));
+  }, [notifications]);
   const dismiss = id => {
     setNotifications(prev => prev.filter(n => n.id !== id));
   };
 
   return (
     <LinearGradient colors={['rgb(208, 224, 241)', 'rgb(213, 225, 236)']} style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        {notifications.map(item => (
+      <SectionList
+        sections={sections}
+        keyExtractor={item => item.id}
+        contentContainerStyle={styles.scrollContainer}
+        ListEmptyComponent={() => (
+          <View style={styles.emptyContainer}>
+            <Text style={styles.emptyText}>알림을 모두 지웠어요!</Text>
+          </View>
+        )}
+        renderSectionHeader={({ section }) => (
+          <Text style={styles.sectionTitle}>{section.title}</Text>
+        )}
+        renderItem={({ item }) => (
           <View key={item.id} style={styles.card}>
-            {/* <View style={[styles.cardHeader, { borderColor: item.borderColor }]}> */}
-            <View style={[styles.cardHeader]}>
+            <View style={styles.cardHeader}>
               <View style={styles.left}>
                 <Ionicons name={item.icon} size={24} color={item.iconColor} style={styles.icon} />
                 <CustomText style={styles.cardContent}>{item.content}</CustomText>
@@ -58,8 +97,8 @@ export default function NotificationScreen() {
               </TouchableOpacity>
             </View>
           </View>
-        ))}
-      </ScrollView>
+        )}
+      />
     </LinearGradient>
   );
 }
@@ -95,4 +134,20 @@ const styles = StyleSheet.create({
   icon: { marginRight: 10, marginTop: 3 },
   cardContent: { flex: 1, color: '#1A4DCC', fontWeight: '500', fontSize: +20, lineHeight: 24 },
   closeButton: { padding: 4 },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#333',
+    paddingVertical: 8,
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 50,
+  },
+  emptyText: {
+    fontSize: +36,
+    color: '#666',
+  },
 });

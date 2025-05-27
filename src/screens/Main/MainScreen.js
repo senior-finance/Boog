@@ -627,9 +627,9 @@ const styles = StyleSheet.create({
   balanceCard: {
     backgroundColor: 'rgba(49, 116, 199, 0.97)',
     borderRadius: 20,
-    padding: 60,
+    padding: 36,
     alignItems: 'center',
-    marginBottom: 32,
+    marginBottom: 30,
     shadowColor: '#004AAD',
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.3,
@@ -677,8 +677,8 @@ const styles = StyleSheet.create({
     borderColor: '#fff',
     opacity: 0.3,
   },
-  accountNum: { color: '#E3F2FD', fontWeight: '700', marginBottom: 20, fontSize: +24 },
-  balanceAmt: { color: '#fff', fontWeight: '900', letterSpacing: 2, fontSize: +32 },
+  accountNum: { color: '#E3F2FD', fontWeight: '700', marginBottom: 20, fontSize: +20 },
+  balanceAmt: { color: '#fff', fontWeight: '900', letterSpacing: 2, fontSize: +24 },
 
   sectionSubTitle: { fontWeight: '600', color: '#0052CC', marginBottom: 10 },
   sectionTitle: { fontWeight: 'bold', color: '#0052CC' },

@@ -395,9 +395,14 @@ const AccountScreenGUI = ({
   // 로딩 상태 렌더링
   if (loading) {
     return (
-      <View style={styles.container}>
-        <ActivityIndicator size="large" />
-        <Text>{LOADING_MESSAGE}</Text>
+      <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
+        <LottieView
+          source={require('../../assets/loadingg.json')}
+          autoPlay
+          loop
+          style={{ width: 300, height: 300 }}
+        />
+        {/* <Text>{LOADING_MESSAGE}</Text> */}
       </View>
     );
   }
