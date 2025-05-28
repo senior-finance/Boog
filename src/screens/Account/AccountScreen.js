@@ -252,6 +252,10 @@ const AccountScreen = () => {
           '저장된 토큰 데이터 로드:',
           storedToken.access_token.substring(0, 20) + '…'
         );
+        console.log(
+          '저장된 토큰 데이터 로드:',
+          storedToken.access_token
+        );
         setTokenData(storedToken);
         setStep('fetchAccounts');
       } else {
@@ -266,13 +270,13 @@ const AccountScreen = () => {
   const handleNavigationStateChange = navState => {
     const { url } = navState;
     console.log('URL 변경됨:', url.substring(0, 20) + '...');
-    console.log('URL 변경됨:', url.substring);
+    console.log('URL 변경됨:', url);
     if (url.startsWith(KFTC_REDIRECT_URI)) {
       const codeMatch = url.match(/[?&]code=([^&]+)/);
       if (codeMatch) {
         const code = codeMatch[1];
         console.log('추출된 code:', code.substring(0, 20) + '...');
-        console.log('추출된 code:', code.substring);
+        console.log('추출된 code:', code);
         setAuthCode(code);
         setStep('fetchToken');
       }
@@ -283,7 +287,7 @@ const AccountScreen = () => {
   useEffect(() => {
     if (step === 'fetchToken' && authCode && cfg.CLIENT_ID) {
       console.log('토큰 요청 시작 - code:', authCode.substring(0, 20) + '…');
-      console.log('토큰 요청 시작 - code:', authCode.substring);
+      console.log('토큰 요청 시작 - code:', authCode);
       setLoading(true);
 
       const bodyParams = new URLSearchParams({
@@ -303,7 +307,7 @@ const AccountScreen = () => {
         .then(async response => {
           const text = await response.clone().text();
           console.log('토큰 응답(raw):', text.substring(0, 100) + '…');
-          console.log('토큰 응답(raw):', text.substring);
+          console.log('토큰 응답(raw):', text);
           return response.json();
         })
         .then(async data => {
