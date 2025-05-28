@@ -266,11 +266,13 @@ const AccountScreen = () => {
   const handleNavigationStateChange = navState => {
     const { url } = navState;
     console.log('URL 변경됨:', url.substring(0, 20) + '...');
+    console.log('URL 변경됨:', url.substring);
     if (url.startsWith(KFTC_REDIRECT_URI)) {
       const codeMatch = url.match(/[?&]code=([^&]+)/);
       if (codeMatch) {
         const code = codeMatch[1];
         console.log('추출된 code:', code.substring(0, 20) + '...');
+        console.log('추출된 code:', code.substring);
         setAuthCode(code);
         setStep('fetchToken');
       }
@@ -281,6 +283,7 @@ const AccountScreen = () => {
   useEffect(() => {
     if (step === 'fetchToken' && authCode && cfg.CLIENT_ID) {
       console.log('토큰 요청 시작 - code:', authCode.substring(0, 20) + '…');
+      console.log('토큰 요청 시작 - code:', authCode.substring);
       setLoading(true);
 
       const bodyParams = new URLSearchParams({
@@ -300,10 +303,12 @@ const AccountScreen = () => {
         .then(async response => {
           const text = await response.clone().text();
           console.log('토큰 응답(raw):', text.substring(0, 100) + '…');
+          console.log('토큰 응답(raw):', text.substring);
           return response.json();
         })
         .then(async data => {
           console.log('토큰 응답 데이터:', JSON.stringify(data).substring(0, 100) + '…');
+          console.log('토큰 응답 데이터:', JSON.stringify(data));
           if (data.access_token) {
             setTokenData(data);
             // 계정별 Firebase 문서에 저장
@@ -331,6 +336,10 @@ const AccountScreen = () => {
       console.log(
         '계좌 목록 요청 시작 _ tokenData:',
         tokenData.user_seq_no.substring(0, 20) + '...',
+      );
+      console.log(
+        '계좌 목록 요청 시작 _ tokenData:',
+        tokenData.user_seq_no
       );
       setLoading(true);
       fetch(`${USER_ME_URL}?user_seq_no=${tokenData.user_seq_no}`, {
