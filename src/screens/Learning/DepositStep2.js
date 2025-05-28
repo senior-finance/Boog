@@ -19,10 +19,10 @@ export default function DepositStep2({ navigation, route }) {
   const [visible, setVisible] = useState(false);
 
   const BANKS = [
-    { label: 'KDB산업은행', value: 'KDB산업은행', icon: require('../../assets/banks/KDB.png') },
-    { label: 'SBI저축은행', value: 'SBI저축은행', icon: require('../../assets/banks/SBI.png') },
+    { label: '산업은행', value: '산업은행', icon: require('../../assets/banks/KDB.png') },
+    { label: '저축은행', value: '저축은행', icon: require('../../assets/banks/SBI.png') },
     { label: 'SC제일은행', value: 'SC제일은행', icon: require('../../assets/banks/SC제일.png') },
-    { label: 'Sh수협은행', value: 'Sh수협은행', icon: require('../../assets/banks/Sh수협.png') },
+    { label: 'Sh수협은행', value: '수협은행', icon: require('../../assets/banks/Sh수협.png') },
     { label: '광주은행', value: '광주은행', icon: require('../../assets/banks/광주.png') },
     { label: '농협은행', value: '농협은행', icon: require('../../assets/banks/농협.png') },
     { label: '신한은행', value: '신한은행', icon: require('../../assets/banks/신한.png') },
@@ -35,8 +35,8 @@ export default function DepositStep2({ navigation, route }) {
     { label: '케이뱅크', value: '케이뱅크', icon: require('../../assets/banks/케이뱅크.png') },
     { label: '토스뱅크', value: '토스뱅크', icon: require('../../assets/banks/토스.png') },
     { label: '하나은행', value: '하나은행', icon: require('../../assets/banks/하나.png') },
-    { label: 'KB국민은행', value: 'KB국민은행', icon: require('../../assets/banks/KB.png') },
-    { label: 'IBK기업은행', value: 'IBK기업은행', icon: require('../../assets/banks/IBK.png') },
+    { label: '국민은행', value: '국민은행', icon: require('../../assets/banks/KB.png') },
+    { label: '기업은행', value: '기업은행', icon: require('../../assets/banks/IBK.png') },
     { label: '새마을금고', value: '새마을금고', icon: require('../../assets/banks/MG새마을금고.png') },
     { label: '부산은행', value: '부산은행', icon: require('../../assets/banks/부산은행.png') },
   ];
