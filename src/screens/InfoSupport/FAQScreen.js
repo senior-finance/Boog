@@ -94,12 +94,14 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#1A4DCC',
     flexShrink: 1,
-    lineHeight: 22,
+    flexWrap: 'wrap', // ✅ 중요
+    lineHeight: 26,   // ✅ 글자가 겹치지 않게
   },
   answer: {
     color: '#333',
     flexShrink: 1,
-    lineHeight: 22,
+    flexWrap: 'wrap',
+    lineHeight: 26,
   },
 });
 
