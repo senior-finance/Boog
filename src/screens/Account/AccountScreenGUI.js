@@ -74,6 +74,7 @@ const AccountScreenGUI = ({
   const [modalTitle, setModalTitle] = useState('');
   const [modalMessage, setModalMessage] = useState('');
   const [buttons, setButtons] = useState([]);
+  const [webViewLoading, setWebViewLoading] = useState(true);
 
   const showSimpleModal = (message) => {
     setModalTitle('알림');
@@ -135,7 +136,7 @@ const AccountScreenGUI = ({
   // 마운트 시와 testBedAccount, accountList 변경 시만 실행
   useEffect(() => {
     fetchDbAccounts();
-  }, [testBedAccount, accountList]);
+  }, [testBedAccount, accountList, step]);
 
   const openOverlay = () => setShowWithdrawOverlay(true);
   const closeOverlay = () => {
@@ -385,10 +386,27 @@ const AccountScreenGUI = ({
   // 인증 화면 렌더링
   if (step === 'auth') {
     return (
-      <WebView
-        source={{ uri: AUTH_URL }}
-        onNavigationStateChange={handleNavigationStateChange}
-      />
+      <View style={{ flex: 1 }}>
+        {/* 로딩 애니메이션 오버레이 */}
+        {webViewLoading && (
+          <View style={styles.loadingOverlay}>
+            <LottieView
+              source={require('../../assets/loadingg.json')}
+              autoPlay
+              loop
+              style={{ width: 300, height: 300 }}
+            />
+          </View>
+        )}
+
+        <WebView
+          source={{ uri: AUTH_URL }}
+          onNavigationStateChange={handleNavigationStateChange}
+          onLoadStart={() => setWebViewLoading(true)}
+          onLoadEnd={() => setWebViewLoading(false)}
+          style={{ flex: 1 }}
+        />
+      </View>
     );
   }
 
@@ -400,7 +418,7 @@ const AccountScreenGUI = ({
           source={require('../../assets/loadingg.json')}
           autoPlay
           loop
-          style={{ width: 300, height: 300 }}
+          style={{ width: 500, height: 500 }}
         />
         {/* <Text>{LOADING_MESSAGE}</Text> */}
       </View>
@@ -678,8 +696,13 @@ const AccountScreenGUI = ({
   // 그 외의 상태: 진행 중 메시지
   return (
     <View style={styles.container}>
-      <Text>프로세스 진행 중...</Text>
-      <Text>이 화면 메시지도 바꾸고 로딩바로 만들고 등등</Text>
+      {/* 로딩 애니메이션 */}
+      <LottieView
+        source={require('../../assets/loadingg.json')}
+        autoPlay
+        loop
+        style={{ width: 300, height: 300, marginBottom: 20 }}
+      />
     </View>
   );
 };

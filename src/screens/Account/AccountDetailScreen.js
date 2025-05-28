@@ -2,7 +2,28 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
 import LottieView from 'lottie-react-native';
 import { Calendar } from 'react-native-calendars';
+import { LocaleConfig } from 'react-native-calendars';
 import { accountGetAll } from '../../database/mongoDB';
+
+// 1) 한글 로케일 정의
+LocaleConfig.locales['ko'] = {
+  monthNames: [
+    '1월', '2월', '3월', '4월', '5월', '6월',
+    '7월', '8월', '9월', '10월', '11월', '12월'
+  ],
+  monthNamesShort: [
+    '1월', '2월', '3월', '4월', '5월', '6월',
+    '7월', '8월', '9월', '10월', '11월', '12월'
+  ],
+  dayNames: [
+    '일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'
+  ],
+  dayNamesShort: ['일', '월', '화', '수', '목', '금', '토'],
+  today: '오늘'
+};
+
+// 2) 기본 로케일을 ko로 설정
+LocaleConfig.defaultLocale = 'ko';
 
 const AccountDetailScreen = ({ route }) => {
   const { userName } = route.params;
@@ -10,10 +31,27 @@ const AccountDetailScreen = ({ route }) => {
   const [loading, setLoading] = useState(true);
   const [selectedDate, setSelectedDate] = useState(null);
   const [showCalendar, setShowCalendar] = useState(false);
-  const [sortBy, setSortBy] = useState(null); // 'amount' | 'date' | null
+  const [sortBy, setSortBy] = useState('date'); // 'amount' | 'date' | null
   const [amountOrder, setAmountOrder] = useState('none');
-  const [dateOrder, setDateOrder] = useState('none');
+  const [dateOrder, setDateOrder] = useState('desc');
   const [filterType, setFilterType] = useState('all'); // 'all' | 'deposit' | 'withdraw'
+
+  // 1. 섹션 키와 타이틀 매핑
+  const sectionKeys = {
+    today: '오늘',
+    yesterday: '어제',
+    week: '최근 일주일',
+    month: '최근 한달',
+    older: '오래전',
+  };
+
+  // 2. dateOrder에 따라 섹션 순서 결정
+  const orderedSectionKeys = useMemo(() => {
+    const keys = ['today', 'yesterday', 'week', 'month', 'older'];
+    return dateOrder === 'asc' ? keys.reverse() : keys;
+  }, [dateOrder]);
+
+
   const cycleFilter = prev =>
     prev === 'all' ? 'deposit' :
       prev === 'deposit' ? 'withdraw' :
@@ -53,13 +91,11 @@ const AccountDetailScreen = ({ route }) => {
   // 업데이트: sortBy가 null이면 변경 전 순서 유지
   const sortFn = useMemo(() => {
     if (sortBy === 'amount') {
-      if (amountOrder === 'none') return () => 0;
       return amountOrder === 'asc'
         ? (a, b) => a.amount - b.amount
         : (a, b) => b.amount - a.amount;
     }
     if (sortBy === 'date') {
-      if (dateOrder === 'none') return () => 0;
       return dateOrder === 'asc'
         ? (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
         : (a, b) => new Date(b.createdAt) - new Date(a.createdAt);
@@ -114,7 +150,7 @@ const AccountDetailScreen = ({ route }) => {
 
   if (loading) return (
     <View style={styles.center}>
-      <LottieView source={require('../../assets/animeLoading.json')} autoPlay loop style={styles.loader} />
+      <LottieView source={require('../../assets/loadingg.json')} autoPlay loop style={styles.loader} />
     </View>
   );
 
@@ -134,7 +170,21 @@ const AccountDetailScreen = ({ route }) => {
           {(selectedDate || showCalendar) ? '원래대로' : '기간 선택'}
         </Text>
       </TouchableOpacity>
+
       <View style={styles.buttonRow}>
+        {/* 버튼 onPress 변경 (날짜) */}
+        <TouchableOpacity
+          style={[styles.toggleButton, sortBy === 'date' && styles.toggleButtonActive]}
+          onPress={() => {
+            const next = dateOrder === 'desc' ? 'asc' : 'desc';
+            setDateOrder(next);
+            setSortBy('date');
+          }}
+        >
+          <Text style={[styles.toggleText, sortBy === 'date' && styles.toggleTextActive]}>
+            날짜 {dateOrder === 'desc' ? '최근순' : '오래된순'}
+          </Text>
+        </TouchableOpacity>
 
         {/* 버튼 onPress 변경 (금액) */}
         <TouchableOpacity
@@ -156,25 +206,7 @@ const AccountDetailScreen = ({ route }) => {
           </Text>
         </TouchableOpacity>
 
-        {/* 버튼 onPress 변경 (날짜) */}
-        <TouchableOpacity
-          style={[styles.toggleButton, sortBy === 'date' && styles.toggleButtonActive]}
-          onPress={() => {
-            const next = cycleOrder(dateOrder);
-            setDateOrder(next);
-            setSortBy(next === 'none' ? null : 'date');
-          }}
-        >
-          <Text style={[styles.toggleText, sortBy === 'date' && styles.toggleTextActive]}>
-            날짜 {
-              dateOrder === 'none'
-                ? '원래대로'
-                : dateOrder === 'desc'
-                  ? '최근 순서'
-                  : '오래된 순서'
-            }
-          </Text>
-        </TouchableOpacity>
+        {/* 입출금 토글 버튼 */}
         <TouchableOpacity
           style={[styles.toggleButton, filterType !== 'all' && styles.toggleButtonActive]}
           onPress={() => setFilterType(cycleFilter(filterType))}
@@ -189,6 +221,23 @@ const AccountDetailScreen = ({ route }) => {
           </Text>
         </TouchableOpacity>
       </View>
+
+      {!selectedDate && !showCalendar && sortBy !== 'amount' && (
+        orderedSectionKeys.map(key => (
+          <Section
+            key={key}
+            title={sectionKeys[key]}
+            data={groups[key]}
+          />
+        ))
+      )}
+
+      {/* ★ 선택된 날짜 거래 내역 */}
+      {selectedDate && !showCalendar && (
+        selectedList.length > 0
+          ? selectedList.map(item => <TransactionCard key={item._id} item={item} />)
+          : <Text style={styles.emptyText}>해당 날짜에 거래 내역이 없습니다</Text>
+      )}
 
       {/* 달력: 일별 거래건수 */}
       {showCalendar && (
@@ -212,7 +261,10 @@ const AccountDetailScreen = ({ route }) => {
               </TouchableOpacity>
             );
           }}
-          onDayPress={() => { }}
+          onDayPress={day => {
+            setSelectedDate(new Date(day.dateString));
+            setShowCalendar(false);
+          }}
           theme={calendarTheme}
           style={styles.calendar}
         />
@@ -290,33 +342,43 @@ const calendarTheme = {
   textDisabledColor: '#b2bec3',
   monthTextColor: '#0984e3',
   arrowColor: '#0984e3',
+
+  textMonthFontSize: 24,       // 월 이름 (예: “5월”)
+  textDayHeaderFontSize: 16,   // 요일 헤더 (예: “월”, “화”)
+  textDayFontSize: 20,         // 날짜 숫자 (예: “28”)
 };
 
 const styles = StyleSheet.create({
-  background: { backgroundColor: '#f0f4f8' },
+  background: { backgroundColor: 'rgba(140, 182, 222, 0.69)' },
   container: { padding: 16 },
   center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   loader: { width: 200, height: 200 },
   buttonRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 12 },
-  toggleButton: { flex: 1, padding: 20, marginHorizontal: 1, backgroundColor: '#dfe6e9', borderRadius: 6, marginBottom: 10, alignItems: 'center' },
+  toggleButton: { flex: 1, padding: 20, marginHorizontal: 10, backgroundColor: '#dfe6e9', borderRadius: 20, marginBottom: 10, alignItems: 'center' },
   toggleButtonActive: { backgroundColor: '#0984e3' },
-  toggleText: { color: '#2d3436', fontWeight: '600' },
+  toggleText: { color: '#2d3436', fontWeight: '500', fontSize: +16 },
   toggleTextActive: { color: '#fff' },
-  calendar: { borderRadius: 8, elevation: 2, marginBottom: 12 },
-  dayContainer: { alignItems: 'center', padding: 4 },
+  calendar: {
+    borderRadius: 8,
+    elevation: 10,
+    marginBottom: 12,
+    // height: 360,
+  }, dayContainer: { alignItems: 'center', padding: 4 },
   dayCount: { fontSize: 10, color: '#0984e3' },
   section: { marginBottom: 16 },
-  sectionTitle: { fontSize: 16, fontWeight: 'bold', color: '#0984e3', marginBottom: 8 },
+  sectionTitle: { fontSize: +20, fontWeight: 'bold', color: '#0984e3', marginBottom: 8 },
   emptyText: { fontStyle: 'italic', color: '#636e72' },
   summaryText: { textAlign: 'center', marginBottom: 16, fontSize: 16, color: '#2d3436', fontWeight: '600' },
   card: {
     flexDirection: 'row',
     backgroundColor: '#fff',
-    borderRadius: 8,
-    padding: 12,
+    borderRadius: 20,
+    padding: 10,
     marginBottom: 10,
     elevation: 2,
     position: 'relative',
+    borderWidth: 2,
+    borderColor: "rgba(181, 161, 255, 0.8)"
   },
   sideBar: {
     width: 4,

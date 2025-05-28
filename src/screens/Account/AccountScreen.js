@@ -544,7 +544,7 @@ const AccountScreen = () => {
           source={loadingJson}
           autoPlay
           loop
-          style={{ width: 160, height: 160 }}
+          style={{ width: 300, height: 300 }}
         />
       </LinearGradient>
     );

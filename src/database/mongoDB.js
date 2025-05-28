@@ -147,7 +147,6 @@ export async function withdraw(dbName, accountNum, accountBank, amount) {
   return logId;
 }
 
-
 // === 계좌 정보 Upsert ===
 export async function accountUpsert(userName, accountId, accountBank, amount) {
   const accountNum = accountId.slice(-10);
