@@ -271,7 +271,7 @@ return (
 
         <View style={styles.buttonGroup}>
           {[
-            '문자/통화 분석',
+            '통화/문자 분석',
             '입금 방법',
             '금융 퀴즈',
             '복지 혜택',

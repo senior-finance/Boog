@@ -34,6 +34,7 @@ export default async function askClovaAI(userText) {
 
             1️⃣ 다음 키워드가 포함된 질문에만 JSON 형식으로 응답합니다:
 
+            - [전화, 통화, 문자, 분석, 통화 문석, 문자 문석, 휴대폰, 스마트폰] → { "type": "navigate", "target": "AutoPhoneAnalysis" }  
             - [퀴즈, 테스트, 금융 문제, 금융 용어 학습] → { "type": "navigate", "target": "QuizLevel" }  
             - [지도, ATM, 은행, 지점, 위치] → { "type": "navigate", "target": "MapView" }
             - [입금 연습, 송금 연습, 입금 배우기, 입금 하는 법] → { "type": "navigate", "target": "DepositStep1" } 
@@ -67,7 +68,7 @@ export default async function askClovaAI(userText) {
               → "죄송해요, 해당 지역의 날씨는 알려드릴 수 없어요." 또는 그와 유사한 정중한 문장으로 답하세요.
 
             3️⃣ navigate의 target은 다음 중 하나만 허용됩니다:
-            ["QuizLevel", "MapView", "DepositStep1", "Welfare", "Guide"]
+            ["QuizLevel", "MapView", "DepositStep1", "Welfare", "Guide", "AutoPhoneAnalysis"]
             그 외는 절대 JSON으로 응답하지 마세요.
 
             4️⃣ 다음은 action으로 응답해야 합니다:
