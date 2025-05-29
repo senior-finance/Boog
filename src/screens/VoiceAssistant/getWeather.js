@@ -1,5 +1,35 @@
 import { WEATHER_API_KEY } from '@env';
 
+// 사용 가능한 기상청 base_time 중 가장 가까운 값 계산
+function getAvailableBaseTime() {
+  const now = new Date();
+  const hours = now.getHours();
+  const minutes = now.getMinutes();
+
+  const timeTable = [2, 5, 8, 11, 14, 17, 20, 23];
+
+  let baseHour = timeTable
+    .slice()
+    .reverse()
+    .find(h => {
+      const base = new Date(now);
+      base.setHours(h, 40, 0, 0); // 각 시간의 40분 이후부터 유효
+      return now >= base;
+    });
+
+  // 만약 오늘 가능한 base_time이 없으면 → 어제 23시
+  let baseDateObj = new Date(now);
+  if (baseHour === undefined) {
+    baseHour = 23;
+    baseDateObj.setDate(now.getDate() - 1);
+  }
+
+  const base_date = baseDateObj.toISOString().slice(0, 10).replace(/-/g, '');
+  const base_time = String(baseHour).padStart(2, '0') + '00';
+
+  return { base_date, base_time };
+}
+
 // 도시명 기반 기상청 날씨 조회 함수
 export async function getWeather(city) {
   try {
@@ -26,9 +56,7 @@ export async function getWeather(city) {
       return { error: `"${city}"는 지원하지 않는 도시입니다.` };
     }
 
-    const now = new Date();
-    const base_date = now.toISOString().slice(0, 10).replace(/-/g, '');
-    const base_time = '1100';
+    const { base_date, base_time } = getAvailableBaseTime();
 
     const url = `https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getUltraSrtNcst?serviceKey=${WEATHER_API_KEY}&numOfRows=1000&pageNo=1&dataType=JSON&base_date=${base_date}&base_time=${base_time}&nx=${grid.nx}&ny=${grid.ny}`;
 
