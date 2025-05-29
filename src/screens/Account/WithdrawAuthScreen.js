@@ -151,7 +151,7 @@ export default function WithdrawAuthScreen() {
         accountNum.replace(/-/g, ''),  // 상대방(송금자) 계좌
         bankName                       // 상대방(송금자) 은행
       );
-      
+
       await addNotification(fromDb, {
         icon: 'navigate-outline',
         iconColor: 'rgb(0, 100, 248)',
@@ -248,6 +248,12 @@ export default function WithdrawAuthScreen() {
                     }
                     // 6자리 완성 시
                     if (next === '828282') {
+
+                      // ** 암호화 프로토콜
+                      // 이 영역에서는 환경 변수(env), Vault, DB 등을 활용해
+                      // 향후 양방향 암호화 통신을 구현할 예정
+                      // 예를 들어, 해시(hash) 처리 및 TLS(SSL)의 깊은 이해 필요
+
                       setAuthTries(3);        // 성공 시 3회로 초기화
                       setPinInput('');        // 입력 초기화
                       setShowNumPad(false);
@@ -264,7 +270,6 @@ export default function WithdrawAuthScreen() {
           </View>
         </TouchableWithoutFeedback>
       </Modal>
-
       <CustomModal
         visible={modalVisible}
         title={modalTitle}
