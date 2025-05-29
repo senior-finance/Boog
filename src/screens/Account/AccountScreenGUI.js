@@ -569,7 +569,7 @@ const AccountScreenGUI = ({
                         activeOpacity={0.7}
                       >
                         <CustomText style={styles.copyButtonText}>
-                          계좌 번호 복사하기
+                          계좌 복사하기
                         </CustomText>
                       </TouchableOpacity>
                       <View style={styles.rowButtons}>
@@ -988,7 +988,7 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     width: "100%",
     paddingVertical: 5,
-    paddingHorizontal: 10,
+    paddingHorizontal: 0,
     backgroundColor: 'rgb(155, 178, 255)',
     borderRadius: 10,
   },

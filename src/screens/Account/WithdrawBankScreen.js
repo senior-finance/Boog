@@ -58,7 +58,7 @@ export default function WithdrawBankScreen() {
   const [loading, setLoading] = useState(false);
 
   const BANKS = [
-    { label: '산업은행', value: '산업은행', icon: require('../../assets/banks/KDB.png') },
+    { label: 'KDB산업은행', value: 'KDB산업은행', icon: require('../../assets/banks/KDB.png') },
     { label: '저축은행', value: '저축은행', icon: require('../../assets/banks/SBI.png') },
     { label: 'SC제일은행', value: 'SC제일은행', icon: require('../../assets/banks/SC제일.png') },
     { label: 'Sh수협은행', value: '수협은행', icon: require('../../assets/banks/Sh수협.png') },

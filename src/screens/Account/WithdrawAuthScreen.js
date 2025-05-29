@@ -1,7 +1,7 @@
 // ✅ WithdrawAuthScreen.tsx
 // ✅ 기존 기능 유지 + UI를 전달한 이미지와 동일하게 업데이트
 
-import { React, useState, useEffect } from 'react';
+import { React, useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   StyleSheet,
+  Dimensions,
   Animated,
 } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
@@ -18,6 +19,8 @@ import { deposit, withdraw, mongoDB, addNotification } from '../../database/mong
 import CustomModal from '../../components/CustomModal';
 import CustomNumPad from '../../components/CustomNumPad';
 import PushNotification from 'react-native-push-notification';
+
+const { height } = Dimensions.get('window');
 
 export default function WithdrawAuthScreen() {
   const nav = useNavigation();
@@ -41,6 +44,7 @@ export default function WithdrawAuthScreen() {
   const [pinInput, setPinInput] = useState('');
   const [counterpartyName, setCounterpartyName] = useState('');
   const [isOwnTransfer, setIsOwnTransfer] = useState(false);
+  const slideAnim = useRef(new Animated.Value(height)).current;
 
   useEffect(() => {
     // 1. 푸시 알림 설정 (한 번만)
@@ -74,13 +78,21 @@ export default function WithdrawAuthScreen() {
       /* Android & iOS 공통 */
       channelId: 'default-channel-id', // Android는 필수
       title: '송금 안내',                   // 제목
-      message: `${bankName}에서 ${amountNum}을 송금했어요`,                 // 본문
+      message: `${bankName}에서${amountNum}을 송금했어요`,                 // 본문
 
       /* iOS 전용 옵션 (필요 시) */
       // soundName: 'default',
       // playSound: true,
     });
   };
+
+  +useEffect(() => {
+    Animated.timing(slideAnim, {
+      toValue: showNumPad ? 0 : height,
+      duration: 300,
+      useNativeDriver: true,
+    }).start();
+  }, [showNumPad]);
 
   useEffect(() => {
     (async () => {
@@ -105,6 +117,8 @@ export default function WithdrawAuthScreen() {
   }, [accountNumTo, testBedAccount]);
 
   const showModal = (title, message, buttons = [{ text: '확인', onPress: () => setModalVisible(false), color: '#4B7BE5' }]) => {
+    // PIN 패드 모달이 떠있다면 숨기고
+    setShowNumPad(false);
     setModalTitle(title);
     setModalMessage(message);
     setModalButtons(buttons);
@@ -127,33 +141,42 @@ export default function WithdrawAuthScreen() {
         icon: 'navigate-outline',
         iconColor: 'rgb(0, 100, 248)',
         borderColor: '#FFCDD2',
-        content: `${bankName}에서 ${formattedAmount}을 송금했어요`,
+        content: `${bankName}에서${formattedAmount}을 송금했어요`,
       });
       sendHiNotification(bankName, formattedAmount);
-      showModal('송금 완료', `${bankTo} ${formattedAmount} 송금이 완료되었습니다.`);
+      showModal('송금 완료', `${bankTo}${formattedAmount} 송금이 완료되었습니다.`);
     } catch (err) {
       showModal('송금 실패', '송금 처리 중 오류가 발생했습니다.');
     }
   };
 
   const onAuthAndWithdraw = async () => {
+    // ① 버튼 누르는 순간 PIN 패드부터 띄우기
+    setShowNumPad(true);
+
     const rnBiometrics = new ReactNativeBiometrics();
     const { available, biometryType } = await rnBiometrics.isSensorAvailable();
     let success = false;
 
-    if (available && biometryType) {
+    // ② 3회 미만 실패 시에만 생체인증 띄우기
+    if (available && biometryType && authTries < 3) {
       const promptMessage = biometryType === 'Face ID' ? 'Face ID 인증' : '지문 인증';
       ({ success } = await rnBiometrics.simplePrompt({ promptMessage, cancelButtonText: '취소' }));
     }
 
-    if (success) return handleWithdraw();
+    if (success) {
+      // ③ 인증 성공하면 PIN 패드 숨기고 바로 송금
+      setShowNumPad(false);
+      return handleWithdraw();
+    }
 
+    // ④ 실패 카운트 업
     setAuthTries(prev => prev + 1);
-    if (authTries + 1 >= 3) {
-      setShowNumPad(true);
-    } else {
+
+    if (authTries + 1 < 3) {
       showModal('인증 실패', '생체 인증이 실패했습니다. 다시 시도해주세요.');
     }
+    // ⑤ else { 3회 실패 } 이후엔 showNumPad=true 상태로 PIN만 인터랙티브
   };
 
   return (
@@ -184,25 +207,40 @@ export default function WithdrawAuthScreen() {
         </TouchableOpacity>
       </View>
 
-      <Modal visible={showNumPad} transparent animationType="slide">
+      <Modal visible={showNumPad} transparent animationType="none">
         <TouchableWithoutFeedback>
           <View style={styles.modalBackground}>
             <TouchableWithoutFeedback>
-              <Animated.View style={styles.numpadWrapper}>
+              <Animated.View style={[styles.numpadWrapper, { transform: [{ translateY: slideAnim }] }]}>
+                {/* ★ 입력 중인 PIN 자리 표시 */}
+                <View style={styles.pinPreview}>
+                  {Array(6).fill().map((_, idx) => (
+                    <Text key={idx} style={styles.pinDot}>
+                      {idx < pinInput.length ? '✔️' : '❔'}
+                    </Text>
+                  ))}
+                </View>
                 <CustomNumPad
                   onPress={(key) => {
-                    if (key === '모두 지우기') return setPinInput('');
-                    if (key === '한칸 지우기') return setPinInput(prev => prev.slice(0, -1));
+                    // 3회 실패 전까지는 입력 무시
+                    if (authTries < 3) return;
+                    // 숫자 키만 들어오므로 바로 처리
                     const next = (pinInput + key).slice(0, 6);
-                    setPinInput(next);
-                    if (next.length === 6) {
-                      if (next === '111111') {
-                        setShowNumPad(false);
-                        handleWithdraw();
-                      } else {
-                        setPinInput('');
-                        showModal('PIN 오류', 'PIN이 일치하지 않습니다.');
-                      }
+                    // 6자리 채워질 때까지 입력만 받고 로직 실행 금지
+                    if (next.length < 6) {
+                      setPinInput(next);
+                      return;
+                    }
+                    // 6자리 완성 시
+                    if (next === '828282') {
+                      setAuthTries(3);        // 성공 시 3회로 초기화
+                      setPinInput('');        // 입력 초기화
+                      setShowNumPad(false);
+                      handleWithdraw();
+                    } else {
+                      setPinInput('');        // 입력 초기화
+                      showModal('PIN 오류', 'PIN이 일치하지 않습니다.');
+                      setAuthTries(prev => prev - 1);
                     }
                   }}
                 />
@@ -315,5 +353,20 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 16,
     borderTopRightRadius: 16,
     padding: 20,
+    position: 'absolute', bottom: 0, left: 0, right: 0
+  },
+  pinPreview: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginBottom: 16,    // NumPad 와 간격
+    padding: 10,
+    borderRadius: 10,
+    // backgroundColor: 'rgba(0, 28, 185, 0.39)'
+  },
+  pinDot: {
+    fontSize: +24,        // 별표 크기
+    fontWeight: '500',
+    marginHorizontal: 5, // 별표 간 간격
+    color: 'rgba(17, 0, 255, 0.83)'
   },
 });

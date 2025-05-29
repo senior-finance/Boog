@@ -7,9 +7,7 @@ const DEFAULT_KEY_ROWS = [
   ['1', '2', '3'],
   ['4', '5', '6'],
   ['7', '8', '9'],
-  ['000', '0'],
-  [], [], [],
-  ['모두 지우기', '한칸 지우기',],
+  ['', '0', '취소'],
 ];
 
 export default function CustomNumPad({
@@ -32,7 +30,7 @@ export default function CustomNumPad({
                 style={styles.button}
                 onPress={() => onPress(key)}
               >
-                <Text style={[styles.buttonTextp, textStyle]}>{key}</Text>
+                <Text style={[styles.buttonText, textStyle]}>{key}</Text>
               </TouchableOpacity>
             );
           })}
@@ -55,8 +53,8 @@ const styles = StyleSheet.create({
   },
   button: {
     flex: 1,
-    marginHorizontal:10,
-    height: 40,
+    marginHorizontal: 10,
+    height: 80,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 40,
@@ -74,8 +72,16 @@ const styles = StyleSheet.create({
     transform: [{ scale: 0.97 }],
   },
   buttonText: {
-    fontSize: 28,
+    fontSize: +32,
     fontWeight: '600',
     color: '#1B1B1B',
-  }
+  },
+  placeholder: {
+    // 1) 고정 폭으로 공백 주기
+    // width: 60,
+    // 2) 혹은 flex 로 상대적 크기 조절
+    flex: 1,
+    marginHorizontal: 10,
+    height: 40,
+  },
 });
