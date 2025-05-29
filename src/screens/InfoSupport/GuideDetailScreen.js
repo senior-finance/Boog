@@ -4,6 +4,12 @@ import LinearGradient from 'react-native-linear-gradient';
 import CustomText from '../../components/CustomText';
 
 // 이미지 import
+import account1 from '../../assets/guide/account1.png';
+import account2 from '../../assets/guide/account2.png';
+import account3 from '../../assets/guide/account3.png';
+import account4 from '../../assets/guide/account4.png';
+import account5 from '../../assets/guide/account5.png';
+import account6 from '../../assets/guide/account6.png';
 import quiz1 from '../../assets/guide/quiz1.png';
 import quiz2 from '../../assets/guide/quiz2.png';
 import ai1 from '../../assets/guide/ai1.png';
@@ -39,9 +45,31 @@ export default function GuideDetailScreen({ route }) {
 
   const guideSteps = {
     deposit: [
-      '1. 입금할 은행을 선택해 주세요.',
-      '2. 계좌번호를 정확히 입력해 주세요.',
-      '3. 입금할 금액을 입력하고 확인 버튼을 누르면 입금 연습이 완료돼요.',
+      {
+        text: '1. 계좌에서 송금할 은행을 선택해 주세요.',
+        image: account1
+      },
+      {
+        text: '2. 상대방 계좌 번호를 입력 하세요.',
+        image: account2
+      },
+      {
+        text: '3. 계좌와 일치하는 은행을 선택해 주세요.',
+        image: account3
+      },
+      {
+        text: '4. 송금할 금액을 입력 하세요.',
+        image: account4
+      },
+      {
+        text: '5. 맞게 입력했는지 확인 하세요.',
+        image: account5
+      },
+      {
+        text: '6. 지문 인증이나 PIN 인증을 하면 송금이 완료 됩니다.',
+        image: account6
+
+      },
     ],
     ai: [
       {
@@ -64,7 +92,7 @@ export default function GuideDetailScreen({ route }) {
 
     voicePhishing: [
       { text: '1. 메인 화면의 스마트 기능 영역에서 "금융 상식" 버튼을 눌러 보이스피싱 사례 안내 화면으로 이동해요.', image: voicephishing1 },
-      {text: '2. 화면에 보이스피싱 사례 살펴보기 버튼을 눌러주세요.', image: voicephishing15 },
+      { text: '2. 화면에 보이스피싱 사례 살펴보기 버튼을 눌러주세요.', image: voicephishing15 },
       { text: '3. 다양한 보이스피싱 사례들이 실제 문자 예시와 함께 설명이 제공돼요. 자세한 설명을 보고싶으면 자세히 버튼을 눌러주세요.', image: voicephishing2 },
       { text: '4. 해당 사례의 본문과 주의사항을 자세히 볼 수 있어요.', image: voicephishing3 },
       { text: '5. 하단의 버튼을 누르면 네이버에서 보이스피싱 관련 최신 뉴스를 확인할 수 있어요.', image: voicephishing4 },
@@ -135,7 +163,7 @@ export default function GuideDetailScreen({ route }) {
         text: '4. 의심 기록이 있을 경우, 어떤 문자에서 어떤 키워드가 감지됐는지, 통화는 몇 건이 어떤 이유로 의심되는지 결과 메시지가 뜹니다.',
         image: analysis4,
       },
-          {
+      {
         text: '5. 각 항목을 눌러서 문자 또는 통화에 대한 자세한 정보를 확인해보세요',
         image: analysis5,
       },
