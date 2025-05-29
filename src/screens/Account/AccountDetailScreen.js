@@ -27,7 +27,7 @@ LocaleConfig.locales['ko'] = {
 LocaleConfig.defaultLocale = 'ko';
 
 const AccountDetailScreen = ({ route }) => {
-  const { userName } = route.params;
+  const { userName, accountNum } = route.params;
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedDate, setSelectedDate] = useState(null);
@@ -70,7 +70,9 @@ const AccountDetailScreen = ({ route }) => {
   useEffect(() => {
     (async () => {
       const list = await accountGetAll(userName);
-      setTransactions(list);
+      // 선택한 계좌(accountNum) 거래만 남기기
+      const filteredList = list.filter(tx => tx.accountNum === accountNum);
+      setTransactions(filteredList);
       setLoading(false);
     })();
   }, [userName]);
@@ -147,123 +149,124 @@ const AccountDetailScreen = ({ route }) => {
     </View>
   );
 
-return (
-  <ScrollView style={styles.background} contentContainerStyle={styles.container}>
-    {/* 기간 선택 버튼 */}
-    <TouchableOpacity
-      style={[styles.toggleButton, (selectedDate || showCalendar) && styles.toggleButtonActive]}
-      onPress={() => {
-        if (selectedDate || showCalendar) {
-          setSelectedDate(null);
-          setShowCalendar(false);
-        } else {
-          setShowCalendar(true);
-        }
-      }}
-    >
-      <CustomText style={[styles.toggleText, (selectedDate || showCalendar) && styles.toggleTextActive]}>
-        {(selectedDate || showCalendar) ? '원래대로' : '기간 선택'}
-      </CustomText>
-    </TouchableOpacity>
-
-    {/* 정렬/필터 버튼들 */}
-    <View style={styles.buttonRow}>
+  return (
+    <ScrollView style={styles.background} contentContainerStyle={styles.container}>
+      {/* 기간 선택 버튼 */}
       <TouchableOpacity
-        style={[styles.toggleButton, sortBy === 'date' && styles.toggleButtonActive]}
+        style={[styles.toggleButton, (selectedDate || showCalendar) && styles.toggleButtonActive]}
         onPress={() => {
-          const next = dateOrder === 'desc' ? 'asc' : 'desc';
-          setDateOrder(next);
-          setSortBy('date');
-        }}
-      >
-        <CustomText style={[styles.toggleText, sortBy === 'date' && styles.toggleTextActive]}>
-          날짜 {dateOrder === 'desc' ? '최근순' : '오래된순'}
-        </CustomText>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        style={[styles.toggleButton, sortBy === 'amount' && styles.toggleButtonActive]}
-        onPress={() => {
-          const next = cycleOrder(amountOrder);
-          setAmountOrder(next);
-          setSortBy(next === 'none' ? null : 'amount');
-        }}
-      >
-        <CustomText style={[styles.toggleText, sortBy === 'amount' && styles.toggleTextActive]}>
-          금액 {
-            amountOrder === 'none' ? '원래대로' :
-            amountOrder === 'desc' ? '큰' : '작은'
+          if (selectedDate || showCalendar) {
+            setSelectedDate(null);
+            setShowCalendar(false);
+          } else {
+            setShowCalendar(true);
           }
-        </CustomText>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        style={[styles.toggleButton, filterType !== 'all' && styles.toggleButtonActive]}
-        onPress={() => setFilterType(cycleFilter(filterType))}
+        }}
       >
-        <CustomText style={[styles.toggleText, filterType !== 'all' && styles.toggleTextActive]}>
-          {filterType === 'all' ? '입출금 모두' : filterType === 'deposit' ? '입금만' : '출금만'}
+        <CustomText style={[styles.toggleText, (selectedDate || showCalendar) && styles.toggleTextActive]}>
+          {(selectedDate || showCalendar) ? '원래대로' : '기간 선택'}
         </CustomText>
       </TouchableOpacity>
-    </View>
 
-    {/* 날짜 선택한 경우 */}
-    {selectedDate && !showCalendar && (
-      selectedList.length > 0
-        ? selectedList.map(item => <TransactionCard key={item._id} item={item} />)
-        : <CustomText style={styles.emptyText}>해당 날짜에 거래 내역이 없습니다</CustomText>
-    )}
+      {/* 정렬/필터 버튼들 */}
+      <View style={styles.buttonRow}>
+        <TouchableOpacity
+          style={[styles.toggleButton, sortBy === 'date' && styles.toggleButtonActive]}
+          onPress={() => {
+            const next = dateOrder === 'desc' ? 'asc' : 'desc';
+            setDateOrder(next);
+            setSortBy('date');
+          }}
+        >
+          <CustomText style={[styles.toggleText, sortBy === 'date' && styles.toggleTextActive]}>
+            날짜 {dateOrder === 'desc' ? '최근순' : '오래된순'}
+          </CustomText>
+        </TouchableOpacity>
 
-    {/* 달력 띄운 경우 */}
-    {showCalendar && (
-      <Calendar
-        markingType="custom"
-        markedDates={{
-          ...Object.fromEntries(
-            Object.entries(dayCounts).map(([d]) => [d, { customStyles: {} }])
-          ),
-          ...(selectedDate && { [selectedKey]: { selected: true, selectedColor: '#3498db' } })
-        }}
-        dayComponent={({ date, state }) => {
-          const count = dayCounts[date.dateString] || 0;
-          return (
-            <TouchableOpacity
-              style={styles.dayContainer}
-              onPress={() => { setSelectedDate(new Date(date.dateString)); setShowCalendar(false); }}
-            >
-              <CustomText style={{ color: state === 'disabled' ? '#b2bec3' : '#2d3436' }}>{date.day}</CustomText>
-              {count > 0 && <CustomText style={styles.dayCount}>{`${count}건`}</CustomText>}
-            </TouchableOpacity>
-          );
-        }}
-        onDayPress={day => {
-          setSelectedDate(new Date(day.dateString));
-          setShowCalendar(false);
-        }}
-        theme={calendarTheme}
-        style={styles.calendar}
-      />
-    )}
+        <TouchableOpacity
+          style={[styles.toggleButton, sortBy === 'amount' && styles.toggleButtonActive]}
+          onPress={() => {
+            const next = cycleOrder(amountOrder);
+            setAmountOrder(next);
+            setSortBy(next === 'none' ? null : 'amount');
+          }}
+        >
+          <CustomText style={[styles.toggleText, sortBy === 'amount' && styles.toggleTextActive]}>
+            금액 {
+              amountOrder === 'none' ? '원래대로' :
+                amountOrder === 'desc' ? '큰' : '작은'
+            }
+          </CustomText>
+        </TouchableOpacity>
 
-    {/* 기본 목록 출력 (Section 포함, 중복 없음) */}
-    {!selectedDate && !showCalendar && (
-      sortBy === 'amount'
-        ? filteredTransactions
+        <TouchableOpacity
+          style={[styles.toggleButton, filterType !== 'all' && styles.toggleButtonActive]}
+          onPress={() => setFilterType(cycleFilter(filterType))}
+        >
+          <CustomText style={[styles.toggleText, filterType !== 'all' && styles.toggleTextActive]}>
+            {filterType === 'all' ? '입출금 모두' : filterType === 'deposit' ? '입금만' : '출금만'}
+          </CustomText>
+        </TouchableOpacity>
+      </View>
+
+      {/* 날짜 선택한 경우 */}
+      {selectedDate && !showCalendar && (
+        selectedList.length > 0
+          ? selectedList.map(item => <TransactionCard key={item._id} item={item} />)
+          : <CustomText style={styles.emptyText}>해당 날짜에 거래 내역이 없습니다</CustomText>
+      )}
+
+      {/* 달력 띄운 경우 */}
+      {showCalendar && (
+        <Calendar
+          markingType="custom"
+          markedDates={{
+            ...Object.fromEntries(
+              Object.entries(dayCounts).map(([d]) => [d, { customStyles: {} }])
+            ),
+            ...(selectedDate && { [selectedKey]: { selected: true, selectedColor: '#3498db' } })
+          }}
+          dayComponent={({ date, state }) => {
+            const count = dayCounts[date.dateString] || 0;
+            return (
+              <TouchableOpacity
+                style={styles.dayContainer}
+                onPress={() => { setSelectedDate(new Date(date.dateString)); setShowCalendar(false); }}
+              >
+                <CustomText style={{ color: state === 'disabled' ? '#b2bec3' : '#2d3436' }}>{date.day}</CustomText>
+                {count > 0 && <CustomText style={styles.dayCount}>{`${count}건`}</CustomText>}
+              </TouchableOpacity>
+            );
+          }}
+          onDayPress={day => {
+            setSelectedDate(new Date(day.dateString));
+            setShowCalendar(false);
+          }}
+          theme={calendarTheme}
+          style={styles.calendar}
+        />
+      )}
+
+      {/* 기본 목록 출력 (Section 포함, 중복 없음) */}
+      {!selectedDate && !showCalendar && (
+        sortBy === 'amount'
+          ? filteredTransactions
             .slice()
             .sort(sortFn)
             .map(item => <TransactionCard key={item._id} item={item} />)
-        : orderedSectionKeys.map(key => (
+          : orderedSectionKeys.map(key => (
             <Section key={key} title={sectionKeys[key]} data={groups[key]} />
           ))
-    )}
-  </ScrollView>
-);
+      )}
+    </ScrollView>
+  );
 }
 
 // TransactionCard 컴포넌트 수정
 const TransactionCard = ({ item }) => {
   const isDeposit = item.type === 'deposit';
   const barColor = isDeposit ? '#0984e3' : '#e74c3c';
+  const { counterpartyAccountBank, counterpartyAccountNum } = item;
 
   return (
     <View style={styles.card}>
@@ -278,16 +281,22 @@ const TransactionCard = ({ item }) => {
             {Number(item.amount).toLocaleString()}원
           </CustomText>
         </View>
-        <CustomText style={styles.cardDate}>
-          {new Date(item.createdAt).toLocaleString('ko-KR', {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: false,
-          })}
-        </CustomText>
+        {/* 상대방 정보 */}
+        <View style={styles.counterpartyRow}>
+          <CustomText style={styles.counterpartyText}>
+            상대 은행 : {counterpartyAccountBank} {"\n"}계좌 : {counterpartyAccountNum}
+          </CustomText>
+          <CustomText style={styles.cardDate}>
+            {new Date(item.createdAt).toLocaleString('ko-KR', {
+              year: 'numeric',
+              month: '2-digit',
+              day: '2-digit',
+              hour: '2-digit',
+              minute: '2-digit',
+              hour12: false,
+            })}
+          </CustomText>
+        </View>
       </View>
     </View>
   );

@@ -174,7 +174,7 @@ export default function WithdrawAuthScreen() {
     let success = false;
 
     // ② 3회 미만 실패 시에만 생체인증 띄우기
-    if (available && biometryType && authTries < 3) {
+    if (available && biometryType && authTries < 2) {
       const promptMessage = biometryType === 'Face ID' ? 'Face ID 인증' : '지문 인증';
       ({ success } = await rnBiometrics.simplePrompt({ promptMessage, cancelButtonText: '취소' }));
     }
@@ -188,7 +188,7 @@ export default function WithdrawAuthScreen() {
     // ④ 실패 카운트 업
     setAuthTries(prev => prev + 1);
 
-    if (authTries + 1 < 3) {
+    if (authTries + 1 < 2) {
       showModal('인증 실패', '생체 인증이 실패했습니다. 다시 시도해주세요.');
     }
     // ⑤ else { 3회 실패 } 이후엔 showNumPad=true 상태로 PIN만 인터랙티브
@@ -238,7 +238,7 @@ export default function WithdrawAuthScreen() {
                 <CustomNumPad
                   onPress={(key) => {
                     // 3회 실패 전까지는 입력 무시
-                    if (authTries < 3) return;
+                    if (authTries < 2) return;
                     // 숫자 키만 들어오므로 바로 처리
                     const next = (pinInput + key).slice(0, 6);
                     // 6자리 채워질 때까지 입력만 받고 로직 실행 금지
