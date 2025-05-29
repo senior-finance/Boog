@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
 import LottieView from 'lottie-react-native';
 import { Calendar } from 'react-native-calendars';
 import { LocaleConfig } from 'react-native-calendars';
 import { accountGetAll } from '../../database/mongoDB';
+import CustomText from '../../components/CustomText';
 
 // 1) 한글 로케일 정의
 LocaleConfig.locales['ko'] = {
@@ -31,12 +32,11 @@ const AccountDetailScreen = ({ route }) => {
   const [loading, setLoading] = useState(true);
   const [selectedDate, setSelectedDate] = useState(null);
   const [showCalendar, setShowCalendar] = useState(false);
-  const [sortBy, setSortBy] = useState('date'); // 'amount' | 'date' | null
+  const [sortBy, setSortBy] = useState('date');
   const [amountOrder, setAmountOrder] = useState('none');
   const [dateOrder, setDateOrder] = useState('desc');
-  const [filterType, setFilterType] = useState('all'); // 'all' | 'deposit' | 'withdraw'
+  const [filterType, setFilterType] = useState('all');
 
-  // 1. 섹션 키와 타이틀 매핑
   const sectionKeys = {
     today: '오늘',
     yesterday: '어제',
@@ -45,19 +45,16 @@ const AccountDetailScreen = ({ route }) => {
     older: '오래전',
   };
 
-  // 2. dateOrder에 따라 섹션 순서 결정
   const orderedSectionKeys = useMemo(() => {
     const keys = ['today', 'yesterday', 'week', 'month', 'older'];
     return dateOrder === 'asc' ? keys.reverse() : keys;
   }, [dateOrder]);
-
 
   const cycleFilter = prev =>
     prev === 'all' ? 'deposit' :
       prev === 'deposit' ? 'withdraw' :
         'all';
 
-  // 3단계 순환 함수
   const cycleOrder = (prev) => {
     if (prev === 'none') return 'desc';
     if (prev === 'desc') return 'asc';
@@ -78,7 +75,6 @@ const AccountDetailScreen = ({ route }) => {
     })();
   }, [userName]);
 
-  // 거래 건수 집계
   const dayCounts = useMemo(() => {
     const counts = {};
     filteredTransactions.forEach(({ createdAt }) => {
@@ -88,7 +84,6 @@ const AccountDetailScreen = ({ route }) => {
     return counts;
   }, [filteredTransactions]);
 
-  // 업데이트: sortBy가 null이면 변경 전 순서 유지
   const sortFn = useMemo(() => {
     if (sortBy === 'amount') {
       return amountOrder === 'asc'
@@ -103,7 +98,6 @@ const AccountDetailScreen = ({ route }) => {
     return () => 0;
   }, [sortBy, amountOrder, dateOrder]);
 
-  // 그룹핑: 오늘, 어제, 1주, 1개월, 오래전
   const groups = useMemo(() => {
     const todayList = [];
     const yesterdayList = [];
@@ -138,7 +132,6 @@ const AccountDetailScreen = ({ route }) => {
     };
   }, [filteredTransactions, sortFn]);
 
-  // 선택 날짜 리스트
   const selectedKey = selectedDate ? selectedDate.toISOString().slice(0, 10) : '';
   const selectedList = useMemo(() => {
     if (!selectedDate) return [];
@@ -156,7 +149,6 @@ const AccountDetailScreen = ({ route }) => {
 
   return (
     <ScrollView style={styles.background} contentContainerStyle={styles.container}>
-      {/* 상단 토글 및 정렬 버튼 */}
       <TouchableOpacity
         style={[styles.toggleButton, (selectedDate || showCalendar) && styles.toggleButtonActive]}
         onPress={() => {
@@ -166,13 +158,12 @@ const AccountDetailScreen = ({ route }) => {
           } else setShowCalendar(true);
         }}
       >
-        <Text style={[styles.toggleText, (selectedDate || showCalendar) && styles.toggleTextActive]}>
+        <CustomText style={[styles.toggleText, (selectedDate || showCalendar) && styles.toggleTextActive]}>
           {(selectedDate || showCalendar) ? '원래대로' : '기간 선택'}
-        </Text>
+        </CustomText>
       </TouchableOpacity>
 
       <View style={styles.buttonRow}>
-        {/* 버튼 onPress 변경 (날짜) */}
         <TouchableOpacity
           style={[styles.toggleButton, sortBy === 'date' && styles.toggleButtonActive]}
           onPress={() => {
@@ -181,12 +172,11 @@ const AccountDetailScreen = ({ route }) => {
             setSortBy('date');
           }}
         >
-          <Text style={[styles.toggleText, sortBy === 'date' && styles.toggleTextActive]}>
+          <CustomText style={[styles.toggleText, sortBy === 'date' && styles.toggleTextActive]}>
             날짜 {dateOrder === 'desc' ? '최근순' : '오래된순'}
-          </Text>
+          </CustomText>
         </TouchableOpacity>
 
-        {/* 버튼 onPress 변경 (금액) */}
         <TouchableOpacity
           style={[styles.toggleButton, sortBy === 'amount' && styles.toggleButtonActive]}
           onPress={() => {
@@ -195,7 +185,7 @@ const AccountDetailScreen = ({ route }) => {
             setSortBy(next === 'none' ? null : 'amount');
           }}
         >
-          <Text style={[styles.toggleText, sortBy === 'amount' && styles.toggleTextActive]}>
+          <CustomText style={[styles.toggleText, sortBy === 'amount' && styles.toggleTextActive]}>
             금액 {
               amountOrder === 'none'
                 ? '원래대로'
@@ -203,22 +193,20 @@ const AccountDetailScreen = ({ route }) => {
                   ? '큰'
                   : '작은'
             }
-          </Text>
+          </CustomText>
         </TouchableOpacity>
 
-        {/* 입출금 토글 버튼 */}
         <TouchableOpacity
           style={[styles.toggleButton, filterType !== 'all' && styles.toggleButtonActive]}
           onPress={() => setFilterType(cycleFilter(filterType))}
         >
-          <Text style={[styles.toggleText, filterType !== 'all' && styles.toggleTextActive]}>
+          <CustomText style={[styles.toggleText, filterType !== 'all' && styles.toggleTextActive]}>
             {filterType === 'all'
               ? '입출금 모두'
               : filterType === 'deposit'
                 ? '입금만'
-                : '출금만'
-            }
-          </Text>
+                : '출금만'}
+          </CustomText>
         </TouchableOpacity>
       </View>
 
@@ -232,14 +220,12 @@ const AccountDetailScreen = ({ route }) => {
         ))
       )}
 
-      {/* ★ 선택된 날짜 거래 내역 */}
       {selectedDate && !showCalendar && (
         selectedList.length > 0
           ? selectedList.map(item => <TransactionCard key={item._id} item={item} />)
-          : <Text style={styles.emptyText}>해당 날짜에 거래 내역이 없습니다</Text>
+          : <CustomText style={styles.emptyText}>해당 날짜에 거래 내역이 없습니다</CustomText>
       )}
 
-      {/* 달력: 일별 거래건수 */}
       {showCalendar && (
         <Calendar
           markingType="custom"
@@ -256,8 +242,8 @@ const AccountDetailScreen = ({ route }) => {
                 style={styles.dayContainer}
                 onPress={() => { setSelectedDate(new Date(date.dateString)); setShowCalendar(false); }}
               >
-                <Text style={{ color: state === 'disabled' ? '#b2bec3' : '#2d3436' }}>{date.day}</Text>
-                {count > 0 && <Text style={styles.dayCount}>{`${count}건`}</Text>}
+                <CustomText style={{ color: state === 'disabled' ? '#b2bec3' : '#2d3436' }}>{date.day}</CustomText>
+                {count > 0 && <CustomText style={styles.dayCount}>{`${count}건`}</CustomText>}
               </TouchableOpacity>
             );
           }}
@@ -270,7 +256,6 @@ const AccountDetailScreen = ({ route }) => {
         />
       )}
 
-      {/* 기본 그룹 뷰 */}
       {!selectedDate && !showCalendar && amountOrder === 'none' && dateOrder === 'none' && (
         <>
           <Section title="오늘" data={groups.today} />
@@ -281,7 +266,6 @@ const AccountDetailScreen = ({ route }) => {
         </>
       )}
 
-      {/* 선택 날짜 뷰 정렬 상태일 때 전체 거래 내역을 flat하게 렌더링 */}
       {!selectedDate && !showCalendar && (amountOrder !== 'none' || dateOrder !== 'none') && (
         filteredTransactions
           .slice()
@@ -304,13 +288,13 @@ const TransactionCard = ({ item }) => {
 
       <View style={styles.content}>
         <View style={styles.row}>
-          <Text style={styles.cardBank}>{item.accountBank}</Text>
-          <Text style={[styles.cardAmount, { color: barColor }]}>
+          <CustomText style={styles.cardBank}>{item.accountBank}</CustomText>
+          <CustomText style={[styles.cardAmount, { color: barColor }]}>
             {isDeposit ? '+' : '−'}
             {Number(item.amount).toLocaleString()}원
-          </Text>
+          </CustomText>
         </View>
-        <Text style={styles.cardDate}>
+        <CustomText style={styles.cardDate}>
           {new Date(item.createdAt).toLocaleString('ko-KR', {
             year: 'numeric',
             month: '2-digit',
@@ -319,7 +303,7 @@ const TransactionCard = ({ item }) => {
             minute: '2-digit',
             hour12: false,
           })}
-        </Text>
+        </CustomText>
       </View>
     </View>
   );
@@ -327,9 +311,9 @@ const TransactionCard = ({ item }) => {
 
 const Section = ({ title, data }) => (
   <View style={styles.section}>
-    <Text style={styles.sectionTitle}>{title}</Text>
+    <CustomText style={styles.sectionTitle}>{title}</CustomText>
     {data.length > 0 ? data.map(item => <TransactionCard key={item._id} item={item} />)
-      : <Text style={styles.emptyText}>아직 없어요</Text>}
+      : <CustomText style={styles.emptyText}>아직 없어요</CustomText>}
   </View>
 );
 
@@ -349,45 +333,116 @@ const calendarTheme = {
 };
 
 const styles = StyleSheet.create({
-  background: { backgroundColor: 'rgba(140, 182, 222, 0.69)' },
-  container: { padding: 16 },
-  center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  loader: { width: 200, height: 200 },
-  buttonRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 12 },
-  toggleButton: { flex: 1, padding: 20, marginHorizontal: 10, backgroundColor: '#dfe6e9', borderRadius: 20, marginBottom: 10, alignItems: 'center' },
-  toggleButtonActive: { backgroundColor: '#0984e3' },
-  toggleText: { color: '#2d3436', fontWeight: '500', fontSize: +16 },
-  toggleTextActive: { color: '#fff' },
+  background: {
+    backgroundColor: '#e8f0fe', // 부드러운 파란 계열 배경
+  },
+  container: {
+    padding: 20,
+    paddingBottom: 40,
+  },
+  center: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loader: {
+    width: 200,
+    height: 200,
+  },
+
+  // 🔘 상단 버튼 관련
+  buttonRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: 10,
+    marginTop: 16,
+    marginBottom: 16,
+  },
+  toggleButton: {
+    flex: 1,
+    paddingVertical: 16,
+    paddingHorizontal: 12,
+    marginHorizontal: 5,
+    backgroundColor: '#d0d8f0',
+    borderRadius: 20,
+    alignItems: 'center',
+    elevation: 2,
+  },
+  toggleButtonActive: {
+    backgroundColor: '#4b7be5',
+  },
+  toggleText: {
+    fontSize: 17,
+    fontWeight: '600',
+    color: '#2d3436',
+  },
+  toggleTextActive: {
+    color: '#ffffff',
+  },
+
+  // 📅 캘린더
   calendar: {
-    borderRadius: 8,
-    elevation: 10,
-    marginBottom: 12,
-    // height: 360,
-  }, dayContainer: { alignItems: 'center', padding: 4 },
-  dayCount: { fontSize: 10, color: '#0984e3' },
-  section: { marginBottom: 16 },
-  sectionTitle: { fontSize: +20, fontWeight: 'bold', color: '#0984e3', marginBottom: 8 },
-  emptyText: { fontStyle: 'italic', color: '#636e72' },
-  summaryText: { textAlign: 'center', marginBottom: 16, fontSize: 16, color: '#2d3436', fontWeight: '600' },
+    borderRadius: 12,
+    elevation: 4,
+    marginBottom: 16,
+  },
+  dayContainer: {
+    alignItems: 'center',
+    padding: 4,
+  },
+  dayCount: {
+    fontSize: 11,
+    color: '#4b7be5',
+    marginTop: 2,
+  },
+
+  // 🗂 섹션 및 타이틀
+  section: {
+    marginBottom: 20,
+  },
+  sectionTitle: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: '#4b7be5',
+    marginBottom: 10,
+  },
+  emptyText: {
+    fontStyle: 'italic',
+    color: '#636e72',
+    fontSize: 16,
+    textAlign: 'center',
+    marginVertical: 20,
+  },
+  summaryText: {
+    textAlign: 'center',
+    marginBottom: 16,
+    fontSize: 18,
+    color: '#2d3436',
+    fontWeight: '600',
+  },
+
+  // 💳 거래 카드
   card: {
     flexDirection: 'row',
-    backgroundColor: '#fff',
-    borderRadius: 20,
-    padding: 10,
-    marginBottom: 10,
-    elevation: 2,
-    position: 'relative',
-    borderWidth: 2,
-    borderColor: "rgba(181, 161, 255, 0.8)"
+    backgroundColor: '#ffffff',
+    borderRadius: 16,
+    padding: 14,
+    marginBottom: 12,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    borderLeftWidth: 5,
+    borderLeftColor: '#ccc',
   },
   sideBar: {
-    width: 4,
-    borderTopLeftRadius: 8,
-    borderBottomLeftRadius: 8,
+    width: 5,
+    borderRadius: 5,
   },
   content: {
     flex: 1,
-    paddingLeft: 8, // 색상 바와 내용 사이 여백
+    paddingLeft: 12,
   },
   row: {
     flexDirection: 'row',
@@ -395,15 +450,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   cardBank: {
-    fontSize: +28,
+    fontSize: 24,
+    fontWeight: '600',
     color: '#0984e3',
   },
   cardAmount: {
-    fontSize: +24,
+    fontSize: 22,
     fontWeight: 'bold',
   },
   cardDate: {
-    fontSize: +20,
+    fontSize: 16,
     color: '#636e72',
     marginTop: 8,
     textAlign: 'right',
