@@ -91,15 +91,43 @@ export default function NotificationScreen() {
     });
   };
 
+  // 전체 삭제 함수
+  const clearAll = () => {
+    const animations = notifications.map(n =>
+      Animated.parallel([
+        Animated.timing(n.translateX, {
+          toValue: 500,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+        Animated.timing(n.opacity, {
+          toValue: 0,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+      ])
+    );
+    Animated.stagger(50, animations).start(() => {
+      LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+      setNotifications([]);
+    });
+  };
+
   return (
     <LinearGradient colors={['rgb(208, 224, 241)', 'rgb(213, 225, 236)']} style={styles.container}>
+      {/* 상단 우측 모두 지우기 버튼 */}
+      <View style={styles.header}>
+        <TouchableOpacity onPress={clearAll} style={styles.clearAllButton}>
+          <CustomText style={styles.clearAllText}>모두 지우기</CustomText>
+        </TouchableOpacity>
+      </View>
       <SectionList
         sections={sections}
         keyExtractor={item => item.id}
         contentContainerStyle={styles.scrollContainer}
         ListEmptyComponent={() => (
           <View style={styles.emptyContainer}>
-            <CustomText style={styles.title}>알림이 존재하지 않습니다.</CustomText>
+            <CustomText style={styles.emptyText}>보여줄 알림이 존재하지 않아요</CustomText>
           </View>
         )}
         renderSectionHeader={({ section }) => (
@@ -135,7 +163,7 @@ export default function NotificationScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  scrollContainer: { padding: 24, paddingBottom: 40 },
+  scrollContainer: { padding: 20, paddingBottom: 40 },
   card: {
     backgroundColor: '#fff',
     borderRadius: 20,
@@ -176,7 +204,21 @@ const styles = StyleSheet.create({
     marginTop: 50,
   },
   emptyText: {
-    fontSize: 36,
+    fontSize: +24,
     color: '#666',
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    paddingHorizontal: 20,
+    paddingTop: 10,
+  },
+  clearAllButton: {
+    padding: 8,
+  },
+  clearAllText: {
+    fontSize: +20,
+    fontWeight: '600',
+    color: '#1A4DCC',
   },
 });
