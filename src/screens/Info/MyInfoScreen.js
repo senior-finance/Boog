@@ -167,9 +167,9 @@ const MyInfoScreen = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  scroll: { alignItems: 'center', padding: 24, paddingTop: 60 },
+  scroll: { alignItems: 'center', padding: 24, paddingTop: 40 },
 
-  profileSection: { alignItems: 'center', marginBottom: 30 },
+  profileSection: { alignItems: 'center', marginBottom: 20 },
   profileCard: {
     width: 100,
     height: 100,
@@ -203,7 +203,7 @@ const styles = StyleSheet.create({
   userName: {
     marginTop: 16,
     fontWeight: '700',
-    fontSize: 16,
+    fontSize: +20,
     color: 'rgb(4, 63, 150)',
   },
 
