@@ -17,6 +17,7 @@ import map4 from '../../assets/guide/map4.png';
 import map5 from '../../assets/guide/map5.png';
 import map6 from '../../assets/guide/map6.png';
 import voicephishing1 from '../../assets/guide/voicephishing1.png';
+import voicephishing15 from '../../assets/guide/voicephishing15.png';
 import voicephishing2 from '../../assets/guide/voicephishing2.png';
 import voicephishing3 from '../../assets/guide/voicephishing3.png';
 import voicephishing4 from '../../assets/guide/voicephishing4.png';
@@ -62,10 +63,11 @@ export default function GuideDetailScreen({ route }) {
     ],
 
     voicePhishing: [
-      { text: '1. 메인 화면의 스마트 기능 영역에서 "보이스 피싱" 버튼을 눌러 보이스피싱 사례 안내 화면으로 이동해요.', image: voicephishing1 },
-      { text: '2. 다양한 보이스피싱 사례들이 실제 문자 예시와 함께 설명이 제공돼요. 자세한 설명을 보고싶으면 자세히 버튼을 눌러주세요.', image: voicephishing2 },
-      { text: '3. 해당 사례의 본문과 주의사항을 자세히 볼 수 있어요.', image: voicephishing3 },
-      { text: '4. 하단의 버튼을 누르면 네이버에서 보이스피싱 관련 최신 뉴스를 확인할 수 있어요.', image: voicephishing4 },
+      { text: '1. 메인 화면의 스마트 기능 영역에서 "금융 상식" 버튼을 눌러 보이스피싱 사례 안내 화면으로 이동해요.', image: voicephishing1 },
+      {text: '2. 화면에 보이스피싱 사례 살펴보기 버튼을 눌러주세요.', image: voicephishing15 },
+      { text: '3. 다양한 보이스피싱 사례들이 실제 문자 예시와 함께 설명이 제공돼요. 자세한 설명을 보고싶으면 자세히 버튼을 눌러주세요.', image: voicephishing2 },
+      { text: '4. 해당 사례의 본문과 주의사항을 자세히 볼 수 있어요.', image: voicephishing3 },
+      { text: '5. 하단의 버튼을 누르면 네이버에서 보이스피싱 관련 최신 뉴스를 확인할 수 있어요.', image: voicephishing4 },
     ],
     location: [
       {
@@ -101,7 +103,7 @@ export default function GuideDetailScreen({ route }) {
     ],
     quiz: [
       {
-        text: '1. 메인 화면에서 퀴즈 버튼을 누르면 금융 학습 화면으로 이동할 수 있어요.',
+        text: '1. 메인 화면에서 금융상식 버튼을 누르면 금융 학습 화면으로 이동할 수 있어요.',
         image: quiz1,
       },
       {

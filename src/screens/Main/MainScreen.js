@@ -197,7 +197,7 @@ const MainScreen = ({ navigation }) => {
 
   const actionButtons = [
     { title: '송금', icon: 'swap-horizontal', onPress: () => navigation.navigate('Account') },
-    { title: '학습', icon: 'help-circle', onPress: () => navigation.navigate('Learning') },
+    { title: '거래내역', icon: 'document-text-outline',  onPress: () => {/* 추후 연결 */} },
     { title: '지도', icon: 'map', onPress: () => navigation.navigate('MapView') },
     { title: '복지혜택', icon: 'gift', onPress: () => navigation.navigate('Welfare') },
   ];
@@ -205,7 +205,7 @@ const MainScreen = ({ navigation }) => {
   const featureButtons = [
     { title: 'AI 챗봇', icon: 'chatbubble-ellipses-outline', onPress: () => navigation.navigate('VoiceInput') },
     { title: '통화.문자 분석', icon: 'analytics-outline', onPress: () => navigation.navigate('AutoPhoneAnalysis') },
-    { title: '보이스 피싱', icon: 'alert-circle-outline', onPress: () => navigation.navigate('VoicePhishingScreen') },
+     { title: '금융상식', icon: 'book-outline', onPress: () => navigation.navigate('Learning') },
   ];
 
   // 계좌 문제 영역

@@ -28,6 +28,13 @@ const LearningScreen = ({ navigation }) => {
       nav: 'DepositStep1',
     },
 
+        {
+      title: '보이스피싱 사례 살펴보기',
+      desc: '실제 사례로 예방해보세요',
+      icon: 'shield-alert-outline',
+      nav: 'VoicePhishingScreen',
+    },
+
   ];
 
   if (scaleAnimRefs.current.length !== cards.length) {
@@ -62,7 +69,7 @@ const LearningScreen = ({ navigation }) => {
           { fontSize: (styles.title.fontSize || +25) }
         ]}
       >
-        학습 콘텐츠
+        금융 상식 배우기
       </CustomText>
 
         {cards.map((card, idx) => (
