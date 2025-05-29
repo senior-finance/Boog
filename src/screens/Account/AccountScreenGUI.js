@@ -77,6 +77,8 @@ const AccountScreenGUI = ({
   const [buttons, setButtons] = useState([]);
   const [webViewLoading, setWebViewLoading] = useState(true);
 
+  const { userInfo } = useUser();
+
   const showSimpleModal = (message) => {
     setModalTitle('알림');
     setModalMessage(message);
@@ -362,32 +364,41 @@ const AccountScreenGUI = ({
     outputRange: [0, 0.5, 0],
   });
 
-  // 홈 화면 렌더링
-  if (step === 'home') {
-    const { userInfo } = useUser();
+  useEffect(() => {
+    if (step !== 'home') return;
+
     const testBedAccount = userInfo?.dbName || 'Guest';
-
-    setTestBedAccount(testBedAccount)
+    setTestBedAccount(testBedAccount);
     setStep('accountList');
-    // return (
-    //   <View style={styles.container}>
-    //     <Text style={styles.title}>{DEFAULT_TITLE}</Text>
-    //     <TouchableOpacity
-    //       style={[styles.button, styles.button1]}
-    //       onPress={() => setTestBedAccount('kmj')}
-    //     >
-    //       <Text style={styles.buttonText}>테스트 계정 김민준</Text>
-    //     </TouchableOpacity>
+  }, [step, userInfo]);
 
-    //     <TouchableOpacity
-    //       style={[styles.button, styles.button2]}
-    //       onPress={() => setTestBedAccount('hwc')}
-    //     >
-    //       <Text style={styles.buttonText}>테스트 계정 홍우창</Text>
-    //     </TouchableOpacity>
-    //   </View>
-    // );
-  }
+  // 홈 화면 렌더링
+  // if (step === 'home') {
+
+  //   const { userInfo } = useUser();
+  //   const testBedAccount = userInfo?.dbName || 'Guest';
+  //   setTestBedAccount(testBedAccount)
+  //   setStep('accountList');
+
+  //   // return (
+  //   //   <View style={styles.container}>
+  //   //     <Text style={styles.title}>{DEFAULT_TITLE}</Text>
+  //   //     <TouchableOpacity
+  //   //       style={[styles.button, styles.button1]}
+  //   //       onPress={() => setTestBedAccount('kmj')}
+  //   //     >
+  //   //       <Text style={styles.buttonText}>테스트 계정 김민준</Text>
+  //   //     </TouchableOpacity>
+
+  //   //     <TouchableOpacity
+  //   //       style={[styles.button, styles.button2]}
+  //   //       onPress={() => setTestBedAccount('hwc')}
+  //   //     >
+  //   //       <Text style={styles.buttonText}>테스트 계정 홍우창</Text>
+  //   //     </TouchableOpacity>
+  //   //   </View>
+  //   // );
+  // }
 
   // 인증 화면 렌더링
   if (step === 'auth') {
