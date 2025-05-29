@@ -29,6 +29,7 @@ import { useNavigation } from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
 import Clipboard from '@react-native-clipboard/clipboard';
 import Toast from 'react-native-toast-message';
+import { useUser } from '../Login/UserContext';
 
 // 내부에서 사용할 상수 변수 선언
 const DEFAULT_TITLE = '금융결제원 테스트베드';
@@ -363,24 +364,29 @@ const AccountScreenGUI = ({
 
   // 홈 화면 렌더링
   if (step === 'home') {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.title}>{DEFAULT_TITLE}</Text>
-        <TouchableOpacity
-          style={[styles.button, styles.button1]}
-          onPress={() => setTestBedAccount('kmj')}
-        >
-          <Text style={styles.buttonText}>테스트 계정 김민준</Text>
-        </TouchableOpacity>
+    const { userInfo } = useUser();
+    const testBedAccount = userInfo?.dbName || 'Guest';
 
-        <TouchableOpacity
-          style={[styles.button, styles.button2]}
-          onPress={() => setTestBedAccount('hwc')}
-        >
-          <Text style={styles.buttonText}>테스트 계정 홍우창</Text>
-        </TouchableOpacity>
-      </View>
-    );
+    setTestBedAccount(testBedAccount)
+    setStep('accountList');
+    // return (
+    //   <View style={styles.container}>
+    //     <Text style={styles.title}>{DEFAULT_TITLE}</Text>
+    //     <TouchableOpacity
+    //       style={[styles.button, styles.button1]}
+    //       onPress={() => setTestBedAccount('kmj')}
+    //     >
+    //       <Text style={styles.buttonText}>테스트 계정 김민준</Text>
+    //     </TouchableOpacity>
+
+    //     <TouchableOpacity
+    //       style={[styles.button, styles.button2]}
+    //       onPress={() => setTestBedAccount('hwc')}
+    //     >
+    //       <Text style={styles.buttonText}>테스트 계정 홍우창</Text>
+    //     </TouchableOpacity>
+    //   </View>
+    // );
   }
 
   // 인증 화면 렌더링

@@ -198,7 +198,7 @@ const MainScreen = ({ navigation }) => {
   const actionButtons = [
     { title: '송금', icon: 'swap-horizontal', onPress: () => navigation.navigate('Account') },
     {
-      title: '거래내역 (대표 계좌)',
+      title: ' 거래 내역' + '\n' + '(대표 계좌)',
       icon: 'document-text-outline',
       onPress: () => navigation.navigate('AccountDetail', {
         userName: testBedAccount,          // DB 이름
@@ -242,8 +242,11 @@ const MainScreen = ({ navigation }) => {
     navigation.setOptions({
       headerTitle: '',
       headerLeft: () => (
-        <TouchableOpacity onPress={() => navigation.navigate('Account')} style={{ marginLeft: 16 }}>
-          <Ionicons name="log-in-outline" size={24} color='#0052CC' />
+        <TouchableOpacity
+          onPress={() => navigation.navigate('Account')}
+          style={{ marginLeft: 16, opacity: 0 }} // opacity 0: 완전 투명
+        >
+          <Ionicons name="log-in-outline" size={24} color="#0052CC" />
         </TouchableOpacity>
       ),
       headerRight: () => (
