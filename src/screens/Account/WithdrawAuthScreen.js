@@ -78,7 +78,7 @@ export default function WithdrawAuthScreen() {
       /* Android & iOS 공통 */
       channelId: 'default-channel-id', // Android는 필수
       title: '송금 안내',                   // 제목
-      message: `${bankName}에서${amountNum}을 송금했어요`,                 // 본문
+      message: `${bankName}에서 ${amountNum}을 송금했어요`,                 // 본문
 
       /* iOS 전용 옵션 (필요 시) */
       // soundName: 'default',
@@ -130,68 +130,102 @@ export default function WithdrawAuthScreen() {
     if (isNaN(amountNum) || amountNum <= 0) {
       return showModal('오류', '유효한 금액을 입력해주세요.');
     }
-    try {
-      const fromDb = testBedAccount;
-      const toDb = isOwnTransfer ? fromDb : (fromDb === 'kmj' ? 'hwc' : 'kmj');
 
+    const fromDb = testBedAccount;
+    const toDb = isOwnTransfer ? fromDb : (fromDb === 'kmj' ? 'hwc' : 'kmj');
+
+    // 1) 실제 송금 로직만 try/catch
+    try {
       await withdraw(
         fromDb,
         accountNum.replace(/-/g, ''),
         bankName,
         amountNum,
-        accountNumTo.replace(/-/g, ''),  // 상대방 계좌
-        bankTo                         // 상대방 은행
+        accountNumTo.replace(/-/g, ''),
+        bankTo
       );
-
       await deposit(
         toDb,
         accountNumTo.replace(/-/g, ''),
         bankTo,
         amountNum,
-        accountNum.replace(/-/g, ''),  // 상대방(송금자) 계좌
-        bankName                       // 상대방(송금자) 은행
+        accountNum.replace(/-/g, ''),
+        bankName
       );
-
-      await addNotification(fromDb, {
-        icon: 'navigate-outline',
-        iconColor: 'rgb(0, 100, 248)',
-        borderColor: '#FFCDD2',
-        content: `${bankName}에서${formattedAmount}을 송금했어요`,
-      });
-      sendHiNotification(bankName, formattedAmount);
-      showModal('송금 완료', `${bankTo}${formattedAmount} 송금이 완료되었습니다.`);
     } catch (err) {
-      showModal('송금 실패', '송금 처리 중 오류가 발생했습니다.');
+      console.error('송금 에러', err);
+      return showModal('송금 실패', '송금 처리 중 오류가 발생했습니다.');
     }
+
+    // 2) Notification 저장 실패는 무시
+    addNotification(fromDb, {
+      icon: 'navigate-outline',
+      iconColor: 'rgb(0, 100, 248)',
+      borderColor: '#FFCDD2',
+      content: `${bankName}에서 ${formattedAmount}을 송금했어요`,
+    }).catch(err => console.warn('알림 저장 실패', err));
+
+    // 3) 로컬 푸시
+    sendHiNotification(bankName, formattedAmount);
+
+    // 4) 성공 모달 및 화면 전환
+    showModal(
+      '송금 완료',
+      `${bankTo} ${formattedAmount} 송금이 완료되었습니다.`,
+      [
+        {
+          text: '확인',
+          onPress: () => {
+            setModalVisible(false);
+            nav.navigate('MainTabs');
+          },
+          color: '#4B7BE5',
+        }
+      ]
+    );
   };
 
+  const showInfoModal = (title, message) => {
+    setModalTitle(title);
+    setModalMessage(message);
+    setModalButtons([{ text: '확인', onPress: () => setModalVisible(false), color: '#4B7BE5' }]);
+    setModalVisible(true);
+  };
+
+  // ① 생체 인증 → 실패·에러 시 PIN 모달로 자동 전환
   const onAuthAndWithdraw = async () => {
-    // ① 버튼 누르는 순간 PIN 패드부터 띄우기
+    // 무조건 PIN 패드 띄우기
     setShowNumPad(true);
 
     const rnBiometrics = new ReactNativeBiometrics();
-    const { available, biometryType } = await rnBiometrics.isSensorAvailable();
-    let success = false;
+    try {
+      const { available, biometryType } = await rnBiometrics.isSensorAvailable();
+      if (available && biometryType) {
+        const promptMessage = biometryType === 'Face ID' ? 'Face ID 인증' : '지문 인증';
+        const { success } = await rnBiometrics.simplePrompt({
+          promptMessage,
+          cancelButtonText: '취소',
+        });
 
-    // ② 3회 미만 실패 시에만 생체인증 띄우기
-    if (available && biometryType && authTries < 2) {
-      const promptMessage = biometryType === 'Face ID' ? 'Face ID 인증' : '지문 인증';
-      ({ success } = await rnBiometrics.simplePrompt({ promptMessage, cancelButtonText: '취소' }));
+        if (success) {
+          // 인증 성공하면 바로 송금
+          setShowNumPad(false);
+          return handleWithdraw();
+        } else {
+          // 실패(한두번 틀린 경우)
+          return
+          // showModal('인증 실패', '생체 인증에 실패했습니다. PIN 입력으로 진행합니다.');
+        }
+      }
+    } catch (error) {
+      // 사용자가 “취소”를 눌렀을 때에는 아무 모달도 띄우지 않고 그냥 리턴
+      if (error.message && error.message.toLowerCase().includes('cancel')) {
+        return;
+      }
+      // 하드웨어 레벨 에러(횟수 초과 등)까지 모두 여기로 잡힘
+      // console.warn('Biometric Error:', error);
+      return showInfoModal('인증 실패', '생체 인증에 실패했습니다. PIN 입력으로 진행합니다.');
     }
-
-    if (success) {
-      // ③ 인증 성공하면 PIN 패드 숨기고 바로 송금
-      setShowNumPad(false);
-      return handleWithdraw();
-    }
-
-    // ④ 실패 카운트 업
-    setAuthTries(prev => prev + 1);
-
-    if (authTries + 1 < 2) {
-      showModal('인증 실패', '생체 인증이 실패했습니다. 다시 시도해주세요.');
-    }
-    // ⑤ else { 3회 실패 } 이후엔 showNumPad=true 상태로 PIN만 인터랙티브
   };
 
   return (
@@ -237,8 +271,22 @@ export default function WithdrawAuthScreen() {
                 </View>
                 <CustomNumPad
                   onPress={(key) => {
+                    // 취소 버튼
+                    if (key === '취소') {
+                      setPinInput('');
+                      setShowNumPad(false);
+                      return;
+                    }
+
+                    // 지우기 버튼
+                    if (key === '지우기') {
+                      setPinInput(prev => prev.slice(0, -1));
+                      return;
+                    }
+
                     // 3회 실패 전까지는 입력 무시
-                    if (authTries < 2) return;
+                    // if (authTries < 2) return;
+
                     // 숫자 키만 들어오므로 바로 처리
                     const next = (pinInput + key).slice(0, 6);
                     // 6자리 채워질 때까지 입력만 받고 로직 실행 금지

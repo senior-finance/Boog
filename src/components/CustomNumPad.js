@@ -7,7 +7,7 @@ const DEFAULT_KEY_ROWS = [
   ['1', '2', '3'],
   ['4', '5', '6'],
   ['7', '8', '9'],
-  ['', '0', '취소'],
+  ['취소', '0', '지우기'],
 ];
 
 export default function CustomNumPad({
