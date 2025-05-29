@@ -4,7 +4,8 @@ import {
   TouchableOpacity,
   StyleSheet,
   Animated,
-  Easing
+  Easing,
+  BackHandler,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Sound from 'react-native-sound';
@@ -21,6 +22,16 @@ const WrongAnswerScreen = ({ route, navigation }) => {
     shuffledQuiz,
     userAnswers
   } = route.params;
+
+  useEffect(() => {
+    // 뒤로가기 버튼 무시
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      () => true
+    );
+
+    return () => backHandler.remove();
+  }, []);
 
   const [showContent, setShowContent] = useState(false);
   const scaleAnim = useRef(new Animated.Value(4)).current;
@@ -130,7 +141,7 @@ const styles = StyleSheet.create({
     marginBottom: 6,
     textShadowColor: 'rgba(0, 0, 0, 0.2)',
     textShadowOffset: { width: 0, height: 2 },
-    textShadowRadius: 3, 
+    textShadowRadius: 3,
   },
   resultAnswer: {
     fontWeight: 'bold',

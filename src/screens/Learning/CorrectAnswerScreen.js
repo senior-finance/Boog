@@ -5,7 +5,8 @@ import {
   StyleSheet,
   Image,
   Animated,
-  Easing
+  Easing,
+  BackHandler,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Sound from 'react-native-sound';
@@ -22,6 +23,16 @@ const CorrectAnswerScreen = ({ route, navigation }) => {
     shuffledQuiz,
     userAnswers
   } = route.params;
+
+  useEffect(() => {
+    // 뒤로가기 버튼 무시
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      () => true
+    );
+
+    return () => backHandler.remove();
+  }, []);
 
   const [showContent, setShowContent] = useState(false);
   const scaleAnim = useRef(new Animated.Value(4)).current;
@@ -124,7 +135,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 60,
   },
-    resultTitle: {
+  resultTitle: {
     fontWeight: 'bold',
     color: '#4B7BE5',
     textAlign: 'center',
