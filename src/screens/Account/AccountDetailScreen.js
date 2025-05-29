@@ -27,7 +27,7 @@ LocaleConfig.locales['ko'] = {
 LocaleConfig.defaultLocale = 'ko';
 
 const AccountDetailScreen = ({ route }) => {
-  const { userName } = route.params;
+  const { userName, accountNum } = route.params;
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedDate, setSelectedDate] = useState(null);
@@ -70,7 +70,9 @@ const AccountDetailScreen = ({ route }) => {
   useEffect(() => {
     (async () => {
       const list = await accountGetAll(userName);
-      setTransactions(list);
+      // 선택한 계좌(accountNum) 거래만 남기기
+      const filteredList = list.filter(tx => tx.accountNum === accountNum);
+      setTransactions(filteredList);
       setLoading(false);
     })();
   }, [userName]);
@@ -116,9 +118,9 @@ const AccountDetailScreen = ({ route }) => {
         yesterdayList.push(item);
       } else if (diffDays <= 7) {
         weekList.push(item);
-      } else if (diffDays <= 30) {
+      } else if (diffDays <= 30 && diffDays > 7) {
         monthList.push(item);
-      } else {
+      } else if (diffDays > 30) {
         olderList.push(item);
       }
     });
@@ -266,12 +268,12 @@ const AccountDetailScreen = ({ route }) => {
         </>
       )}
 
-      {!selectedDate && !showCalendar && (amountOrder !== 'none' || dateOrder !== 'none') && (
+      {/* {!selectedDate && !showCalendar && (amountOrder !== 'none' || dateOrder !== 'none') && (
         filteredTransactions
           .slice()
           .sort(sortFn)
           .map(item => <TransactionCard key={item._id} item={item} />)
-      )}
+      )} */}
     </ScrollView>
   );
 };
@@ -280,6 +282,7 @@ const AccountDetailScreen = ({ route }) => {
 const TransactionCard = ({ item }) => {
   const isDeposit = item.type === 'deposit';
   const barColor = isDeposit ? '#0984e3' : '#e74c3c';
+  const { counterpartyAccountBank, counterpartyAccountNum } = item;
 
   return (
     <View style={styles.card}>
@@ -294,16 +297,22 @@ const TransactionCard = ({ item }) => {
             {Number(item.amount).toLocaleString()}원
           </CustomText>
         </View>
-        <CustomText style={styles.cardDate}>
-          {new Date(item.createdAt).toLocaleString('ko-KR', {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: false,
-          })}
-        </CustomText>
+        {/* 상대방 정보 */}
+        <View style={styles.counterpartyRow}>
+          <CustomText style={styles.counterpartyText}>
+            상대 은행 : {counterpartyAccountBank} {"\n"}계좌 : {counterpartyAccountNum}
+          </CustomText>
+          <CustomText style={styles.cardDate}>
+            {new Date(item.createdAt).toLocaleString('ko-KR', {
+              year: 'numeric',
+              month: '2-digit',
+              day: '2-digit',
+              hour: '2-digit',
+              minute: '2-digit',
+              hour12: false,
+            })}
+          </CustomText>
+        </View>
       </View>
     </View>
   );
@@ -443,6 +452,7 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     paddingLeft: 12,
+    paddingVertical: 10,
   },
   row: {
     flexDirection: 'row',
@@ -455,7 +465,7 @@ const styles = StyleSheet.create({
     color: '#0984e3',
   },
   cardAmount: {
-    fontSize: 22,
+    fontSize: +32,
     fontWeight: 'bold',
   },
   cardDate: {
@@ -463,6 +473,13 @@ const styles = StyleSheet.create({
     color: '#636e72',
     marginTop: 8,
     textAlign: 'right',
+  },
+  counterpartyRow: {
+    marginTop: 6,
+  },
+  counterpartyText: {
+    fontSize: 16,
+    color: '#636e72',
   },
 });
 

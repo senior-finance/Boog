@@ -39,7 +39,14 @@ export async function mongoDB(action, dbName, collName, params) {
 // 이하 함수는 자주 쓰는 헬퍼 함수입니다
 // 
 // === 입금 전용 deposit 함수 (로그남기 + 잔액 증가 + trans에도 기록) ===
-export async function deposit(dbName, accountNum, accountBank, amount) {
+export async function deposit(
+  dbName,
+  accountNum,
+  accountBank,
+  amount,
+  counterpartyAccountNum,      // 추가
+  counterpartyAccountBank      // 추가
+) {
   const numeric = Number(amount);
 
   // 1) bank.deposit 컬렉션에 로그 남기기
@@ -71,21 +78,18 @@ export async function deposit(dbName, accountNum, accountBank, amount) {
     );
 
     // 3) trans 컬렉션에도 거래내역 기록 (입금)
-    await mongoDB(
-      'insertOne',
-      dbName,
-      'trans',
-      {
-        document: {
-          accountNum,
-          accountBank,
-          type: 'deposit',   // 거래 구분
-          amount: numeric,   // 입금 금액
-          createdAt: new Date()
-        }
+    await mongoDB('insertOne', dbName, 'trans', {
+      document: {
+        accountNum,
+        accountBank,
+        counterpartyAccountNum,       // 상대방 계좌
+        counterpartyAccountBank,      // 상대방 은행
+        type: 'deposit',
+        amount: numeric,
+        createdAt: new Date()
       }
-    );
-
+    });
+    
   } catch (err) {
     console.log('▶ updateOne or trans insert failed:', err?.response?.status, err?.response?.data);
     // 필요 시 롤백 로직 추가 가능
@@ -95,7 +99,14 @@ export async function deposit(dbName, accountNum, accountBank, amount) {
 }
 
 // === 출금 전용 withdraw 함수 (로그남기 + 잔액 차감 + trans에도 기록) ===
-export async function withdraw(dbName, accountNum, accountBank, amount) {
+export async function withdraw(
+  dbName,
+  accountNum,
+  accountBank,
+  amount,
+  counterpartyAccountNum,      // 추가
+  counterpartyAccountBank      // 추가
+) {
   const numeric = Number(amount);
   // 1) bank.withdraw 컬렉션에 로그 남기기
   const logId = await mongoDB(
@@ -125,20 +136,17 @@ export async function withdraw(dbName, accountNum, accountBank, amount) {
     );
 
     // 3) trans 컬렉션에도 거래내역 기록 (출금)
-    await mongoDB(
-      'insertOne',
-      dbName,
-      'trans',
-      {
-        document: {
-          accountNum,
-          accountBank,
-          type: 'withdraw',    // 거래 구분
-          amount: numeric,     // 출금 금액
-          createdAt: new Date()
-        }
+    await mongoDB('insertOne', dbName, 'trans', {
+      document: {
+        accountNum,
+        accountBank,
+        counterpartyAccountNum,       // 상대방 계좌
+        counterpartyAccountBank,      // 상대방 은행
+        type: 'withdraw',
+        amount: numeric,
+        createdAt: new Date()
       }
-    );
+    });
 
   } catch (err) {
     // console.log('▶ updateOne or trans insert failed:', err?.response?.status, err?.response?.data);

@@ -197,8 +197,14 @@ const MainScreen = ({ navigation }) => {
 
   const actionButtons = [
     { title: '송금', icon: 'swap-horizontal', onPress: () => navigation.navigate('Account') },
-    { title: '거래내역', icon: 'document-text-outline',  onPress: () => {/* 추후 연결 */} },
-    { title: '지도', icon: 'map', onPress: () => navigation.navigate('MapView') },
+    {
+      title: '거래내역 (대표 계좌)',
+      icon: 'document-text-outline',
+      onPress: () => navigation.navigate('AccountDetail', {
+        userName: testBedAccount,          // DB 이름
+        accountNum: primary.bank_num       // 대표 계좌 번호
+      }),
+    }, { title: '지도', icon: 'map', onPress: () => navigation.navigate('MapView') },
     { title: '복지혜택', icon: 'gift', onPress: () => navigation.navigate('Welfare') },
   ];
 
@@ -391,7 +397,7 @@ const MainScreen = ({ navigation }) => {
           }}
         >
           {/* 실제 거래 내역으로 바꿔야 돼 */}
-          <CustomText style={styles.sectionTitle}>거래 내역 (최근 5건)</CustomText>
+          <CustomText style={styles.sectionTitle}>전체 내역 간략하게 (최근 5건)</CustomText>
           <Ionicons
             name={showHistory ? 'chevron-up-outline' : 'chevron-down-outline'}
             size={20}
@@ -442,9 +448,9 @@ const MainScreen = ({ navigation }) => {
               renderItem={({ item }) => (
                 <View style={styles.modalRow}>
                   <View style={styles.modalInfo}>
-                    <CustomText>{item.bank_name}</CustomText>
-                    <CustomText>{item.bank_num}</CustomText>
-                    <CustomText>₩ {Number(item.localAmount).toLocaleString()}</CustomText>
+                    <CustomText>은행 : {item.bank_name}</CustomText>
+                    <CustomText>계좌 : {item.bank_num}</CustomText>
+                    <CustomText>금액 : {Number(item.localAmount).toLocaleString()}원</CustomText>
                   </View>
                   <Pressable
                     style={styles.pickerButton}
@@ -825,6 +831,17 @@ const styles = StyleSheet.create({
   },
   modalInfo: {
     flex: 1,
+    backgroundColor: '#E8F4FF',
+    padding: 16,
+    borderRadius: 12,
+    marginRight: 8,
+    // 그림자 (iOS)
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    // 그림자 (Android)
+    elevation: 2,
   },
   pickerButton: {
     backgroundColor: '#4A90E2',

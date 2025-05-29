@@ -134,9 +134,24 @@ export default function WithdrawAuthScreen() {
       const fromDb = testBedAccount;
       const toDb = isOwnTransfer ? fromDb : (fromDb === 'kmj' ? 'hwc' : 'kmj');
 
-      await withdraw(fromDb, accountNum.replace(/-/g, ''), bankName, amountNum);
-      await deposit(toDb, accountNumTo.replace(/-/g, ''), bankTo, amountNum);
+      await withdraw(
+        fromDb,
+        accountNum.replace(/-/g, ''),
+        bankName,
+        amountNum,
+        accountNumTo.replace(/-/g, ''),  // 상대방 계좌
+        bankTo                         // 상대방 은행
+      );
 
+      await deposit(
+        toDb,
+        accountNumTo.replace(/-/g, ''),
+        bankTo,
+        amountNum,
+        accountNum.replace(/-/g, ''),  // 상대방(송금자) 계좌
+        bankName                       // 상대방(송금자) 은행
+      );
+      
       await addNotification(fromDb, {
         icon: 'navigate-outline',
         iconColor: 'rgb(0, 100, 248)',
