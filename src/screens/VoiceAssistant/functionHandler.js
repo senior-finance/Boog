@@ -15,7 +15,7 @@ export const handleFunctionCalling = async ({
 
   if (reply.type === 'navigate-confirm') {
     const screenNameMap = {
-      AutoPhoneAnalysis: "통화/문자 분석",
+      AutoPhoneAnalysis: '통화/문자 분석',
       QuizLevel: '금융 용어 학습',
       MapView: 'ATM/은행 찾기',
       Welfare: '복지 혜택',

@@ -1,5 +1,5 @@
 // src/AutoPhoneAnalysisScreen.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   TouchableOpacity,
@@ -14,6 +14,9 @@ import { checkSpamForNumber } from './PhoneUtils';
 import CustomText from '../../components/CustomText';
 import CustomModal from '../../components/CustomModal';
 import { ScrollView } from 'react-native';
+import { addNotification, getNotifications } from '../../database/mongoDB';
+import PushNotification from 'react-native-push-notification';
+import { useUser } from '../Login/UserContext';
 
 const { PhoneAnalysisModule } = NativeModules;
 
@@ -46,6 +49,49 @@ const AutoPhoneAnalysisScreen = () => {
   const [suspiciousList, setSuspiciousList] = useState([]);
   const [loading, setLoading] = useState(false);
 
+  const { userInfo } = useUser(); // 로그인 시 setUserInfo로 저장된 값
+
+  useEffect(() => {
+    // 1. 푸시 알림 설정 (한 번만)
+    PushNotification.configure({
+      // (필요 시) 토큰 받기
+      onRegister: function (token) {
+        // console.log('TOKEN:', token);
+      },
+      // 알림 탭/닫기 시
+      onNotification: function (notification) {
+        console.log('NOTIFICATION:', notification);
+        notification.finish(PushNotification.FetchResult.NoData);
+      },
+      // Android 권한 요청
+      requestPermissions: true,
+    });
+
+    // 2. Android용 채널 생성 (Android 8.0+)
+    PushNotification.createChannel(
+      {
+        channelId: 'default-channel-id', // 채널 ID
+        channelName: '부금이 알람 채널',  // 채널 이름
+        // importance: 3,                   // (optional) 중요도
+      },
+      // (created) => console.log(`createChannel returned '${created}'`)
+    );
+  }, []);
+
+  // 버튼 눌렀을 때 호출
+  const sendHiNotification = () => {
+    PushNotification.localNotification({
+      /* Android & iOS 공통 */
+      channelId: 'default-channel-id', // Android는 필수
+      title: '제목이야',                   // 제목
+      message: '내용이야',                 // 본문
+
+      /* iOS 전용 옵션 (필요 시) */
+      // soundName: 'default',
+      // playSound: true,
+    });
+  };
+
   const requestPermissions = async () => {
     const smsGranted = await PermissionsAndroid.request(
       PermissionsAndroid.PERMISSIONS.READ_SMS
@@ -61,6 +107,7 @@ const AutoPhoneAnalysisScreen = () => {
   };
 
   const analyze = async () => {
+    const userName = userInfo?.username || 'Guest';
     const hasPermission = await requestPermissions();
     if (!hasPermission) {
       setResultText('권한이 거부되었습니다. 설정에서 권한을 허용해주세요.');
@@ -130,10 +177,26 @@ const AutoPhoneAnalysisScreen = () => {
 
     if (autoCheckedFound.length === 0) {
       setResultText('✅오늘은 의심스러운 문자나 통화 기록이 없습니다.');
+      await addNotification(userName, {
+        icon: 'checkbox-outline',
+        iconColor: '#4CAF50',
+        content: '오늘 통화/문자 분석 결과 이상 없어요!'
+      });
+      PushNotification.localNotification({
+        channelId: 'default-channel-id',
+        title: '통화/문자 분석 완료',
+        message: '오늘 분석 결과 이상이 없어요!'
+      });
     } else {
       const smsCount = autoCheckedFound.filter(item => item.type === 'sms').length;
       const callCount = autoCheckedFound.filter(item => item.type === 'call').length;
       setResultText(`의심 기록 ${autoCheckedFound.length}건 발견됨!`);
+      await addNotification(userId, { content: `의심 기록 ${autoChecked.length}건 발견됨` });
+      PushNotification.localNotification({
+        channelId: 'default-channel-id',
+        title: '분석 완료',
+        message: `의심 기록 ${autoChecked.length}건 발견됨`,
+      });
 
       setTimeout(() => {
         showModal(
@@ -141,6 +204,16 @@ const AutoPhoneAnalysisScreen = () => {
           `총 ${autoCheckedFound.length}개의 의심 기록이 발견되었습니다.\n\n문자: ${smsCount}개\n통화: ${callCount}건`
         );
       }, 500);
+      await addNotification(userName, {
+        icon: ' warning- outline',
+        iconColor: '#F44336',
+        content: `의심 기록 ${autoChecked.length}건 발견됨`
+      });
+      PushNotification.localNotification({
+        channelId: 'default-channel-id',
+        title: '분석 완료',
+        message: `의심 기록 ${autoChecked.length}건 발견됨`
+      });
     }
   };
 
