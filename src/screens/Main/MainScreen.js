@@ -205,7 +205,7 @@ const MainScreen = ({ navigation }) => {
   const featureButtons = [
     { title: 'AI 챗봇', icon: 'chatbubble-ellipses-outline', onPress: () => navigation.navigate('VoiceInput') },
     { title: '통화.문자 분석', icon: 'analytics-outline', onPress: () => navigation.navigate('AutoPhoneAnalysis') },
-     { title: '금융상식', icon: 'book-outline', onPress: () => navigation.navigate('Learning') },
+    { title: '금융 교육', icon: 'book-outline', onPress: () => navigation.navigate('Learning') },
   ];
 
   // 계좌 문제 영역
@@ -304,17 +304,19 @@ const MainScreen = ({ navigation }) => {
         <View style={styles.balanceCard}>
           <View style={styles.circleDecor} />
           <View style={[styles.circleDecor, styles.circleOffset]} />
-          <View style={styles.arrowPattern} />
           <View style={styles.dottedLine} />
 
           <Pressable
             style={styles.settingsButton}
             onPress={() => setAccountPickerVisible(true)}
           >
-            <Icon name="gear" size={24} color="#fff" />
+            <View style={styles.settingsButtonContent}>
+              <CustomText style={styles.settingsButtonText}>대표 계좌 설정</CustomText>
+              <Icon name="gear" size={16} color="#fff" style={{ marginLeft: 6 }} />
+            </View>
           </Pressable>
 
-          <CustomText style={styles.accountNum}>
+          <CustomText style={[styles.accountNum, { marginTop: 10 }]}>
             대표 계좌 : {primary.bank_name ?? ''}{"\n"}
             계좌 번호 : {primary.bank_num}
           </CustomText>
@@ -688,18 +690,18 @@ const styles = StyleSheet.create({
   actionRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 32 },
   featureRow: { flexDirection: 'row', justifyContent: 'center', marginBottom: 32 },
 
- functionButton: {
-  borderRadius: 20,
-  width: '22%',
-  
-  shadowColor: '#000',
-  shadowOffset: { width: 0, height: 4 },
-  shadowOpacity: 0.1,
-  shadowRadius: 8,
-  elevation: 6,
-},
+  functionButton: {
+    borderRadius: 20,
+    width: '22%',
 
-  
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 6,
+  },
+
+
   functionButtonInner: {
     flex: 1,
     paddingVertical: 12,
@@ -785,6 +787,18 @@ const styles = StyleSheet.create({
     padding: 5,
     borderRadius: 10,
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    height: 40,
+    paddingHorizontal: 12,
+  },
+  settingsButtonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  settingsButtonText: {
+    color: '#fff',
+    fontWeight: '600',
+    fontSize: 18,
   },
   modalOverlay: {
     flex: 1,

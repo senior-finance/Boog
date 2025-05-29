@@ -103,7 +103,7 @@ export default function GuideDetailScreen({ route }) {
     ],
     quiz: [
       {
-        text: '1. 메인 화면에서 금융상식 버튼을 누르면 금융 학습 화면으로 이동할 수 있어요.',
+        text: '1. 메인 화면에서 금융 교육 버튼을 누르면 금융 학습 화면으로 이동할 수 있어요.',
         image: quiz1,
       },
       {

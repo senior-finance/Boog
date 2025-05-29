@@ -132,7 +132,7 @@ export default function App() {
                   <Stack.Screen name="WithdrawAmount" component={WithdrawAmountScreen} options={{ title: '송금 화면 - 금액 입력' }} />
                   <Stack.Screen name="WithdrawAuth" component={WithdrawAuthScreen} options={{ title: '송금 화면 - 인증하기' }} />
 
-                  <Stack.Screen name="Learning" component={LearningScreen} options={{ title: '금융 상식' }} />
+                  <Stack.Screen name="Learning" component={LearningScreen} options={{ title: '금융 교육' }} />
                   <Stack.Screen name="QuizLevel" component={SelectLevelScreen} options={{ title: '금융 용어 학습 난이도 선택' }} />
                   <Stack.Screen name="Quiz" component={QuizScreen} options={{ title: '금융 용어 학습' }} />
                   <Stack.Screen name="Answer" component={AnswerScreen} options={{ title: '정답 확인' }} />

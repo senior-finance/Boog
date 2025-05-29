@@ -69,7 +69,7 @@ const LearningScreen = ({ navigation }) => {
           { fontSize: (styles.title.fontSize || +25) }
         ]}
       >
-        금융 상식 배우기
+        금융 교육 목록
       </CustomText>
 
         {cards.map((card, idx) => (
