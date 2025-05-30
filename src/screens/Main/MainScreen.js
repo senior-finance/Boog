@@ -95,6 +95,8 @@ const MainScreen = ({ navigation }) => {
   const [accountPickerVisible, setAccountPickerVisible] = useState(false);
   const [primaryId, setPrimaryId] = useState(null);
 
+  const [balanceLoading, setBalanceLoading] = useState(false);
+
   // 1) 앱 시작 시 저장된 대표 계좌 불러오기
   useEffect(() => {
     AsyncStorage.getItem('primaryAccount').then(id => {
@@ -182,6 +184,21 @@ const MainScreen = ({ navigation }) => {
       // soundName: 'default',
       // playSound: true,
     });
+  };
+
+  // 컴포넌트 내부에 refreshBalance 구현
+  const refreshBalance = async () => {
+    setBalanceLoading(true);
+    try {
+      // 적절한 API 호출 함수로 교체
+      const accounts = await accountGetAll(testBedAccount);
+      const primaryAcc = accounts.find(acc => acc.isPrimary) || accounts[0];
+      setPrimaryId(primaryAcc.fintech_use_num);
+      setPrimary(newPrimary);
+    } catch (e) {
+      // showModal('오류', '잔액을 불러오지 못했습니다.');
+    }
+    setBalanceLoading(false);
   };
 
   useFocusEffect(
@@ -310,7 +327,11 @@ const MainScreen = ({ navigation }) => {
           </TouchableOpacity>
         </View>
 
-        <View style={styles.balanceCard}>
+        <Pressable
+          style={styles.balanceCard}
+          onPress={refreshBalance}
+          disabled={balanceLoading} // 로딩 중엔 비활성화
+        >
           <View style={styles.circleDecor} />
           <View style={[styles.circleDecor, styles.circleOffset]} />
           <View style={styles.dottedLine} />
@@ -343,7 +364,7 @@ const MainScreen = ({ navigation }) => {
               />
             </View>
           )}
-        </View>
+        </Pressable>
 
         <TouchableOpacity style={styles.toggleRow} onPress={() => setShowActions(v => !v)}>
           <CustomText style={styles.sectionSubTitle}>주요 기능</CustomText>
