@@ -31,16 +31,35 @@ export function useAccountData(testBedAccount) {
   const USER_ME_URL = `${baseUrl}/v2.0/user/me`;
   const ACCOUNT_BALANCE_URL = `${baseUrl}/v2.0/account/balance/fin_num`;
 
+  // refetch: 토큰 불러오기 → 계좌 목록 → 잔고 조회 → 병합
+  const refetch = async () => {
+    try {
+      setLoading(true);
+      const docId = testBedAccount === 'hwc' ? 'Token2' : 'Token';
+      const snap = await getDoc(doc(db, 'tokens', docId));
+      if (!snap.exists()) throw new Error('토큰 없음');
+      const tokenData = snap.data();
+      setTokenData(tokenData); // 이게 있어야 이후 useEffect들이 작동
+
+      // 계좌 목록은 tokenData 변경을 통해 자동 트리거됨
+    } catch (e) {
+      setError(e);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
   // 1) Firebase에 저장된 토큰 로드
   useEffect(() => {
-    if (!['kmj','hwc'].includes(testBedAccount)) return;
+    if (!['kmj', 'hwc'].includes(testBedAccount)) return;
     (async () => {
       setLoading(true);
       try {
-        const docId = testBedAccount==='hwc' ? 'Token2' : 'Token';
-        const snap = await getDoc(doc(db,'tokens',docId));
+        const docId = testBedAccount === 'hwc' ? 'Token2' : 'Token';
+        const snap = await getDoc(doc(db, 'tokens', docId));
         if (snap.exists()) setTokenData(snap.data());
-      } catch(e) {
+      } catch (e) {
         setError(e);
       } finally {
         setLoading(false);
@@ -53,37 +72,37 @@ export function useAccountData(testBedAccount) {
     if (!tokenData?.access_token) return;
     setLoading(true);
     fetch(`${USER_ME_URL}?user_seq_no=${tokenData.user_seq_no}`, {
-      headers:{ Authorization:`Bearer ${tokenData.access_token}` }
+      headers: { Authorization: `Bearer ${tokenData.access_token}` }
     })
-      .then(r=>r.json())
+      .then(r => r.json())
       .then(data => {
         if (data.res_list) setAccountList(data.res_list);
         else throw new Error('계좌 목록 응답 에러');
       })
-      .catch(e=>setError(e))
-      .finally(()=>setLoading(false));
+      .catch(e => setError(e))
+      .finally(() => setLoading(false));
   }, [tokenData]);
 
   // 3) 잔고 병렬 조회 (API)
   useEffect(() => {
     if (!accountList.length || !tokenData?.access_token) return;
     const fetchBalance = async account => {
-      const rand = Math.floor(Math.random()*1e9).toString().padStart(9,'0');
+      const rand = Math.floor(Math.random() * 1e9).toString().padStart(9, '0');
       const bankTranId = `${cfg.TRAN_ID}U${rand}`;
-      const tranDTime = new Date().toISOString().replace(/[-:TZ.]/g,'').slice(0,14);
+      const tranDTime = new Date().toISOString().replace(/[-:TZ.]/g, '').slice(0, 14);
       try {
         const res = await fetch(
-          `${ACCOUNT_BALANCE_URL}?bank_tran_id=${bankTranId}`+
-          `&fintech_use_num=${account.fintech_use_num}`+
+          `${ACCOUNT_BALANCE_URL}?bank_tran_id=${bankTranId}` +
+          `&fintech_use_num=${account.fintech_use_num}` +
           `&tran_dtime=${tranDTime}`,
-          { headers:{ Authorization:`Bearer ${tokenData.access_token}` } }
+          { headers: { Authorization: `Bearer ${tokenData.access_token}` } }
         );
         const d = await res.json();
         return {
           fintech_use_num: account.fintech_use_num,
           balance_amt: d.balance_amt,
-          bank_name:  d.bank_name,
-          bank_num:   account.fintech_use_num.slice(-10),
+          bank_name: d.bank_name,
+          bank_num: account.fintech_use_num.slice(-10),
         };
       } catch {
         return {
@@ -100,15 +119,15 @@ export function useAccountData(testBedAccount) {
       try {
         const batches = [];
         const concurrency = 3;
-        for (let i=0; i<accountList.length; i+=concurrency) {
+        for (let i = 0; i < accountList.length; i += concurrency) {
           const part = await Promise.all(
-            accountList.slice(i,i+concurrency).map(fetchBalance)
+            accountList.slice(i, i + concurrency).map(fetchBalance)
           );
           batches.push(...part);
-          await new Promise(res=>setTimeout(res,200));
+          await new Promise(res => setTimeout(res, 200));
         }
         setRawBalances(batches);
-      } catch(e) {
+      } catch (e) {
         setError(e);
       } finally {
         setLoading(false);
@@ -129,12 +148,12 @@ export function useAccountData(testBedAccount) {
           const local = await accountGet(dbName, rec.fintech_use_num) || {};
           return {
             ...rec,
-            accountNum:  local.accountNum,    // 몽고에 저장된 뒤 10자리
+            accountNum: local.accountNum,    // 몽고에 저장된 뒤 10자리
             localAmount: local.amount,        // 몽고에 기록된 잔액
           };
         }));
         setMergedData(merged);
-      } catch(e) {
+      } catch (e) {
         setError(e);
       } finally {
         setLoading(false);
@@ -142,5 +161,5 @@ export function useAccountData(testBedAccount) {
     })();
   }, [rawBalances, dbName]);
 
-  return { data: mergedData, loading, error };
+  return { data: mergedData, loading, error, refetch };
 }

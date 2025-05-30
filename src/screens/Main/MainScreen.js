@@ -89,13 +89,12 @@ const MainScreen = ({ navigation }) => {
 
   const { userInfo } = useUser();
   const testBedAccount = userInfo?.dbName || 'Guest';
-  const { data, loading, error } = useAccountData(testBedAccount);
+  const { data, loading, error, refetch } = useAccountData(testBedAccount);
+
 
   const scrollViewRef = useRef(null);
   const [accountPickerVisible, setAccountPickerVisible] = useState(false);
   const [primaryId, setPrimaryId] = useState(null);
-
-  const [balanceLoading, setBalanceLoading] = useState(false);
 
   // 1) 앱 시작 시 저장된 대표 계좌 불러오기
   useEffect(() => {
@@ -184,21 +183,6 @@ const MainScreen = ({ navigation }) => {
       // soundName: 'default',
       // playSound: true,
     });
-  };
-
-  // 컴포넌트 내부에 refreshBalance 구현
-  const refreshBalance = async () => {
-    setBalanceLoading(true);
-    try {
-      // 적절한 API 호출 함수로 교체
-      const accounts = await accountGetAll(testBedAccount);
-      const primaryAcc = accounts.find(acc => acc.isPrimary) || accounts[0];
-      setPrimaryId(primaryAcc.fintech_use_num);
-      setPrimary(newPrimary);
-    } catch (e) {
-      // showModal('오류', '잔액을 불러오지 못했습니다.');
-    }
-    setBalanceLoading(false);
   };
 
   useFocusEffect(
@@ -326,46 +310,47 @@ const MainScreen = ({ navigation }) => {
             ]}>큰 버튼 모드</CustomText>
           </TouchableOpacity>
         </View>
-
         <Pressable
-          style={styles.balanceCard}
-          onPress={refreshBalance}
-          disabled={balanceLoading} // 로딩 중엔 비활성화
+          onPress={() => {
+            console.log('카드 눌림');
+            refetch();
+          }}
         >
-          <View style={styles.circleDecor} />
-          <View style={[styles.circleDecor, styles.circleOffset]} />
-          <View style={styles.dottedLine} />
+          <View style={styles.balanceCard}>
+            <View style={styles.circleDecor} />
+            <View style={[styles.circleDecor, styles.circleOffset]} />
+            <View style={styles.dottedLine} />
 
-          <Pressable
-            style={styles.settingsButton}
-            onPress={() => setAccountPickerVisible(true)}
-          >
-            <View style={styles.settingsButtonContent}>
-              <CustomText style={styles.settingsButtonText}>대표 계좌 설정</CustomText>
-              <Icon name="gear" size={16} color="#fff" style={{ marginLeft: 6 }} />
-            </View>
-          </Pressable>
+            <Pressable
+              style={styles.settingsButton}
+              onPress={() => setAccountPickerVisible(true)}
+            >
+              <View style={styles.settingsButtonContent}>
+                <CustomText style={styles.settingsButtonText}>대표 계좌 설정</CustomText>
+                <Icon name="gear" size={16} color="#fff" style={{ marginLeft: 6 }} />
+              </View>
+            </Pressable>
 
-          <CustomText style={[styles.accountNum, { marginTop: 10 }]}>
-            대표 계좌 : {primary.bank_name ?? ''}{"\n"}
-            계좌 번호 : {primary.bank_num}
-          </CustomText>
-          <CustomText style={styles.balanceAmt}>
-            잔액 : {Number(primary.localAmount).toLocaleString('ko-KR')}원
-          </CustomText>
-          {/* 로딩 오버레이 */}
-          {loading && (
-            <View style={styles.loadingOverlay}>
-              <LottieView
-                source={require('../../assets/loadingg.json')}
-                autoPlay
-                loop
-                style={styles.loadingLottie}
-              />
-            </View>
-          )}
+            <CustomText style={[styles.accountNum, { marginTop: 10 }]}>
+              대표 계좌 : {primary.bank_name ?? ''}{"\n"}
+              계좌 번호 : {primary.bank_num}
+            </CustomText>
+            <CustomText style={styles.balanceAmt}>
+              잔액 : {Number(primary.localAmount).toLocaleString('ko-KR')}원
+            </CustomText>
+            {/* 로딩 오버레이 */}
+            {loading && (
+              <View style={styles.loadingOverlay}>
+                <LottieView
+                  source={require('../../assets/loadingg.json')}
+                  autoPlay
+                  loop
+                  style={styles.loadingLottie}
+                />
+              </View>
+            )}
+          </View>
         </Pressable>
-
         <TouchableOpacity style={styles.toggleRow} onPress={() => setShowActions(v => !v)}>
           <CustomText style={styles.sectionSubTitle}>주요 기능</CustomText>
           {/* <Button title="안녕 푸시 알림" onPress={sendHiNotification} /> */}
