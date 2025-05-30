@@ -171,20 +171,15 @@ const MainScreen = ({ navigation }) => {
     );
   }, []);
 
-  // 버튼 눌렀을 때 호출
-  const sendHiNotification = () => {
-    PushNotification.localNotification({
-      /* Android & iOS 공통 */
-      channelId: 'default-channel-id', // Android는 필수
-      title: '제목이야',                   // 제목
-      message: '내용이야',                 // 본문
 
-      /* iOS 전용 옵션 (필요 시) */
-      // soundName: 'default',
-      // playSound: true,
+  // 버튼 눌렀을 때 호출
+  const sendHiNotification = (amount) => {
+    PushNotification.localNotification({
+      channelId: 'default-channel-id',
+      title: '입금', // 제목 고정
+      message: `${amount.toLocaleString()}원이 입금되었습니다.`, // 메시지 변경
     });
   };
-
   useFocusEffect(
     React.useCallback(() => {
       const onBackPress = () => {
@@ -260,6 +255,34 @@ const MainScreen = ({ navigation }) => {
 
   // if (loading) return <ActivityIndicator size="large" />;
   // if (error) return <Text>에러: {error.message}</Text>;
+
+  const previousBalanceRef = useRef();
+  useEffect(() => {
+    const prev = previousBalanceRef.current;
+    const current = primary.localAmount;
+
+    if (
+      typeof prev === 'number' &&
+      typeof current === 'number' &&
+      current > prev
+    ) {
+      const diff = current - prev;
+
+      Toast.show({
+        type: 'success',
+        text1: `입금 알림`,
+        text2: `${diff.toLocaleString()}원이 입금되었습니다.`,
+        position: 'top',
+        topOffset: 60,
+        visibilityTime: 2000,
+      });
+      
+      sendHiNotification(diff);
+    }
+
+    previousBalanceRef.current = current;
+  }, [primary.localAmount]);
+
 
   return (
     <LinearGradient colors={['rgba(159, 193, 219, 0.66)', '#e0f0ff']} style={styles.container}>
