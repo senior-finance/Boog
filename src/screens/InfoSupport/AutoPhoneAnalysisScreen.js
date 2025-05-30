@@ -191,11 +191,11 @@ const AutoPhoneAnalysisScreen = () => {
       const smsCount = autoCheckedFound.filter(item => item.type === 'sms').length;
       const callCount = autoCheckedFound.filter(item => item.type === 'call').length;
       setResultText(`의심 기록 ${autoCheckedFound.length}건 발견됨!`);
-      await addNotification(userId, { content: `의심 기록 ${autoChecked.length}건 발견됨` });
+      await addNotification(userName, { content: `의심 기록 ${autoCheckedFound.length}건 발견됨` });
       PushNotification.localNotification({
         channelId: 'default-channel-id',
         title: '분석 완료',
-        message: `의심 기록 ${autoChecked.length}건 발견됨`,
+        message: `의심 기록 ${autoCheckedFound.length}건 발견됨`,
       });
 
       setTimeout(() => {
@@ -207,12 +207,12 @@ const AutoPhoneAnalysisScreen = () => {
       await addNotification(userName, {
         icon: ' warning- outline',
         iconColor: '#F44336',
-        content: `의심 기록 ${autoChecked.length}건 발견됨`
+        content: `의심 기록 ${autoCheckedFound.length}건 발견됨`
       });
       PushNotification.localNotification({
         channelId: 'default-channel-id',
         title: '분석 완료',
-        message: `의심 기록 ${autoChecked.length}건 발견됨`
+        message: `의심 기록 ${autoCheckedFound.length}건 발견됨`
       });
     }
   };

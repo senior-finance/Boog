@@ -198,7 +198,7 @@ const MainScreen = ({ navigation }) => {
   const actionButtons = [
     { title: '송금', icon: 'swap-horizontal', onPress: () => navigation.navigate('Account') },
     {
-      title: ' 거래 내역' + '\n' + '(대표 계좌)',
+      title: '대표 계좌' + '\n' + '거래 내역',
       icon: 'document-text-outline',
       onPress: () => navigation.navigate('AccountDetail', {
         userName: testBedAccount,          // DB 이름
